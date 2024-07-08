@@ -1,0 +1,79 @@
+CREATE TABLE DictionaryEntry (
+    entry_id TEXT PRIMARY KEY NOT NULL,
+    lexeme_ipa TEXT NOT NULL,
+    lexeme_bengali TEXT,
+    lexeme_nagri TEXT,
+    citation_ipa TEXT,
+    citation_bengali TEXT,
+    citation_nagri TEXT,
+    sense_id TEXT UNIQUE,
+    part_of_speech TEXT,
+    gloss TEXT,
+    definition_en TEXT,
+    definition_bn TEXT,
+    definition_bnipa TEXT,
+    definition_ipa TEXT,
+    definition_nagri TEXT
+);
+
+searchSylLatin:
+SELECT * FROM DictionaryEntry
+WHERE lexeme_ipa REGEXP :query OR
+    citation_ipa REGEXP :query OR
+    definition_ipa REGEXP :query;
+
+CREATE TABLE EntryCrossRef (
+    sense_id1 TEXT NOT NULL,
+    sense_id2 TEXT NOT NULL,
+    relation_type TEXT NOT NULL,
+    FOREIGN KEY (sense_id1) REFERENCES DictionaryEntry(sense_id),
+    FOREIGN KEY (sense_id2) REFERENCES DictionaryEntry(sense_id),
+    PRIMARY KEY (sense_id1, sense_id2),
+    CHECK (sense_id1 < sense_id2)
+);
+
+CREATE TABLE Domain(
+    domain_id TEXT PRIMARY KEY NOT NULL,
+    description TEXT NOT NULL
+);
+
+CREATE TABLE EntryDomainCrossRef (
+    entry_id TEXT NOT NULL,
+    domain_id TEXT NOT NULL,
+    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id),
+    FOREIGN KEY (domain_id) REFERENCES Domain(domain_id),
+    PRIMARY KEY (entry_id, domain_id)
+);
+
+CREATE TABLE Example (
+    id INTEGER PRIMARY KEY,
+    entry_id TEXT NOT NULL,
+    example_ipa TEXT,
+    example_bengali TEXT,
+    example_nagri TEXT,
+    example_en TEXT,
+    example_bn TEXT,
+    example_bnipa TEXT,
+    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id)
+);
+
+CREATE TABLE Variant (
+    id INTEGER PRIMARY KEY,
+    entry_id TEXT NOT NULL,
+    variant_ipa TEXT NOT NULL,
+    variant_bengali TEXT,
+    variant_nagri TEXT,
+    environment TEXT,
+    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id)
+);
+
+CREATE TABLE ComponentLexeme (
+    id INTEGER PRIMARY KEY,
+    entry_id TEXT NOT NULL,
+    component_id TEXT NOT NULL,
+    is_primary INTEGER NOT NULL,
+    complex_form_type TEXT,
+    variant_type TEXT,
+    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id),
+    FOREIGN KEY (component_id) REFERENCES DictionaryEntry(entry_id)
+);

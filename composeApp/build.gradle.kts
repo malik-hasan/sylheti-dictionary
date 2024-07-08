@@ -1,8 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -38,30 +36,47 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
             implementation(compose.ui)
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
         }
         androidMain.dependencies {
             implementation(compose.preview)
-            implementation(libs.androidx.activityCompose)
-            implementation(libs.sqldelight.androidDriver)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
+            implementation(libs.sqldelight.android.driver)
         }
         iosMain.dependencies {
-            implementation(libs.sqldelight.nativeDriver)
+            implementation(libs.sqldelight.native.driver)
         }
 
         val desktopMain by getting
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.sqldelight.sqliteDriver)
+            implementation(libs.sqldelight.sqlite.driver)
+        }
+    }
+
+    targets.all {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+            }
         }
     }
 }
 
+val sylhetiDictionaryPackage = "oats.mobile.sylhetidictionary"
+
 android {
-    namespace = "oats.mobile.sylhetidictionary"
+    namespace = sylhetiDictionaryPackage
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -69,7 +84,7 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
-        applicationId = "oats.mobile.sylhetidictionary"
+        applicationId = sylhetiDictionaryPackage
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -103,8 +118,16 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "oats.mobile.sylhetidictionary"
+            packageName = sylhetiDictionaryPackage
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("DictionaryDatabase") {
+            packageName.set(sylhetiDictionaryPackage)
         }
     }
 }
