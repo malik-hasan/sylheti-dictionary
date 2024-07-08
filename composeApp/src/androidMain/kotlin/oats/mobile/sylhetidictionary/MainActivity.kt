@@ -1,4 +1,4 @@
-package me.malikhasan.sylhetidictionary
+package oats.mobile.sylhetidictionary
 
 import App
 import android.os.Bundle
