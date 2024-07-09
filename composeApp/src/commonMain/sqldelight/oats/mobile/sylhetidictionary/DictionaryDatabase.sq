@@ -16,6 +16,9 @@ CREATE TABLE DictionaryEntry (
     definition_nagri TEXT
 );
 
+getAll:
+SELECT * FROM DictionaryEntry;
+
 searchSylLatin:
 SELECT * FROM DictionaryEntry
 WHERE lexeme_ipa REGEXP :query OR
