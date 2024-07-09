@@ -4,7 +4,7 @@ import data.favorites.FavoritesRepository
 import data.settings.SettingsRepository
 import org.koin.dsl.module
 
-val dataModule = module {
+val sharedModule = module {
     single { SettingsRepository(get()) }
     single { FavoritesRepository(get(), get()) }
 //    single {

@@ -44,18 +44,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import models.search.settings.LatinSearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 import ui.components.EntryCard
 import ui.ifTrue
 import ui.interfaces.LocalDrawerState
 import ui.isScrollingUp
-import kotlinx.coroutines.launch
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
-fun SearchScreen(vm: SearchViewModel = viewModel()) {
+fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
     SearchScreen(vm.state, vm::onEvent)
 }
 
