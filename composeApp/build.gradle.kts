@@ -49,6 +49,7 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.room.runtime)
+            implementation(libs.datastore.preferences)
         }
         androidMain.dependencies {
             implementation(compose.preview)

@@ -2,9 +2,7 @@ package data.dictionary
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.RawQuery
 import androidx.room.Transaction
-import androidx.sqlite.db.SupportSQLiteQuery
 import models.dictionary.DictionaryData
 import models.dictionary.DomainWithEntries
 
@@ -34,6 +32,6 @@ interface DictionaryDao {
     suspend fun getEntries(entryIds: List<String>): List<DictionaryData>
 
 //    @Query("SELECT * FROM DictionaryEntry WHERE lexeme_ipa REGEXP :query")
-    @RawQuery
-    suspend fun searchSylLatin(query: SupportSQLiteQuery): List<DictionaryData>
+//    @RawQuery
+//    suspend fun searchSylLatin(query: SupportSQLiteQuery): List<DictionaryData>
 }
