@@ -1,11 +1,17 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import di.initKoin
+import di.platformModule
+import di.sharedModule
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "SylhetiDictionary",
-    ) {
-        App()
+fun main() {
+    initKoin()
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "SylhetiDictionary",
+        ) {
+            App()
+        }
     }
 }

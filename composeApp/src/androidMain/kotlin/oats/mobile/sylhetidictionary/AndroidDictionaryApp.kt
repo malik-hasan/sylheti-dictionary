@@ -1,11 +1,14 @@
 package oats.mobile.sylhetidictionary
 
 import android.app.Application
-import di.KoinInitializer
+import di.initKoin
+import org.koin.android.ext.koin.androidContext
 
 class AndroidDictionaryApp: Application() {
     override fun onCreate() {
         super.onCreate()
-        KoinInitializer(this).init()
+        initKoin {
+            androidContext(this@AndroidDictionaryApp)
+        }
     }
 }
