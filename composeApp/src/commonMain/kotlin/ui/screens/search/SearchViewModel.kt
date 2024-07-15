@@ -87,8 +87,8 @@ class SearchViewModel : ViewModel(), KoinComponent {
     private fun loadFavorites() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            val favorites = favoritesRepository.getFavorites()
-            state = state.copy(favorites = favorites)
+//            val favorites = favoritesRepository.getFavorites()
+//            state = state.copy(favorites = favorites)
         }
     }
 }

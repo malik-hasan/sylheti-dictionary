@@ -1,12 +1,11 @@
 package di
 
-import data.favorites.FavoritesRepository
 import data.settings.SettingsRepository
 import org.koin.dsl.module
 
 val sharedModule = module {
     single { SettingsRepository(get()) }
-    single { FavoritesRepository(get(), get()) }
+//    single { FavoritesRepository(get(), get()) }
 //    single {
 //        Room.databaseBuilder(
 //            get(), DictionaryDatabase::class.java, "sylhetiLexicon.db"
