@@ -10,14 +10,11 @@ interface DictionaryDataSource {
 
 class DictionaryDataSourceImpl(db: DictionaryDatabase) : DictionaryDataSource {
 
-//    private val queries = db
+    private val queries = db.dictionaryDatabaseQueries
 
-    override suspend fun searchSylLatin(query: String): List<DictionaryEntry> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun searchSylLatin(query: String): List<DictionaryEntry> =
+        queries.searchSylLatin(query).executeAsList()
 
-    override suspend fun getAll(): List<DictionaryEntry> {
-        TODO("Not yet implemented")
-    }
-
+    override suspend fun getAll(): List<DictionaryEntry> =
+        queries.getAll().executeAsList()
 }

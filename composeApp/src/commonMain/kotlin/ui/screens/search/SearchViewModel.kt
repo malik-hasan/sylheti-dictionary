@@ -5,12 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import data.dictionary.DictionaryDao
+import data.dictionary.DictionaryDataSource
 import data.favorites.FavoritesRepository
 import data.settings.SettingsRepository
 import kotlinx.coroutines.CompletionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -18,7 +16,8 @@ import org.koin.core.component.inject
 
 class SearchViewModel : ViewModel(), KoinComponent {
 
-    private val dictionaryDao: DictionaryDao by inject()
+//    private val dictionaryDao: DictionaryDao by inject()
+    private val dictionaryDataSource: DictionaryDataSource by inject()
     private val favoritesRepository: FavoritesRepository by inject()
     private val settingsRepository: SettingsRepository by inject()
 
@@ -48,9 +47,9 @@ class SearchViewModel : ViewModel(), KoinComponent {
             is SearchEvent.MarkFavorite -> {
                 viewModelScope.launch {
                     if (event.isFavorite) {
-                        favoritesRepository.addFavorite(event.entryId)
+//                        favoritesRepository.addFavorite(event.entryId)
                     } else {
-                        favoritesRepository.removeFavorite(event.entryId)
+//                        favoritesRepository.removeFavorite(event.entryId)
                     }
                 }
             }
@@ -67,7 +66,8 @@ class SearchViewModel : ViewModel(), KoinComponent {
         if (state.searchTerm.isBlank()) {
             state = state.copy(searchResults = null)
         } else {
-            searchJob = viewModelScope.launch(Dispatchers.IO) {
+            searchJob = viewModelScope.launch {
+                val results = dictionaryDataSource.searchSylLatin(term)
 //                val results = dictionaryDao.searchSylLatin(
 //                    SimpleSQLiteQuery(
 //                        """SELECT * FROM DictionaryEntry
@@ -78,7 +78,7 @@ class SearchViewModel : ViewModel(), KoinComponent {
 //                        arrayOf(term, term, term)
 //                    )
 //                )
-//                state = state.copy(searchResults = results)
+                state = state.copy(searchResults = results)
             }
             searchJob?.invokeOnCompletion(onCompletion)
         }

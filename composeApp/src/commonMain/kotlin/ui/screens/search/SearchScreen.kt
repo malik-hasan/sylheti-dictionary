@@ -265,7 +265,7 @@ fun SearchScreen(
                             }
 
                             items(results) { data ->
-                                val word = data.entry.lexemeIPA
+                                val word = data.lexeme_ipa
                                 Text(
                                     text = word,
                                     modifier = Modifier

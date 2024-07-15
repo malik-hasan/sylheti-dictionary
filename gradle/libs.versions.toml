@@ -13,8 +13,10 @@ lifecycle-viewmodel = "2.8.3"
 koin = "3.5.6"
 koin-compose-viewmodel = "1.2.0-Beta4"
 sqldelight = "2.0.2"
-room = "2.7.0-alpha04"
+room = "2.7.0-alpha05"
 datastore = "1.1.1"
+xmlutil = "0.90.1"
+kermit = "2.0.4"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -34,6 +36,11 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+xmlutil-core = { module = "io.github.pdvrieze.xmlutil:core", version.ref = "xmlutil" }
+xmlutil-serialization = { module = "io.github.pdvrieze.xmlutil:serialization", version.ref = "xmlutil" }
+
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

@@ -1,4 +1,4 @@
-CREATE TABLE DictionaryEntry (
+CREATE TABLE IF NOT EXISTS DictionaryEntry (
     entry_id TEXT PRIMARY KEY NOT NULL,
     lexeme_ipa TEXT NOT NULL,
     lexeme_bengali TEXT,
@@ -25,7 +25,7 @@ WHERE lexeme_ipa REGEXP :query OR
     citation_ipa REGEXP :query OR
     definition_ipa REGEXP :query;
 
-CREATE TABLE EntryCrossRef (
+CREATE TABLE IF NOT EXISTS EntryCrossRef (
     sense_id1 TEXT NOT NULL,
     sense_id2 TEXT NOT NULL,
     relation_type TEXT NOT NULL,
@@ -35,12 +35,12 @@ CREATE TABLE EntryCrossRef (
     CHECK (sense_id1 < sense_id2)
 );
 
-CREATE TABLE Domain(
+CREATE TABLE IF NOT EXISTS Domain(
     domain_id TEXT PRIMARY KEY NOT NULL,
     description TEXT NOT NULL
 );
 
-CREATE TABLE EntryDomainCrossRef (
+CREATE TABLE IF NOT EXISTS EntryDomainCrossRef (
     entry_id TEXT NOT NULL,
     domain_id TEXT NOT NULL,
     FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id),
@@ -48,7 +48,7 @@ CREATE TABLE EntryDomainCrossRef (
     PRIMARY KEY (entry_id, domain_id)
 );
 
-CREATE TABLE Example (
+CREATE TABLE IF NOT EXISTS Example (
     id INTEGER PRIMARY KEY,
     entry_id TEXT NOT NULL,
     example_ipa TEXT,
@@ -60,7 +60,7 @@ CREATE TABLE Example (
     FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id)
 );
 
-CREATE TABLE Variant (
+CREATE TABLE IF NOT EXISTS Variant (
     id INTEGER PRIMARY KEY,
     entry_id TEXT NOT NULL,
     variant_ipa TEXT NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE Variant (
     FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id)
 );
 
-CREATE TABLE ComponentLexeme (
+CREATE TABLE IF NOT EXISTS ComponentLexeme (
     id INTEGER PRIMARY KEY,
     entry_id TEXT NOT NULL,
     component_id TEXT NOT NULL,

@@ -50,6 +50,9 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.room.runtime)
             implementation(libs.datastore.preferences)
+            implementation(libs.xmlutil.core)
+            implementation(libs.xmlutil.serialization)
+            implementation(libs.kermit)
         }
         androidMain.dependencies {
             implementation(compose.preview)

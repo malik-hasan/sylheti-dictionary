@@ -1,11 +1,11 @@
 package ui.screens.search
 
-import models.dictionary.DictionaryData
+import oats.mobile.sylhetidictionary.DictionaryEntry
 
 data class SearchState(
     val searchBarActive: Boolean = false,
-    val searchResults: List<DictionaryData>? = null,
+    val searchResults: List<DictionaryEntry>? = null,
     val searchTerm: String = "",
-    val favorites: List<DictionaryData> = emptyList(),
+    val favorites: List<DictionaryEntry> = emptyList(),
     val searchPositions: List<Boolean> = List(3) { false }
 )
