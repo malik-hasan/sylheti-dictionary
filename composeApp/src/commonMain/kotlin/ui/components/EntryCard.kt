@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -29,8 +26,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import models.dictionary.DictionaryData
 import data.favorites.FavoritesRepository
+import org.jetbrains.compose.resources.painterResource
 import ui.theme.bengaliFontFamily
 import org.koin.compose.koinInject
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.bookmark
+import sylhetidictionary.composeapp.generated.resources.bookmark_border
 
 @Composable
 fun EntryCard(
@@ -77,9 +78,11 @@ fun EntryCard(
                             onFavorite(entry.entryId, isFavorite)
                         }
                     ),
-                    imageVector = if (isFavorite) {
-                        Icons.Default.Bookmark
-                    } else Icons.Default.BookmarkBorder,
+                    painter = painterResource(
+                        if (isFavorite) {
+                            Res.drawable.bookmark
+                        } else Res.drawable.bookmark_border
+                    ),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = "favorite"
                 )

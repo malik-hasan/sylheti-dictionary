@@ -16,6 +16,7 @@ import ui.theme.bodyFontFamily
 @Composable
 fun taggedField(tag: String, body: CharSequence): AnnotatedString {
     val bodySmall = MaterialTheme.typography.bodySmall.fontSize
+    val bodyFontFamily = bodyFontFamily
     return buildAnnotatedString {
         withStyle(ParagraphStyle(textIndent = TextIndent(restLine = 30.sp))) {
             withStyle(

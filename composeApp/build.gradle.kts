@@ -78,7 +78,7 @@ kotlin {
 }
 
 dependencies {
-    add("kspCommonMainMetadata", libs.room.compiler)
+    ksp(libs.room.compiler)
 }
 
 room {

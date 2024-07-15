@@ -20,7 +20,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,8 +47,11 @@ import kotlinx.coroutines.launch
 import models.search.settings.LatinSearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.tune
 import ui.components.EntryCard
 import ui.ifTrue
 import ui.interfaces.LocalDrawerState
@@ -102,7 +104,7 @@ fun SearchScreen(
                 actions = {
                     Box {
                         IconButton(onClick = { dstate = true }) {
-                            Icon(Icons.Default.Tune, "settings")
+                            Icon(painterResource(Res.drawable.tune), "settings")
                         }
 
                         DropdownMenu(
