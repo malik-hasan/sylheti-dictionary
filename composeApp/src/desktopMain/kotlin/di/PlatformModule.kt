@@ -11,7 +11,7 @@ import ui.screens.search.SearchViewModel
 actual val platformModule = module {
     singleOf(::SearchViewModel)
 
-    single { createDataStore { dataStoreFileName } }
+    single { initDataStore { it } }
 
     single {
         JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {

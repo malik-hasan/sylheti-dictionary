@@ -40,7 +40,7 @@ actual val platformModule = module {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-private fun createDataStore() = createDataStore {
+private fun createDataStore() = initDataStore { fileName ->
     val documentDirectory: NSURL? = NSFileManager.defaultManager.URLForDirectory(
         directory = NSDocumentDirectory,
         inDomain = NSUserDomainMask,
@@ -48,5 +48,5 @@ private fun createDataStore() = createDataStore {
         create = false,
         error = null
     )
-    requireNotNull(documentDirectory).path + "/$dataStoreFileName"
+    requireNotNull(documentDirectory).path + "/$fileName"
 }

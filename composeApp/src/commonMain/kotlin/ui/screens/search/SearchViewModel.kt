@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import data.dictionary.DictionaryDataSource
 import data.favorites.FavoritesRepository
-import data.settings.SettingsRepository
+import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -19,7 +19,7 @@ class SearchViewModel : ViewModel(), KoinComponent {
 //    private val dictionaryDao: DictionaryDao by inject()
     private val dictionaryDataSource: DictionaryDataSource by inject()
     private val favoritesRepository: FavoritesRepository by inject()
-    private val settingsRepository: SettingsRepository by inject()
+    private val preferencesRepository: PreferencesRepository by inject()
 
     var state by mutableStateOf(SearchState())
         private set

@@ -1,10 +1,10 @@
 package models.search.settings
 
 import androidx.datastore.preferences.core.Preferences
-import data.settings.SettingsKey
+import data.settings.PreferenceKey
 
 enum class SearchPosition(val settingsKey: Preferences.Key<Boolean>) {
-    Beginning(SettingsKey.SEARCH_BEGINNING),
-    Middle(SettingsKey.SEARCH_MIDDLE),
-    End(SettingsKey.SEARCH_END)
+    Beginning(PreferenceKey.SEARCH_BEGINNING),
+    Middle(PreferenceKey.SEARCH_MIDDLE),
+    End(PreferenceKey.SEARCH_END)
 }

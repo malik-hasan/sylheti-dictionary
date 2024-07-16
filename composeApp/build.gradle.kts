@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
@@ -50,8 +50,6 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.room.runtime)
             implementation(libs.datastore.preferences)
-            implementation(libs.xmlutil.core)
-            implementation(libs.xmlutil.serialization)
             implementation(libs.kermit)
         }
         androidMain.dependencies {
