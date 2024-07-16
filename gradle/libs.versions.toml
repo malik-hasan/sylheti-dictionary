@@ -15,7 +15,6 @@ koin-compose-viewmodel = "1.2.0-Beta4"
 sqldelight = "2.0.2"
 room = "2.7.0-alpha05"
 datastore = "1.1.1"
-xmlutil = "0.90.1"
 kermit = "2.0.4"
 
 [libraries]
@@ -31,6 +30,7 @@ koin-android = { module = "io.insert-koin:koin-android" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

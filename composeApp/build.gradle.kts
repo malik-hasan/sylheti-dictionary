@@ -29,7 +29,7 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
-            isStatic = true
+            isStatic = false
         }
     }
     
@@ -48,6 +48,7 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.room.runtime)
             implementation(libs.datastore.preferences)
             implementation(libs.kermit)
@@ -79,7 +80,7 @@ kotlin {
 }
 
 dependencies {
-    ksp(libs.room.compiler)
+    kspCommonMainMetadata(libs.room.compiler)
 }
 
 room {
