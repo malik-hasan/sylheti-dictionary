@@ -11,8 +11,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
+import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
 
 class AndroidDictionaryApp: Application() {
@@ -29,6 +31,7 @@ class AndroidDictionaryApp: Application() {
         appScope = MainScope()
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     override fun onCreate() {
         super.onCreate()
 
@@ -41,10 +44,9 @@ class AndroidDictionaryApp: Application() {
             if (DictionaryAssetVersion > currentDictionaryVersion) {
 
                 Logger.d("INIT: copying dictionary asset to SQLite")
-                val database = getDatabasePath(DictionaryAsset)
 
-                val inputStream = assets.open(DictionaryAsset)
-                val outputStream = FileOutputStream(database.absolutePath)
+                val inputStream = Res.readBytes("files/$DictionaryAsset").inputStream()
+                val outputStream = FileOutputStream(getDatabasePath(DictionaryAsset).absolutePath)
 
                 inputStream.use { input ->
                     outputStream.use {
