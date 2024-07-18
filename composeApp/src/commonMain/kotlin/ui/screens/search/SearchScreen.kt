@@ -7,10 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,6 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import models.search.settings.LatinSearchLanguage
@@ -112,11 +116,12 @@ fun SearchScreen(
                             onDismissRequest = { dstate = !dstate }
                         ) {
                             Column(Modifier.padding(16.dp)) {
-                                Text("Parts of word to search")
-                                MultiChoiceSegmentedButtonRow {
+                                Text("Part of word to search")
+                                MultiChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
                                     val searchPositions = SearchPosition.entries
                                     searchPositions.forEachIndexed { index, searchPosition ->
                                         SegmentedButton(
+                                            modifier = Modifier.fillMaxHeight(),
                                             checked = true,
                                             onCheckedChange = {},
                                             shape = SegmentedButtonDefaults.itemShape(
@@ -129,10 +134,11 @@ fun SearchScreen(
                                     }
                                 }
                                 Text("Search script")
-                                SingleChoiceSegmentedButtonRow {
+                                SingleChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
                                     val searchScripts = SearchScript.entries
                                     searchScripts.forEachIndexed { index, searchScript ->
                                         SegmentedButton(
+                                            modifier = Modifier.fillMaxHeight(),
                                             selected = false,
                                             onClick = {},
                                             shape = SegmentedButtonDefaults.itemShape(
@@ -140,15 +146,19 @@ fun SearchScreen(
                                                 count = searchScripts.size
                                             )
                                         ) {
-                                            Text(searchScript.toString())
+                                            Text(
+                                                searchScript.toString(),
+                                                textAlign = TextAlign.Center
+                                            )
                                         }
                                     }
                                 }
                                 Text("Search language")
-                                MultiChoiceSegmentedButtonRow {
+                                MultiChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
                                     val searchLanguages = LatinSearchLanguage.entries
                                     searchLanguages.forEachIndexed { index, searchLanguage ->
                                         SegmentedButton(
+                                            modifier = Modifier.fillMaxHeight(),
                                             checked = true,
                                             onCheckedChange = {},
                                             shape = SegmentedButtonDefaults.itemShape(
