@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import data.dictionary.DictionaryDataSource
 import data.favorites.FavoritesRepository
 import data.settings.PreferencesRepository
@@ -67,17 +68,8 @@ class SearchViewModel : ViewModel(), KoinComponent {
             state = state.copy(searchResults = null)
         } else {
             searchJob = viewModelScope.launch {
-                val results = dictionaryDataSource.searchSylLatin(term)
-//                val results = dictionaryDao.searchSylLatin(
-//                    SimpleSQLiteQuery(
-//                        """SELECT * FROM DictionaryEntry
-//                            |WHERE lexeme_ipa REGEXP ? OR
-//                            |citation_ipa REGEXP ? OR
-//                            |definition_ipa REGEXP ?
-//                            |""".trimMargin(),
-//                        arrayOf(term, term, term)
-//                    )
-//                )
+                Logger.d("SEARCH: Searching for $term")
+                val results = dictionaryDataSource.searchSylLatin("*$term*")
                 state = state.copy(searchResults = results)
             }
             searchJob?.invokeOnCompletion(onCompletion)

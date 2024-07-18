@@ -211,8 +211,8 @@ fun SearchScreen(
 //
 //                    }
 
-                items(items) { data ->
-                    EntryCard(data) { entryId, isFavorite ->
+                items(items) { entry ->
+                    EntryCard(entry) { entryId, isFavorite ->
                         onEvent(SearchEvent.MarkFavorite(entryId, isFavorite))
                     }
                 }
@@ -264,16 +264,14 @@ fun SearchScreen(
                                 item { Text("No suggestions") }
                             }
 
-                            items(results) { data ->
-                                val word = data.lexeme_ipa
+                            items(results) { entry ->
+                                val word = entry.lexemeIPA
                                 Text(
                                     text = word,
                                     modifier = Modifier
                                         .clickable {
                                             onEvent(
-                                                SearchEvent.SelectSuggestion(
-                                                    word
-                                                )
+                                                SearchEvent.SelectSuggestion(word)
                                             )
                                         }
                                         .fillMaxWidth()

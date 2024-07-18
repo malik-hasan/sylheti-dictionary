@@ -1,19 +1,19 @@
 CREATE TABLE IF NOT EXISTS DictionaryEntry (
-    entry_id TEXT PRIMARY KEY NOT NULL,
-    lexeme_ipa TEXT NOT NULL,
-    lexeme_bengali TEXT,
-    lexeme_nagri TEXT,
-    citation_ipa TEXT,
-    citation_bengali TEXT,
-    citation_nagri TEXT,
-    sense_id TEXT UNIQUE,
-    part_of_speech TEXT,
+    entryId TEXT PRIMARY KEY NOT NULL,
+    lexemeIPA TEXT NOT NULL,
+    lexemeBengali TEXT,
+    lexemeNagri TEXT,
+    citationIPA TEXT,
+    citationBengali TEXT,
+    citationNagri TEXT,
+    senseId TEXT UNIQUE,
+    partOfSpeech TEXT,
     gloss TEXT,
-    definition_en TEXT,
-    definition_bn TEXT,
-    definition_bnipa TEXT,
-    definition_ipa TEXT,
-    definition_nagri TEXT
+    definitionEN TEXT,
+    definitionBN TEXT,
+    definitionBNIPA TEXT,
+    definitionIPA TEXT,
+    definitionNagri TEXT
 );
 
 getAll:
@@ -21,62 +21,62 @@ SELECT * FROM DictionaryEntry;
 
 searchSylLatin:
 SELECT * FROM DictionaryEntry
-WHERE lexeme_ipa REGEXP :query OR
-    citation_ipa REGEXP :query OR
-    definition_ipa REGEXP :query;
+WHERE lexemeIPA GLOB :query OR
+    citationIPA GLOB :query OR
+    definitionIPA GLOB :query;
 
 CREATE TABLE IF NOT EXISTS EntryCrossRef (
-    sense_id1 TEXT NOT NULL,
-    sense_id2 TEXT NOT NULL,
-    relation_type TEXT NOT NULL,
-    FOREIGN KEY (sense_id1) REFERENCES DictionaryEntry(sense_id),
-    FOREIGN KEY (sense_id2) REFERENCES DictionaryEntry(sense_id),
-    PRIMARY KEY (sense_id1, sense_id2),
-    CHECK (sense_id1 < sense_id2)
+    senseId1 TEXT NOT NULL,
+    senseId2 TEXT NOT NULL,
+    relationType TEXT NOT NULL,
+    FOREIGN KEY (senseId1) REFERENCES DictionaryEntry(senseId),
+    FOREIGN KEY (senseId2) REFERENCES DictionaryEntry(senseId),
+    PRIMARY KEY (senseId1, senseId2),
+    CHECK (senseId1 < senseId2)
 );
 
 CREATE TABLE IF NOT EXISTS Domain(
-    domain_id TEXT PRIMARY KEY NOT NULL,
+    domainId TEXT PRIMARY KEY NOT NULL,
     description TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS EntryDomainCrossRef (
-    entry_id TEXT NOT NULL,
-    domain_id TEXT NOT NULL,
-    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id),
-    FOREIGN KEY (domain_id) REFERENCES Domain(domain_id),
-    PRIMARY KEY (entry_id, domain_id)
+    entryId TEXT NOT NULL,
+    domainId TEXT NOT NULL,
+    FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId),
+    FOREIGN KEY (domainId) REFERENCES Domain(domainId),
+    PRIMARY KEY (entryId, domainId)
 );
 
 CREATE TABLE IF NOT EXISTS Example (
     id INTEGER PRIMARY KEY,
-    entry_id TEXT NOT NULL,
-    example_ipa TEXT,
-    example_bengali TEXT,
-    example_nagri TEXT,
-    example_en TEXT,
-    example_bn TEXT,
-    example_bnipa TEXT,
-    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id)
+    entryId TEXT NOT NULL,
+    exampleIPA TEXT,
+    exampleBengali TEXT,
+    exampleNagri TEXT,
+    exampleEN TEXT,
+    exampleBN TEXT,
+    exampleBNIPA TEXT,
+    FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId)
 );
 
 CREATE TABLE IF NOT EXISTS Variant (
     id INTEGER PRIMARY KEY,
-    entry_id TEXT NOT NULL,
-    variant_ipa TEXT NOT NULL,
-    variant_bengali TEXT,
-    variant_nagri TEXT,
+    entryId TEXT NOT NULL,
+    variantIPA TEXT NOT NULL,
+    variantBengali TEXT,
+    variantNagri TEXT,
     environment TEXT,
-    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id)
+    FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId)
 );
 
 CREATE TABLE IF NOT EXISTS ComponentLexeme (
     id INTEGER PRIMARY KEY,
-    entry_id TEXT NOT NULL,
-    component_id TEXT NOT NULL,
-    is_primary INTEGER NOT NULL,
-    complex_form_type TEXT,
-    variant_type TEXT,
-    FOREIGN KEY (entry_id) REFERENCES DictionaryEntry(entry_id),
-    FOREIGN KEY (component_id) REFERENCES DictionaryEntry(entry_id)
+    entryId TEXT NOT NULL,
+    componentId TEXT NOT NULL,
+    isPrimary INTEGER NOT NULL,
+    complexFormType TEXT,
+    variantType TEXT,
+    FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId),
+    FOREIGN KEY (componentId) REFERENCES DictionaryEntry(entryId)
 );

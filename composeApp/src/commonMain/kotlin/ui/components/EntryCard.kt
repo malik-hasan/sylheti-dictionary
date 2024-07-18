@@ -50,13 +50,13 @@ fun EntryCard(
             ) {
                 Text(
                     text = buildAnnotatedString {
-                        append(entry.citation_ipa ?: entry.lexeme_ipa)
-                        (entry.citation_bengali ?: entry.lexeme_bengali)?.let {
+                        append(entry.citationIPA ?: entry.lexemeIPA)
+                        (entry.citationBengali ?: entry.lexemeBengali)?.let {
                             withStyle(SpanStyle(fontFamily = bengaliFontFamily)) {
                                 append(" • $it")
                             }
                         }
-                        (entry.citation_nagri ?: entry.lexeme_nagri)?.let {
+                        (entry.citationNagri ?: entry.lexemeNagri)?.let {
                             append(" • $it")
                         }
                     },
@@ -84,59 +84,59 @@ fun EntryCard(
                 )
             }
 
-//            Text(
-//                text = taggedField(
-//                    tag = entry.partOfSpeech?.lowercase() ?: "unknown",
-//                    body = entry.gloss ?: ""
-//                ),
-//                style = MaterialTheme.typography.bodyMedium
-//            )
-//
-//            entry.definitionEN?.let { def ->
-//                Text(
-//                    text = taggedField(
-//                        tag = "english",
-//                        body = def
-//                    ),
-//                    style = MaterialTheme.typography.bodyMedium
-//                )
-//            }
-//
-//            if (entry.definitionBN != null || entry.definitionBNIPA != null) {
-//                Text(
-//                    text = taggedField(
-//                        tag = "bengali",
-//                        body = buildAnnotatedString {
-//                            entry.definitionBN?.let {
-//                                withStyle(SpanStyle(fontFamily = bengaliFontFamily)) {
-//                                    append("$it ")
-//                                }
-//                            }
-//                            entry.definitionBNIPA?.let {
-//                                append(it)
-//                            }
-//                        }
-//                    ),
-//                    style = MaterialTheme.typography.bodyMedium
-//                )
-//            }
-//
-//            if (entry.definitionNagri != null || entry.definitionIPA != null) {
-//                Text(
-//                    text = taggedField(
-//                        tag = "sylheti",
-//                        body = buildAnnotatedString {
-//                            entry.definitionNagri?.let {
-//                                append("$it ")
-//                            }
-//                            entry.definitionIPA?.let {
-//                                append(it)
-//                            }
-//                        }
-//                    ),
-//                    style = MaterialTheme.typography.bodyMedium
-//                )
-//            }
+            Text(
+                text = taggedField(
+                    tag = entry.partOfSpeech?.lowercase() ?: "unknown",
+                    body = entry.gloss ?: ""
+                ),
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            entry.definitionEN?.let { def ->
+                Text(
+                    text = taggedField(
+                        tag = "english",
+                        body = def
+                    ),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            if (entry.definitionBN != null || entry.definitionBNIPA != null) {
+                Text(
+                    text = taggedField(
+                        tag = "bengali",
+                        body = buildAnnotatedString {
+                            entry.definitionBN?.let {
+                                withStyle(SpanStyle(fontFamily = bengaliFontFamily)) {
+                                    append("$it ")
+                                }
+                            }
+                            entry.definitionBNIPA?.let {
+                                append(it)
+                            }
+                        }
+                    ),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            if (entry.definitionNagri != null || entry.definitionIPA != null) {
+                Text(
+                    text = taggedField(
+                        tag = "sylheti",
+                        body = buildAnnotatedString {
+                            entry.definitionNagri?.let {
+                                append("$it ")
+                            }
+                            entry.definitionIPA?.let {
+                                append(it)
+                            }
+                        }
+                    ),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
