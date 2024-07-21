@@ -18,8 +18,8 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
 
 class AndroidDictionaryApp: Application() {
-    private val preferences: PreferencesRepository by inject()
 
+    private val preferences: PreferencesRepository by inject()
 
     companion object {
         var appScope = MainScope()
