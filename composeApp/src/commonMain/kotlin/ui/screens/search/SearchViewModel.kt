@@ -70,6 +70,7 @@ class SearchViewModel : ViewModel(), KoinComponent {
             searchJob = viewModelScope.launch {
                 Logger.d("SEARCH: Searching for $term")
                 val results = dictionaryDataSource.searchSylLatin("*$term*")
+                Logger.d("SEARCH: Found ${results.size}")
                 state = state.copy(searchResults = results)
             }
             searchJob?.invokeOnCompletion(onCompletion)

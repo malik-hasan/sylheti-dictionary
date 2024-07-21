@@ -1,12 +1,12 @@
-
-import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSSearchPathDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSString
 import platform.Foundation.NSUserDomainMask
 
-val documentsDirectoryPath: NSString
+val NSSearchPathDirectory.path: NSString
     get() = NSSearchPathForDirectoriesInDomains(
-        directory = NSDocumentDirectory,
+        directory = this,
         domainMask = NSUserDomainMask,
         expandTilde = true
     ).first() as NSString
+
