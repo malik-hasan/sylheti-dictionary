@@ -54,8 +54,7 @@ class AndroidDictionaryApp: Application() {
                     }
                 }
 
-                // TODO: enable increment
-//                preferences.put(PreferenceKey.DICTIONARY_VERSION, DictionaryAssetVersion)
+                preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
             }
         }
     }

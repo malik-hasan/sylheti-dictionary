@@ -32,6 +32,10 @@ kotlin {
             isStatic = true
         }
     }
+
+    sourceSets.commonMain {
+        kotlin.srcDir("build/generated/ksp/metadata")
+    }
     
     sourceSets {
 
@@ -50,14 +54,18 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
             implementation(libs.datastore.preferences)
             implementation(libs.kermit)
+            implementation(libs.kotlinx.coroutines.core)
         }
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.activity.compose)
+            implementation(libs.lifecycle.runtime.compose)
             implementation(libs.koin.android)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.room.runtime.android)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
@@ -66,6 +74,7 @@ kotlin {
         val desktopMain by getting
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.lifecycle.runtime.compose)
             implementation(libs.sqldelight.sqlite.driver)
         }
     }
@@ -80,12 +89,11 @@ kotlin {
 }
 
 dependencies {
-    kspCommonMainMetadata(libs.room.compiler)
+    add("kspCommonMainMetadata", libs.room.compiler)
+//    kspCommonMainMetadata(libs.room.compiler)
 }
 
-room {
-    schemaDirectory("$projectDir/schemas")
-}
+room.schemaDirectory("$projectDir/schemas")
 
 val sylhetiDictionaryPackage = "oats.mobile.sylhetidictionary"
 
@@ -143,5 +151,11 @@ sqldelight {
         create("DictionaryDatabase") {
             packageName.set(sylhetiDictionaryPackage)
         }
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+    if (name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
     }
 }

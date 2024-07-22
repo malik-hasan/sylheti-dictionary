@@ -59,8 +59,7 @@ fun MainViewController() = ComposeUIViewController(
                     Logger.d("INIT: dictionary asset copied: $copyAssetResult")
                 }
 
-                // TODO: enable increment
-//                preferences.put(PreferenceKey.DICTIONARY_VERSION, DictionaryAssetVersion)
+                preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
             }
         }
     }

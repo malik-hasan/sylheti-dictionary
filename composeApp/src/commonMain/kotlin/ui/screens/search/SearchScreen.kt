@@ -57,14 +57,17 @@ import org.koin.core.annotation.KoinExperimentalAPI
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.tune
 import ui.components.EntryCard
-import ui.ifTrue
-import ui.interfaces.LocalDrawerState
-import ui.isScrollingUp
+import ui.components.LocalDrawerState
+import ui.utils.collectAsStateForPlatform
+import ui.utils.ifTrue
+import ui.utils.isScrollingUp
 
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
-    SearchScreen(vm.state, vm::onEvent)
+    val state by vm.state.collectAsStateForPlatform()
+
+    SearchScreen(state, vm::onEvent)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

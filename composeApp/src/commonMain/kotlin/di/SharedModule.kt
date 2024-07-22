@@ -10,9 +10,7 @@ import org.koin.dsl.module
 val sharedModule = module {
     single { PreferencesRepository(get()) }
     single {
-        DictionaryDataSourceImpl(
-            DictionaryDatabase(get())
-        )
+        DictionaryDataSourceImpl(DictionaryDatabase(get()))
     }.bind(DictionaryDataSource::class)
 //    single { FavoritesRepository(get(), get()) }
 //    single {

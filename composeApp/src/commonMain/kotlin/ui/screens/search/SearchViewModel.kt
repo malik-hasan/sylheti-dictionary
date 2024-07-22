@@ -1,8 +1,5 @@
 package ui.screens.search
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
@@ -11,19 +8,21 @@ import data.favorites.FavoritesRepository
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SearchViewModel : ViewModel(), KoinComponent {
 
-//    private val dictionaryDao: DictionaryDao by inject()
     private val dictionaryDataSource: DictionaryDataSource by inject()
     private val favoritesRepository: FavoritesRepository by inject()
     private val preferencesRepository: PreferencesRepository by inject()
 
-    var state by mutableStateOf(SearchState())
-        private set
+    private val _state = MutableStateFlow(SearchState())
+    val state: StateFlow<SearchState> = _state
 
     private var searchJob: Job? = null
 
@@ -34,7 +33,7 @@ class SearchViewModel : ViewModel(), KoinComponent {
             is SearchEvent.SetSearchBarActive -> { setSearchBarActive(event.value) }
             is SearchEvent.UpdateSearchTerm -> { updateSearchTerm(event.value) }
             SearchEvent.ClearSearchBar -> {
-                if (state.searchTerm.isBlank()) {
+                if (_state.value.searchTerm.isBlank()) {
                     setSearchBarActive(false)
                 } else updateSearchTerm("")
             }
@@ -48,9 +47,9 @@ class SearchViewModel : ViewModel(), KoinComponent {
             is SearchEvent.MarkFavorite -> {
                 viewModelScope.launch {
                     if (event.isFavorite) {
-//                        favoritesRepository.addFavorite(event.entryId)
+                        favoritesRepository.addFavorite(event.entryId)
                     } else {
-//                        favoritesRepository.removeFavorite(event.entryId)
+                        favoritesRepository.removeFavorite(event.entryId)
                     }
                 }
             }
@@ -58,20 +57,28 @@ class SearchViewModel : ViewModel(), KoinComponent {
     }
 
     private fun setSearchBarActive(value: Boolean) {
-        state = state.copy(searchBarActive = value)
+        _state.update {
+            it.copy(searchBarActive = value)
+        }
     }
 
     private fun updateSearchTerm(term: String, onCompletion: CompletionHandler = {}) {
         searchJob?.cancel()
-        state = state.copy(searchTerm = term)
-        if (state.searchTerm.isBlank()) {
-            state = state.copy(searchResults = null)
+        _state.update {
+            it.copy(searchTerm = term)
+        }
+        if (_state.value.searchTerm.isBlank()) {
+            _state.update {
+                it.copy(searchResults = null)
+            }
         } else {
             searchJob = viewModelScope.launch {
                 Logger.d("SEARCH: Searching for $term")
                 val results = dictionaryDataSource.searchSylLatin("*$term*")
                 Logger.d("SEARCH: Found ${results.size}")
-                state = state.copy(searchResults = results)
+                _state.update {
+                    it.copy(searchResults = results)
+                }
             }
             searchJob?.invokeOnCompletion(onCompletion)
         }
@@ -80,8 +87,10 @@ class SearchViewModel : ViewModel(), KoinComponent {
     private fun loadFavorites() {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-//            val favorites = favoritesRepository.getFavorites()
-//            state = state.copy(favorites = favorites)
+            val favorites = favoritesRepository.getFavorites()
+            _state.update {
+                it.copy(favorites = favorites)
+            }
         }
     }
 }
