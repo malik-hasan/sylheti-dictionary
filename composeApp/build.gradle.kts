@@ -15,9 +15,7 @@ plugins {
 kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
     }
     
     jvm("desktop")
@@ -32,32 +30,30 @@ kotlin {
             isStatic = true
         }
     }
-
-    sourceSets.commonMain {
-        kotlin.srcDir("build/generated/ksp/metadata")
-    }
     
     sourceSets {
+        commonMain {
+            kotlin.srcDir("build/generated/ksp/metadata")
+            dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.ui)
+                implementation(compose.material3)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
 
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
-            implementation(compose.material3)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-
-            implementation(libs.lifecycle.viewmodel)
-            implementation(project.dependencies.platform(libs.koin.bom))
-            api(libs.koin.core)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.sqldelight.coroutines.extensions)
-            implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundled)
-            implementation(libs.datastore.preferences)
-            implementation(libs.kermit)
-            implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.lifecycle.viewmodel)
+                implementation(project.dependencies.platform(libs.koin.bom))
+                api(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+                implementation(libs.sqldelight.coroutines.extensions)
+                implementation(libs.room.runtime)
+                implementation(libs.sqlite.bundled)
+                implementation(libs.datastore.preferences)
+                implementation(libs.kermit)
+                implementation(libs.kotlinx.coroutines.core)
+            }
         }
         androidMain.dependencies {
             implementation(compose.preview)
@@ -70,7 +66,6 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
-
         val desktopMain by getting
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -88,10 +83,7 @@ kotlin {
     }
 }
 
-dependencies {
-    add("kspCommonMainMetadata", libs.room.compiler)
-//    kspCommonMainMetadata(libs.room.compiler)
-}
+dependencies.kspCommonMainMetadata(libs.room.compiler)
 
 room.schemaDirectory("$projectDir/schemas")
 
@@ -101,9 +93,11 @@ android {
     namespace = sylhetiDictionaryPackage
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
-    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+    sourceSets.getByName("main") {
+        manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        res.srcDirs("src/androidMain/res")
+        resources.srcDirs("src/commonMain/resources")
+    }
 
     defaultConfig {
         applicationId = sylhetiDictionaryPackage
@@ -112,23 +106,13 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
+    packaging.resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+    buildTypes.getByName("release").isMinifyEnabled = false
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures {
-        compose = true
-    }
+    buildFeatures.compose = true
     dependencies {
         debugImplementation(compose.uiTooling)
     }
@@ -146,15 +130,9 @@ compose.desktop {
     }
 }
 
-sqldelight {
-    databases {
-        create("DictionaryDatabase") {
-            packageName.set(sylhetiDictionaryPackage)
-        }
-    }
-}
+sqldelight.databases.create("DictionaryDatabase").packageName.set(sylhetiDictionaryPackage)
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
     if (name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
     }
