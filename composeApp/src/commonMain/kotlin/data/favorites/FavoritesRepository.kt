@@ -1,6 +1,8 @@
 package data.favorites
 
 import data.dictionary.DictionaryDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import models.Favorite
 import oats.mobile.sylhetidictionary.DictionaryEntry
 
@@ -9,10 +11,11 @@ class FavoritesRepository(
     private val favoritesDao: FavoritesDao
 ) {
 
-    suspend fun getFavorites(): List<DictionaryEntry> {
-        val favorites = favoritesDao.getFavorites().map { it.entryId }
-        return dictionaryDataSource.getEntries(favorites)
-    }
+    fun getFavorites(): Flow<List<DictionaryEntry>> =
+        favoritesDao.getFavorites().map { favorites ->
+            val ids = favorites.map { it.entryId }
+            dictionaryDataSource.getEntries(ids)
+        }
 
     suspend fun checkFavorite(entryId: String) = favoritesDao.checkFavorite(entryId)
 

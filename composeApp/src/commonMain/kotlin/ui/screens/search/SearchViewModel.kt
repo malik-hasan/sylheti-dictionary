@@ -9,7 +9,10 @@ import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -22,14 +25,20 @@ class SearchViewModel : ViewModel(), KoinComponent {
     private val preferencesRepository: PreferencesRepository by inject()
 
     private val _state = MutableStateFlow(SearchState())
-    val state: StateFlow<SearchState> = _state
+    val state: StateFlow<SearchState> = combine(
+        _state,
+        favoritesRepository.getFavorites(),
+    ) { state, favorites ->
+        state.copy(
+            favorites = favorites
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SearchState())
 
     private var searchJob: Job? = null
 
     fun onEvent(event: SearchEvent) {
         when (event) {
             SearchEvent.Search -> { setSearchBarActive(false) }
-            SearchEvent.LoadFavorites -> { loadFavorites() }
             is SearchEvent.SetSearchBarActive -> { setSearchBarActive(event.value) }
             is SearchEvent.UpdateSearchTerm -> { updateSearchTerm(event.value) }
             SearchEvent.ClearSearchBar -> {
@@ -81,16 +90,6 @@ class SearchViewModel : ViewModel(), KoinComponent {
                 }
             }
             searchJob?.invokeOnCompletion(onCompletion)
-        }
-    }
-
-    private fun loadFavorites() {
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            val favorites = favoritesRepository.getFavorites()
-            _state.update {
-                it.copy(favorites = favorites)
-            }
         }
     }
 }

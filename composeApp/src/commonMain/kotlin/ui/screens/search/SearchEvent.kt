@@ -7,5 +7,4 @@ sealed interface SearchEvent {
     data object ClearSearchBar: SearchEvent
     data class SelectSuggestion(val value: String): SearchEvent
     data class MarkFavorite(val entryId: String, val isFavorite: Boolean): SearchEvent
-    data object LoadFavorites: SearchEvent
 }

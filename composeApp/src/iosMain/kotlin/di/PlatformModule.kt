@@ -7,6 +7,7 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import data.dictionary.DictionaryAsset
 import data.favorites.FavoritesDatabase
 import data.favorites.FavoritesRepository
+import data.favorites.instantiateImpl
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -30,8 +31,7 @@ actual val platformModule = module {
         FavoritesRepository(get(),
             Room.databaseBuilder<FavoritesDatabase>(
                 "${NSHomeDirectory()}/favorites.db",
-                { FavoritesDatabase::class.instantiateImpl() }
-//                FavoritesDatabase::class::instantiateImpl
+                FavoritesDatabase::class::instantiateImpl
             )
                 .setDriver(BundledSQLiteDriver())
                 .build()
