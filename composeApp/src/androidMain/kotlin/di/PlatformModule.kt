@@ -2,23 +2,29 @@ package di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import data.dictionary.DictionaryAsset
 import data.favorites.FavoritesDatabase
 import data.favorites.FavoritesRepository
+import data.recentsearches.RecentSearchesDatabase
+import data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import ui.screens.search.SearchViewModel
 
 actual val platformModule = module {
-    viewModelOf(::SearchViewModel)
 
-    single { createDataStore(get()) }
+    single {
+        PreferencesRepository(
+            initDataStore { fileName ->
+                androidContext().filesDir.resolve(fileName).absolutePath
+            }
+        )
+    }
 
     single {
         AndroidSqliteDriver(DictionaryDatabase.Schema, get(), DictionaryAsset)
@@ -26,17 +32,19 @@ actual val platformModule = module {
 
     single {
         FavoritesRepository(get(),
-            Room.databaseBuilder<FavoritesDatabase>(
-                get(),
-                androidContext().getDatabasePath("favorites.db").absolutePath
-            )
-                .setDriver(BundledSQLiteDriver())
-                .build()
-                .favoritesDao()
+            roomDatabase<FavoritesDatabase>(get(), FavoritesDatabase.FILENAME).dao()
         )
+    }
+
+    single {
+        roomDatabase<RecentSearchesDatabase>(get(), RecentSearchesDatabase.FILENAME).dao()
     }
 }
 
-private fun createDataStore(context: Context) = initDataStore { fileName ->
-    context.filesDir.resolve(fileName).absolutePath
-}
+inline fun <reified T : RoomDatabase> roomDatabase(context: Context, filename: String) =
+    Room.databaseBuilder<T>(
+        context,
+        context.getDatabasePath(filename).absolutePath
+    )
+        .setDriver(BundledSQLiteDriver())
+        .build()

@@ -4,6 +4,9 @@ import di.initKoin
 
 fun main() {
     initKoin()
+
+
+
     application {
         Window(
             onCloseRequest = ::exitApplication,

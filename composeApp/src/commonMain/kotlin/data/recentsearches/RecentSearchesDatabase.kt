@@ -7,7 +7,12 @@ import models.RecentSearch
 
 @Database(entities = [RecentSearch::class], version = 1)
 abstract class RecentSearchesDatabase : RoomDatabase(), RoomCompileAppeaser {
-    abstract fun recentSearchesDao(): RecentSearchesDao
+
+    companion object {
+        const val FILENAME = "recentSearches.db"
+    }
+
+    abstract fun dao(): RecentSearchesDao
 
     override fun clearAllTables() = super.clearAllTables()
 }

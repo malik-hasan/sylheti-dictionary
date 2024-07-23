@@ -1,6 +1,7 @@
 package di
 
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
@@ -8,20 +9,26 @@ import data.dictionary.DictionaryAsset
 import data.favorites.FavoritesDatabase
 import data.favorites.FavoritesRepository
 import data.favorites.instantiateImpl
+import data.recentsearches.instantiateImpl
+import data.recentsearches.RecentSearchesDatabase
+import data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.DictionaryDatabase
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import path
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSHomeDirectory
 import platform.Foundation.stringByAppendingPathComponent
-import ui.screens.search.SearchViewModel
 
 actual val platformModule = module {
-    singleOf(::SearchViewModel)
 
-    single { createDataStore() }
+    single {
+        PreferencesRepository(
+            initDataStore { fileName ->
+                NSDocumentDirectory.path.stringByAppendingPathComponent(fileName)
+            }
+        )
+    }
 
     single {
         NativeSqliteDriver(DictionaryDatabase.Schema, DictionaryAsset)
@@ -29,17 +36,19 @@ actual val platformModule = module {
 
     single {
         FavoritesRepository(get(),
-            Room.databaseBuilder<FavoritesDatabase>(
-                "${NSHomeDirectory()}/favorites.db",
-                FavoritesDatabase::class::instantiateImpl
-            )
-                .setDriver(BundledSQLiteDriver())
-                .build()
-                .favoritesDao()
+            roomDatabase<FavoritesDatabase>(FavoritesDatabase.FILENAME, FavoritesDatabase::class::instantiateImpl).dao()
         )
+    }
+
+    single {
+        roomDatabase<RecentSearchesDatabase>(RecentSearchesDatabase.FILENAME, RecentSearchesDatabase::class::instantiateImpl).dao()
     }
 }
 
-private fun createDataStore() = initDataStore { fileName ->
-    NSDocumentDirectory.path.stringByAppendingPathComponent(fileName)
-}
+inline fun <reified T : RoomDatabase> roomDatabase(filename: String, noinline instantiateImpl: () -> T) =
+    Room.databaseBuilder<T>(
+        "${NSHomeDirectory()}/$filename",
+        instantiateImpl
+    )
+        .setDriver(BundledSQLiteDriver())
+        .build()
