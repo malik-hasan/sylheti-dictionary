@@ -1,11 +1,43 @@
+
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import co.touchlab.kermit.Logger
+import data.dictionary.DictionaryAsset
+import data.dictionary.DictionaryAssetVersion
+import data.settings.PreferenceKey
+import data.settings.PreferencesRepository
 import di.initKoin
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.koin.mp.KoinPlatform.getKoin
+import sylhetidictionary.composeapp.generated.resources.Res
+import java.io.FileOutputStream
 
+@OptIn(ExperimentalResourceApi::class)
 fun main() {
     initKoin()
 
-    // TODO: copy db file
+    val preferences = getKoin().get<PreferencesRepository>()
+    MainScope().launch(Dispatchers.IO) {
+        val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
+        if (DictionaryAssetVersion > currentDictionaryVersion) {
+
+            Logger.d("INIT: copying dictionary asset to SQLite")
+
+            val inputStream = Res.readBytes("files/$DictionaryAsset").inputStream()
+            val outputStream = FileOutputStream(DictionaryAsset)
+
+            inputStream.use { input ->
+                outputStream.use {
+                    input.copyTo(it)
+                }
+            }
+
+            preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+        }
+    }
 
     application {
         Window(

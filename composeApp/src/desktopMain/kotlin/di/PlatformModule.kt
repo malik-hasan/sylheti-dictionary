@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import data.dictionary.DictionaryAsset
 import data.favorites.FavoritesDatabase
 import data.favorites.FavoritesRepository
 import data.recentsearches.RecentSearchesDatabase
@@ -21,7 +22,7 @@ actual val platformModule = module {
     }
 
     single {
-        JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY).also {
+        JdbcSqliteDriver("jdbc:sqlite:$DictionaryAsset").also {
             DictionaryDatabase.Schema.create(it)
         }
     }.bind(SqlDriver::class)
