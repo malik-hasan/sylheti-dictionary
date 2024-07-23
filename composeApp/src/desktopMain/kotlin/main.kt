@@ -5,7 +5,7 @@ import di.initKoin
 fun main() {
     initKoin()
 
-
+    // TODO: copy db file
 
     application {
         Window(

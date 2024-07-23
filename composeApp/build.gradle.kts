@@ -17,9 +17,7 @@ kotlin {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
     }
-    
-    jvm("desktop")
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -30,7 +28,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+
+    jvm("desktop")
+
     sourceSets {
         commonMain {
             kotlin.srcDir("build/generated/ksp/metadata")
@@ -71,6 +71,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.lifecycle.runtime.compose)
             implementation(libs.sqldelight.sqlite.driver)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 
