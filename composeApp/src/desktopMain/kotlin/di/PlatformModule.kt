@@ -22,9 +22,7 @@ actual val platformModule = module {
     }
 
     single {
-        JdbcSqliteDriver("jdbc:sqlite:$DictionaryAsset").also {
-            DictionaryDatabase.Schema.create(it)
-        }
+        JdbcSqliteDriver("jdbc:sqlite:$DictionaryAsset").also(DictionaryDatabase.Schema::create)
     }.bind(SqlDriver::class)
 
     single {
