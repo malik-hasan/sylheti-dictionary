@@ -49,15 +49,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
 import kotlinx.coroutines.launch
 import models.search.settings.LatinSearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import setLanguage
@@ -202,10 +199,8 @@ fun SearchScreen(
                 val bookmarks = state.bookmarks
 
                 item {
-                    val preferences: PreferencesRepository = koinInject()
                     Button(onClick = {
                         scope.launch {
-                            preferences.put(PreferenceKey.LANGUAGE, Language.English.code)
                             setLanguage(Language.English.code)
                         }
                     }) {
@@ -213,7 +208,6 @@ fun SearchScreen(
                     }
                     Button(onClick = {
                         scope.launch {
-                            preferences.put(PreferenceKey.LANGUAGE, Language.Bengali.code)
                             setLanguage(Language.Bengali.code)
                         }
                     }) {
