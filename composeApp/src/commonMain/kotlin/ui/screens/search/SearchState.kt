@@ -6,6 +6,6 @@ data class SearchState(
     val searchBarActive: Boolean = false,
     val searchResults: List<DictionaryEntry>? = null,
     val searchTerm: String = "",
-    val favorites: List<DictionaryEntry> = emptyList(),
+    val bookmarks: List<DictionaryEntry> = emptyList(),
     val searchPositions: List<Boolean> = List(3) { false }
 )

@@ -106,14 +106,20 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        resourceConfigurations.addAll(setOf("en", "bn"))
     }
+
     packaging.resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+
     buildTypes.getByName("release").isMinifyEnabled = false
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures.compose = true
+
     dependencies {
         debugImplementation(compose.uiTooling)
     }

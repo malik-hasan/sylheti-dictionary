@@ -30,7 +30,7 @@ class SearchViewModel : ViewModel(), KoinComponent {
         favoritesRepository.getFavorites(),
     ) { state, favorites ->
         state.copy(
-            favorites = favorites
+            bookmarks = favorites
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SearchState())
 

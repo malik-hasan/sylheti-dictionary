@@ -1,6 +1,7 @@
 package oats.mobile.sylhetidictionary
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import co.touchlab.kermit.Logger
 import data.dictionary.DictionaryAsset
 import data.dictionary.DictionaryAssetVersion
@@ -57,5 +58,7 @@ class AndroidDictionaryApp: Application() {
                 preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
             }
         }
+
+        AppCompatDelegate.getApplicationLocales()
     }
 }

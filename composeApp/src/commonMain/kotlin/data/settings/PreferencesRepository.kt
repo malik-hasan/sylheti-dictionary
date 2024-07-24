@@ -12,18 +12,18 @@ import kotlinx.coroutines.flow.map
 
 class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 
-    private val safeSettingsFlow: Flow<Preferences>
+    private val safePreferencesFlow: Flow<Preferences>
         get() = preferences.data.catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
             } else throw exception
         }
 
-    fun <T> getFlow(key: Preferences.Key<T>): Flow<T?> =
-        safeSettingsFlow.map { it[key] }
+    fun <T> flow(key: Preferences.Key<T>, default: T): Flow<T> =
+        safePreferencesFlow.map { it[key] ?: default }
 
     suspend fun <T> get(key: Preferences.Key<T>): T? =
-        safeSettingsFlow.first()[key]
+        safePreferencesFlow.first()[key]
 
     suspend fun <T> put(key: Preferences.Key<T>, value: T) {
         preferences.edit { it[key] = value }

@@ -19,7 +19,6 @@ import sylhetidictionary.composeapp.generated.resources.montserrat
 import sylhetidictionary.composeapp.generated.resources.montserrat_italic
 import sylhetidictionary.composeapp.generated.resources.noto_serif_bengali
 
-
 val bengaliFontFamily
     @Composable
     get() = FontFamily(Font(Res.font.noto_serif_bengali))

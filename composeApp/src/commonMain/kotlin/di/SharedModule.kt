@@ -1,5 +1,6 @@
 package di
 
+import MainViewModel
 import data.dictionary.DictionaryDataSource
 import data.dictionary.DictionaryDataSourceImpl
 import oats.mobile.sylhetidictionary.DictionaryDatabase
@@ -9,6 +10,7 @@ import org.koin.dsl.module
 import ui.screens.search.SearchViewModel
 
 val sharedModule = module {
+    viewModelOf(::MainViewModel)
     viewModelOf(::SearchViewModel)
 
     single {

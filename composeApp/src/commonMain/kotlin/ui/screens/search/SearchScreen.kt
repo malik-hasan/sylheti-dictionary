@@ -1,5 +1,6 @@
 package ui.screens.search
 
+import Language
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,18 +44,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import data.settings.PreferenceKey
+import data.settings.PreferencesRepository
 import kotlinx.coroutines.launch
 import models.search.settings.LatinSearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import setLanguage
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
 import ui.components.EntryCard
 import ui.components.LocalDrawerState
@@ -89,7 +98,7 @@ fun SearchScreen(
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Text("Sylheti Dictionary")
+                    Text(stringResource(Res.string.sylheti_dictionary))
                 },
                 navigationIcon = {
                     IconButton(
@@ -186,39 +195,38 @@ fun SearchScreen(
                     .padding(scaffoldPadding)
                     .fillMaxSize(),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 72.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val items = state.searchResults ?: state.favorites
+                val searchResults = state.searchResults
+                val bookmarks = state.bookmarks
 
-                if (items.isEmpty()) {
-                    item { Text("No results") }
-                    return@LazyColumn
+                item {
+                    val preferences: PreferencesRepository = koinInject()
+                    Button(onClick = {
+                        scope.launch {
+                            preferences.put(PreferenceKey.LANGUAGE, Language.English.code)
+                            setLanguage(Language.English.code)
+                        }
+                    }) {
+                        Text("English")
+                    }
+                    Button(onClick = {
+                        scope.launch {
+                            preferences.put(PreferenceKey.LANGUAGE, Language.Bengali.code)
+                            setLanguage(Language.Bengali.code)
+                        }
+                    }) {
+                        Text("Bengali")
+                    }
                 }
 
-//                    item(results.first().entry.entryId) {
-//                        val data = results.first()
-//                        Card(Modifier.fillMaxWidth()) {
-//                            Text(text = data.entry.lexemeIPA)
-//                            Text(text = data.entry.lexemeBangla ?: "No bangla lexeme")
-//                            Text(text = data.entry.lexemeNagri ?: "No nagri lexeme")
-//                            Text(text = data.entry.citationIPA ?: "No IPA citation")
-//                            Text(text = data.entry.citationBangla ?: "No bangla citation")
-//                            Text(text = data.entry.citationNagri ?: "No nagri citation")
-//                            Text(text = data.entry.partOfSpeech ?: "POS unknown")
-//                            Text(text = data.entry.gloss ?: "?")
-//                            Text(text = data.entry.definitionEN ?: "no en def")
-//                            Text(text = data.entry.definitionBN ?: "no bn def")
-//                            Text(text = data.entry.definitionBNIPA ?: "no bnipa def")
-//                            Text(text = data.entry.definitionIPA ?: "no ipa def")
-//                            Text(text = data.entry.definitionNagri ?: "no nagri def")
-//                            Text(text = data.componentLexemes.toString())
-//                            Text(text = data.examples.toString())
-//                            Text(text = data.variants.toString())
-//                            Text(text = data.domains.toString())
-//                            Text(text = data.relatedEntries.size.toString())
-//                        }
-//
-//                    }
+                val items = searchResults?.let {
+                    searchResults.ifEmpty {
+                        item { Text("No results") }
+                        return@LazyColumn
+                    }
+                } ?: bookmarks.ifEmpty { return@LazyColumn }
 
                 items(items) { entry ->
                     EntryCard(entry) { entryId, isFavorite ->
