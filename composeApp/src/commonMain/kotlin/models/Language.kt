@@ -1,4 +1,4 @@
-expect fun setLanguage(languageCode: String)
+package models
 
 enum class Language(val code: String) {
     English("en"),

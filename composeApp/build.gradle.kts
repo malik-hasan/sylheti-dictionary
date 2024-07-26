@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
@@ -43,6 +44,7 @@ kotlin {
                 implementation(compose.components.uiToolingPreview)
 
                 implementation(libs.lifecycle.viewmodel)
+                implementation(libs.navigation.compose)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 api(libs.koin.core)
                 implementation(libs.koin.compose)
@@ -53,6 +55,7 @@ kotlin {
                 implementation(libs.datastore.preferences)
                 implementation(libs.kermit)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.json)
             }
         }
         androidMain.dependencies {
