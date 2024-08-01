@@ -2,7 +2,6 @@ package di
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import data.dictionary.DictionaryAsset
@@ -17,9 +16,7 @@ import java.io.File
 
 actual val platformModule = module {
 
-    single {
-        PreferencesRepository(initDataStore { it })
-    }
+    single { PreferencesRepository(initDataStore { it }) }
 
     single {
         JdbcSqliteDriver("jdbc:sqlite:$DictionaryAsset").also(DictionaryDatabase.Schema::create)
@@ -31,14 +28,8 @@ actual val platformModule = module {
         )
     }
 
-    single {
-        roomDatabase<RecentSearchesDatabase>(RecentSearchesDatabase.FILENAME).dao()
-    }
+    single { roomDatabase<RecentSearchesDatabase>(RecentSearchesDatabase.FILENAME).dao() }
 }
 
 inline fun <reified T : RoomDatabase> roomDatabase(filename: String) =
-    Room.databaseBuilder<T>(
-        File(System.getProperty("java.io.tmpdir"), filename).absolutePath,
-    )
-        .setDriver(BundledSQLiteDriver())
-        .build()
+    Room.databaseBuilder<T>(File(System.getProperty("java.io.tmpdir"), filename).absolutePath).init()

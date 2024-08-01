@@ -2,15 +2,14 @@ package di
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import data.dictionary.DictionaryAsset
 import data.favorites.FavoritesDatabase
 import data.favorites.FavoritesRepository
 import data.favorites.instantiateImpl
-import data.recentsearches.instantiateImpl
 import data.recentsearches.RecentSearchesDatabase
+import data.recentsearches.instantiateImpl
 import data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import org.koin.dsl.bind
@@ -46,9 +45,4 @@ actual val platformModule = module {
 }
 
 inline fun <reified T : RoomDatabase> roomDatabase(filename: String, noinline instantiateImpl: () -> T) =
-    Room.databaseBuilder<T>(
-        "${NSHomeDirectory()}/$filename",
-        instantiateImpl
-    )
-        .setDriver(BundledSQLiteDriver())
-        .build()
+    Room.databaseBuilder<T>("${NSHomeDirectory()}/$filename", instantiateImpl).init()

@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import ui.providers.LocalDrawerState
+import di.LocalDrawerState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

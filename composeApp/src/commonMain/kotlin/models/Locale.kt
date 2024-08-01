@@ -1,6 +1,6 @@
 package models
 
-enum class Language(val code: String) {
+enum class Locale(val code: String) {
     English("en"),
     Bengali("bn")
 }

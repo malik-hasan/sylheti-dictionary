@@ -3,7 +3,6 @@ package di
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import data.dictionary.DictionaryAsset
@@ -36,15 +35,8 @@ actual val platformModule = module {
         )
     }
 
-    single {
-        roomDatabase<RecentSearchesDatabase>(get(), RecentSearchesDatabase.FILENAME).dao()
-    }
+    single { roomDatabase<RecentSearchesDatabase>(get(), RecentSearchesDatabase.FILENAME).dao() }
 }
 
 inline fun <reified T : RoomDatabase> roomDatabase(context: Context, filename: String) =
-    Room.databaseBuilder<T>(
-        context,
-        context.getDatabasePath(filename).absolutePath
-    )
-        .setDriver(BundledSQLiteDriver())
-        .build()
+    Room.databaseBuilder<T>(context, context.getDatabasePath(filename).absolutePath).init()

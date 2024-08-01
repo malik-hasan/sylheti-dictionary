@@ -10,8 +10,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.launch
-import ui.providers.LocalDrawerState
-import ui.providers.LocalNavController
+import di.LocalDrawerState
+import di.LocalNavController
 
 @Composable
 fun SDNavigationDrawerItem(

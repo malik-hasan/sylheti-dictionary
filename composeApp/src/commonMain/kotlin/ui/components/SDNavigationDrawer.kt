@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.settings
-import ui.providers.LocalDrawerState
+import di.LocalDrawerState
 import ui.screens.search.SearchRoute
 import ui.screens.settings.SettingsRoute
 

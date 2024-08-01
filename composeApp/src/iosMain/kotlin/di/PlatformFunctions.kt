@@ -8,6 +8,6 @@ import platform.Foundation.NSUserDefaults
 @Composable
 actual fun <T> StateFlow<T>.collectAsStateForPlatform() = collectAsStateWithLifecycle()
 
-actual fun setLanguage(languageCode: String) {
+actual fun setLanguage(languageCode: String, saveToPreferences: () -> Unit) {
     NSUserDefaults.standardUserDefaults.setObject(arrayListOf(languageCode), "AppleLanguages")
 }
