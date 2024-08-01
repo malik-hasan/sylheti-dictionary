@@ -57,9 +57,9 @@ fun MainViewController() = ComposeUIViewController(
                         length = sourceBytes.size.toULong()
                     ).writeToFile("$destinationDirectory/$DictionaryAsset", true)
                     Logger.d("INIT: dictionary asset copied: $copyAssetResult")
-                }
 
-                preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+                    if (copyAssetResult) preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+                }
             }
         }
     }
