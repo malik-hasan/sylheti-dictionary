@@ -44,21 +44,25 @@ fun MainViewController() = ComposeUIViewController(
                 memScoped {
                     val error: ObjCObjectVar<NSError?> = alloc()
 
-                    val createDirectoryResult = NSFileManager.defaultManager.createDirectoryAtPath(
+                    val createDirectorySuccess = NSFileManager.defaultManager.createDirectoryAtPath(
                         path = destinationDirectory,
                         withIntermediateDirectories = true,
                         attributes = null,
                         error = error.ptr
                     )
-                    Logger.d("INIT: database directory created: $createDirectoryResult")
+                    Logger.d("INIT: database directory created: $createDirectorySuccess")
 
-                    val copyAssetResult = NSData.create(
+                    val copyAssetSuccess = NSData.create(
                         bytes = allocArrayOf(sourceBytes),
                         length = sourceBytes.size.toULong()
                     ).writeToFile("$destinationDirectory/$DictionaryAsset", true)
-                    Logger.d("INIT: dictionary asset copied: $copyAssetResult")
+                    Logger.d("INIT: dictionary asset copied: $copyAssetSuccess")
 
-                    if (copyAssetResult) preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+                    val dictionaryVersion = if (copyAssetSuccess) {
+                        DictionaryAssetVersion
+                    } else -1 // failure
+
+                    preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, dictionaryVersion)
                 }
             }
         }

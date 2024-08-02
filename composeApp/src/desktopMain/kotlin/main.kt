@@ -14,6 +14,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform.getKoin
 import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
+import java.io.IOException
 
 @OptIn(ExperimentalResourceApi::class)
 fun main() {
@@ -26,16 +27,22 @@ fun main() {
 
             Logger.d("INIT: copying dictionary asset to SQLite")
 
-            val inputStream = Res.readBytes("files/$DictionaryAsset").inputStream()
-            val outputStream = FileOutputStream(DictionaryAsset)
+            var dictionaryVersion = DictionaryAssetVersion
 
-            inputStream.use { input ->
-                outputStream.use {
-                    input.copyTo(it)
+            try {
+                val inputStream = Res.readBytes("files/$DictionaryAsset").inputStream()
+                val outputStream = FileOutputStream(DictionaryAsset)
+
+                inputStream.use { input ->
+                    outputStream.use {
+                        input.copyTo(it)
+                    }
                 }
+            } catch(e: IOException) {
+                dictionaryVersion = -1 // failure
             }
 
-            preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+            preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, dictionaryVersion)
         }
     }
 

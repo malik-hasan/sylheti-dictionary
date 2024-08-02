@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import di.collectAsStateForPlatform
 import kotlinx.coroutines.launch
@@ -78,7 +79,10 @@ fun SearchScreen(
             SylhetiDictionaryTopBar(stringResource(Res.string.sylheti_dictionary), scrollBehavior) {
                 Box {
                     IconButton(onClick = { isSettingsMenuOpen = true }) {
-                        Icon(painterResource(Res.drawable.tune), stringResource(Res.string.settings))
+                        Icon(
+                            painterResource(Res.drawable.tune),
+                            stringResource(Res.string.settings)
+                        )
                     }
 
                     SearchSettingsMenu(isSettingsMenuOpen) {
@@ -91,13 +95,27 @@ fun SearchScreen(
         val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
 
+        if (!state.assetLoaded) {
+            Text(
+                "There was an error loading the dictionary data. Try restarting the app, or report a bug if the problem persists.",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            return@Scaffold
+        }
+
         Box {
             LazyColumn(
                 state = listState,
                 modifier = Modifier
                     .padding(scaffoldPadding)
                     .fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 72.dp, bottom = 8.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 72.dp,
+                    bottom = 8.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

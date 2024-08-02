@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import data.dictionary.DictionaryDataSource
 import data.favorites.FavoritesRepository
+import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.Job
@@ -28,9 +29,11 @@ class SearchViewModel : ViewModel(), KoinComponent {
     val state: StateFlow<SearchState> = combine(
         _state,
         favoritesRepository.getFavorites(),
-    ) { state, favorites ->
+        preferencesRepository.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, -1)
+    ) { state, favorites, dictionaryVersion ->
         state.copy(
-            bookmarks = favorites
+            bookmarks = favorites,
+            assetLoaded = dictionaryVersion >= 0
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SearchState())
 

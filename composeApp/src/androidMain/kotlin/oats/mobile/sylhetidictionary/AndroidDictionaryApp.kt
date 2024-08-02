@@ -16,6 +16,7 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
+import java.io.IOException
 
 class AndroidDictionaryApp: Application() {
 
@@ -45,16 +46,22 @@ class AndroidDictionaryApp: Application() {
 
                 Logger.d("INIT: copying dictionary asset to SQLite")
 
-                val inputStream = Res.readBytes("files/$DictionaryAsset").inputStream()
-                val outputStream = FileOutputStream(getDatabasePath(DictionaryAsset).absolutePath)
+                var dictionaryVersion = DictionaryAssetVersion
 
-                inputStream.use { input ->
-                    outputStream.use {
-                        input.copyTo(it)
+                try {
+                    val inputStream = Res.readBytes("files/$DictionaryAsset").inputStream()
+                    val outputStream = FileOutputStream(getDatabasePath(DictionaryAsset).absolutePath)
+
+                    inputStream.use { input ->
+                        outputStream.use {
+                            input.copyTo(it)
+                        }
                     }
+                } catch(e: IOException) {
+                    dictionaryVersion = -1 // failure
                 }
 
-                preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+                preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, dictionaryVersion)
             }
         }
     }
