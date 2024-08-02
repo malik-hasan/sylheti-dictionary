@@ -14,7 +14,7 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
         when(event) {
             is SettingsEvent.SetLocale -> {
                 setLanguage(event.locale.code) {
-                    Logger.d("THEN")
+                    Logger.d("SETTINGS: Saving locale to preferences")
                     viewModelScope.launch {
                         preferences.put(PreferenceKey.LOCALE, event.locale.code)
                     }

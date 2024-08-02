@@ -10,4 +10,5 @@ actual fun <T> StateFlow<T>.collectAsStateForPlatform() = collectAsStateWithLife
 
 actual fun setLanguage(languageCode: String, saveToPreferences: () -> Unit) {
     NSUserDefaults.standardUserDefaults.setObject(arrayListOf(languageCode), "AppleLanguages")
+    saveToPreferences()
 }
