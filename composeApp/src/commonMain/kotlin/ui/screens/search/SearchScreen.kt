@@ -98,7 +98,7 @@ fun SearchScreen(
         if (!state.assetLoaded) {
             Text(
                 "There was an error loading the dictionary data. Try restarting the app, or report a bug if the problem persists.",
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(scaffoldPadding),
                 textAlign = TextAlign.Center
             )
             return@Scaffold

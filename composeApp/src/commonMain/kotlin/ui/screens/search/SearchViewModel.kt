@@ -29,7 +29,7 @@ class SearchViewModel : ViewModel(), KoinComponent {
     val state: StateFlow<SearchState> = combine(
         _state,
         favoritesRepository.getFavorites(),
-        preferencesRepository.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, -1)
+        preferencesRepository.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, 0)
     ) { state, favorites, dictionaryVersion ->
         state.copy(
             bookmarks = favorites,

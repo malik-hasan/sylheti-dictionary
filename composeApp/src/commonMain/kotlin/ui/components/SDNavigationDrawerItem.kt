@@ -8,10 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import co.touchlab.kermit.Logger
-import kotlinx.coroutines.launch
 import di.LocalDrawerState
 import di.LocalNavController
+import kotlinx.coroutines.launch
 
 @Composable
 fun SDNavigationDrawerItem(
@@ -28,7 +27,6 @@ fun SDNavigationDrawerItem(
         selected = currentBackStackEntry?.destination?.route == route::class.qualifiedName,
         onClick = {
             navController.navigate(route)
-            Logger.d("ROUTE ${navController.currentDestination?.route}, ${route::class.qualifiedName}")
             scope.launch {
                 drawerState.close()
             }
