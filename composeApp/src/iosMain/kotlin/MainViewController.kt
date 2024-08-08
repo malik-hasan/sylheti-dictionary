@@ -13,6 +13,8 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform.getKoin
@@ -31,7 +33,7 @@ fun MainViewController() = ComposeUIViewController(
         initKoin()
 
         val preferences: PreferencesRepository = getKoin().get()
-        runBlocking {
+        runBlocking(Dispatchers.IO) {
             val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
             if (DictionaryAssetVersion > currentDictionaryVersion) {
 

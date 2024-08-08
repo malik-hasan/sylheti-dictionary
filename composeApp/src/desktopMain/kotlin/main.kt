@@ -7,6 +7,7 @@ import data.dictionary.DictionaryAssetVersion
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import di.initKoin
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform.getKoin
@@ -19,7 +20,7 @@ fun main() {
     initKoin()
 
     val preferences: PreferencesRepository = getKoin().get()
-    runBlocking {
+    runBlocking(Dispatchers.IO) {
         val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
         if (DictionaryAssetVersion > currentDictionaryVersion) {
 
