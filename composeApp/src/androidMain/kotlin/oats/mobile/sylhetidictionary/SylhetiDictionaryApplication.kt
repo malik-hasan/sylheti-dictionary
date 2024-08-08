@@ -18,7 +18,7 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
 import java.io.IOException
 
-class AndroidDictionaryApp: Application() {
+class SylhetiDictionaryApplication: Application() {
 
     private val preferences: PreferencesRepository by inject()
 
@@ -37,7 +37,7 @@ class AndroidDictionaryApp: Application() {
         super.onCreate()
 
         initKoin {
-            androidContext(this@AndroidDictionaryApp)
+            androidContext(this@SylhetiDictionaryApplication)
         }
 
         appScope.launch(Dispatchers.IO) {

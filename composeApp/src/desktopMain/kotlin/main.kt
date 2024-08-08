@@ -20,7 +20,7 @@ import java.io.IOException
 fun main() {
     initKoin()
 
-    val preferences = getKoin().get<PreferencesRepository>()
+    val preferences: PreferencesRepository = getKoin().get()
     MainScope().launch(Dispatchers.IO) {
         val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
         if (DictionaryAssetVersion > currentDictionaryVersion) {

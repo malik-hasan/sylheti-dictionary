@@ -8,5 +8,5 @@ data class SearchState(
     val searchTerm: String = "",
     val bookmarks: List<DictionaryEntry> = emptyList(),
     val searchPositions: List<Boolean> = List(3) { false },
-    val assetLoaded: Boolean = false
+    val assetLoaded: Boolean = true
 )
