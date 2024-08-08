@@ -7,9 +7,7 @@ import data.dictionary.DictionaryAssetVersion
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import di.initKoin
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform.getKoin
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -21,7 +19,7 @@ fun main() {
     initKoin()
 
     val preferences: PreferencesRepository = getKoin().get()
-    MainScope().launch(Dispatchers.IO) {
+    runBlocking {
         val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
         if (DictionaryAssetVersion > currentDictionaryVersion) {
 
@@ -38,6 +36,7 @@ fun main() {
                         input.copyTo(it)
                     }
                 }
+                Logger.d("INIT: dictionary asset copied")
             } catch(e: IOException) {
                 dictionaryVersion = -1 // failure
             }

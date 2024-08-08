@@ -38,7 +38,7 @@ fun MainViewController() = ComposeUIViewController(
                 val sourceBytes = Res.readBytes("files/$DictionaryAsset")
                 val destinationDirectory = NSApplicationSupportDirectory.path.stringByAppendingPathComponent("databases")
 
-                Logger.d("INIT: copying dictionary asset to $destinationDirectory")
+                Logger.d("INIT: copying dictionary asset to SQLite")
 
                 memScoped {
                     val error: ObjCObjectVar<NSError?> = alloc()
