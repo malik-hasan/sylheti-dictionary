@@ -2,10 +2,10 @@
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import org.koin.compose.KoinContext
-import ui.components.SDNavigationDrawer
 import di.LocalNavController
 import di.SDProvider
+import org.koin.compose.KoinContext
+import ui.components.SDNavigationDrawer
 import ui.screens.search.SearchRoute
 import ui.screens.search.SearchScreen
 import ui.screens.settings.SettingsRoute

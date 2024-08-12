@@ -27,6 +27,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            linkerOpts.add("-lsqlite3")
         }
     }
 
@@ -88,7 +89,17 @@ kotlin {
     }
 }
 
-dependencies.kspCommonMainMetadata(libs.room.compiler)
+dependencies {
+    listOf(
+        "kspAndroid",
+//        "kspJvm",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64"
+    ).forEach {
+        add(it, libs.room.compiler)
+    }
+}
 
 room.schemaDirectory("$projectDir/schemas")
 
@@ -142,9 +153,3 @@ compose.desktop {
 }
 
 sqldelight.databases.create("DictionaryDatabase").packageName.set(sylhetiDictionaryPackage)
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}

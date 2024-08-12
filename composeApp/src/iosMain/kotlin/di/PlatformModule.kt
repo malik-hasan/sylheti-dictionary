@@ -7,16 +7,13 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import data.dictionary.DictionaryAsset
 import data.favorites.FavoritesDatabase
 import data.favorites.FavoritesRepository
-import data.favorites.instantiateImpl
 import data.recentsearches.RecentSearchesDatabase
-import data.recentsearches.instantiateImpl
 import data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import path
 import platform.Foundation.NSDocumentDirectory
-import platform.Foundation.NSHomeDirectory
 import platform.Foundation.stringByAppendingPathComponent
 
 actual val platformModule = module {
@@ -35,14 +32,14 @@ actual val platformModule = module {
 
     single {
         FavoritesRepository(get(),
-            roomDatabase<FavoritesDatabase>(FavoritesDatabase.FILENAME, FavoritesDatabase::class::instantiateImpl).dao()
+            roomDatabase<FavoritesDatabase>(FavoritesDatabase.FILENAME).dao()
         )
     }
 
     single {
-        roomDatabase<RecentSearchesDatabase>(RecentSearchesDatabase.FILENAME, RecentSearchesDatabase::class::instantiateImpl).dao()
+        roomDatabase<RecentSearchesDatabase>(RecentSearchesDatabase.FILENAME).dao()
     }
 }
 
-inline fun <reified T : RoomDatabase> roomDatabase(filename: String, noinline instantiateImpl: () -> T) =
-    Room.databaseBuilder<T>("${NSHomeDirectory()}/$filename", instantiateImpl).init()
+inline fun <reified T : RoomDatabase> roomDatabase(filename: String) =
+    Room.databaseBuilder<T>(NSDocumentDirectory.path.stringByAppendingPathComponent(filename)).init()

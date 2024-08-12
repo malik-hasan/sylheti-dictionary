@@ -1,12 +1,16 @@
 package data.favorites
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import data.RoomCompileAppeaser
+import androidx.room.RoomDatabaseConstructor
 import models.Favorite
 
+expect object FavoritesDatabaseConstructor : RoomDatabaseConstructor<FavoritesDatabase>
+
 @Database(entities = [Favorite::class], version = 1)
-abstract class FavoritesDatabase : RoomDatabase(), RoomCompileAppeaser {
+@ConstructedBy(FavoritesDatabaseConstructor::class)
+abstract class FavoritesDatabase : RoomDatabase() {
 
     companion object {
         const val FILENAME = "favorites.db"
@@ -14,5 +18,5 @@ abstract class FavoritesDatabase : RoomDatabase(), RoomCompileAppeaser {
 
     abstract fun dao(): FavoritesDao
 
-    override fun clearAllTables() = super.clearAllTables()
+//    override fun clearAllTables() = super.clearAllTables()
 }
