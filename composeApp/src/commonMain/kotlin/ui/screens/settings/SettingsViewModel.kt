@@ -14,6 +14,7 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
         when(event) {
             is SettingsEvent.SetLocale -> {
                 setLanguage(event.locale.code) {
+                    // Runs for all platforms except Android Tiramisu or later
                     Logger.d("SETTINGS: Saving locale to preferences")
                     viewModelScope.launch {
                         preferences.put(PreferenceKey.LOCALE, event.locale.code)

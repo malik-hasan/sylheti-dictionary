@@ -20,7 +20,6 @@ import models.search.settings.LatinSearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchSettingsMenu(
     expanded: Boolean,
