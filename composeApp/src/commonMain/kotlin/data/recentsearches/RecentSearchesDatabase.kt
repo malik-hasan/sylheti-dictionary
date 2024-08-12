@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import models.RecentSearch
 
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect object RecentSearchesDatabaseConstructor : RoomDatabaseConstructor<RecentSearchesDatabase>
 
 @Database(entities = [RecentSearch::class], version = 1)

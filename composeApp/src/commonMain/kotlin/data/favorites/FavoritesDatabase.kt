@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import models.Favorite
 
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect object FavoritesDatabaseConstructor : RoomDatabaseConstructor<FavoritesDatabase>
 
 @Database(entities = [Favorite::class], version = 1)

@@ -20,8 +20,8 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
+        iosX64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -79,23 +79,15 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
     }
-
-    targets.all {
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
-            }
-        }
-    }
 }
 
 dependencies {
     listOf(
         "kspAndroid",
-//        "kspJvm",
-        "kspIosSimulatorArm64",
+        "kspIosArm64",
         "kspIosX64",
-        "kspIosArm64"
+        "kspIosSimulatorArm64",
+//        "kspJvm"
     ).forEach {
         add(it, libs.room.compiler)
     }
