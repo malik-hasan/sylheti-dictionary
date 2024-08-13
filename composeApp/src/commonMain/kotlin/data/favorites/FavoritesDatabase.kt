@@ -18,6 +18,4 @@ abstract class FavoritesDatabase : RoomDatabase() {
     }
 
     abstract fun dao(): FavoritesDao
-
-//    override fun clearAllTables() = super.clearAllTables()
 }

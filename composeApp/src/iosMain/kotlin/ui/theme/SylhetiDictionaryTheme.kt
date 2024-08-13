@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 @Composable
 actual fun SylhetiDictionaryTheme(
     darkTheme: Boolean,
-    dynamicColor: Boolean,
     languageCode: String,
+    dynamicTheme: Boolean,
     content: @Composable () -> Unit
 ) {
     MaterialTheme(

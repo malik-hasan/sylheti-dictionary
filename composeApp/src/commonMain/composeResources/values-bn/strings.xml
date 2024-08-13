@@ -2,4 +2,7 @@
 <resources>
     <string name="sylheti_dictionary">সিলেটি অভিধান</string>
     <string name="settings">সেটিংস</string>
+    <string name="language">ভাষা</string>
+    <string name="english">ইংরেজি</string>
+    <string name="bengali">বাংলা</string>
 </resources>

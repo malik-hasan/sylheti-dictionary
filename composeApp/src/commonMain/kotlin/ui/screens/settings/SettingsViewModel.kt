@@ -18,6 +18,12 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
                     preferences.put(PreferenceKey.LOCALE, languageCode)
                 }
             }
+
+            is SettingsEvent.ToggleDynamicTheme -> {
+                viewModelScope.launch {
+                    preferences.put(PreferenceKey.DYNAMIC_THEME, event.value)
+                }
+            }
         }
     }
 

@@ -12,22 +12,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import di.LocalDynamicTheme
 import di.LocalLocalization
 import kotlinx.serialization.Serializable
 import models.BN
@@ -37,10 +36,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.bengali
+import sylhetidictionary.composeapp.generated.resources.dynamic_theme
+import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
+import ui.components.LanguageButton
 import ui.components.SylhetiDictionaryTopBar
-import ui.theme.bengaliDisplayFontFamily
 
 @Serializable
 object SettingsRoute
@@ -57,15 +59,17 @@ fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
     locale: String = LocalLocalization.current
 ) {
+
     Scaffold(
         topBar = { SylhetiDictionaryTopBar(stringResource(Res.string.settings)) }
     ) { scaffoldPadding ->
 
         Column(
-            Modifier
+            modifier = Modifier
                 .padding(scaffoldPadding)
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -73,68 +77,66 @@ fun SettingsScreen(
             ) {
                 Icon(
                     painterResource(Res.drawable.language),
-                    "Language",
+                    stringResource(Res.string.language),
                     tint = MaterialTheme.colorScheme.secondary
                 )
-                Text("Language", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(Res.string.language), style = MaterialTheme.typography.bodyLarge)
             }
 
-            Surface {
-                BoxWithConstraints(
+            BoxWithConstraints(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                    .height(150.dp)
+            ) {
+                val offset by animateDpAsState(
+                    targetValue = if (locale == BN) maxWidth * .48f else 0.dp
+                )
+
+                // Indicator
+                Box(
                     Modifier
+                        .offset(x = offset)
+                        .fillMaxWidth(0.52f)
+                        .padding(8.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Cyan)
-                        .height(40.dp)
-                ) {
-                    val offset by animateDpAsState(
-                        targetValue = if (locale == EN) {
-                            0.dp
-                        } else {
-                            maxWidth * .48f
-                        }
-                    )
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .fillMaxHeight()
+                )
 
-                    Box(
-                        Modifier
-                            .offset(x = offset)
-                            .fillMaxWidth(0.52f)
-                            .padding(4.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(Color.LightGray)
-                            .fillMaxHeight()
-                    )
+                Row(Modifier.selectableGroup()) {
+                    LanguageButton(
+                        indicator = 'A',
+                        language = stringResource(Res.string.english),
+                        languageCode = EN,
+                        selected = locale != BN
+                    ) { onEvent(SettingsEvent.SetLocale(it)) }
 
-                    Row(Modifier.selectableGroup()) {
-                        Column(
-                            Modifier.selectable(
-                                interactionSource = null,
-                                indication = null,
-                                selected = locale != BN
-                            ) {
-                                onEvent(SettingsEvent.SetLocale(EN))
-                            }.fillMaxHeight().weight(1f),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text("English")
-                        }
-                        Column(
-                            Modifier.selectable(
-                                interactionSource = null,
-                                indication = null,
-                                selected = locale == BN
-                            ) {
-                                onEvent(SettingsEvent.SetLocale(BN))
-                            }.fillMaxHeight().weight(1f),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text("ক", fontFamily = bengaliDisplayFontFamily)
-                            Text("Bengali")
-                        }
-                    }
+                    LanguageButton(
+                        indicator = 'ক',
+                        language = stringResource(Res.string.bengali),
+                        languageCode = BN,
+                        selected = locale == BN
+                    ) { onEvent(SettingsEvent.SetLocale(it)) }
                 }
             }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    painterResource(Res.drawable.dynamic_theme),
+                    stringResource(Res.string.language),
+                    tint = MaterialTheme.colorScheme.secondary
+                )
+                Text(stringResource(Res.string.language), style = MaterialTheme.typography.bodyLarge)
+            }
+
+            Switch(
+                checked = LocalDynamicTheme.current,
+                onCheckedChange = { onEvent(SettingsEvent.ToggleDynamicTheme(it)) }
+            )
         }
     }
 }

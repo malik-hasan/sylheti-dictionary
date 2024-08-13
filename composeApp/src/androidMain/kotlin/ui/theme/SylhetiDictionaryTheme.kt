@@ -15,13 +15,13 @@ import androidx.core.view.WindowCompat
 @Composable
 actual fun SylhetiDictionaryTheme(
     darkTheme: Boolean,
-    dynamicColor: Boolean,
     languageCode: String,
+    dynamicTheme: Boolean,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         // Dynamic color is available on Android 12+
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        dynamicTheme && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }

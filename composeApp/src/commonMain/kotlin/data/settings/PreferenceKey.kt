@@ -10,4 +10,5 @@ object PreferenceKey {
     val SEARCH_MIDDLE = booleanPreferencesKey("search_middle")
     val SEARCH_END = booleanPreferencesKey("search_end")
     val LOCALE = stringPreferencesKey("locale")
+    val DYNAMIC_THEME = booleanPreferencesKey("dynamic_theme")
 }

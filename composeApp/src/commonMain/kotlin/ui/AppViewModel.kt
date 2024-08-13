@@ -13,4 +13,6 @@ class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
     val locale = preferences.flow(PreferenceKey.LOCALE, EN)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), EN)
 
+    val dynamicTheme = preferences.flow(PreferenceKey.DYNAMIC_THEME, true)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
 }

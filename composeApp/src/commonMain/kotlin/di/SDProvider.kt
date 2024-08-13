@@ -17,6 +17,7 @@ import ui.AppViewModel
 
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController provided") }
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
+val LocalDynamicTheme = compositionLocalOf { true }
 val LocalLocalization = staticCompositionLocalOf { EN }
 
 @OptIn(KoinExperimentalAPI::class)
@@ -25,11 +26,13 @@ fun SDProvider(
     appViewModel: AppViewModel = koinViewModel(),
     content: @Composable () -> Unit
 ) {
+    val dynamicTheme by appViewModel.dynamicTheme.collectAsStateWithLifecycle()
     val locale by appViewModel.locale.collectAsStateWithLifecycle()
 
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),
         LocalDrawerState provides DrawerState(DrawerValue.Closed),
-        LocalLocalization provides locale
+        LocalLocalization provides locale,
+        LocalDynamicTheme provides dynamicTheme
     ) { content() }
 }

@@ -18,7 +18,7 @@ import sylhetidictionary.composeapp.generated.resources.merriweather_light_itali
 import sylhetidictionary.composeapp.generated.resources.merriweather_regular
 import sylhetidictionary.composeapp.generated.resources.montserrat
 import sylhetidictionary.composeapp.generated.resources.montserrat_italic
-import sylhetidictionary.composeapp.generated.resources.noto_serif_bengali
+import sylhetidictionary.composeapp.generated.resources.noto_sans_bengali
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla_italic
 
@@ -52,14 +52,14 @@ val englishDisplayFontFamily
 
 val bengaliBodyFontFamily
     @Composable
-    get() = FontFamily(Font(Res.font.noto_serif_bengali))
-
-val bengaliDisplayFontFamily
-    @Composable
     get() = FontFamily(
         Font(Res.font.tiro_bangla),
         Font(Res.font.tiro_bangla_italic, style = FontStyle.Italic)
     )
+
+val bengaliDisplayFontFamily
+    @Composable
+    get() = FontFamily(Font(Res.font.noto_sans_bengali))
 
 @Composable
 fun getTypography(languageCode: String): Typography {
