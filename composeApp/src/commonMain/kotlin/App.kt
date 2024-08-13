@@ -5,6 +5,7 @@ import androidx.navigation.compose.composable
 import di.LocalNavController
 import di.SDProvider
 import org.koin.compose.KoinContext
+import org.koin.core.annotation.KoinExperimentalAPI
 import ui.components.SDNavigationDrawer
 import ui.screens.search.SearchRoute
 import ui.screens.search.SearchScreen

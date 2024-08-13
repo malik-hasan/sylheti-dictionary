@@ -36,7 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import di.collectAsStateForPlatform
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
@@ -59,7 +59,7 @@ object SearchRoute
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
-    val state by vm.state.collectAsStateForPlatform()
+    val state by vm.state.collectAsStateWithLifecycle()
 
     SearchScreen(state, vm::onEvent)
 }

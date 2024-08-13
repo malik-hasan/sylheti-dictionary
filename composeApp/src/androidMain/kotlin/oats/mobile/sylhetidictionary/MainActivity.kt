@@ -7,9 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import co.touchlab.kermit.Logger
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.launch
+import models.EN
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -28,10 +30,10 @@ class MainActivity : AppCompatActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
 
-        AppCompatDelegate.getApplicationLocales().get(0)?.language?.let { appLocale ->
-            lifecycleScope.launch {
-                preferences.put(PreferenceKey.LOCALE, appLocale)
-            }
+        val languageCode = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: EN
+        Logger.d("LOCALE: Refreshing locale preference: $languageCode")
+        lifecycleScope.launch {
+            preferences.put(PreferenceKey.LOCALE, languageCode)
         }
     }
 }

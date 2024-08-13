@@ -23,17 +23,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import di.LocalLocalization
 import kotlinx.serialization.Serializable
-import models.Locale
+import models.BN
+import models.EN
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,7 +54,8 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onEvent: (SettingsEvent) -> Unit
+    onEvent: (SettingsEvent) -> Unit,
+    locale: String = LocalLocalization.current
 ) {
     Scaffold(
         topBar = { SylhetiDictionaryTopBar(stringResource(Res.string.settings)) }
@@ -68,8 +67,6 @@ fun SettingsScreen(
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
         ) {
-            var selected by remember { mutableStateOf(true) }
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -86,11 +83,11 @@ fun SettingsScreen(
                 BoxWithConstraints(
                     Modifier
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Green)
+                        .background(Color.Cyan)
                         .height(40.dp)
                 ) {
                     val offset by animateDpAsState(
-                        targetValue = if (selected) {
+                        targetValue = if (locale == EN) {
                             0.dp
                         } else {
                             maxWidth * .48f
@@ -100,7 +97,6 @@ fun SettingsScreen(
                     Box(
                         Modifier
                             .offset(x = offset)
-                            .shadow(1.dp, RoundedCornerShape(10.dp))
                             .fillMaxWidth(0.52f)
                             .padding(4.dp)
                             .clip(RoundedCornerShape(10.dp))
@@ -113,10 +109,9 @@ fun SettingsScreen(
                             Modifier.selectable(
                                 interactionSource = null,
                                 indication = null,
-                                selected = selected
+                                selected = locale != BN
                             ) {
-                                selected = true
-                                onEvent(SettingsEvent.SetLocale(Locale.English))
+                                onEvent(SettingsEvent.SetLocale(EN))
                             }.fillMaxHeight().weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
@@ -127,10 +122,9 @@ fun SettingsScreen(
                             Modifier.selectable(
                                 interactionSource = null,
                                 indication = null,
-                                selected = !selected
+                                selected = locale == BN
                             ) {
-                                selected = false
-                                onEvent(SettingsEvent.SetLocale(Locale.Bengali))
+                                onEvent(SettingsEvent.SetLocale(BN))
                             }.fillMaxHeight().weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
