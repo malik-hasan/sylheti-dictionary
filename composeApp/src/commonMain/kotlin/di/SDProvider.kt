@@ -16,7 +16,7 @@ import ui.AppViewModel
 
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController provided") }
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
-val LocalLocalization = staticCompositionLocalOf { Locale.English.code }
+val LocalLocalization = staticCompositionLocalOf { Locale.English }
 
 @OptIn(KoinExperimentalAPI::class)
 @Composable

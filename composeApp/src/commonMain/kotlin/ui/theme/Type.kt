@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import models.Locale
 import org.jetbrains.compose.resources.Font
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.merriweather_black
@@ -18,12 +19,18 @@ import sylhetidictionary.composeapp.generated.resources.merriweather_regular
 import sylhetidictionary.composeapp.generated.resources.montserrat
 import sylhetidictionary.composeapp.generated.resources.montserrat_italic
 import sylhetidictionary.composeapp.generated.resources.noto_serif_bengali
+import sylhetidictionary.composeapp.generated.resources.tiro_bangla
+import sylhetidictionary.composeapp.generated.resources.tiro_bangla_italic
 
-val bengaliFontFamily
-    @Composable
-    get() = FontFamily(Font(Res.font.noto_serif_bengali))
+@Composable
+fun getBodyFontFamily(locale: Locale) = 
+    if (locale == Locale.Bengali) bengaliBodyFontFamily else englishBodyFontFamily
 
-val bodyFontFamily
+@Composable
+fun getDisplayFontFamily(locale: Locale) =
+    if (locale == Locale.Bengali) bengaliDisplayFontFamily else englishDisplayFontFamily
+
+val englishBodyFontFamily
     @Composable
     get() = FontFamily(
         Font(Res.font.merriweather_regular),
@@ -36,32 +43,47 @@ val bodyFontFamily
         Font(Res.font.merriweather_black_italic, weight = FontWeight.Black, style = FontStyle.Italic),
     )
 
-val displayFontFamily
+val englishDisplayFontFamily
     @Composable
     get() = FontFamily(
         Font(Res.font.montserrat),
         Font(Res.font.montserrat_italic, style = FontStyle.Italic)
     )
 
-// Default Material 3 typography values
-val baseline = Typography()
-
-val AppTypography
+val bengaliBodyFontFamily
     @Composable
-    get() = Typography(
-        displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
-        displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),
-        displaySmall = baseline.displaySmall.copy(fontFamily = displayFontFamily),
-        headlineLarge = baseline.headlineLarge.copy(fontFamily = displayFontFamily),
-        headlineMedium = baseline.headlineMedium.copy(fontFamily = displayFontFamily),
-        headlineSmall = baseline.headlineSmall.copy(fontFamily = displayFontFamily),
-        titleLarge = baseline.titleLarge.copy(fontFamily = displayFontFamily),
-        titleMedium = baseline.titleMedium.copy(fontFamily = displayFontFamily),
-        titleSmall = baseline.titleSmall.copy(fontFamily = displayFontFamily),
-        bodyLarge = baseline.bodyLarge.copy(fontFamily = bodyFontFamily),
-        bodyMedium = baseline.bodyMedium.copy(fontFamily = bodyFontFamily),
-        bodySmall = baseline.bodySmall.copy(fontFamily = bodyFontFamily),
-        labelLarge = baseline.labelLarge.copy(fontFamily = bodyFontFamily),
-        labelMedium = baseline.labelMedium.copy(fontFamily = bodyFontFamily),
-        labelSmall = baseline.labelSmall.copy(fontFamily = bodyFontFamily),
+    get() = FontFamily(Font(Res.font.noto_serif_bengali))
+
+val bengaliDisplayFontFamily
+    @Composable
+    get() = FontFamily(
+        Font(Res.font.tiro_bangla),
+        Font(Res.font.tiro_bangla_italic, style = FontStyle.Italic)
     )
+
+@Composable
+fun getTypography(locale: Locale): Typography {
+
+    val bodyFontFamily = getBodyFontFamily(locale)
+    val displayFontFamily = getDisplayFontFamily(locale)
+
+    return with(Typography()) {
+        Typography(
+            displayLarge = displayLarge.copy(fontFamily = displayFontFamily),
+            displayMedium = displayMedium.copy(fontFamily = displayFontFamily),
+            displaySmall = displaySmall.copy(fontFamily = displayFontFamily),
+            headlineLarge = headlineLarge.copy(fontFamily = displayFontFamily),
+            headlineMedium = headlineMedium.copy(fontFamily = displayFontFamily),
+            headlineSmall = headlineSmall.copy(fontFamily = displayFontFamily),
+            titleLarge = titleLarge.copy(fontFamily = displayFontFamily),
+            titleMedium = titleMedium.copy(fontFamily = displayFontFamily),
+            titleSmall = titleSmall.copy(fontFamily = displayFontFamily),
+            bodyLarge = bodyLarge.copy(fontFamily = bodyFontFamily),
+            bodyMedium = bodyMedium.copy(fontFamily = bodyFontFamily),
+            bodySmall = bodySmall.copy(fontFamily = bodyFontFamily),
+            labelLarge = labelLarge.copy(fontFamily = bodyFontFamily),
+            labelMedium = labelMedium.copy(fontFamily = bodyFontFamily),
+            labelSmall = labelSmall.copy(fontFamily = bodyFontFamily)
+        )
+    }
+}

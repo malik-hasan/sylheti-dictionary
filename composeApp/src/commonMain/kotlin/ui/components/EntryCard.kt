@@ -31,7 +31,7 @@ import org.koin.compose.koinInject
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.bookmark
 import sylhetidictionary.composeapp.generated.resources.bookmark_border
-import ui.theme.bengaliFontFamily
+import ui.theme.bengaliBodyFontFamily
 
 @Composable
 fun EntryCard(
@@ -55,7 +55,7 @@ fun EntryCard(
                     text = buildAnnotatedString {
                         append(entry.citationIPA ?: entry.lexemeIPA)
                         (entry.citationBengali ?: entry.lexemeBengali)?.let {
-                            withStyle(SpanStyle(fontFamily = bengaliFontFamily)) {
+                            withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
                                 append(" • $it")
                             }
                         }
@@ -111,7 +111,7 @@ fun EntryCard(
                         tag = "bengali",
                         body = buildAnnotatedString {
                             entry.definitionBN?.let {
-                                withStyle(SpanStyle(fontFamily = bengaliFontFamily)) {
+                                withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
                                     append("$it ")
                                 }
                             }

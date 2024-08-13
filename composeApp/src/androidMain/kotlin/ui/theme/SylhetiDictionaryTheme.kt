@@ -11,15 +11,18 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import models.Locale
 
 @Composable
 actual fun SylhetiDictionaryTheme(
     darkTheme: Boolean,
+    dynamicColor: Boolean,
+    locale: Locale,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         // Dynamic color is available on Android 12+
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
@@ -39,7 +42,7 @@ actual fun SylhetiDictionaryTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = AppTypography,
+        typography = getTypography(locale),
         content = content
     )
 }

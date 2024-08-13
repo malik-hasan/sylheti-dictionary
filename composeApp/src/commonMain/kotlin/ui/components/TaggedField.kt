@@ -11,12 +11,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
-import ui.theme.bodyFontFamily
+import ui.theme.englishBodyFontFamily
 
 @Composable
 fun taggedField(tag: String, body: CharSequence): AnnotatedString {
     val bodySmall = MaterialTheme.typography.bodySmall.fontSize
-    val bodyFontFamily = bodyFontFamily
+    val bodyFontFamily = englishBodyFontFamily
     return buildAnnotatedString {
         withStyle(ParagraphStyle(textIndent = TextIndent(restLine = 30.sp))) {
             withStyle(

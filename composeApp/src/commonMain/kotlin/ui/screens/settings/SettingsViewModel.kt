@@ -2,7 +2,6 @@ package ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import di.setLanguage
@@ -13,12 +12,10 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
     fun onEvent(event: SettingsEvent) {
         when(event) {
             is SettingsEvent.SetLocale -> {
-                setLanguage(event.locale.code) {
-                    // Runs for all platforms except Android Tiramisu or later
-                    Logger.d("SETTINGS: Saving locale to preferences")
-                    viewModelScope.launch {
-                        preferences.put(PreferenceKey.LOCALE, event.locale.code)
-                    }
+                val languageCode = event.locale.code
+                setLanguage(languageCode)
+                viewModelScope.launch {
+                    preferences.put(PreferenceKey.LOCALE, languageCode)
                 }
             }
         }

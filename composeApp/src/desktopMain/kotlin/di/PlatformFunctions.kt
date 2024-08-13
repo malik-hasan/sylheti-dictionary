@@ -8,7 +8,6 @@ import java.util.Locale
 @Composable
 actual fun <T> StateFlow<T>.collectAsStateForPlatform() = collectAsStateWithLifecycle()
 
-actual fun setLanguage(languageCode: String, saveToPreferences: () -> Unit) {
+actual fun setLanguage(languageCode: String) {
     Locale.setDefault(Locale(languageCode))
-    saveToPreferences()
 }

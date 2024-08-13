@@ -42,6 +42,7 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
 import ui.components.SylhetiDictionaryTopBar
+import ui.theme.bengaliDisplayFontFamily
 
 @Serializable
 object SettingsRoute
@@ -108,7 +109,7 @@ fun SettingsScreen(
                     )
 
                     Row(Modifier.selectableGroup()) {
-                        Box(
+                        Column(
                             Modifier.selectable(
                                 interactionSource = null,
                                 indication = null,
@@ -117,11 +118,12 @@ fun SettingsScreen(
                                 selected = true
                                 onEvent(SettingsEvent.SetLocale(Locale.English))
                             }.fillMaxHeight().weight(1f),
-                            contentAlignment = Alignment.Center
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
                             Text("English")
                         }
-                        Box(
+                        Column(
                             Modifier.selectable(
                                 interactionSource = null,
                                 indication = null,
@@ -130,8 +132,10 @@ fun SettingsScreen(
                                 selected = false
                                 onEvent(SettingsEvent.SetLocale(Locale.Bengali))
                             }.fillMaxHeight().weight(1f),
-                            contentAlignment = Alignment.Center
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
+                            Text("ক", fontFamily = bengaliDisplayFontFamily)
                             Text("Bengali")
                         }
                     }

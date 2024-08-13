@@ -7,4 +7,4 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 expect fun <T> StateFlow<T>.collectAsStateForPlatform(): State<T>
 
-expect fun setLanguage(languageCode: String, saveToPreferences: () -> Unit = {})
+expect fun setLanguage(languageCode: String)
