@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import di.LocalDynamicTheme
 import di.LocalLocalization
 import kotlinx.serialization.Serializable
 import models.BN
@@ -37,10 +35,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.bengali
-import sylhetidictionary.composeapp.generated.resources.dynamic_theme
 import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
+import ui.components.DynamicThemeSetting
 import ui.components.LanguageButton
 import ui.components.SylhetiDictionaryTopBar
 
@@ -121,22 +119,7 @@ fun SettingsScreen(
                 }
             }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    painterResource(Res.drawable.dynamic_theme),
-                    stringResource(Res.string.language),
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-                Text(stringResource(Res.string.language), style = MaterialTheme.typography.bodyLarge)
-            }
-
-            Switch(
-                checked = LocalDynamicTheme.current,
-                onCheckedChange = { onEvent(SettingsEvent.ToggleDynamicTheme(it)) }
-            )
+            DynamicThemeSetting { onEvent(SettingsEvent.ToggleDynamicTheme(it)) }
         }
     }
 }

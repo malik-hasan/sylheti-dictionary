@@ -5,4 +5,5 @@
     <string name="language">ভাষা</string>
     <string name="english">ইংরেজি</string>
     <string name="bengali">বাংলা</string>
+    <string name="dynamic_theme">ওয়ালপেপার থিম ব্যবহার করুন</string>
 </resources>
