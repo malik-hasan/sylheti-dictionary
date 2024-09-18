@@ -87,7 +87,7 @@ dependencies {
         "kspIosArm64",
         "kspIosX64",
         "kspIosSimulatorArm64",
-//        "kspJvm"
+        "kspDesktop"
     ).forEach {
         add(it, libs.room.compiler)
     }
