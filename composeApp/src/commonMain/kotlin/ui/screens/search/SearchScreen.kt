@@ -150,7 +150,7 @@ fun SearchScreen(
                     shadowElevation = 6.dp,
                     tonalElevation = 50000.dp,
                     windowInsets = WindowInsets(0.dp),
-                    placeholder = { Text("Search dictionary") },
+                    placeholder = { Text(stringResource(Res.string.search_dictionary)) },
                     query = state.searchTerm,
                     onQueryChange = { onEvent(SearchEvent.UpdateSearchTerm(it)) },
                     onSearch = {

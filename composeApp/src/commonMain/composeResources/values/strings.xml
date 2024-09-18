@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sylheti_dictionary">Sylheti Dictionary</string>
+    <string name="search">Search</string>
+    <string name="search_dictionary">Search dictionary</string>
     <string name="settings">Settings</string>
     <string name="language">Language</string>
     <string name="english">English</string>

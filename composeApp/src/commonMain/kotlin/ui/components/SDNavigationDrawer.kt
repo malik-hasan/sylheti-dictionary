@@ -38,7 +38,7 @@ fun SDNavigationDrawer(content: @Composable () -> Unit) {
                         textAlign = TextAlign.Center
                     )
 
-                    SDNavigationDrawerItem("Search", SearchRoute)
+                    SDNavigationDrawerItem(stringResource(Res.string.search), SearchRoute)
 
                     SDNavigationDrawerItem(stringResource(Res.string.settings), SettingsRoute)
 
