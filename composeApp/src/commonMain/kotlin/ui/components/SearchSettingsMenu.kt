@@ -23,18 +23,18 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.search_language
 import sylhetidictionary.composeapp.generated.resources.search_parts
 import sylhetidictionary.composeapp.generated.resources.search_script
-import ui.screens.search.SearchEvent
-import ui.screens.search.SearchState
+import ui.screens.search.SearchSettingsEvent
+import ui.screens.search.SearchSettingsState
 
 @Composable
 fun SearchSettingsMenu(
-    state: SearchState,
-    onEvent: (SearchEvent) -> Unit
+    state: SearchSettingsState,
+    onEvent: (SearchSettingsEvent) -> Unit
 ) {
 
     DropdownMenu(
-        expanded = state.settingsMenuOpen,
-        onDismissRequest = { onEvent(SearchEvent.ToggleSettingsMenu(false)) }
+        expanded = state.menuExpanded,
+        onDismissRequest = { onEvent(SearchSettingsEvent.ToggleSettingsMenu(false)) }
     ) {
         Column(Modifier.padding(16.dp)) {
 
@@ -45,7 +45,9 @@ fun SearchSettingsMenu(
                         SegmentedButton(
                             modifier = Modifier.fillMaxHeight(),
                             checked = state.searchPositions[index],
-                            onCheckedChange = {},
+                            onCheckedChange = { checked ->
+                                onEvent(SearchSettingsEvent.SelectSearchPosition(index, checked))
+                            },
                             shape = SegmentedButtonDefaults.itemShape(index, size)
                         ) { Text(stringResource(searchPosition.label)) }
                     }

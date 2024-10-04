@@ -40,7 +40,6 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.search_dictionary
 import sylhetidictionary.composeapp.generated.resources.settings
@@ -55,19 +54,23 @@ import ui.utils.isScrollingUp
 @Serializable
 object SearchRoute
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
-    val state by vm.state.collectAsStateWithLifecycle()
+    val assetLoaded by vm.assetLoaded.collectAsStateWithLifecycle()
+    val searchState by vm.searchState.collectAsStateWithLifecycle()
+    val settingsState by vm.settingsState.collectAsStateWithLifecycle()
 
-    SearchScreen(state, vm::onEvent)
+    SearchScreen(assetLoaded, searchState, vm::onSearchEvent, settingsState, vm::onSettingsEvent)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    state: SearchState,
-    onEvent: (SearchEvent) -> Unit
+    assetLoaded: Boolean,
+    searchState: SearchState,
+    onSearchEvent: (SearchEvent) -> Unit,
+    settingsState: SearchSettingsState,
+    onSettingsEvent: (SearchSettingsEvent) -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -77,24 +80,23 @@ fun SearchScreen(
         topBar = {
             SylhetiDictionaryTopBar(stringResource(Res.string.sylheti_dictionary), scrollBehavior) {
                 Box {
-                    IconButton(onClick = { onEvent(SearchEvent.ToggleSettingsMenu(true)) }) {
+                    IconButton(onClick = { onSettingsEvent(SearchSettingsEvent.ToggleSettingsMenu(true)) }) {
                         Icon(
                             painterResource(Res.drawable.tune),
                             stringResource(Res.string.settings)
                         )
                     }
 
-                    SearchSettingsMenu(state.settingsMenuOpen) {
-                        onEvent(SearchEvent.ToggleSettingsMenu(false))
-                    }
+                    SearchSettingsMenu(settingsState, onSettingsEvent)
                 }
             }
         }
     ) { scaffoldPadding ->
+
         val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
 
-        if (!state.assetLoaded) {
+        if (!assetLoaded) {
             Text(
                 "There was an error loading the dictionary data. Try restarting the app, or report a bug if the problem persists.",
                 modifier = Modifier.fillMaxWidth().padding(scaffoldPadding),
@@ -118,8 +120,8 @@ fun SearchScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val searchResults = state.searchResults
-                val bookmarks = state.bookmarks
+                val searchResults = searchState.searchResults
+                val bookmarks = searchState.bookmarks
 
                 val items = searchResults?.let {
                     searchResults.ifEmpty {
@@ -130,7 +132,7 @@ fun SearchScreen(
 
                 items(items) { entry ->
                     EntryCard(entry) { entryId, isFavorite ->
-                        onEvent(SearchEvent.Bookmark(entryId, isFavorite))
+                        onSearchEvent(SearchEvent.Bookmark(entryId, isFavorite))
                     }
                 }
             }
@@ -143,44 +145,44 @@ fun SearchScreen(
                 SearchBar(
                     modifier = Modifier
                         .padding(scaffoldPadding)
-                        .ifTrue(!state.searchBarActive) { padding(horizontal = 8.dp) }
+                        .ifTrue(!searchState.searchBarActive) { padding(horizontal = 8.dp) }
                         .fillMaxWidth(),
                     inputField = {
                         SearchBarDefaults.InputField(
-                            query = state.searchTerm,
-                            onQueryChange = { onEvent(SearchEvent.UpdateSearchTerm(it)) },
+                            query = searchState.searchTerm,
+                            onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
                             onSearch = {
-                                onEvent(SearchEvent.Search)
+                                onSearchEvent(SearchEvent.Search)
                                 scope.launch {
                                     listState.scrollToItem(0)
                                 }
                             },
-                            expanded = state.searchBarActive,
-                            onExpandedChange = { onEvent(SearchEvent.SetSearchBarActive(it)) },
+                            expanded = searchState.searchBarActive,
+                            onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
                             placeholder = { Text(stringResource(Res.string.search_dictionary)) },
                             leadingIcon = {
-                                if (state.searchBarActive) {
-                                    IconButton({ onEvent(SearchEvent.SetSearchBarActive(false)) }) {
+                                if (searchState.searchBarActive) {
+                                    IconButton({ onSearchEvent(SearchEvent.SetSearchBarActive(false)) }) {
                                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
                                     }
                                 } else Icon(Icons.Default.Search, "Search")
                             },
                             trailingIcon = {
-                                if (state.searchBarActive || state.searchTerm.isNotBlank()) {
-                                    IconButton({ onEvent(SearchEvent.ClearSearchBar) }) {
+                                if (searchState.searchBarActive || searchState.searchTerm.isNotBlank()) {
+                                    IconButton({ onSearchEvent(SearchEvent.ClearSearchBar) }) {
                                         Icon(Icons.Default.Clear, "clear")
                                     }
                                 }
                             }
                         )
                     },
-                    expanded = state.searchBarActive,
-                    onExpandedChange = { onEvent(SearchEvent.SetSearchBarActive(it)) },
+                    expanded = searchState.searchBarActive,
+                    onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
                     tonalElevation = 50000.dp,
                     shadowElevation = 6.dp,
                     windowInsets = WindowInsets(0.dp)
                 ) {
-                    state.searchResults?.let { results ->
+                    searchState.searchResults?.let { results ->
                         LazyColumn {
                             if (results.isEmpty()) {
                                 item { Text("No suggestions") }
@@ -192,9 +194,7 @@ fun SearchScreen(
                                     text = word,
                                     modifier = Modifier
                                         .clickable {
-                                            onEvent(
-                                                SearchEvent.SelectSuggestion(word)
-                                            )
+                                            onSearchEvent(SearchEvent.SelectSuggestion(word))
                                         }
                                         .fillMaxWidth()
                                         .padding(vertical = 8.dp, horizontal = 16.dp)
