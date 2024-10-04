@@ -16,81 +16,85 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import models.search.settings.SearchPosition
 
-class SearchViewModel : ViewModel(), KoinComponent {
-
-    private val dictionaryDataSource: DictionaryDataSource by inject()
-    private val favoritesRepository: FavoritesRepository by inject()
-    private val preferencesRepository: PreferencesRepository by inject()
+class SearchViewModel(
+    private val dictionary: DictionaryDataSource,
+    private val favorites: FavoritesRepository,
+    private val preferences: PreferencesRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = combine(
-        _state,
-        favoritesRepository.getFavorites(),
-        preferencesRepository.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, 0)
-    ) { state, favorites, dictionaryVersion ->
-        state.copy(
-            bookmarks = favorites,
-            assetLoaded = dictionaryVersion >= 0
-        )
+        combine(
+            _state,
+            preferences.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, 0),
+            preferences.flow(PreferenceKey.SEARCH_BEGINNING, false),
+            preferences.flow(PreferenceKey.SEARCH_MIDDLE, false),
+            preferences.flow(PreferenceKey.SEARCH_END, false)
+        ) { state, dictionaryVersion, searchBeginning, searchMiddle, searchEnd ->
+            state.copy(
+                assetLoaded = dictionaryVersion >= 0,
+                searchPositions = listOf(searchBeginning, searchMiddle, searchEnd)
+            )
+        },
+        favorites.getFavorites(),
+    ) { state, favorites ->
+        state.copy(bookmarks = favorites)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), SearchState())
 
     private var searchJob: Job? = null
 
     fun onEvent(event: SearchEvent) {
         when (event) {
-            SearchEvent.Search -> { setSearchBarActive(false) }
-            is SearchEvent.SetSearchBarActive -> { setSearchBarActive(event.value) }
-            is SearchEvent.UpdateSearchTerm -> { updateSearchTerm(event.value) }
-            SearchEvent.ClearSearchBar -> {
-                if (_state.value.searchTerm.isBlank()) {
-                    setSearchBarActive(false)
-                } else updateSearchTerm("")
+            SearchEvent.Search -> setSearchBarActive(false)
+            is SearchEvent.SetSearchBarActive -> setSearchBarActive(event.value)
+            is SearchEvent.UpdateSearchTerm -> updateSearchTerm(event.value)
+            SearchEvent.ClearSearchBar -> if (_state.value.searchTerm.isBlank()) {
+                setSearchBarActive(false)
+            } else updateSearchTerm("")
+
+            is SearchEvent.SelectSuggestion -> updateSearchTerm(event.value) { error ->
+                if (error == null) setSearchBarActive(false)
             }
 
-            is SearchEvent.SelectSuggestion -> {
-                updateSearchTerm(event.value) { error ->
-                    if (error == null) setSearchBarActive(false)
+            is SearchEvent.Bookmark -> with(event) {
+                viewModelScope.launch {
+                    if (isBookmark) {
+                        favorites.addFavorite(entryId)
+                    } else {
+                        favorites.removeFavorite(entryId)
+                    }
                 }
             }
 
-            is SearchEvent.MarkFavorite -> {
+            is SearchEvent.ToggleSettingsMenu -> _state.update {
+                it.copy(settingsMenuOpen = event.value)
+            }
+
+            is SearchEvent.SelectSearchPosition -> with(event) {
                 viewModelScope.launch {
-                    if (event.isFavorite) {
-                        favoritesRepository.addFavorite(event.entryId)
-                    } else {
-                        favoritesRepository.removeFavorite(event.entryId)
-                    }
+                    preferences.put(SearchPosition.entries[index].settingsKey, selected)
                 }
             }
         }
     }
 
     private fun setSearchBarActive(value: Boolean) {
-        _state.update {
-            it.copy(searchBarActive = value)
-        }
+        _state.update { it.copy(searchBarActive = value) }
     }
 
     private fun updateSearchTerm(term: String, onCompletion: CompletionHandler = {}) {
         searchJob?.cancel()
-        _state.update {
-            it.copy(searchTerm = term)
-        }
+        _state.update { it.copy(searchTerm = term) }
         if (_state.value.searchTerm.isBlank()) {
-            _state.update {
-                it.copy(searchResults = null)
-            }
+            _state.update { it.copy(searchResults = null) }
         } else {
             searchJob = viewModelScope.launch {
                 Logger.d("SEARCH: Searching for $term")
-                val results = dictionaryDataSource.searchSylLatin("*$term*")
+                val results = dictionary.searchSylLatin("*$term*")
                 Logger.d("SEARCH: Found ${results.size}")
-                _state.update {
-                    it.copy(searchResults = results)
-                }
+                _state.update { it.copy(searchResults = results) }
             }
             searchJob?.invokeOnCompletion(onCompletion)
         }

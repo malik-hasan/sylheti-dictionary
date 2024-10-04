@@ -23,14 +23,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -44,6 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.search_dictionary
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
@@ -70,23 +69,23 @@ fun SearchScreen(
     state: SearchState,
     onEvent: (SearchEvent) -> Unit
 ) {
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var isSettingsMenuOpen by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SylhetiDictionaryTopBar(stringResource(Res.string.sylheti_dictionary), scrollBehavior) {
                 Box {
-                    IconButton(onClick = { isSettingsMenuOpen = true }) {
+                    IconButton(onClick = { onEvent(SearchEvent.ToggleSettingsMenu(true)) }) {
                         Icon(
                             painterResource(Res.drawable.tune),
                             stringResource(Res.string.settings)
                         )
                     }
 
-                    SearchSettingsMenu(isSettingsMenuOpen) {
-                        isSettingsMenuOpen = !isSettingsMenuOpen
+                    SearchSettingsMenu(state.settingsMenuOpen) {
+                        onEvent(SearchEvent.ToggleSettingsMenu(false))
                     }
                 }
             }
@@ -131,7 +130,7 @@ fun SearchScreen(
 
                 items(items) { entry ->
                     EntryCard(entry) { entryId, isFavorite ->
-                        onEvent(SearchEvent.MarkFavorite(entryId, isFavorite))
+                        onEvent(SearchEvent.Bookmark(entryId, isFavorite))
                     }
                 }
             }
@@ -141,40 +140,45 @@ fun SearchScreen(
                 enter = slideInVertically(),
                 exit = slideOutVertically()
             ) {
-
                 SearchBar(
                     modifier = Modifier
                         .padding(scaffoldPadding)
                         .ifTrue(!state.searchBarActive) { padding(horizontal = 8.dp) }
                         .fillMaxWidth(),
-                    shadowElevation = 6.dp,
+                    inputField = {
+                        SearchBarDefaults.InputField(
+                            query = state.searchTerm,
+                            onQueryChange = { onEvent(SearchEvent.UpdateSearchTerm(it)) },
+                            onSearch = {
+                                onEvent(SearchEvent.Search)
+                                scope.launch {
+                                    listState.scrollToItem(0)
+                                }
+                            },
+                            expanded = state.searchBarActive,
+                            onExpandedChange = { onEvent(SearchEvent.SetSearchBarActive(it)) },
+                            placeholder = { Text(stringResource(Res.string.search_dictionary)) },
+                            leadingIcon = {
+                                if (state.searchBarActive) {
+                                    IconButton({ onEvent(SearchEvent.SetSearchBarActive(false)) }) {
+                                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
+                                    }
+                                } else Icon(Icons.Default.Search, "Search")
+                            },
+                            trailingIcon = {
+                                if (state.searchBarActive || state.searchTerm.isNotBlank()) {
+                                    IconButton({ onEvent(SearchEvent.ClearSearchBar) }) {
+                                        Icon(Icons.Default.Clear, "clear")
+                                    }
+                                }
+                            }
+                        )
+                    },
+                    expanded = state.searchBarActive,
+                    onExpandedChange = { onEvent(SearchEvent.SetSearchBarActive(it)) },
                     tonalElevation = 50000.dp,
-                    windowInsets = WindowInsets(0.dp),
-                    placeholder = { Text(stringResource(Res.string.search_dictionary)) },
-                    query = state.searchTerm,
-                    onQueryChange = { onEvent(SearchEvent.UpdateSearchTerm(it)) },
-                    onSearch = {
-                        onEvent(SearchEvent.Search)
-                        scope.launch {
-                            listState.scrollToItem(0)
-                        }
-                    },
-                    active = state.searchBarActive,
-                    onActiveChange = { onEvent(SearchEvent.SetSearchBarActive(it)) },
-                    leadingIcon = {
-                        if (state.searchBarActive) {
-                            IconButton({ onEvent(SearchEvent.SetSearchBarActive(false)) }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "clear")
-                            }
-                        } else Icon(Icons.Default.Search, "Search")
-                    },
-                    trailingIcon = {
-                        if (state.searchBarActive || state.searchTerm.isNotBlank()) {
-                            IconButton({ onEvent(SearchEvent.ClearSearchBar) }) {
-                                Icon(Icons.Default.Clear, "clear")
-                            }
-                        }
-                    }
+                    shadowElevation = 6.dp,
+                    windowInsets = WindowInsets(0.dp)
                 ) {
                     state.searchResults?.let { results ->
                         LazyColumn {

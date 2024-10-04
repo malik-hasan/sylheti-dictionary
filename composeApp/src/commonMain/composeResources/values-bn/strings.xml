@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sylheti_dictionary">সিলেটি অভিধান</string>
+
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
+    <string name="search_parts">শব্দের কোন অংশে খোঁজা</string>
+    <string name="beginning">শুরুতে</string>
+    <string name="middle">মাঝে</string>
+    <string name="end">শেষে</string>
+    <string name="search_script">কোন লিপিতে খোঁজা</string>
+    <string name="search_language">কোন ভাষায় খোঁজা</string>
+
     <string name="settings">সেটিংস</string>
     <string name="language">ভাষা</string>
     <string name="english">ইংরেজি</string>

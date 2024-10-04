@@ -12,10 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import di.LocalDrawerState
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.search
 import sylhetidictionary.composeapp.generated.resources.settings
-import di.LocalDrawerState
 import ui.screens.search.SearchRoute
 import ui.screens.settings.SettingsRoute
 

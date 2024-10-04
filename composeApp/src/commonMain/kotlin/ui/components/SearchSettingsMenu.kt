@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -19,31 +18,41 @@ import androidx.compose.ui.unit.dp
 import models.search.settings.LatinSearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
+import org.jetbrains.compose.resources.stringResource
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.search_language
+import sylhetidictionary.composeapp.generated.resources.search_parts
+import sylhetidictionary.composeapp.generated.resources.search_script
+import ui.screens.search.SearchEvent
+import ui.screens.search.SearchState
 
 @Composable
 fun SearchSettingsMenu(
-    expanded: Boolean,
-    onDismiss: () -> Unit
+    state: SearchState,
+    onEvent: (SearchEvent) -> Unit
 ) {
-    DropdownMenu(expanded, onDismiss) {
+
+    DropdownMenu(
+        expanded = state.settingsMenuOpen,
+        onDismissRequest = { onEvent(SearchEvent.ToggleSettingsMenu(false)) }
+    ) {
         Column(Modifier.padding(16.dp)) {
-            Text("Part of word to search")
+
+            Text(stringResource(Res.string.search_parts))
             MultiChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
-                val searchPositions = SearchPosition.entries
-                searchPositions.forEachIndexed { index, searchPosition ->
-                    SegmentedButton(
-                        modifier = Modifier.fillMaxHeight(),
-                        checked = true,
-                        onCheckedChange = {},
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = searchPositions.size
-                        )
-                    ) {
-                        Text(searchPosition.name)
+                with(SearchPosition.entries) {
+                    forEachIndexed { index, searchPosition ->
+                        SegmentedButton(
+                            modifier = Modifier.fillMaxHeight(),
+                            checked = state.searchPositions[index],
+                            onCheckedChange = {},
+                            shape = SegmentedButtonDefaults.itemShape(index, size)
+                        ) { Text(stringResource(searchPosition.label)) }
                     }
                 }
             }
-            Text("Search script")
+
+            Text(stringResource(Res.string.search_script))
             SingleChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
                 val searchScripts = SearchScript.entries
                 searchScripts.forEachIndexed { index, searchScript ->
@@ -61,7 +70,8 @@ fun SearchSettingsMenu(
                     }
                 }
             }
-            Text("Search language")
+
+            Text(stringResource(Res.string.search_language))
             MultiChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
                 val searchLanguages = LatinSearchLanguage.entries
                 searchLanguages.forEachIndexed { index, searchLanguage ->

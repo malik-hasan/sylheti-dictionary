@@ -87,14 +87,12 @@ fun SettingsScreen(
                     .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                     .height(150.dp)
             ) {
-                val offset by animateDpAsState(
-                    targetValue = if (locale == BN) maxWidth * .48f else 0.dp
-                )
+                val offset by animateDpAsState(if (locale == BN) maxWidth * .48f else 0.dp)
 
                 // Indicator
                 Box(
                     Modifier
-                        .offset(x = offset)
+                        .offset(offset)
                         .fillMaxWidth(0.52f)
                         .padding(8.dp)
                         .clip(RoundedCornerShape(10.dp))
