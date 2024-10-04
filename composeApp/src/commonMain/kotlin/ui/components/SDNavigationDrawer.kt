@@ -26,9 +26,7 @@ fun SDNavigationDrawer(content: @Composable () -> Unit) {
         drawerState = LocalDrawerState.current,
         drawerContent = {
             ModalDrawerSheet {
-                Column(
-                    Modifier.padding(8.dp)
-                ) {
+                Column(Modifier.padding(8.dp)) {
 
                     Text(
                         text = "Sylheti Dictionary",
