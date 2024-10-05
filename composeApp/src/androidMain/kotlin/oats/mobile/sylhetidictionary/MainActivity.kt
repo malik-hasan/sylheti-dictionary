@@ -8,12 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import co.touchlab.kermit.Logger
-import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.launch
-import models.EN
+import models.Language
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.util.Locale
 
 class MainActivity : AppCompatActivity(), KoinComponent {
 
@@ -30,10 +30,10 @@ class MainActivity : AppCompatActivity(), KoinComponent {
     override fun onResume() {
         super.onResume()
 
-        val languageCode = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: EN
-        Logger.d("LOCALE: Refreshing locale preference: $languageCode")
+        val locale = AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.getDefault()
+        Logger.d("LOCALE: Refreshing language preference from: $locale")
         lifecycleScope.launch {
-            preferences.put(PreferenceKey.LOCALE, languageCode)
+            preferences.setLanguage(Language.fromCode(locale.language))
         }
     }
 }

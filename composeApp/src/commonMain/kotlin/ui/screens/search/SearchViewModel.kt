@@ -119,17 +119,17 @@ class SearchViewModel(
 
             is SelectPosition -> with(event) {
                 viewModelScope.launch {
-                    preferences.put(position.settingsKey, selected)
+                    preferences.set(position.settingsKey, selected)
                 }
             }
 
             is SelectScript -> viewModelScope.launch {
-                preferences.put(PreferenceKey.SEARCH_SCRIPT, event.script.ordinal)
+                preferences.set(PreferenceKey.SEARCH_SCRIPT, event.script.ordinal)
             }
 
             is SearchSettingsEvent.SelectLanguage -> with(event) {
                 viewModelScope.launch {
-                    preferences.put(language.settingsKey, selected)
+                    preferences.set(language.settingsKey, selected)
                 }
             }
         }

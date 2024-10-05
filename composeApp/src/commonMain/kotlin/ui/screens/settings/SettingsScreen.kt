@@ -27,15 +27,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import di.LocalLocalization
 import kotlinx.serialization.Serializable
-import models.BN
-import models.EN
+import models.Language
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 import sylhetidictionary.composeapp.generated.resources.Res
-import sylhetidictionary.composeapp.generated.resources.bengali
-import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
 import ui.components.DynamicThemeSetting
@@ -45,7 +41,6 @@ import ui.components.SylhetiDictionaryTopBar
 @Serializable
 object SettingsRoute
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
     SettingsScreen(vm::onEvent)
@@ -55,7 +50,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 @Composable
 fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
-    locale: String = LocalLocalization.current
+    locale: Language = LocalLocalization.current
 ) {
 
     Scaffold(
@@ -87,7 +82,7 @@ fun SettingsScreen(
                     .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                     .height(150.dp)
             ) {
-                val offset by animateDpAsState(if (locale == BN) maxWidth * .48f else 0.dp)
+                val offset by animateDpAsState(if (locale == Language.BN) maxWidth * .48f else 0.dp)
 
                 // Indicator
                 Box(
@@ -101,19 +96,11 @@ fun SettingsScreen(
                 )
 
                 Row(Modifier.selectableGroup()) {
-                    LanguageButton(
-                        indicator = 'A',
-                        language = stringResource(Res.string.english),
-                        languageCode = EN,
-                        selected = locale != BN
-                    ) { onEvent(SettingsEvent.SetLocale(it)) }
-
-                    LanguageButton(
-                        indicator = 'ক',
-                        language = stringResource(Res.string.bengali),
-                        languageCode = BN,
-                        selected = locale == BN
-                    ) { onEvent(SettingsEvent.SetLocale(it)) }
+                    Language.entries.forEach { language ->
+                        LanguageButton(
+                            language = language,
+                        ) { onEvent(SettingsEvent.SetLanguage(language)) }
+                    }
                 }
             }
 

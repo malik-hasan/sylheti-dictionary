@@ -10,14 +10,14 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import models.EN
+import models.Language
 import org.koin.compose.viewmodel.koinViewModel
 import ui.AppViewModel
 
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController provided") }
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
 val LocalDynamicTheme = compositionLocalOf { true }
-val LocalLocalization = staticCompositionLocalOf { EN }
+val LocalLocalization = staticCompositionLocalOf { Language.EN }
 
 @Composable
 fun SDProvider(

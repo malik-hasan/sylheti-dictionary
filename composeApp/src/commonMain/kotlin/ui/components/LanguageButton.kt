@@ -12,25 +12,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import models.BN
+import di.LocalLocalization
+import models.Language
+import org.jetbrains.compose.resources.stringResource
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.englishDisplayFontFamily
 
 @Composable
 fun RowScope.LanguageButton(
-    indicator: Char,
-    language: String,
-    languageCode: String,
-    selected: Boolean,
-    onSelect: (languageCode: String) -> Unit
+    language: Language,
+    locale: Language = LocalLocalization.current,
+    onSelect: (Language) -> Unit
 ) {
+    val selected = language == locale
+
     Column(
         modifier = Modifier
             .selectable(
                 interactionSource = null,
                 indication = null,
                 selected = selected,
-                onClick = { onSelect(languageCode) }
+                onClick = { onSelect(language) }
             )
             .weight(1f)
             .fillMaxHeight(),
@@ -38,12 +40,12 @@ fun RowScope.LanguageButton(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = indicator.toString(),
+            text = language.indicator.toString(),
             style = MaterialTheme.typography.displayLarge,
-            fontFamily = if (languageCode == BN) bengaliBodyFontFamily else englishDisplayFontFamily,
+            fontFamily = if (language == Language.BN) bengaliBodyFontFamily else englishDisplayFontFamily,
             fontWeight = FontWeight.Medium,
             color = if (selected) MaterialTheme.colorScheme.primary else Color.Unspecified
         )
-        Text(language, style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(language.label), style = MaterialTheme.typography.titleMedium)
     }
 }

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import models.BN
+import models.Language
 import org.jetbrains.compose.resources.Font
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.merriweather_black
@@ -23,12 +23,12 @@ import sylhetidictionary.composeapp.generated.resources.tiro_bangla
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla_italic
 
 @Composable
-fun getBodyFontFamily(languageCode: String) =
-    if (languageCode == BN) bengaliBodyFontFamily else englishBodyFontFamily
+fun getBodyFontFamily(language: Language) =
+    if (language == Language.BN) bengaliBodyFontFamily else englishBodyFontFamily
 
 @Composable
-fun getDisplayFontFamily(languageCode: String) =
-    if (languageCode == BN) bengaliDisplayFontFamily else englishDisplayFontFamily
+fun getDisplayFontFamily(language: Language) =
+    if (language == Language.BN) bengaliDisplayFontFamily else englishDisplayFontFamily
 
 val englishBodyFontFamily
     @Composable
@@ -62,10 +62,10 @@ val bengaliDisplayFontFamily
     get() = FontFamily(Font(Res.font.noto_sans_bengali))
 
 @Composable
-fun getTypography(languageCode: String): Typography {
+fun getTypography(language: Language): Typography {
 
-    val bodyFontFamily = getBodyFontFamily(languageCode)
-    val displayFontFamily = getDisplayFontFamily(languageCode)
+    val bodyFontFamily = getBodyFontFamily(language)
+    val displayFontFamily = getDisplayFontFamily(language)
 
     return with(Typography()) {
         Typography(

@@ -5,23 +5,20 @@ import androidx.lifecycle.viewModelScope
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.launch
-import utility.setLocale
 
 class SettingsViewModel(private val preferences: PreferencesRepository): ViewModel() {
 
     fun onEvent(event: SettingsEvent) {
         when(event) {
-            is SettingsEvent.SetLocale -> {
-                val languageCode = event.languageCode
-                setLocale(languageCode)
+            is SettingsEvent.SetLanguage -> with(event) {
                 viewModelScope.launch {
-                    preferences.put(PreferenceKey.LOCALE, languageCode)
+                    preferences.setLanguage(language)
                 }
             }
 
             is SettingsEvent.ToggleDynamicTheme -> {
                 viewModelScope.launch {
-                    preferences.put(PreferenceKey.DYNAMIC_THEME, event.value)
+                    preferences.set(PreferenceKey.DYNAMIC_THEME, event.value)
                 }
             }
         }

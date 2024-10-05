@@ -63,7 +63,7 @@ fun MainViewController() = ComposeUIViewController(
                         DictionaryAssetVersion
                     } else -1 // failure
 
-                    preferences.put(PreferenceKey.CURRENT_DICTIONARY_VERSION, dictionaryVersion)
+                    preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, dictionaryVersion)
                 }
             }
         }

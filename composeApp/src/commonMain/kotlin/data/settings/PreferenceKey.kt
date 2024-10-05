@@ -16,6 +16,6 @@ object PreferenceKey {
     val BENGALI_SCRIPT_BENGALI = booleanPreferencesKey("BENGALI_SCRIPT_BENGALI")
     val BENGALI_SCRIPT_SYLHETI = booleanPreferencesKey("BENGALI_SCRIPT_SYLHETI")
 
-    val LOCALE = stringPreferencesKey("LOCALE")
+    val LANGUAGE = stringPreferencesKey("LANGUAGE")
     val DYNAMIC_THEME = booleanPreferencesKey("DYNAMIC_THEME")
 }

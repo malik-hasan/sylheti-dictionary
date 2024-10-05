@@ -10,8 +10,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import models.Language
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
+import utility.setAppOSLanguage
 
 class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 
@@ -22,15 +24,11 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
             } else throw exception
         }
 
-    fun <T> flow(key: Preferences.Key<T>, default: T): Flow<T> =
-        safePreferencesFlow.map { it[key] ?: default }
-
     suspend fun <T> get(key: Preferences.Key<T>): T? =
         safePreferencesFlow.first()[key]
 
-    suspend fun <T> put(key: Preferences.Key<T>, value: T) {
-        preferences.edit { it[key] = value }
-    }
+    fun <T> flow(key: Preferences.Key<T>, default: T): Flow<T> =
+        safePreferencesFlow.map { it[key] ?: default }
 
     val searchPositionsFlow: Flow<List<Boolean>>
         get() {
@@ -51,4 +49,18 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 
             return combine(*languageFlows) { it.toMap() }
         }
+
+    val languageFlow: Flow<Language>
+        get() = flow(PreferenceKey.LANGUAGE, Language.EN.code).map { code ->
+            Language.fromCode(code)
+        }
+
+    suspend fun <T> set(key: Preferences.Key<T>, value: T) {
+        preferences.edit { it[key] = value }
+    }
+
+    suspend fun setLanguage(language: Language) {
+        setAppOSLanguage(language)
+        set(PreferenceKey.LANGUAGE, language.code)
+    }
 }

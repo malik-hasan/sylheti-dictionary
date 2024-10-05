@@ -11,11 +11,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import models.Language
 
 @Composable
 actual fun SylhetiDictionaryTheme(
     darkTheme: Boolean,
-    languageCode: String,
+    language: Language,
     dynamicTheme: Boolean,
     content: @Composable () -> Unit
 ) {
@@ -41,7 +42,7 @@ actual fun SylhetiDictionaryTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = getTypography(languageCode),
+        typography = getTypography(language),
         content = content
     )
 }
