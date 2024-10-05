@@ -12,7 +12,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import models.EN
 import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 import ui.AppViewModel
 
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController provided") }
@@ -20,7 +19,6 @@ val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
 val LocalDynamicTheme = compositionLocalOf { true }
 val LocalLocalization = staticCompositionLocalOf { EN }
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SDProvider(
     appViewModel: AppViewModel = koinViewModel(),
