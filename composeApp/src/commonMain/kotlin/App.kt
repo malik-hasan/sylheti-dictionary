@@ -10,13 +10,13 @@ import ui.screens.search.SearchRoute
 import ui.screens.search.SearchScreen
 import ui.screens.settings.SettingsRoute
 import ui.screens.settings.SettingsScreen
-import ui.theme.SylhetiDictionaryTheme
+import ui.theme.SDTheme
 
 @Composable
 fun App() {
     KoinContext {
         SDProvider {
-            SylhetiDictionaryTheme {
+            SDTheme {
                 SDNavigationDrawer {
                     NavHost(LocalNavController.current, SearchRoute) {
                         composable<SearchRoute> {

@@ -14,7 +14,7 @@ import androidx.core.view.WindowCompat
 import models.Language
 
 @Composable
-actual fun SylhetiDictionaryTheme(
+actual fun SDTheme(
     darkTheme: Boolean,
     language: Language,
     dynamicTheme: Boolean,

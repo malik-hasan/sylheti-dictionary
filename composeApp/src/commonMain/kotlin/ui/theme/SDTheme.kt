@@ -7,7 +7,7 @@ import di.LocalLanguage
 import models.Language
 
 @Composable
-expect fun SylhetiDictionaryTheme(
+expect fun SDTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     language: Language = LocalLanguage.current,
     dynamicTheme: Boolean = LocalDynamicTheme.current,
