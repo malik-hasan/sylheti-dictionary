@@ -4,11 +4,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import di.LocalNavController
 import di.SDProvider
+import models.Route
 import org.koin.compose.KoinContext
 import ui.components.SDNavigationDrawer
-import ui.screens.search.SearchRoute
 import ui.screens.search.SearchScreen
-import ui.screens.settings.SettingsRoute
 import ui.screens.settings.SettingsScreen
 import ui.theme.SDTheme
 
@@ -18,11 +17,11 @@ fun App() {
         SDProvider {
             SDTheme {
                 SDNavigationDrawer {
-                    NavHost(LocalNavController.current, SearchRoute) {
-                        composable<SearchRoute> {
+                    NavHost(LocalNavController.current, Route.Search) {
+                        composable<Route.Search> {
                             SearchScreen()
                         }
-                        composable<SettingsRoute> {
+                        composable<Route.Settings> {
                             SettingsScreen()
                         }
                     }

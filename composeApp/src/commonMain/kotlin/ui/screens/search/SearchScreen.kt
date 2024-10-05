@@ -51,9 +51,6 @@ import ui.components.SylhetiDictionaryTopBar
 import ui.utils.ifTrue
 import ui.utils.isScrollingUp
 
-@Serializable
-object SearchRoute
-
 @Composable
 fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
     val assetLoaded by vm.assetLoaded.collectAsStateWithLifecycle()

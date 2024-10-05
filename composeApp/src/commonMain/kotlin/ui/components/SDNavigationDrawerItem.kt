@@ -11,11 +11,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import di.LocalDrawerState
 import di.LocalNavController
 import kotlinx.coroutines.launch
+import models.Route
 
 @Composable
 fun SDNavigationDrawerItem(
     label: String,
-    route: Any,
+    route: Route,
     navController: NavHostController = LocalNavController.current,
     drawerState: DrawerState = LocalDrawerState.current
 ) {

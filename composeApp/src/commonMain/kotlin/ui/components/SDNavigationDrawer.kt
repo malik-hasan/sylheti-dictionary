@@ -13,12 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import di.LocalDrawerState
+import models.Route
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.search
 import sylhetidictionary.composeapp.generated.resources.settings
-import ui.screens.search.SearchRoute
-import ui.screens.settings.SettingsRoute
 
 @Composable
 fun SDNavigationDrawer(content: @Composable () -> Unit) {
@@ -37,9 +36,9 @@ fun SDNavigationDrawer(content: @Composable () -> Unit) {
                         textAlign = TextAlign.Center
                     )
 
-                    SDNavigationDrawerItem(stringResource(Res.string.search), SearchRoute)
+                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search)
 
-                    SDNavigationDrawerItem(stringResource(Res.string.settings), SettingsRoute)
+                    SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings)
 
                     NavigationDrawerItem(
                         label = { Text("Domains") },

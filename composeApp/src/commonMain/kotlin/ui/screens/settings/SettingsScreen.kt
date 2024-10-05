@@ -38,9 +38,6 @@ import ui.components.DynamicThemeSetting
 import ui.components.LanguageButton
 import ui.components.SylhetiDictionaryTopBar
 
-@Serializable
-object SettingsRoute
-
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
     SettingsScreen(vm::onEvent)
