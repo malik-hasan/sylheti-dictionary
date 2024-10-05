@@ -98,9 +98,9 @@ class SearchViewModel(
     val settingsState = stateFlowOf(SearchSettingsState(),
         combine(
             _settingsState,
-            preferences.searchPositionsFlow,
-            preferences.flow(PreferenceKey.SEARCH_SCRIPT, 0),
-            preferences.searchLanguagesFlow
+            preferences.searchPositions,
+            preferences.searchScript,
+            preferences.searchLanguages
         ) { state, positions, scriptOrdinal, languages ->
             val script = SearchScript.entries[scriptOrdinal]
             state.copy(

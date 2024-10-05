@@ -11,7 +11,7 @@ import utility.refreshLanguage
 
 class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
 
-    val language = stateFlowOf(Language.EN, preferences.languageFlow)
+    val language = stateFlowOf(Language.EN, preferences.language)
 
     fun refreshLanguage() {
         viewModelScope.launch {

@@ -29,19 +29,22 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
     fun <T> flow(key: Preferences.Key<T>, default: T): Flow<T> =
         safePreferencesFlow.map { it[key] ?: default }
 
-    val searchPositionsFlow: Flow<List<Boolean>>
+    val searchPositions: Flow<List<Boolean>>
         get() {
             val positionFlows = SearchPosition.entries.map {
-                flow(it.settingsKey, false)
+                flow(it.settingsKey, true)
             }.toTypedArray()
 
             return combine(*positionFlows) { it.toList() }
         }
 
-    val searchLanguagesFlow: Flow<Map<SearchLanguage, Boolean>>
+    val searchScript: Flow<Int>
+        get() = flow(PreferenceKey.SEARCH_SCRIPT, 0)
+
+    val searchLanguages: Flow<Map<SearchLanguage, Boolean>>
         get() {
             val languageFlows = SearchLanguage.entries.map { language ->
-                flow(language.settingsKey, false).map { value ->
+                flow(language.settingsKey, true).map { value ->
                     language to value
                 }
             }.toTypedArray()
@@ -49,7 +52,7 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
             return combine(*languageFlows) { it.toMap() }
         }
 
-    val languageFlow: Flow<Language>
+    val language: Flow<Language>
         get() = flow(PreferenceKey.LANGUAGE, Language.EN.code).map(Language::fromCode)
 
     suspend fun <T> set(key: Preferences.Key<T>, value: T) {
