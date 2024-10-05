@@ -4,16 +4,23 @@
 
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
+
     <string name="search_parts">শব্দের কোন অংশে খোঁজা</string>
     <string name="beginning">শুরুতে</string>
     <string name="middle">মাঝে</string>
     <string name="end">শেষে</string>
+
     <string name="search_script">কোন লিপিতে খোঁজা</string>
-    <string name="search_language">কোন ভাষায় খোঁজা</string>
+    <string name="auto">অটোমেটিক</string>
+    <string name="latin_ipa">রোমান/আধ্বব</string>
+    <string name="bengali">বাংলা</string>
+    <string name="nagri">নাগরি</string>
+
+    <string name="search_languages">কোন ভাষায় খোঁজা</string>
+    <string name="english">ইংরেজি</string>
+    <string name="sylheti">সিলেটি</string>
 
     <string name="settings">সেটিংস</string>
     <string name="language">ভাষা</string>
-    <string name="english">ইংরেজি</string>
-    <string name="bengali">বাংলা</string>
     <string name="dynamic_theme">ওয়ালপেপার থিম ব্যবহার করুন</string>
 </resources>

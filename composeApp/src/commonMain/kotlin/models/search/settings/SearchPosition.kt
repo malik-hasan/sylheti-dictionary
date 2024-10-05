@@ -9,7 +9,7 @@ import sylhetidictionary.composeapp.generated.resources.end
 import sylhetidictionary.composeapp.generated.resources.middle
 
 enum class SearchPosition(val settingsKey: Preferences.Key<Boolean>, val label: StringResource) {
-    Beginning(PreferenceKey.SEARCH_BEGINNING, Res.string.beginning),
-    Middle(PreferenceKey.SEARCH_MIDDLE, Res.string.middle),
-    End(PreferenceKey.SEARCH_END, Res.string.end)
+    BEGINNING(PreferenceKey.SEARCH_BEGINNING, Res.string.beginning),
+    MIDDLE(PreferenceKey.SEARCH_MIDDLE, Res.string.middle),
+    END(PreferenceKey.SEARCH_END, Res.string.end);
 }

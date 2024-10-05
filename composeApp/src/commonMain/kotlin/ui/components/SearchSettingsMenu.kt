@@ -1,9 +1,7 @@
 package ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
@@ -13,14 +11,12 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import models.search.settings.LatinSearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
-import sylhetidictionary.composeapp.generated.resources.search_language
+import sylhetidictionary.composeapp.generated.resources.search_languages
 import sylhetidictionary.composeapp.generated.resources.search_parts
 import sylhetidictionary.composeapp.generated.resources.search_script
 import ui.screens.search.SearchSettingsEvent
@@ -36,56 +32,58 @@ fun SearchSettingsMenu(
         expanded = state.menuExpanded,
         onDismissRequest = { onEvent(SearchSettingsEvent.ToggleSettingsMenu(false)) }
     ) {
-        Column(Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
 
-            Text(stringResource(Res.string.search_parts))
-            MultiChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
-                with(SearchPosition.entries) {
-                    forEachIndexed { index, searchPosition ->
-                        SegmentedButton(
-                            modifier = Modifier.fillMaxHeight(),
-                            checked = state.searchPositions[index],
-                            onCheckedChange = { checked ->
-                                onEvent(SearchSettingsEvent.SelectSearchPosition(index, checked))
-                            },
-                            shape = SegmentedButtonDefaults.itemShape(index, size)
-                        ) { Text(stringResource(searchPosition.label)) }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(Res.string.search_parts), Modifier.padding(start = 8.dp))
+                MultiChoiceSegmentedButtonRow {
+                    with(SearchPosition.entries) {
+                        forEachIndexed { i, position ->
+                            SegmentedButton(
+                                checked = state.positions[i],
+                                onCheckedChange = { checked ->
+                                    onEvent(SearchSettingsEvent.SelectPosition(position, checked))
+                                },
+                                shape = SegmentedButtonDefaults.itemShape(i, size)
+                            ) { Text(stringResource(position.label)) }
+                        }
                     }
                 }
             }
 
-            Text(stringResource(Res.string.search_script))
-            SingleChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
-                val searchScripts = SearchScript.entries
-                searchScripts.forEachIndexed { index, searchScript ->
-                    SegmentedButton(
-                        modifier = Modifier.fillMaxHeight(),
-                        selected = false,
-                        onClick = {},
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = searchScripts.size
-                        )
-                    ) {
-                        Text(
-                            searchScript.toString(), textAlign = TextAlign.Center
-                        )
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(Res.string.search_script), Modifier.padding(start = 8.dp))
+                SingleChoiceSegmentedButtonRow {
+                    with(SearchScript.entries) {
+                        forEachIndexed { i, script ->
+                            SegmentedButton(
+                                selected = state.script == script,
+                                onClick = { onEvent(SearchSettingsEvent.SelectScript(script)) },
+                                shape = SegmentedButtonDefaults.itemShape(i, size)
+                            ) { Text(stringResource(script.label)) }
+                        }
                     }
                 }
             }
 
-            Text(stringResource(Res.string.search_language))
-            MultiChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
-                val searchLanguages = LatinSearchLanguage.entries
-                searchLanguages.forEachIndexed { index, searchLanguage ->
-                    SegmentedButton(
-                        modifier = Modifier.fillMaxHeight(),
-                        checked = true,
-                        onCheckedChange = {},
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index, count = searchLanguages.size
-                        )
-                    ) {
-                        Text(searchLanguage.toString())
+            with(state.languages.toList()) {
+                if (isNotEmpty()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(stringResource(Res.string.search_languages), Modifier.padding(start = 8.dp))
+                        MultiChoiceSegmentedButtonRow {
+                            forEachIndexed { i, (language, checked) ->
+                                SegmentedButton(
+                                    checked = checked,
+                                    onCheckedChange = { selected ->
+                                        onEvent(SearchSettingsEvent.SelectLanguage(language, selected))
+                                    },
+                                    shape = SegmentedButtonDefaults.itemShape(i, size)
+                                ) { Text(stringResource(language.label)) }
+                            }
+                        }
                     }
                 }
             }

@@ -10,12 +10,20 @@ import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import models.search.settings.SearchPosition
+import models.search.settings.SearchScript
+import ui.screens.search.SearchEvent.Bookmark
+import ui.screens.search.SearchEvent.ClearSearchBar
+import ui.screens.search.SearchEvent.Search
+import ui.screens.search.SearchEvent.SelectSuggestion
+import ui.screens.search.SearchEvent.SetSearchBarActive
+import ui.screens.search.SearchEvent.UpdateSearchTerm
+import ui.screens.search.SearchSettingsEvent.SelectPosition
+import ui.screens.search.SearchSettingsEvent.SelectScript
+import ui.screens.search.SearchSettingsEvent.ToggleSettingsMenu
 import ui.utils.stateFlowOf
 
 class SearchViewModel(
@@ -24,17 +32,13 @@ class SearchViewModel(
     private val preferences: PreferencesRepository
 ) : ViewModel() {
 
-    // default to true so that error state doesn't show unless it actually fails
-    private val _assetLoaded = MutableStateFlow(true)
-    val assetLoaded: StateFlow<Boolean> = stateFlowOf(true,
-        preferences.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, 0)
-            .map { dictionaryVersion ->
-                dictionaryVersion >= 0
-            }
+    // default to true so that error state doesn't show while loading, only after it actually fails
+    val assetLoaded = stateFlowOf(true,
+        preferences.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, 0).map { it >= 0 }
     )
 
     private val _searchState = MutableStateFlow(SearchState())
-    val searchState: StateFlow<SearchState> = stateFlowOf(SearchState(),
+    val searchState = stateFlowOf(SearchState(),
         combine(
             _searchState,
             favorites.getFavorites()
@@ -47,18 +51,18 @@ class SearchViewModel(
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
-            SearchEvent.Search -> setSearchBarActive(false)
-            is SearchEvent.SetSearchBarActive -> setSearchBarActive(event.value)
-            is SearchEvent.UpdateSearchTerm -> updateSearchTerm(event.value)
-            SearchEvent.ClearSearchBar -> if (_searchState.value.searchTerm.isBlank()) {
+            is SetSearchBarActive -> setSearchBarActive(event.value)
+            is UpdateSearchTerm -> updateSearchTerm(event.value)
+            Search -> setSearchBarActive(false)
+            ClearSearchBar -> if (_searchState.value.searchTerm.isBlank()) {
                 setSearchBarActive(false)
             } else updateSearchTerm("")
 
-            is SearchEvent.SelectSuggestion -> updateSearchTerm(event.value) { error ->
+            is SelectSuggestion -> updateSearchTerm(event.value) { error ->
                 if (error == null) setSearchBarActive(false)
             }
 
-            is SearchEvent.Bookmark -> with(event) {
+            is Bookmark -> with(event) {
                 viewModelScope.launch {
                     if (isBookmark) {
                         favorites.addFavorite(entryId)
@@ -94,21 +98,38 @@ class SearchViewModel(
     val settingsState = stateFlowOf(SearchSettingsState(),
         combine(
             _settingsState,
-            preferences.searchPositionFlow
-        ) { state, positions ->
-            state.copy(searchPositions = positions)
+            preferences.searchPositionsFlow,
+            preferences.flow(PreferenceKey.SEARCH_SCRIPT, 0),
+            preferences.searchLanguagesFlow
+        ) { state, positions, scriptOrdinal, languages ->
+            val script = SearchScript.entries[scriptOrdinal]
+            state.copy(
+                positions = positions,
+                script = script,
+                languages = languages.filterKeys { it in script.languages }
+            )
         }
     )
 
     fun onSettingsEvent(event: SearchSettingsEvent) {
         when (event) {
-            is SearchSettingsEvent.ToggleSettingsMenu -> _settingsState.update {
+            is ToggleSettingsMenu -> _settingsState.update {
                 it.copy(menuExpanded = event.value)
             }
 
-            is SearchSettingsEvent.SelectSearchPosition -> with(event) {
+            is SelectPosition -> with(event) {
                 viewModelScope.launch {
-                    preferences.put(SearchPosition.entries[index].settingsKey, selected)
+                    preferences.put(position.settingsKey, selected)
+                }
+            }
+
+            is SelectScript -> viewModelScope.launch {
+                preferences.put(PreferenceKey.SEARCH_SCRIPT, event.script.ordinal)
+            }
+
+            is SearchSettingsEvent.SelectLanguage -> with(event) {
+                viewModelScope.launch {
+                    preferences.put(language.settingsKey, selected)
                 }
             }
         }

@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import models.search.settings.SearchLanguage
+import models.search.settings.SearchPosition
 
 class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 
@@ -30,12 +32,23 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
         preferences.edit { it[key] = value }
     }
 
-    val searchPositionFlow: Flow<List<Boolean>>
-        get() = combine(
-            flow(PreferenceKey.SEARCH_BEGINNING, false),
-            flow(PreferenceKey.SEARCH_MIDDLE, false),
-            flow(PreferenceKey.SEARCH_END, false)
-        ) { beginning, middle, end ->
-            listOf(beginning, middle, end)
+    val searchPositionsFlow: Flow<List<Boolean>>
+        get() {
+            val positionFlows = SearchPosition.entries.map {
+                flow(it.settingsKey, false)
+            }.toTypedArray()
+
+            return combine(*positionFlows) { it.toList() }
+        }
+
+    val searchLanguagesFlow: Flow<Map<SearchLanguage, Boolean>>
+        get() {
+            val languageFlows = SearchLanguage.entries.map { language ->
+                flow(language.settingsKey, false).map { value ->
+                    language to value
+                }
+            }.toTypedArray()
+
+            return combine(*languageFlows) { it.toMap() }
         }
 }

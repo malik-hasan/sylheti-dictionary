@@ -5,10 +5,17 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object PreferenceKey {
-    val CURRENT_DICTIONARY_VERSION = intPreferencesKey("dictionary_version")
-    val SEARCH_BEGINNING = booleanPreferencesKey("search_beginning")
-    val SEARCH_MIDDLE = booleanPreferencesKey("search_middle")
-    val SEARCH_END = booleanPreferencesKey("search_end")
-    val LOCALE = stringPreferencesKey("locale")
-    val DYNAMIC_THEME = booleanPreferencesKey("dynamic_theme")
+    val CURRENT_DICTIONARY_VERSION = intPreferencesKey("CURRENT_DICTIONARY_VERSION")
+
+    val SEARCH_BEGINNING = booleanPreferencesKey("SEARCH_BEGINNING")
+    val SEARCH_MIDDLE = booleanPreferencesKey("SEARCH_MIDDLE")
+    val SEARCH_END = booleanPreferencesKey("SEARCH_END")
+    val SEARCH_SCRIPT = intPreferencesKey("SEARCH_SCRIPT")
+    val LATIN_SCRIPT_ENGLISH = booleanPreferencesKey("LATIN_SCRIPT_ENGLISH")
+    val LATIN_SCRIPT_SYLHETI = booleanPreferencesKey("LATIN_SCRIPT_SYLHETI")
+    val BENGALI_SCRIPT_BENGALI = booleanPreferencesKey("BENGALI_SCRIPT_BENGALI")
+    val BENGALI_SCRIPT_SYLHETI = booleanPreferencesKey("BENGALI_SCRIPT_SYLHETI")
+
+    val LOCALE = stringPreferencesKey("LOCALE")
+    val DYNAMIC_THEME = booleanPreferencesKey("DYNAMIC_THEME")
 }

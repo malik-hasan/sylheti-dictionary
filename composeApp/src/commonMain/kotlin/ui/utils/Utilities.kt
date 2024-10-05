@@ -34,3 +34,9 @@ val LazyListState.isScrollingUp: State<Boolean>
 
 inline fun <reified T> ViewModel.stateFlowOf(initialValue: T, flow: Flow<T>) =
     flow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), initialValue)
+
+fun String.capitalizeFirstLetter(): String {
+    return if (isNotEmpty()) {
+        first().uppercaseChar() + substring(1).lowercase()
+    } else this
+}

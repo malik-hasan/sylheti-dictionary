@@ -1,10 +1,18 @@
 package models.search.settings
 
-enum class SearchScript(private val displayName: String) {
-    Auto("Auto"),
-    Latin("Latin/IPA"),
-    Bengali("Bengali"),
-    Nagri("Nagri");
+import org.jetbrains.compose.resources.StringResource
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.auto
+import sylhetidictionary.composeapp.generated.resources.bengali
+import sylhetidictionary.composeapp.generated.resources.latin_ipa
+import sylhetidictionary.composeapp.generated.resources.nagri
 
-    override fun toString() = displayName
+enum class SearchScript(
+    val label: StringResource,
+    val languages: List<SearchLanguage> = emptyList()
+) {
+    AUTO(Res.string.auto),
+    LATIN(Res.string.latin_ipa, SearchLanguage.Latin.entries),
+    BENGALI(Res.string.bengali, SearchLanguage.Bengali.entries),
+    NAGRI(Res.string.nagri);
 }
