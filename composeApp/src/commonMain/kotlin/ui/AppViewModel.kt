@@ -8,7 +8,7 @@ import ui.utils.stateFlowOf
 
 class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
 
-    val locale = stateFlowOf(Language.EN, preferences.languageFlow)
+    val language = stateFlowOf(Language.EN, preferences.languageFlow)
 
     val dynamicTheme = stateFlowOf(true,
         preferences.flow(PreferenceKey.DYNAMIC_THEME, true)

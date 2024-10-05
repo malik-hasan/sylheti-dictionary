@@ -61,7 +61,7 @@ fun main() {
     application {
         Window(
             onCloseRequest = ::exitApplication,
-            title = "SylhetiDictionary",
+            title = "Sylheti Dictionary",
         ) {
             App()
         }

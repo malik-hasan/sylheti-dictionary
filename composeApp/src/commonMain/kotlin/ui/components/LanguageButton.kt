@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import di.LocalLocalization
+import di.LocalLanguage
 import models.Language
 import org.jetbrains.compose.resources.stringResource
 import ui.theme.bengaliBodyFontFamily
@@ -21,7 +21,7 @@ import ui.theme.englishDisplayFontFamily
 @Composable
 fun RowScope.LanguageButton(
     language: Language,
-    locale: Language = LocalLocalization.current,
+    locale: Language = LocalLanguage.current,
     onSelect: (Language) -> Unit
 ) {
     val selected = language == locale

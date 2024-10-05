@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import di.LocalLocalization
+import di.LocalLanguage
 import kotlinx.serialization.Serializable
 import models.Language
 import org.jetbrains.compose.resources.painterResource
@@ -50,7 +50,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 @Composable
 fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
-    locale: Language = LocalLocalization.current
+    locale: Language = LocalLanguage.current
 ) {
 
     Scaffold(
