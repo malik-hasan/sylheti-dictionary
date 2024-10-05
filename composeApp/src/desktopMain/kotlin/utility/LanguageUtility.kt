@@ -7,9 +7,11 @@ import models.Language
 import java.util.Locale
 
 actual suspend fun PreferencesRepository.refreshLanguage() {
-    val languageCode = get(PreferenceKey.LANGUAGE) ?: Locale.getDefault().language
-    Logger.d("LOCALE: refreshing language preference from: $languageCode")
-    setLanguage(Language.fromCode(languageCode))
+    if (get(PreferenceKey.LANGUAGE).isNullOrBlank()) {
+        val locale = Locale.getDefault()
+        Logger.d("LOCALE: initializing language preference from: $locale")
+        setLanguage(Language.fromCode(locale.language))
+    }
 }
 
 actual fun setAppOSLanguage(language: Language) = Locale.setDefault(Locale(language.code))
