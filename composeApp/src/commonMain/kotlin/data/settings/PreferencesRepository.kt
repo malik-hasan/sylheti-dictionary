@@ -59,8 +59,10 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
         preferences.edit { it[key] = value }
     }
 
-    suspend fun setLanguage(language: Language) {
+    suspend fun setLanguage(language: Language) = set(PreferenceKey.LANGUAGE, language.code)
+    
+    suspend fun setLanguagePrefAndOS(language: Language) {
         setAppOSLanguage(language)
-        set(PreferenceKey.LANGUAGE, language.code)
+        setLanguage(language)
     }
 }

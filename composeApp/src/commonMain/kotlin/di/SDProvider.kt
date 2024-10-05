@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -20,11 +22,15 @@ val LocalDynamicTheme = compositionLocalOf { true }
 
 @Composable
 fun SDProvider(
-    appViewModel: AppViewModel = koinViewModel(),
+    vm: AppViewModel = koinViewModel(),
     content: @Composable () -> Unit
 ) {
-    val language by appViewModel.language.collectAsStateWithLifecycle()
-    val dynamicTheme by appViewModel.dynamicTheme.collectAsStateWithLifecycle()
+    val language by vm.language.collectAsStateWithLifecycle()
+    val dynamicTheme by vm.dynamicTheme.collectAsStateWithLifecycle()
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        vm.refreshLanguage()
+    }
 
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),

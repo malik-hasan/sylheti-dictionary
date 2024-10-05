@@ -12,7 +12,7 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
         when(event) {
             is SettingsEvent.SetLanguage -> with(event) {
                 viewModelScope.launch {
-                    preferences.setLanguage(language)
+                    preferences.setLanguagePrefAndOS(language)
                 }
             }
 

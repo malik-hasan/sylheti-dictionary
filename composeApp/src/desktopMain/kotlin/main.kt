@@ -8,15 +8,12 @@ import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import di.initKoin
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import models.Language
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform.getKoin
 import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.Locale
 
 @OptIn(ExperimentalResourceApi::class)
 fun main() {
@@ -24,14 +21,6 @@ fun main() {
 
     val preferences: PreferencesRepository = getKoin().get()
     runBlocking(Dispatchers.IO) {
-
-        launch {
-            if (preferences.get(PreferenceKey.LANGUAGE).isNullOrBlank()) {
-                val locale = Locale.getDefault()
-                Logger.d("LOCALE: initializing language preference from: $locale")
-                preferences.setLanguage(Language.fromCode(locale.language))
-            }
-        }
 
         val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
         if (DictionaryAssetVersion > currentDictionaryVersion) {
