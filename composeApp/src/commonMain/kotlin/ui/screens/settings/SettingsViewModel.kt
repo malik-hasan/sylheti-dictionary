@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.launch
+import utility.setAppOSLanguage
 
 class SettingsViewModel(private val preferences: PreferencesRepository): ViewModel() {
 
@@ -12,14 +13,13 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
         when(event) {
             is SettingsEvent.SetLanguage -> with(event) {
                 viewModelScope.launch {
-                    preferences.setLanguagePrefAndOS(language)
+                    setAppOSLanguage(language)
+                    preferences.setLanguage(language)
                 }
             }
 
-            is SettingsEvent.ToggleDynamicTheme -> {
-                viewModelScope.launch {
-                    preferences.set(PreferenceKey.DYNAMIC_THEME, event.value)
-                }
+            is SettingsEvent.ToggleDynamicTheme -> viewModelScope.launch {
+                preferences.set(PreferenceKey.DYNAMIC_THEME, event.value)
             }
         }
     }

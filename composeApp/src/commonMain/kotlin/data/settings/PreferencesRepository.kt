@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.map
 import models.Language
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
-import utility.setAppOSLanguage
 
 class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 
@@ -51,18 +50,11 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
         }
 
     val languageFlow: Flow<Language>
-        get() = flow(PreferenceKey.LANGUAGE, Language.EN.code).map { code ->
-            Language.fromCode(code)
-        }
+        get() = flow(PreferenceKey.LANGUAGE, Language.EN.code).map(Language::fromCode)
 
     suspend fun <T> set(key: Preferences.Key<T>, value: T) {
         preferences.edit { it[key] = value }
     }
 
     suspend fun setLanguage(language: Language) = set(PreferenceKey.LANGUAGE, language.code)
-    
-    suspend fun setLanguagePrefAndOS(language: Language) {
-        setAppOSLanguage(language)
-        setLanguage(language)
-    }
 }

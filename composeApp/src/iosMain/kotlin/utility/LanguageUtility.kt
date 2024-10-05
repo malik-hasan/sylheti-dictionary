@@ -7,8 +7,10 @@ import platform.Foundation.NSLocale
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.languageCode
 
+private const val NSUserDefaultsLocalizationKey = "AppleLanguages"
+
 actual suspend fun PreferencesRepository.refreshLanguage() {
-    val locales = NSUserDefaults.standardUserDefaults.arrayForKey("AppleLanguages")
+    val locales = NSUserDefaults.standardUserDefaults.arrayForKey(NSUserDefaultsLocalizationKey)
     Logger.d("LOCALE: refreshing language preference from: $locales")
     if (!locales.isNullOrEmpty()) {
         val locale = NSLocale(locales.first().toString())
@@ -17,5 +19,5 @@ actual suspend fun PreferencesRepository.refreshLanguage() {
 }
 
 actual fun setAppOSLanguage(language: Language) {
-    NSUserDefaults.standardUserDefaults.setObject(listOf(language.code), "AppleLanguages")
+    NSUserDefaults.standardUserDefaults.setObject(listOf(language.code), NSUserDefaultsLocalizationKey)
 }

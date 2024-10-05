@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,7 +18,7 @@ import ui.AppViewModel
 
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController provided") }
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
-val LocalLanguage = compositionLocalOf { Language.EN }
+val LocalLanguage = staticCompositionLocalOf { Language.EN }
 val LocalDynamicTheme = compositionLocalOf { true }
 
 @Composable
