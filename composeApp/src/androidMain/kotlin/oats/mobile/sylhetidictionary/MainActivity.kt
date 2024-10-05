@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), KoinComponent {
         super.onResume()
 
         val locale = AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.getDefault()
-        Logger.d("LOCALE: Refreshing language preference from: $locale")
+        Logger.d("LOCALE: refreshing language preference from: $locale")
         lifecycleScope.launch {
             preferences.setLanguage(Language.fromCode(locale.language))
         }
