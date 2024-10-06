@@ -18,6 +18,7 @@ import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.search
 import sylhetidictionary.composeapp.generated.resources.settings
+import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 
 @Composable
 fun SDNavigationDrawer(content: @Composable () -> Unit) {
@@ -28,7 +29,7 @@ fun SDNavigationDrawer(content: @Composable () -> Unit) {
                 Column(Modifier.padding(8.dp)) {
 
                     Text(
-                        text = "Sylheti Dictionary",
+                        text = stringResource(Res.string.sylheti_dictionary),
                         style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier
                             .fillMaxWidth()
