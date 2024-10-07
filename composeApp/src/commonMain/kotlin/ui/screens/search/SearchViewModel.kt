@@ -1,10 +1,13 @@
 package ui.screens.search
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import data.dictionary.DictionaryDataSource
-import data.favorites.FavoritesRepository
+import data.bookmarks.BookmarksRepository
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
@@ -28,7 +31,7 @@ import ui.utils.stateFlowOf
 
 class SearchViewModel(
     private val dictionary: DictionaryDataSource,
-    private val favorites: FavoritesRepository,
+    private val bookmarks: BookmarksRepository,
     private val preferences: PreferencesRepository
 ) : ViewModel() {
 
@@ -37,13 +40,16 @@ class SearchViewModel(
         preferences.flow(PreferenceKey.CURRENT_DICTIONARY_VERSION, 0).map { it >= 0 }
     )
 
+    var searchTerm by mutableStateOf("")
+        private set
+
     private val _searchState = MutableStateFlow(SearchState())
     val searchState = stateFlowOf(SearchState(),
         combine(
             _searchState,
-            favorites.getFavorites()
-        ) { state, favorites ->
-            state.copy(bookmarks = favorites,)
+            bookmarks.getBookmarks()
+        ) { state, bookmarks ->
+            state.copy(bookmarks = bookmarks)
         }
     )
 
@@ -54,7 +60,7 @@ class SearchViewModel(
             is SetSearchBarActive -> setSearchBarActive(event.value)
             is UpdateSearchTerm -> updateSearchTerm(event.value)
             Search -> setSearchBarActive(false)
-            ClearSearchBar -> if (_searchState.value.searchTerm.isBlank()) {
+            ClearSearchBar -> if (searchTerm.isBlank()) {
                 setSearchBarActive(false)
             } else updateSearchTerm("")
 
@@ -65,9 +71,9 @@ class SearchViewModel(
             is Bookmark -> with(event) {
                 viewModelScope.launch {
                     if (isBookmark) {
-                        favorites.addFavorite(entryId)
+                        bookmarks.addBookmark(entryId)
                     } else {
-                        favorites.removeFavorite(entryId)
+                        bookmarks.removeBookmark(entryId)
                     }
                 }
             }
@@ -80,14 +86,15 @@ class SearchViewModel(
 
     private fun updateSearchTerm(term: String, onCompletion: CompletionHandler = {}) {
         searchJob?.cancel()
-        _searchState.update { it.copy(searchTerm = term) }
-        if (_searchState.value.searchTerm.isBlank()) {
+        searchTerm = term
+        if (searchTerm.isBlank()) {
             _searchState.update { it.copy(searchResults = null) }
         } else {
             searchJob = viewModelScope.launch {
                 Logger.d("SEARCH: Searching for $term")
                 val results = dictionary.searchSylLatin("*$term*")
                 Logger.d("SEARCH: Found ${results.size}")
+                Logger.d("SEARCH: Found ${results.take(5).map { it.lexemeIPA }}")
                 _searchState.update { it.copy(searchResults = results) }
             }
             searchJob?.invokeOnCompletion(onCompletion)
@@ -120,6 +127,9 @@ class SearchViewModel(
             is SelectPosition -> with(event) {
                 viewModelScope.launch {
                     preferences.set(position.settingsKey, selected)
+                    if (settingsState.value.positions.none { it }) { // ensure at least one is selected
+                        preferences.set(position.settingsKey, true)
+                    }
                 }
             }
 
@@ -130,6 +140,9 @@ class SearchViewModel(
             is SearchSettingsEvent.SelectLanguage -> with(event) {
                 viewModelScope.launch {
                     preferences.set(language.settingsKey, selected)
+                    if (settingsState.value.languages.none { it.value }) { // ensure at least one is selected
+                        preferences.set(language.settingsKey, true)
+                    }
                 }
             }
         }

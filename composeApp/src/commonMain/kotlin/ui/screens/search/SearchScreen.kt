@@ -56,13 +56,14 @@ fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
     val searchState by vm.searchState.collectAsStateWithLifecycle()
     val settingsState by vm.settingsState.collectAsStateWithLifecycle()
 
-    SearchScreen(assetLoaded, searchState, vm::onSearchEvent, settingsState, vm::onSettingsEvent)
+    SearchScreen(assetLoaded, vm.searchTerm, searchState, vm::onSearchEvent, settingsState, vm::onSettingsEvent)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     assetLoaded: Boolean,
+    searchTerm: String,
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
@@ -127,8 +128,8 @@ fun SearchScreen(
                 } ?: bookmarks.ifEmpty { return@LazyColumn }
 
                 items(items) { entry ->
-                    EntryCard(entry) { entryId, isFavorite ->
-                        onSearchEvent(SearchEvent.Bookmark(entryId, isFavorite))
+                    EntryCard(entry) { entryId, isBookmark ->
+                        onSearchEvent(SearchEvent.Bookmark(entryId, isBookmark))
                     }
                 }
             }
@@ -145,7 +146,7 @@ fun SearchScreen(
                         .fillMaxWidth(),
                     inputField = {
                         SearchBarDefaults.InputField(
-                            query = searchState.searchTerm,
+                            query = searchTerm,
                             onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
                             onSearch = {
                                 onSearchEvent(SearchEvent.Search)
@@ -164,7 +165,7 @@ fun SearchScreen(
                                 } else Icon(Icons.Default.Search, "Search")
                             },
                             trailingIcon = {
-                                if (searchState.searchBarActive || searchState.searchTerm.isNotBlank()) {
+                                if (searchState.searchBarActive || searchTerm.isNotBlank()) {
                                     IconButton({ onSearchEvent(SearchEvent.ClearSearchBar) }) {
                                         Icon(Icons.Default.Clear, "clear")
                                     }

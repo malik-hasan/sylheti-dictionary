@@ -24,7 +24,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import data.favorites.FavoritesRepository
+import data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
@@ -36,13 +36,13 @@ import ui.theme.bengaliBodyFontFamily
 @Composable
 fun EntryCard(
     entry: DictionaryEntry,
-    favoritesRepository: FavoritesRepository = koinInject(),
-    onFavorite: (entryId: String, isFavorite: Boolean) -> Unit
+    bookmarksRepository: BookmarksRepository = koinInject(),
+    onBookmark: (entryId: String, isBookmark: Boolean) -> Unit
 ) {
 
-    var isFavorite by remember { mutableStateOf(false) }
+    var isBookmark by remember { mutableStateOf(false) }
     LaunchedEffect(entry.entryId) {
-        isFavorite = favoritesRepository.checkFavorite(entry.entryId)
+        isBookmark = bookmarksRepository.checkBookmark(entry.entryId)
     }
 
     Card(Modifier.fillMaxWidth()) {
@@ -73,17 +73,17 @@ fun EntryCard(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = ripple(bounded = false, radius = 20.dp),
                         onClick = {
-                            isFavorite = !isFavorite
-                            onFavorite(entry.entryId, isFavorite)
+                            isBookmark = !isBookmark
+                            onBookmark(entry.entryId, isBookmark)
                         }
                     ),
                     painter = painterResource(
-                        if (isFavorite) {
+                        if (isBookmark) {
                             Res.drawable.bookmark
                         } else Res.drawable.bookmark_border
                     ),
                     tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = "favorite"
+                    contentDescription = "bookmark"
                 )
             }
 
