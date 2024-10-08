@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import data.dictionary.DictionaryDataSource
 import data.bookmarks.BookmarksRepository
+import data.dictionary.DictionaryDataSource
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
@@ -85,16 +85,39 @@ class SearchViewModel(
     }
 
     private fun updateSearchTerm(term: String, onCompletion: CompletionHandler = {}) {
+        Logger.d("SEARCH: Searching for $term")
         searchJob?.cancel()
         searchTerm = term
         if (searchTerm.isBlank()) {
             _searchState.update { it.copy(searchResults = null) }
         } else {
             searchJob = viewModelScope.launch {
-                Logger.d("SEARCH: Searching for $term")
-                val results = dictionary.searchSylLatin("*$term*")
+                var searchScript = SearchScript.entries[preferences.get(PreferenceKey.SEARCH_SCRIPT) ?: 0]
+                if (searchScript == SearchScript.AUTO) {
+                    searchTerm.find { char ->
+                        SearchScript.entries.any { script ->
+                            script.regexCharSet?.let { regex ->
+                                if (char.toString().matches(regex)) {
+                                    searchScript = script
+                                    true
+                                } else false
+                            } ?: false
+                        }
+                    }
+                }
+                Logger.d("SEARCH: evaluated script: $searchScript")
+
+                val query = "*$term*")
+
+                val results = with(dictionary) {
+                    when (searchScript) {
+                        SearchScript.AUTO, SearchScript.LATIN -> searchSylLatin(query)
+                        SearchScript.BENGALI -> searchSylLatin(query) // TODO
+                        SearchScript.NAGRI -> searchSylLatin(query) // TODO
+                    }
+                }
+
                 Logger.d("SEARCH: Found ${results.size}")
-                Logger.d("SEARCH: Found ${results.take(5).map { it.lexemeIPA }}")
                 _searchState.update { it.copy(searchResults = results) }
             }
             searchJob?.invokeOnCompletion(onCompletion)
