@@ -23,11 +23,31 @@ getEntries:
 SELECT * FROM DictionaryEntry
 WHERE entryId IN :entryIds;
 
-searchSylLatin:
+searchEnglish:
+SELECT * FROM DictionaryEntry
+WHERE gloss GLOB :query OR
+    definitionEN GLOB :query;
+
+searchSylhetiLatin:
 SELECT * FROM DictionaryEntry
 WHERE lexemeIPA GLOB :query OR
     citationIPA GLOB :query OR
     definitionIPA GLOB :query;
+
+searchBengali:
+SELECT * FROM DictionaryEntry
+WHERE definitionBN GLOB :query;
+
+searchSylhetiBengali:
+SELECT * FROM DictionaryEntry
+WHERE lexemeBengali GLOB :query OR
+    citationBengali GLOB :query;
+
+searchNagri:
+SELECT * FROM DictionaryEntry
+WHERE lexemeNagri GLOB :query OR
+    citationNagri GLOB :query OR
+    definitionNagri GLOB :query;
 
 CREATE TABLE IF NOT EXISTS EntryCrossRef (
     senseId1 TEXT NOT NULL,

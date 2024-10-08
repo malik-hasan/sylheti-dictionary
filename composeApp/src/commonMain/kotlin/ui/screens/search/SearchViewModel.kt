@@ -92,8 +92,9 @@ class SearchViewModel(
             _searchState.update { it.copy(searchResults = null) }
         } else {
             searchJob = viewModelScope.launch {
-                var searchScript = SearchScript.entries[preferences.get(PreferenceKey.SEARCH_SCRIPT) ?: 0]
-                if (searchScript == SearchScript.AUTO) {
+                val searchScriptPreference = SearchScript.entries[preferences.get(PreferenceKey.SEARCH_SCRIPT) ?: 0]
+                var searchScript = searchScriptPreference
+                if (searchScriptPreference == SearchScript.AUTO) {
                     searchTerm.find { char ->
                         SearchScript.entries.any { script ->
                             script.regexCharSet?.let { regex ->
@@ -109,11 +110,13 @@ class SearchViewModel(
 
                 val query = "*$term*"
 
-                val results = with(dictionary) {
-                    when (searchScript) {
-                        SearchScript.AUTO, SearchScript.LATIN -> searchSylLatin(query)
-                        SearchScript.BENGALI -> searchSylLatin(query) // TODO
-                        SearchScript.NAGRI -> searchSylLatin(query) // TODO
+                val results = if (searchScript == SearchScript.NAGRI) {
+                    dictionary.searchNagri(query)
+                } else {
+                    searchScript.languages.filter { language ->
+                        searchScriptPreference == SearchScript.AUTO || preferences.get(language.settingsKey) == true
+                    }.flatMap { language ->
+                        language.search(dictionary, query)
                     }
                 }
 
