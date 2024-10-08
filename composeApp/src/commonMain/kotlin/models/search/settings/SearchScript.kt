@@ -15,5 +15,5 @@ enum class SearchScript(
     AUTO(Res.string.auto),
     LATIN(Res.string.latin_ipa, Regex("\\p{Latin}"), SearchLanguage.Latin.entries),
     BENGALI(Res.string.bengali, Regex("\\p{Bengali}"), SearchLanguage.Bengali.entries),
-    NAGRI(Res.string.nagri, Regex("\\p{Syloti_Nagri}");
+    NAGRI(Res.string.nagri, Regex("\\p{Syloti_Nagri}"))
 }

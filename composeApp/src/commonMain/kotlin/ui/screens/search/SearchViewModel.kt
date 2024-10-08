@@ -85,9 +85,9 @@ class SearchViewModel(
     }
 
     private fun updateSearchTerm(term: String, onCompletion: CompletionHandler = {}) {
-        Logger.d("SEARCH: Searching for $term")
         searchJob?.cancel()
         searchTerm = term
+        Logger.d("SEARCH: Searching for $term")
         if (searchTerm.isBlank()) {
             _searchState.update { it.copy(searchResults = null) }
         } else {
@@ -107,7 +107,7 @@ class SearchViewModel(
                 }
                 Logger.d("SEARCH: evaluated script: $searchScript")
 
-                val query = "*$term*")
+                val query = "*$term*"
 
                 val results = with(dictionary) {
                     when (searchScript) {
