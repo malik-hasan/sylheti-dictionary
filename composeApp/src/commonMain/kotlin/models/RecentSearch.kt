@@ -6,7 +6,7 @@ import models.search.settings.SearchScript
 
 @Entity
 data class RecentSearch(
-    @PrimaryKey(autoGenerate = true) val id: Int,
     val term: String,
-    val script: SearchScript
+    val script: SearchScript,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0
 )

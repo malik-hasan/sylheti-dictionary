@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import models.RecentSearch
 import models.search.settings.SearchScript
 import ui.screens.search.SearchEvent.Bookmark
 import ui.screens.search.SearchEvent.ClearSearchBar
@@ -56,7 +57,15 @@ class SearchViewModel(
         when (event) {
             is SetSearchBarActive -> setSearchBarActive(event.value)
             is UpdateSearchTerm -> updateSearchTerm(event.value)
-            Search -> setSearchBarActive(false)
+            Search -> {
+                setSearchBarActive(false)
+                if (searchState.value.searchResults?.isNotEmpty() == true) {
+                    viewModelScope.launch {
+                        recentSearches.cacheSearch(RecentSearch(searchTerm, detectSearchScript()))
+                    }
+                }
+            }
+
             ClearSearchBar -> updateSearchTerm("")
             is SelectSuggestion -> updateSearchTerm(event.value) { error ->
                 if (error == null) setSearchBarActive(false)
@@ -81,6 +90,7 @@ class SearchViewModel(
     private var searchJob: Job? = null
 
     private fun updateSearchTerm(term: String, onCompletion: CompletionHandler = {}) {
+
         searchJob?.cancel()
         searchTerm = term
         Logger.d("SEARCH: Searching for $term")
@@ -89,20 +99,21 @@ class SearchViewModel(
         } else {
             searchJob = viewModelScope.launch {
                 val searchScriptPreference = SearchScript.entries[preferences.get(PreferenceKey.SEARCH_SCRIPT) ?: 0]
-                var searchScript = searchScriptPreference
-                if (searchScriptPreference == SearchScript.AUTO) {
-                    searchTerm.find { char ->
-                        SearchScript.entries.any { script ->
-                            script.regexCharSet?.let { regex ->
-                                if (char.toString().matches(regex)) {
-                                    searchScript = script
-                                    true
-                                } else false
-                            } ?: false
-                        }
-                    }
-                }
-                Logger.d("SEARCH: evaluated script: $searchScript")
+//                var searchScript = searchScriptPreference
+//                if (searchScriptPreference == SearchScript.AUTO) {
+//                    searchTerm.find { char ->
+//                        SearchScript.entries.any { script ->
+//                            script.regexCharSet?.let { regex ->
+//                                if (char.toString().matches(regex)) {
+//                                    searchScript = script
+//                                    true
+//                                } else false
+//                            } ?: false
+//                        }
+//                    }
+//                }
+                val searchScript = detectSearchScript()
+                Logger.d("SEARCH: detected script: $searchScript from term: $searchTerm, pref: $searchScriptPreference")
 
                 val query = "*$term*"
 
@@ -121,6 +132,23 @@ class SearchViewModel(
             }
             searchJob?.invokeOnCompletion(onCompletion)
         }
+    }
+
+    private suspend fun detectSearchScript(): SearchScript {
+
+        val searchScriptPreference = SearchScript.entries[preferences.get(PreferenceKey.SEARCH_SCRIPT) ?: 0]
+        if (searchScriptPreference == SearchScript.AUTO) {
+            searchTerm.forEach { char ->
+                SearchScript.entries.forEach { script ->
+                    script.regexCharSet?.let { regex ->
+                        if (char.toString().matches(regex)) {
+                            return script
+                        }
+                    }
+                }
+            }
+        }
+        return searchScriptPreference
     }
 
     private val _settingsState = MutableStateFlow(SearchSettingsState())
