@@ -165,7 +165,7 @@ fun SearchScreen(
                                 } else Icon(Icons.Default.Search, "Search")
                             },
                             trailingIcon = {
-                                if (searchState.searchBarActive || searchTerm.isNotBlank()) {
+                                if (searchTerm.isNotBlank()) {
                                     IconButton({ onSearchEvent(SearchEvent.ClearSearchBar) }) {
                                         Icon(Icons.Default.Clear, "clear")
                                     }

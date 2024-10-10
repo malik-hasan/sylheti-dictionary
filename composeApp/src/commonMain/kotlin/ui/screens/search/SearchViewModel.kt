@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import data.bookmarks.BookmarksRepository
 import data.dictionary.DictionaryDataSource
+import data.recentsearches.RecentSearchesDao
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
 import kotlinx.coroutines.CompletionHandler
@@ -32,7 +33,8 @@ import ui.utils.stateFlowOf
 class SearchViewModel(
     private val dictionary: DictionaryDataSource,
     private val bookmarks: BookmarksRepository,
-    private val preferences: PreferencesRepository
+    private val preferences: PreferencesRepository,
+    private val recentSearches: RecentSearchesDao
 ) : ViewModel() {
 
     // default to true so that error state doesn't show while loading, only after it actually fails
@@ -42,6 +44,8 @@ class SearchViewModel(
 
     var searchTerm by mutableStateOf("")
         private set
+
+    private var previousSearchTerm: String = ""
 
     private val _searchState = MutableStateFlow(SearchState())
     val searchState = stateFlowOf(SearchState(),
@@ -53,17 +57,23 @@ class SearchViewModel(
         }
     )
 
-    private var searchJob: Job? = null
-
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
-            is SetSearchBarActive -> setSearchBarActive(event.value)
-            is UpdateSearchTerm -> updateSearchTerm(event.value)
-            Search -> setSearchBarActive(false)
-            ClearSearchBar -> if (searchTerm.isBlank()) {
-                setSearchBarActive(false)
-            } else updateSearchTerm("")
+            is SetSearchBarActive -> with(event) {
+                if (value) {
+                    previousSearchTerm = searchTerm
+                } else {
+                    updateSearchTerm(previousSearchTerm)
+                }
+                setSearchBarActive(value)
+            }
 
+            is UpdateSearchTerm -> updateSearchTerm(event.value)
+            Search -> {
+                setSearchBarActive(false)
+//                recentSearches.cacheSearch(RecentSearch(searchTerm))
+            }
+            ClearSearchBar -> updateSearchTerm("")
             is SelectSuggestion -> updateSearchTerm(event.value) { error ->
                 if (error == null) setSearchBarActive(false)
             }
@@ -83,6 +93,8 @@ class SearchViewModel(
     private fun setSearchBarActive(value: Boolean) {
         _searchState.update { it.copy(searchBarActive = value) }
     }
+
+    private var searchJob: Job? = null
 
     private fun updateSearchTerm(term: String, onCompletion: CompletionHandler = {}) {
         searchJob?.cancel()
@@ -152,10 +164,11 @@ class SearchViewModel(
 
             is SelectPosition -> with(event) {
                 viewModelScope.launch {
-                    preferences.set(position.settingsKey, selected)
-                    if (settingsState.value.positions.none { it }) { // ensure at least one is selected
-                        preferences.set(position.settingsKey, true)
-                    }
+                    val atLeastOneSelected = settingsState.value.positions.toMutableList().apply {
+                        this[position.ordinal] = selected
+                    }.any { it }
+
+                    if (atLeastOneSelected) preferences.set(position.settingsKey, selected)
                 }
             }
 
@@ -165,10 +178,11 @@ class SearchViewModel(
 
             is SearchSettingsEvent.SelectLanguage -> with(event) {
                 viewModelScope.launch {
-                    preferences.set(language.settingsKey, selected)
-                    if (settingsState.value.languages.none { it.value }) { // ensure at least one is selected
-                        preferences.set(language.settingsKey, true)
-                    }
+                    val atLeastOneSelected = settingsState.value.languages.toMutableMap().apply {
+                        this[language] = selected
+                    }.any { it.value }
+
+                    if (atLeastOneSelected) preferences.set(language.settingsKey, selected)
                 }
             }
         }
