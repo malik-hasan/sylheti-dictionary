@@ -45,34 +45,18 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
-    private var previousSearchTerm: String = ""
-
     private val _searchState = MutableStateFlow(SearchState())
     val searchState = stateFlowOf(SearchState(),
-        combine(
-            _searchState,
-            bookmarks.getBookmarks()
-        ) { state, bookmarks ->
+        _searchState.combine(bookmarks.getBookmarks()) { state, bookmarks ->
             state.copy(bookmarks = bookmarks)
         }
     )
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
-            is SetSearchBarActive -> with(event) {
-                if (value) {
-                    previousSearchTerm = searchTerm
-                } else {
-                    updateSearchTerm(previousSearchTerm)
-                }
-                setSearchBarActive(value)
-            }
-
+            is SetSearchBarActive -> setSearchBarActive(event.value)
             is UpdateSearchTerm -> updateSearchTerm(event.value)
-            Search -> {
-                setSearchBarActive(false)
-//                recentSearches.cacheSearch(RecentSearch(searchTerm))
-            }
+            Search -> setSearchBarActive(false)
             ClearSearchBar -> updateSearchTerm("")
             is SelectSuggestion -> updateSearchTerm(event.value) { error ->
                 if (error == null) setSearchBarActive(false)

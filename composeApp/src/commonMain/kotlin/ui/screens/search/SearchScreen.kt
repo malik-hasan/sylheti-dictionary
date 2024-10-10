@@ -28,14 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -90,7 +88,6 @@ fun SearchScreen(
         }
     ) { scaffoldPadding ->
 
-        val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
 
         if (!assetLoaded) {
@@ -148,12 +145,7 @@ fun SearchScreen(
                         SearchBarDefaults.InputField(
                             query = searchTerm,
                             onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
-                            onSearch = {
-                                onSearchEvent(SearchEvent.Search)
-                                scope.launch {
-                                    listState.scrollToItem(0)
-                                }
-                            },
+                            onSearch = { onSearchEvent(SearchEvent.Search) },
                             expanded = searchState.searchBarActive,
                             onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
                             placeholder = { Text(stringResource(Res.string.search_dictionary)) },

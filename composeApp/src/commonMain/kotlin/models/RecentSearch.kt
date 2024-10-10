@@ -1,9 +1,12 @@
 package models
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
+import models.search.settings.SearchScript
 
-@Entity(primaryKeys = ["term", "language"])
+@Entity
 data class RecentSearch(
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val term: String,
-    val language: String // TODO: enum
+    val script: SearchScript
 )
