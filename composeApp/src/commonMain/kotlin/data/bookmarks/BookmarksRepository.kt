@@ -7,19 +7,19 @@ import models.Bookmark
 import oats.mobile.sylhetidictionary.DictionaryEntry
 
 class BookmarksRepository(
-    private val dictionaryDataSource: DictionaryDataSource,
-    private val bookmarksDao: BookmarksDao
+    private val dao: BookmarksDao,
+    private val dictionary: DictionaryDataSource
 ) {
 
     fun getBookmarks(): Flow<List<DictionaryEntry>> =
-        bookmarksDao.getBookmarks().map { bookmarks ->
+        dao.getBookmarks().map { bookmarks ->
             val ids = bookmarks.map { it.entryId }
-            dictionaryDataSource.getEntries(ids)
+            dictionary.getEntries(ids)
         }
 
-    suspend fun checkBookmark(entryId: String) = bookmarksDao.checkBookmark(entryId)
+    suspend fun checkBookmark(entryId: String) = dao.checkBookmark(entryId)
 
-    suspend fun addBookmark(entryId: String) = bookmarksDao.addBookmark(Bookmark(entryId))
+    suspend fun addBookmark(entryId: String) = dao.addBookmark(Bookmark(entryId))
 
-    suspend fun removeBookmark(entryId: String) = bookmarksDao.removeBookmark(Bookmark(entryId))
+    suspend fun removeBookmark(entryId: String) = dao.removeBookmark(Bookmark(entryId))
 }

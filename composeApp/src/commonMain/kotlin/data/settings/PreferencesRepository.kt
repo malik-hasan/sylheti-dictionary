@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import models.Language
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
+import models.search.settings.SearchScript
 
 class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 
@@ -29,6 +30,9 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
     fun <T> flow(key: Preferences.Key<T>, default: T): Flow<T> =
         safePreferencesFlow.map { it[key] ?: default }
 
+    fun <T> nullableFlow(key: Preferences.Key<T>): Flow<T?> =
+        safePreferencesFlow.map { it[key] }
+
     val searchPositions: Flow<List<Boolean>>
         get() {
             val positionFlows = SearchPosition.entries.map {
@@ -38,8 +42,22 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
             return combine(*positionFlows) { it.toList() }
         }
 
-    val searchScript: Flow<Int>
-        get() = flow(PreferenceKey.SEARCH_SCRIPT, 0)
+    suspend fun positionQuery(term: String) = with(searchPositions.first()) {
+        if (this[1]) {
+            var query = "*$term*"
+            if (!first()) query = "?$query"
+            if (!last()) query += '?'
+            listOf(query)
+        } else listOfNotNull(
+            if (first()) "$term*?" else null,
+            if (last()) "?*$term" else null
+        )
+    }
+
+    val searchScript: Flow<SearchScript>
+        get() = flow(PreferenceKey.SEARCH_SCRIPT, 0).map {
+            SearchScript.entries[it]
+        }
 
     val searchLanguages: Flow<Map<SearchLanguage, Boolean>>
         get() {

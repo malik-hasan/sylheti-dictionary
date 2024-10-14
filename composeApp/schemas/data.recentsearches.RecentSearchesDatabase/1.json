@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9c253947650e3ca27697b8168e803b9c",
+    "identityHash": "e9f5c89e86d589fdcdc8c44f099b1c88",
     "entities": [
       {
         "tableName": "RecentSearch",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`term` TEXT NOT NULL, `language` TEXT NOT NULL, PRIMARY KEY(`term`, `language`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`term` TEXT NOT NULL, `script` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`term`, `script`))",
         "fields": [
           {
             "fieldPath": "term",
@@ -15,9 +15,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "language",
-            "columnName": "language",
+            "fieldPath": "script",
+            "columnName": "script",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -25,14 +31,14 @@
           "autoGenerate": false,
           "columnNames": [
             "term",
-            "language"
+            "script"
           ]
         }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9c253947650e3ca27697b8168e803b9c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e9f5c89e86d589fdcdc8c44f099b1c88')"
     ]
   }
 }

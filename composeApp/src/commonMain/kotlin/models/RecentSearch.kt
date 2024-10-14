@@ -1,12 +1,12 @@
 package models
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import kotlinx.datetime.Clock
 import models.search.settings.SearchScript
 
-@Entity
+@Entity(primaryKeys = ["term", "script"])
 data class RecentSearch(
     val term: String,
     val script: SearchScript,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0
+    val timestamp: Long = Clock.System.now().epochSeconds
 )

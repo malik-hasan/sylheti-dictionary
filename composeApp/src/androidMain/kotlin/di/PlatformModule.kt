@@ -5,10 +5,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import data.dictionary.DictionaryAsset
 import data.bookmarks.BookmarksDatabase
 import data.bookmarks.BookmarksRepository
+import data.dictionary.DictionaryAsset
 import data.recentsearches.RecentSearchesDatabase
+import data.recentsearches.RecentSearchesRepository
 import data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import org.koin.android.ext.koin.androidContext
@@ -30,12 +31,17 @@ actual val platformModule = module {
     }.bind(SqlDriver::class)
 
     single {
-        BookmarksRepository(get(),
-            roomDatabase<BookmarksDatabase>(get(), BookmarksDatabase.FILENAME).dao()
+        BookmarksRepository(
+            roomDatabase<BookmarksDatabase>(get(), BookmarksDatabase.FILENAME).dao(),
+            get()
         )
     }
 
-    single { roomDatabase<RecentSearchesDatabase>(get(), RecentSearchesDatabase.FILENAME).dao() }
+    single {
+        RecentSearchesRepository(
+            roomDatabase<RecentSearchesDatabase>(get(), RecentSearchesDatabase.FILENAME).dao()
+        )
+    }
 }
 
 inline fun <reified T : RoomDatabase> roomDatabase(context: Context, filename: String) =
