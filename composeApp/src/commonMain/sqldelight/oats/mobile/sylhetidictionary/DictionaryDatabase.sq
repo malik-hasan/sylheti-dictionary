@@ -26,17 +26,17 @@ WHERE entryId IN :entryIds;
 searchEnglish:
 SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery OR
-    definitionEN GLOB :query;
+    definitionEN GLOB :simpleQuery;
 
 searchSylhetiLatin:
 SELECT * FROM DictionaryEntry
 WHERE lexemeIPA GLOB :positionedQuery OR
     citationIPA GLOB :positionedQuery OR
-    definitionIPA GLOB :query;
+    definitionIPA GLOB :simpleQuery;
 
 searchBengali:
 SELECT * FROM DictionaryEntry
-WHERE definitionBN GLOB :query;
+WHERE definitionBN GLOB :simpleQuery;
 
 searchSylhetiBengali:
 SELECT * FROM DictionaryEntry
@@ -47,7 +47,7 @@ searchNagri:
 SELECT * FROM DictionaryEntry
 WHERE lexemeNagri GLOB :positionedQuery OR
     citationNagri GLOB :positionedQuery OR
-    definitionNagri GLOB :query;
+    definitionNagri GLOB :simpleQuery;
 
 CREATE TABLE IF NOT EXISTS EntryCrossRef (
     senseId1 TEXT NOT NULL,

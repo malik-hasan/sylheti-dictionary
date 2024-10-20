@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import models.CharSets
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchScript
 import ui.screens.search.SearchEvent.Bookmark
@@ -159,6 +160,15 @@ class SearchViewModel(
         return searchScriptPreference
     }
 
+    private fun mapIpaChars(term: String, detectedSearchScript: SearchScript) =
+        if (detectedSearchScript.isLatinOrAuto) {
+            term.map { char ->
+                CharSets.ipaCharMap[char]?.let { altChars ->
+                    "[$char${altChars.joinToString("")}]"
+                } ?: char.toString()
+            }.joinToString("")
+        } else term
+
     private fun getPositionedQueries(term: String, searchPositions: List<Boolean>) = with(searchPositions) {
         if (this[1]) {
             var query = "*$term*"
@@ -178,18 +188,19 @@ class SearchViewModel(
         searchLanguages:  Map<SearchLanguage, Boolean>
     ) = term.takeIf { it.isNotBlank() }?.let {
 
-        val query = "*$term*"
-        val positionedQueries = getPositionedQueries(term, searchPositions)
+        val query = mapIpaChars(term, detectedSearchScript)
+        val simpleQuery = "*$query*"
+        val positionedQueries = getPositionedQueries(query, searchPositions)
 
         if (detectedSearchScript == SearchScript.NAGRI) {
-            dictionary.searchNagri(query, positionedQueries)
+            dictionary.searchNagri(simpleQuery, positionedQueries)
         } else {
             detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
             }.flatMap { language ->
-                language.search(dictionary, query, positionedQueries)
+                language.search(dictionary, simpleQuery, positionedQueries)
             }
-        }
+        }.sortedBy(detectedSearchScript.sortAlgorithm)
     }
 
     private fun setSearchBarActive(value: Boolean) {
