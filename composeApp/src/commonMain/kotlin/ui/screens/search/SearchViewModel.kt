@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import models.search.settings.SearchLanguage
 import models.search.settings.SearchScript
 import ui.screens.search.SearchEvent.Bookmark
 import ui.screens.search.SearchEvent.Search
@@ -105,7 +106,7 @@ class SearchViewModel(
         ) { state, bookmarks, searchTerm, settings ->
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
             state.copy(
-                searchResults = getResults(searchTerm, detectedSearchScript),
+                searchResults = getResults(searchTerm, detectedSearchScript, settings.positions, settings.languages),
                 bookmarks = bookmarks,
                 recents = recentSearches.getRecentSearches(searchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript
@@ -148,7 +149,7 @@ class SearchViewModel(
                     yield()
                     script.regexCharSet?.let { regex ->
                         if (char.toString().matches(regex)) {
-                            Logger.d("SEARCH: detected script: $script from term: $term, pref: $searchScriptPreference")
+                            Logger.d("SEARCH: detected script: $script from term: $term")
                             return script
                         }
                     }
@@ -158,20 +159,38 @@ class SearchViewModel(
         return searchScriptPreference
     }
 
-    private suspend fun getResults(term: String, detectedSearchScript: SearchScript) =
-        term.takeIf { it.isNotBlank() }?.let {
-            val query = "*$term*"
+    private fun getPositionedQueries(term: String, searchPositions: List<Boolean>) = with(searchPositions) {
+        if (this[1]) {
+            var query = "*$term*"
+            if (!first()) query = "?$query"
+            if (!last()) query += '?'
+            listOf(query)
+        } else listOfNotNull(
+            if (first()) "$term*?" else null,
+            if (last()) "?*$term" else null
+        )
+    }
 
-            if (detectedSearchScript == SearchScript.NAGRI) {
-                dictionary.searchNagri(query)
-            } else {
-                detectedSearchScript.languages.filter { language ->
-                    settingsState.value.script == SearchScript.AUTO || preferences.get(language.settingsKey) == true
-                }.flatMap { language ->
-                    language.search(dictionary, query)
-                }
+    private suspend fun getResults(
+        term: String,
+        detectedSearchScript: SearchScript,
+        searchPositions: List<Boolean>,
+        searchLanguages:  Map<SearchLanguage, Boolean>
+    ) = term.takeIf { it.isNotBlank() }?.let {
+
+        val query = "*$term*"
+        val positionedQueries = getPositionedQueries(term, searchPositions)
+
+        if (detectedSearchScript == SearchScript.NAGRI) {
+            dictionary.searchNagri(query, positionedQueries)
+        } else {
+            detectedSearchScript.languages.filter { language ->
+                settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
+            }.flatMap { language ->
+                language.search(dictionary, query, positionedQueries)
             }
         }
+    }
 
     private fun setSearchBarActive(value: Boolean) {
         _searchState.update { it.copy(searchBarActive = value) }

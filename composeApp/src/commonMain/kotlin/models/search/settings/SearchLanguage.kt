@@ -14,7 +14,7 @@ sealed interface SearchLanguage {
 
     val settingsKey: Preferences.Key<Boolean>
     val label: StringResource
-    val search: suspend DictionaryDataSource.(query: String) -> List<DictionaryEntry>
+    val search: suspend DictionaryDataSource.(query: String, List<String>) -> List<DictionaryEntry>
 
     companion object {
         val entries: List<SearchLanguage> =
@@ -24,7 +24,7 @@ sealed interface SearchLanguage {
     enum class Latin(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: suspend DictionaryDataSource.(String) -> List<DictionaryEntry>
+        override val search: suspend DictionaryDataSource.(String, List<String>) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         ENGLISH(
@@ -43,19 +43,19 @@ sealed interface SearchLanguage {
     enum class Bengali(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: suspend DictionaryDataSource.(String) -> List<DictionaryEntry>
+        override val search: suspend DictionaryDataSource.(String, List<String>) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         BENGALI(
             settingsKey = PreferenceKey.BENGALI_SCRIPT_BENGALI,
             label = Res.string.bengali,
-            search = DictionaryDataSource::searchBengali
+            search = { query, _ -> searchBengali(query) }
         ),
 
         SYLHETI(
             settingsKey = PreferenceKey.BENGALI_SCRIPT_SYLHETI,
             label = Res.string.sylheti,
-            search = DictionaryDataSource::searchSylhetiBengali
+            search = { _, positionedQueries -> searchSylhetiBengali(positionedQueries) }
         );
     }
 }

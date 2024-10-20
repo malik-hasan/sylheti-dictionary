@@ -25,13 +25,13 @@ WHERE entryId IN :entryIds;
 
 searchEnglish:
 SELECT * FROM DictionaryEntry
-WHERE gloss GLOB :query OR
+WHERE gloss GLOB :positionedQuery OR
     definitionEN GLOB :query;
 
 searchSylhetiLatin:
 SELECT * FROM DictionaryEntry
-WHERE lexemeIPA GLOB :query OR
-    citationIPA GLOB :query OR
+WHERE lexemeIPA GLOB :positionedQuery OR
+    citationIPA GLOB :positionedQuery OR
     definitionIPA GLOB :query;
 
 searchBengali:
@@ -40,13 +40,13 @@ WHERE definitionBN GLOB :query;
 
 searchSylhetiBengali:
 SELECT * FROM DictionaryEntry
-WHERE lexemeBengali GLOB :query OR
-    citationBengali GLOB :query;
+WHERE lexemeBengali GLOB :positionedQuery OR
+    citationBengali GLOB :positionedQuery;
 
 searchNagri:
 SELECT * FROM DictionaryEntry
-WHERE lexemeNagri GLOB :query OR
-    citationNagri GLOB :query OR
+WHERE lexemeNagri GLOB :positionedQuery OR
+    citationNagri GLOB :positionedQuery OR
     definitionNagri GLOB :query;
 
 CREATE TABLE IF NOT EXISTS EntryCrossRef (

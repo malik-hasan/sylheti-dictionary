@@ -42,18 +42,6 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
             return combine(*positionFlows) { it.toList() }
         }
 
-    suspend fun positionQuery(term: String) = with(searchPositions.first()) {
-        if (this[1]) {
-            var query = "*$term*"
-            if (!first()) query = "?$query"
-            if (!last()) query += '?'
-            listOf(query)
-        } else listOfNotNull(
-            if (first()) "$term*?" else null,
-            if (last()) "?*$term" else null
-        )
-    }
-
     val searchScript: Flow<SearchScript>
         get() = flow(PreferenceKey.SEARCH_SCRIPT, 0).map {
             SearchScript.entries[it]
