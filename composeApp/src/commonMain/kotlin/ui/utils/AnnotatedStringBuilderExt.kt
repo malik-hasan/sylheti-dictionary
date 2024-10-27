@@ -16,8 +16,12 @@ fun AnnotatedString.Builder.appendHighlighted(text: CharSequence, highlightRegex
             append(text.substring(currentIndex, highlightRange.first))
         }
         withStyle(SpanStyle(background = MaterialTheme.colorScheme.primaryContainer)) {
-            append(text.substring(highlightRange))
-            currentIndex = highlightConjuncts(text, highlightRange.last + 1)
+            val stopIndex = if (text[highlightRange.last] in UnicodeUtility.HOSHONTO) {
+                highlightRange.last // exclusive
+            } else highlightRange.last + 1 // inclusive
+
+            append(text.substring(highlightRange.first, stopIndex))
+            currentIndex = highlightConjuncts(text, stopIndex)
         }
     }
     if (currentIndex < text.length) {
