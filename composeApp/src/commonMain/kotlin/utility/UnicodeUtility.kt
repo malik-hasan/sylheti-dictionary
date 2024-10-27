@@ -1,12 +1,11 @@
-package models
+package utility
 
-object CharSets {
+object UnicodeUtility {
 
-    val stopChars = setOf(']', '[', ' ', ',', ';', '/', '\\', '{', '}', '(', ')', '.', '"', '\'', ':', '!', '?', '|', '\n', '\t', '-', '_')
-
+    // chars found in Sylheti IPA fields:
     // "a", "b", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "x", "z",
     // "ŋ", "ɔ", "ɖ", "ɛ", "ɡ", "ɪ", "ɱ", "ɳ", "ɽ", "ɾ", "ʂ", "ʃ", "ʈ", "ʊ", "ʒ", "ʤ", "ʧ"
-    val ipaCharMap = mapOf(
+    val LATIN_IPA_CHAR_MAP = mapOf(
         'c' to setOf('ʧ'),
         'd' to setOf('ɖ', 'ɽ'),
         'e' to setOf('ɛ'),
@@ -25,4 +24,15 @@ object CharSets {
         'w' to setOf('ʊ', 'ɔ'),
         'y' to setOf('ɪ', 'ɛ')
     )
+
+    const val BENGALI_HOSHONTO = '্'
+    const val SYLHETI_HOSHONTO = '꠆'
+
+    val HOSHONTO = setOf(BENGALI_HOSHONTO, SYLHETI_HOSHONTO)
+
+    val BENGALI_DIACRITICS = setOf('া', 'ি', 'ী', 'ু', 'ূ', 'ৃ', 'ৄ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ', 'ঁ', 'ং', 'ঃ', '়', '্', 'ৢ', 'ৣ')
+
+    val NAGRI_DIACRITICS = setOf('ꠣ', 'ꠤ', 'ꠥ', 'ꠦ', 'ꠧ', 'ꠂ', '꠆', 'ꠋ', '꠬')
+
+    val ABUGIDA_DIACRITICS = BENGALI_DIACRITICS + NAGRI_DIACRITICS
 }

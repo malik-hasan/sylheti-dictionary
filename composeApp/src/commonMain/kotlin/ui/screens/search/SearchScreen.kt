@@ -48,8 +48,7 @@ import sylhetidictionary.composeapp.generated.resources.tune
 import ui.components.EntryCard
 import ui.components.SearchSettingsMenu
 import ui.components.SylhetiDictionaryTopBar
-import ui.utils.ifTrue
-import ui.utils.isScrollingUp
+import ui.utils.rememberIsScrollingUp
 
 @Composable
 fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
@@ -92,6 +91,7 @@ fun SearchScreen(
     ) { scaffoldPadding ->
 
         val listState = rememberLazyListState()
+        val isScrollingUp by listState.rememberIsScrollingUp()
 
         if (assetLoaded == false) {
             Text(
@@ -128,21 +128,21 @@ fun SearchScreen(
                 }
 
                 items(items) { entry ->
-                    EntryCard(entry) { entryId, isBookmark ->
+                    EntryCard(entry, searchState.highlightRegex) { entryId, isBookmark ->
                         onSearchEvent(SearchEvent.Bookmark(entryId, isBookmark))
                     }
                 }
             }
 
             AnimatedVisibility(
-                visible = listState.isScrollingUp.value,
+                visible = isScrollingUp,
                 enter = slideInVertically(),
                 exit = slideOutVertically()
             ) {
                 SearchBar(
                     modifier = Modifier
                         .padding(scaffoldPadding)
-                        .ifTrue(!searchState.searchBarActive) { padding(horizontal = 8.dp) }
+                        .apply { if (!searchState.searchBarActive) padding(horizontal = 8.dp) }
                         .fillMaxWidth(),
                     inputField = {
                         SearchBarDefaults.InputField(

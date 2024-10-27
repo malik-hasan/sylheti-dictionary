@@ -8,5 +8,6 @@ data class SearchState(
     val searchResults: List<DictionaryEntry>? = null,
     val bookmarks: List<DictionaryEntry> = emptyList(),
     val recents: List<String> = emptyList(),
-    val detectedSearchScript: SearchScript = SearchScript.AUTO
+    val detectedSearchScript: SearchScript = SearchScript.AUTO,
+    val highlightRegex: Regex = Regex("")
 )

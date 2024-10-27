@@ -32,10 +32,12 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.bookmark
 import sylhetidictionary.composeapp.generated.resources.bookmark_border
 import ui.theme.bengaliBodyFontFamily
+import ui.utils.appendHighlighted
 
 @Composable
 fun EntryCard(
     entry: DictionaryEntry,
+    highlightRegex: Regex,
     bookmarksRepository: BookmarksRepository = koinInject(),
     onBookmark: (entryId: String, isBookmark: Boolean) -> Unit
 ) {
@@ -53,14 +55,16 @@ fun EntryCard(
             ) {
                 Text(
                     text = buildAnnotatedString {
-                        append(entry.citationIPA ?: entry.lexemeIPA)
-                        (entry.citationBengali ?: entry.lexemeBengali)?.let {
+                        appendHighlighted(entry.citationIPA ?: entry.lexemeIPA, highlightRegex)
+                        entry.citationBengali ?: entry.lexemeBengali?.let {
+                            append(" • ")
                             withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                                append(" • $it")
+                                appendHighlighted(it, highlightRegex)
                             }
                         }
-                        (entry.citationNagri ?: entry.lexemeNagri)?.let {
-                            append(" • $it")
+                        entry.citationNagri ?: entry.lexemeNagri?.let {
+                            append(" • ")
+                            appendHighlighted(it, highlightRegex)
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -87,57 +91,45 @@ fun EntryCard(
                 )
             }
 
-            Text(
-                text = taggedField(
-                    tag = entry.partOfSpeech?.lowercase() ?: "unknown",
-                    body = entry.gloss ?: ""
-                ),
-                style = MaterialTheme.typography.bodyMedium
+            TaggedField(
+                tag = entry.partOfSpeech?.lowercase() ?: "unknown",
+                body = entry.gloss ?: "",
+                highlightRegex = highlightRegex
             )
 
             entry.definitionEN?.let { def ->
-                Text(
-                    text = taggedField(
-                        tag = "english",
-                        body = def
-                    ),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                TaggedField("english", def, highlightRegex)
             }
 
             if (entry.definitionBN != null || entry.definitionBNIPA != null) {
-                Text(
-                    text = taggedField(
-                        tag = "bengali",
-                        body = buildAnnotatedString {
-                            entry.definitionBN?.let {
-                                withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                                    append("$it ")
-                                }
-                            }
-                            entry.definitionBNIPA?.let {
-                                append(it)
+                TaggedField(
+                    tag = "bengali",
+                    body = buildAnnotatedString {
+                        entry.definitionBN?.let {
+                            withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
+                                append("$it ")
                             }
                         }
-                    ),
-                    style = MaterialTheme.typography.bodyMedium
+                        entry.definitionBNIPA?.let {
+                            append(it)
+                        }
+                    },
+                    highlightRegex = highlightRegex
                 )
             }
 
             if (entry.definitionNagri != null || entry.definitionIPA != null) {
-                Text(
-                    text = taggedField(
-                        tag = "sylheti",
-                        body = buildAnnotatedString {
-                            entry.definitionNagri?.let {
-                                append("$it ")
-                            }
-                            entry.definitionIPA?.let {
-                                append(it)
-                            }
+                TaggedField(
+                    tag = "sylheti",
+                    body = buildAnnotatedString {
+                        entry.definitionNagri?.let {
+                            append("$it ")
                         }
-                    ),
-                    style = MaterialTheme.typography.bodyMedium
+                        entry.definitionIPA?.let {
+                            append(it)
+                        }
+                    },
+                    highlightRegex = highlightRegex
                 )
             }
         }

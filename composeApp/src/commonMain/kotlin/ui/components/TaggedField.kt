@@ -1,9 +1,9 @@
 package ui.components
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -12,23 +12,25 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import ui.theme.englishBodyFontFamily
+import ui.utils.appendHighlighted
 
 @Composable
-fun taggedField(tag: String, body: CharSequence): AnnotatedString {
-    val bodySmall = MaterialTheme.typography.bodySmall.fontSize
-    val bodyFontFamily = englishBodyFontFamily
-    return buildAnnotatedString {
-        withStyle(ParagraphStyle(textIndent = TextIndent(restLine = 30.sp))) {
+fun TaggedField(tag: String, body: CharSequence, highlightRegex: Regex) {
+    Text(
+        text = buildAnnotatedString {
+            pushStyle(ParagraphStyle(textIndent = TextIndent(restLine = 30.sp)))
             withStyle(
                 SpanStyle(
                     fontStyle = FontStyle.Italic,
                     color = Color.Gray,
-                    fontFamily = bodyFontFamily,
-                    fontSize = bodySmall
+                    fontFamily = englishBodyFontFamily,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize
                 )
             ) { append(tag) }
             append(' ')
-            append(body)
-        }
-    }
+            appendHighlighted(body, highlightRegex)
+            pop()
+        },
+        style = MaterialTheme.typography.bodyMedium
+    )
 }

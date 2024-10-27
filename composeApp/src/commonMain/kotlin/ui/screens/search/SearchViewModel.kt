@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import models.CharSets
+import utility.UnicodeUtility
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchScript
 import ui.screens.search.SearchEvent.Bookmark
@@ -106,11 +106,13 @@ class SearchViewModel(
             settingsState
         ) { state, bookmarks, searchTerm, settings ->
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
+            val generalizedTerm = mapIpaChars(searchTerm, detectedSearchScript)
             state.copy(
-                searchResults = getResults(searchTerm, detectedSearchScript, settings.positions, settings.languages),
+                searchResults = getResults(generalizedTerm, detectedSearchScript, settings.positions, settings.languages),
                 bookmarks = bookmarks,
                 recents = recentSearches.getRecentSearches(searchTerm, detectedSearchScript),
-                detectedSearchScript = detectedSearchScript
+                detectedSearchScript = detectedSearchScript,
+                highlightRegex = Regex(generalizedTerm)
             )
         }
     )
@@ -163,7 +165,7 @@ class SearchViewModel(
     private fun mapIpaChars(term: String, detectedSearchScript: SearchScript) =
         if (detectedSearchScript.isLatinOrAuto) {
             term.map { char ->
-                CharSets.ipaCharMap[char]?.let { altChars ->
+                UnicodeUtility.LATIN_IPA_CHAR_MAP[char]?.let { altChars ->
                     "[$char${altChars.joinToString("")}]"
                 } ?: char.toString()
             }.joinToString("")
@@ -182,15 +184,13 @@ class SearchViewModel(
     }
 
     private suspend fun getResults(
-        term: String,
+        generalizedTerm: String,
         detectedSearchScript: SearchScript,
         searchPositions: List<Boolean>,
         searchLanguages:  Map<SearchLanguage, Boolean>
-    ) = term.takeIf { it.isNotBlank() }?.let {
-
-        val query = mapIpaChars(term, detectedSearchScript)
-        val simpleQuery = "*$query*"
-        val positionedQueries = getPositionedQueries(query, searchPositions)
+    ) = generalizedTerm.takeIf { it.isNotBlank() }?.let {
+        val simpleQuery = "*$generalizedTerm*"
+        val positionedQueries = getPositionedQueries(generalizedTerm, searchPositions)
 
         if (detectedSearchScript == SearchScript.NAGRI) {
             dictionary.searchNagri(simpleQuery, positionedQueries)
