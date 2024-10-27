@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -32,8 +33,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
@@ -48,6 +52,7 @@ import sylhetidictionary.composeapp.generated.resources.tune
 import ui.components.EntryCard
 import ui.components.SearchSettingsMenu
 import ui.components.SylhetiDictionaryTopBar
+import ui.utils.ifTrue
 import ui.utils.rememberIsScrollingUp
 
 @Composable
@@ -56,7 +61,14 @@ fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
     val searchState by vm.searchState.collectAsStateWithLifecycle()
     val settingsState by vm.settingsState.collectAsStateWithLifecycle()
 
-    SearchScreen(assetLoaded, vm.searchTerm, searchState, vm::onSearchEvent, settingsState, vm::onSettingsEvent)
+    SearchScreen(
+        assetLoaded,
+        vm.searchTerm,
+        searchState,
+        vm::onSearchEvent,
+        settingsState,
+        vm::onSettingsEvent
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,7 +89,13 @@ fun SearchScreen(
         topBar = {
             SylhetiDictionaryTopBar(stringResource(Res.string.sylheti_dictionary), scrollBehavior) {
                 Box {
-                    IconButton(onClick = { onSettingsEvent(SearchSettingsEvent.ToggleSettingsMenu(true)) }) {
+                    IconButton(onClick = {
+                        onSettingsEvent(
+                            SearchSettingsEvent.ToggleSettingsMenu(
+                                true
+                            )
+                        )
+                    }) {
                         Icon(
                             painterResource(Res.drawable.tune),
                             stringResource(Res.string.settings)
@@ -142,7 +160,7 @@ fun SearchScreen(
                 SearchBar(
                     modifier = Modifier
                         .padding(scaffoldPadding)
-                        .apply { if (!searchState.searchBarActive) padding(horizontal = 8.dp) }
+                        .ifTrue(!searchState.searchBarActive) { padding(horizontal = 8.dp) }
                         .fillMaxWidth(),
                     inputField = {
                         SearchBarDefaults.InputField(
@@ -153,12 +171,32 @@ fun SearchScreen(
                             onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
                             placeholder = {
                                 Text(
-                                    buildAnnotatedString {
+                                    text = buildAnnotatedString {
                                         append(stringResource(Res.string.search_dictionary))
-                                        append(" ${settingsState.positions.map { if (it) '*' else '_' }}")
-                                        append(" ${settingsState.script}")
-                                        append(" ${settingsState.languages.filterValues { it }.keys}")
-                                    }
+                                        withStyle(MaterialTheme.typography.bodySmall.toSpanStyle()) {
+                                            with(searchState) {
+                                                searchBarPositions?.let {
+                                                    withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                                                        append(" positions")
+                                                    }
+                                                    append(" $it")
+                                                }
+                                                searchBarScript?.let {
+                                                    withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                                                        append(" script")
+                                                    }
+                                                    append(" $it")
+                                                }
+                                                searchBarLanguage?.let {
+                                                    withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+                                                        append(" language")
+                                                    }
+                                                    append(" $it")
+                                                }
+                                            }
+                                        }
+                                    },
+                                    color = MaterialTheme.colorScheme.tertiary
                                 )
                             },
                             leadingIcon = {
@@ -171,7 +209,7 @@ fun SearchScreen(
                             trailingIcon = {
                                 if (searchTerm.isNotBlank()) {
                                     IconButton({ onSearchEvent(SearchEvent.UpdateSearchTerm("")) }) {
-                                        Icon(Icons.Default.Clear, "clear")
+                                        Icon(Icons.Default.Clear, "Clear")
                                     }
                                 }
                             }

@@ -18,9 +18,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import utility.UnicodeUtility
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchScript
+import org.jetbrains.compose.resources.getString
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.all
+import sylhetidictionary.composeapp.generated.resources.any
 import ui.screens.search.SearchEvent.Bookmark
 import ui.screens.search.SearchEvent.Search
 import ui.screens.search.SearchEvent.SelectSuggestion
@@ -30,6 +33,7 @@ import ui.screens.search.SearchSettingsEvent.SelectPosition
 import ui.screens.search.SearchSettingsEvent.SelectScript
 import ui.screens.search.SearchSettingsEvent.ToggleSettingsMenu
 import ui.utils.stateFlowOf
+import utility.UnicodeUtility
 
 class SearchViewModel(
     private val dictionary: DictionaryDataSource,
@@ -109,6 +113,19 @@ class SearchViewModel(
             val generalizedTerm = mapIpaChars(searchTerm, detectedSearchScript)
             state.copy(
                 searchResults = getResults(generalizedTerm, detectedSearchScript, settings.positions, settings.languages),
+                searchBarPositions = settings.positions
+                    .map { if (it) 'x' else '_' }
+                    .joinToString("")
+                    .takeIf { it.contains('_') }
+                    ?: getString(Res.string.any),
+                searchBarScript = getString(settings.script.label).lowercase(),
+                searchBarLanguage = with(settings) {
+                    languages.filterValues { it }
+                    .takeIf { it.size < languages.size }
+                    ?.keys?.map {
+                        getString(it.label).lowercase()
+                    }
+                }?.joinToString() ?: getString(Res.string.all),
                 bookmarks = bookmarks,
                 recents = recentSearches.getRecentSearches(searchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript,
