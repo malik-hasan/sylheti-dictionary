@@ -210,9 +210,7 @@ fun SearchScreen(
                                         modifier = Modifier
                                             .clickable {
                                                 onSearchEvent(
-                                                    SearchEvent.SelectSuggestion(
-                                                        recent
-                                                    )
+                                                    SearchEvent.SelectSuggestion(recent)
                                                 )
                                             }
                                             .fillMaxWidth()
@@ -233,9 +231,7 @@ fun SearchScreen(
                                             modifier = Modifier
                                                 .clickable {
                                                     onSearchEvent(
-                                                        SearchEvent.SelectSuggestion(
-                                                            word
-                                                        )
+                                                        SearchEvent.SelectSuggestion(word)
                                                     )
                                                 }
                                                 .fillMaxWidth()

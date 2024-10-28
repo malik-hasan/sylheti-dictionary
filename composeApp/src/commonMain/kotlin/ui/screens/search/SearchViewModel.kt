@@ -12,6 +12,8 @@ import data.dictionary.DictionaryDataSource
 import data.recentsearches.RecentSearchesRepository
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -78,9 +80,9 @@ class SearchViewModel(
 
                         if (selected) {
                             if (position == SearchPosition.FULL_MATCH) {
-                                SearchPosition.entries.drop(1).forEach {
-                                    preferences.set(it.settingsKey, false)
-                                }
+                                SearchPosition.entries.drop(1).map {
+                                    async { preferences.set(it.settingsKey, false) }
+                                }.awaitAll()
                             } else {
                                 preferences.set(SearchPosition.FULL_MATCH.settingsKey, false)
                             }
