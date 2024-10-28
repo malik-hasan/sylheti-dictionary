@@ -33,11 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
@@ -171,31 +167,7 @@ fun SearchScreen(
                             onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
                             placeholder = {
                                 Text(
-                                    text = buildAnnotatedString {
-                                        append(stringResource(Res.string.search_dictionary))
-                                        withStyle(MaterialTheme.typography.bodySmall.toSpanStyle()) {
-                                            with(searchState) {
-                                                searchBarPositions?.let {
-                                                    withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                                                        append(" positions")
-                                                    }
-                                                    append(" $it")
-                                                }
-                                                searchBarScript?.let {
-                                                    withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                                                        append(" script")
-                                                    }
-                                                    append(" $it")
-                                                }
-                                                searchBarLanguage?.let {
-                                                    withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                                                        append(" language")
-                                                    }
-                                                    append(" $it")
-                                                }
-                                            }
-                                        }
-                                    },
+                                    text = stringResource(Res.string.search_dictionary),
                                     color = MaterialTheme.colorScheme.tertiary
                                 )
                             },

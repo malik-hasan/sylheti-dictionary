@@ -4,8 +4,6 @@
 
     <string name="search">Search</string>
     <string name="search_dictionary">Search dictionary</string>
-    <string name="any">any</string>
-    <string name="all">all</string>
 
     <string name="search_parts">Parts of word to search</string>
     <string name="beginning">Beginning</string>

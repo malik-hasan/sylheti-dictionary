@@ -20,10 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchScript
-import org.jetbrains.compose.resources.getString
-import sylhetidictionary.composeapp.generated.resources.Res
-import sylhetidictionary.composeapp.generated.resources.all
-import sylhetidictionary.composeapp.generated.resources.any
 import ui.screens.search.SearchEvent.Bookmark
 import ui.screens.search.SearchEvent.Search
 import ui.screens.search.SearchEvent.SelectSuggestion
@@ -113,19 +109,6 @@ class SearchViewModel(
             val generalizedTerm = mapIpaChars(searchTerm, detectedSearchScript)
             state.copy(
                 searchResults = getResults(generalizedTerm, detectedSearchScript, settings.positions, settings.languages),
-                searchBarPositions = settings.positions
-                    .map { if (it) 'x' else '_' }
-                    .joinToString("")
-                    .takeIf { it.contains('_') }
-                    ?: getString(Res.string.any),
-                searchBarScript = getString(settings.script.label).lowercase(),
-                searchBarLanguage = with(settings) {
-                    languages.filterValues { it }
-                    .takeIf { it.size < languages.size }
-                    ?.keys?.map {
-                        getString(it.label).lowercase()
-                    }
-                }?.joinToString() ?: getString(Res.string.all),
                 bookmarks = bookmarks,
                 recents = recentSearches.getRecentSearches(searchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript,

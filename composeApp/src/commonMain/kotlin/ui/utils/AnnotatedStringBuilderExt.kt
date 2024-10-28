@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.withStyle
 import utility.UnicodeUtility
 
@@ -21,7 +22,7 @@ fun AnnotatedString.Builder.appendHighlighted(text: CharSequence, highlightRegex
             } else highlightRange.last + 1 // inclusive
 
             append(text.substring(highlightRange.first, stopIndex))
-            currentIndex = highlightConjuncts(text, stopIndex)
+            currentIndex = appendHighlightedConjuncts(text, stopIndex)
         }
     }
     if (currentIndex < text.length) {
@@ -29,7 +30,7 @@ fun AnnotatedString.Builder.appendHighlighted(text: CharSequence, highlightRegex
     }
 }
 
-private fun AnnotatedString.Builder.highlightConjuncts(text: CharSequence, currentIndex: Int): Int {
+private fun AnnotatedString.Builder.appendHighlightedConjuncts(text: CharSequence, currentIndex: Int): Int {
     if (currentIndex >= text.length) return currentIndex
 
     return when (text[currentIndex]) {
@@ -39,7 +40,7 @@ private fun AnnotatedString.Builder.highlightConjuncts(text: CharSequence, curre
             } else currentIndex + 2
 
             append(text.substring(currentIndex, stopIndex))
-            highlightConjuncts(text, stopIndex)
+            appendHighlightedConjuncts(text, stopIndex)
         }
 
         in UnicodeUtility.ABUGIDA_DIACRITICS -> {

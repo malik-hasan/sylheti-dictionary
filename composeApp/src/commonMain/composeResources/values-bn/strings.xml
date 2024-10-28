@@ -4,8 +4,6 @@
 
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
-    <string name="any">কোনো</string>
-    <string name="all">সব</string>
 
     <string name="search_parts">শব্দের কোন অংশে খোঁজা</string>
     <string name="beginning">শুরুতে</string>
