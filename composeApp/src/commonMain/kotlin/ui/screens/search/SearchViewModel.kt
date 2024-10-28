@@ -185,15 +185,20 @@ class SearchViewModel(
         } else term
 
     private fun getPositionedQueries(term: String, searchPositions: List<Boolean>) = with(searchPositions) {
-        if (this[1]) {
-            var query = "*$term*"
-            if (!first()) query = "?$query"
-            if (!last()) query += '?'
-            listOf(query)
-        } else listOfNotNull(
-            if (first()) "$term*?" else null,
-            if (last()) "?*$term" else null
-        )
+        when {
+            this[0] -> listOf(term)
+            this[2] -> {
+                var query = "*$term*"
+                if (!first()) query = "?$query"
+                if (!last()) query += '?'
+                listOf(query)
+            }
+
+            else -> listOfNotNull(
+                if (first()) "$term*?" else null,
+                if (last()) "?*$term" else null
+            )
+        }
     }
 
     private suspend fun getResults(
