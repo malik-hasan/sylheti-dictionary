@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import models.search.settings.SearchLanguage
+import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 import ui.screens.search.SearchEvent.Bookmark
 import ui.screens.search.SearchEvent.Search
@@ -72,7 +73,19 @@ class SearchViewModel(
                         this[position.ordinal] = selected
                     }.any { it }
 
-                    if (atLeastOneSelected) preferences.set(position.settingsKey, selected)
+                    if (atLeastOneSelected) {
+                        preferences.set(position.settingsKey, selected)
+
+                        if (selected) {
+                            if (position == SearchPosition.FULL_MATCH) {
+                                SearchPosition.entries.drop(1).forEach {
+                                    preferences.set(it.settingsKey, false)
+                                }
+                            } else {
+                                preferences.set(SearchPosition.FULL_MATCH.settingsKey, false)
+                            }
+                        }
+                    }
                 }
             }
 

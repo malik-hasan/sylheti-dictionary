@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 object PreferenceKey {
     val CURRENT_DICTIONARY_VERSION = intPreferencesKey("CURRENT_DICTIONARY_VERSION")
 
+    val SEARCH_FULL_MATCH = booleanPreferencesKey("SEARCH_FULL_MATCH")
     val SEARCH_BEGINNING = booleanPreferencesKey("SEARCH_BEGINNING")
     val SEARCH_MIDDLE = booleanPreferencesKey("SEARCH_MIDDLE")
     val SEARCH_END = booleanPreferencesKey("SEARCH_END")

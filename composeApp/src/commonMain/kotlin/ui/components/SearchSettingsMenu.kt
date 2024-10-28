@@ -19,11 +19,10 @@ import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.search_languages
-import sylhetidictionary.composeapp.generated.resources.search_parts
+import sylhetidictionary.composeapp.generated.resources.search_positions
 import sylhetidictionary.composeapp.generated.resources.search_script
 import ui.screens.search.SearchSettingsEvent
 import ui.screens.search.SearchSettingsState
-import kotlin.math.max
 
 @Composable
 fun SearchSettingsMenu(
@@ -41,17 +40,19 @@ fun SearchSettingsMenu(
         ) {
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(Res.string.search_parts), Modifier.padding(start = 8.dp))
+                Text(stringResource(Res.string.search_positions), Modifier.padding(start = 8.dp))
                 MultiChoiceSegmentedButtonRow {
                     with(SearchPosition.entries) {
                         forEachIndexed { i, position ->
+                            val label = stringResource(position.label)
                             SegmentedButton(
+                                modifier = Modifier.weight(label.length.toFloat().coerceIn(5f, 8f)),
                                 checked = state.positions[i],
                                 onCheckedChange = { checked ->
                                     onEvent(SearchSettingsEvent.SelectPosition(position, checked))
                                 },
                                 shape = SegmentedButtonDefaults.itemShape(i, size)
-                            ) { Text(stringResource(position.label)) }
+                            ) { Text(label) }
                         }
                     }
                 }
@@ -64,7 +65,7 @@ fun SearchSettingsMenu(
                         forEachIndexed { i, script ->
                             val label = stringResource(script.label)
                             SegmentedButton(
-                                modifier = Modifier.weight(max(6f, label.length.toFloat())),
+                                modifier = Modifier.weight(label.length.toFloat().coerceIn(5f, 8f)),
                                 selected = state.script == script,
                                 onClick = { onEvent(SearchSettingsEvent.SelectScript(script)) },
                                 shape = SegmentedButtonDefaults.itemShape(i, size)

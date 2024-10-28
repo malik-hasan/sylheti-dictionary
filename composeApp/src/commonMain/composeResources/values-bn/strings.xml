@@ -5,7 +5,8 @@
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
 
-    <string name="search_parts">শব্দের কোন অংশে খোঁজা</string>
+    <string name="search_positions">শব্দের কোন অংশে খোঁজা</string>
+    <string name="full_match">পুরো শব্দে</string>
     <string name="beginning">শুরুতে</string>
     <string name="middle">মাঝে</string>
     <string name="end">শেষে</string>
