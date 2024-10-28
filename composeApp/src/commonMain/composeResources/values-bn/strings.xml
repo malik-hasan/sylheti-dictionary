@@ -6,10 +6,10 @@
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
 
     <string name="search_positions">শব্দের কোন অংশে খোঁজা</string>
-    <string name="full_match">পুরো শব্দে</string>
-    <string name="beginning">শুরুতে</string>
-    <string name="middle">মাঝে</string>
+    <string name="start">শুরুতে</string>
     <string name="end">শেষে</string>
+    <string name="full_match">পুরো শব্দে</string>
+    <string name="anywhere">কোনো</string>
 
     <string name="search_script">কোন লিপিতে খোঁজা</string>
     <string name="auto">অটোমেটিক</string>

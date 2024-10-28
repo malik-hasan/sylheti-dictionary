@@ -6,11 +6,11 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 interface DictionaryDataSource {
     suspend fun getAll(): List<DictionaryEntry>
     suspend fun getEntries(entryIds: List<String>): List<DictionaryEntry>
-    suspend fun searchEnglish(simpleQuery: String, positionedQueries: List<String>): List<DictionaryEntry>
-    suspend fun searchSylhetiLatin(simpleQuery: String, positionedQueries: List<String>): List<DictionaryEntry>
+    suspend fun searchEnglish(simpleQuery: String, positionedQuery: String): List<DictionaryEntry>
+    suspend fun searchSylhetiLatin(simpleQuery: String, positionedQuery: String): List<DictionaryEntry>
     suspend fun searchBengali(simpleQuery: String): List<DictionaryEntry>
-    suspend fun searchSylhetiBengali(positionedQueries: List<String>): List<DictionaryEntry>
-    suspend fun searchNagri(simpleQuery: String, positionedQueries: List<String>): List<DictionaryEntry>
+    suspend fun searchSylhetiBengali(positionedQuery: String): List<DictionaryEntry>
+    suspend fun searchNagri(simpleQuery: String, positionedQuery: String): List<DictionaryEntry>
 }
 
 class DictionaryDataSourceImpl(db: DictionaryDatabase) : DictionaryDataSource {
@@ -22,26 +22,18 @@ class DictionaryDataSourceImpl(db: DictionaryDatabase) : DictionaryDataSource {
     override suspend fun getEntries(entryIds: List<String>) =
         queries.getEntries(entryIds).executeAsList()
 
-    override suspend fun searchEnglish(simpleQuery: String, positionedQueries: List<String>) =
-        positionedQueries.flatMap { positionedQuery ->
-            queries.searchEnglish(simpleQuery, positionedQuery).executeAsList()
-        }
+    override suspend fun searchEnglish(simpleQuery: String, positionedQuery: String) =
+        queries.searchEnglish(simpleQuery, positionedQuery).executeAsList()
 
-    override suspend fun searchSylhetiLatin(simpleQuery: String, positionedQueries: List<String>) =
-        positionedQueries.flatMap { positionedQuery ->
-            queries.searchSylhetiLatin(simpleQuery, positionedQuery).executeAsList()
-        }
+    override suspend fun searchSylhetiLatin(simpleQuery: String, positionedQuery: String) =
+        queries.searchSylhetiLatin(simpleQuery, positionedQuery).executeAsList()
 
     override suspend fun searchBengali(simpleQuery: String) =
         queries.searchBengali(simpleQuery).executeAsList()
 
-    override suspend fun searchSylhetiBengali(positionedQueries: List<String>) =
-        positionedQueries.flatMap { positionedQuery ->
-            queries.searchSylhetiBengali(positionedQuery).executeAsList()
-        }
+    override suspend fun searchSylhetiBengali(positionedQuery: String) =
+        queries.searchSylhetiBengali(positionedQuery).executeAsList()
 
-    override suspend fun searchNagri(simpleQuery: String, positionedQueries: List<String>) =
-        positionedQueries.flatMap { positionedQuery ->
-            queries.searchNagri(simpleQuery, positionedQuery).executeAsList()
-        }
+    override suspend fun searchNagri(simpleQuery: String, positionedQuery: String) =
+        queries.searchNagri(simpleQuery, positionedQuery).executeAsList()
 }

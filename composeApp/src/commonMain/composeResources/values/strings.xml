@@ -6,10 +6,10 @@
     <string name="search_dictionary">Search dictionary</string>
 
     <string name="search_positions">Parts of word to search</string>
-    <string name="full_match">Full Match</string>
-    <string name="beginning">Beginning</string>
-    <string name="middle">Middle</string>
+    <string name="start">Start</string>
     <string name="end">End</string>
+    <string name="full_match">Full Match</string>
+    <string name="anywhere">Anywhere</string>
 
     <string name="search_script">Search script</string>
     <string name="auto">Auto</string>

@@ -12,8 +12,6 @@ import data.dictionary.DictionaryDataSource
 import data.recentsearches.RecentSearchesRepository
 import data.settings.PreferenceKey
 import data.settings.PreferencesRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -49,17 +47,16 @@ class SearchViewModel(
 
     private val _settingsState = MutableStateFlow(SearchSettingsState())
     val settingsState = stateFlowOf(SearchSettingsState(),
-        combine(
-            _settingsState,
-            preferences.searchPositions,
-            preferences.searchScript,
-            preferences.searchLanguages
-        ) { state, positions, script, languages ->
-            state.copy(
-                positions = positions,
-                script = script,
-                languages = languages.filterKeys { it in script.languages }
-            )
+        with(preferences) {
+            combine(
+                _settingsState, searchPosition, searchScript, searchLanguages
+            ) { state, position, script, languages ->
+                state.copy(
+                    position = position,
+                    script = script,
+                    languages = languages.filterKeys { it in script.languages }
+                )
+            }
         }
     )
 
@@ -69,26 +66,8 @@ class SearchViewModel(
                 it.copy(menuExpanded = event.value)
             }
 
-            is SelectPosition -> with(event) {
-                viewModelScope.launch {
-                    val atLeastOneSelected = settingsState.value.positions.toMutableList().apply {
-                        this[position.ordinal] = selected
-                    }.any { it }
-
-                    if (atLeastOneSelected) {
-                        preferences.set(position.settingsKey, selected)
-
-                        if (selected) {
-                            if (position == SearchPosition.FULL_MATCH) {
-                                SearchPosition.entries.drop(1).map {
-                                    async { preferences.set(it.settingsKey, false) }
-                                }.awaitAll()
-                            } else {
-                                preferences.set(SearchPosition.FULL_MATCH.settingsKey, false)
-                            }
-                        }
-                    }
-                }
+            is SelectPosition -> viewModelScope.launch {
+                preferences.set(PreferenceKey.SEARCH_POSITION, event.position.ordinal)
             }
 
             is SelectScript -> viewModelScope.launch {
@@ -123,7 +102,7 @@ class SearchViewModel(
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
             val generalizedTerm = mapIpaChars(searchTerm, detectedSearchScript)
             state.copy(
-                searchResults = getResults(generalizedTerm, detectedSearchScript, settings.positions, settings.languages),
+                searchResults = getResults(generalizedTerm, detectedSearchScript, settings.position, settings.languages),
                 bookmarks = bookmarks,
                 recents = recentSearches.getRecentSearches(searchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript,
@@ -186,39 +165,22 @@ class SearchViewModel(
             }.joinToString("")
         } else term
 
-    private fun getPositionedQueries(term: String, searchPositions: List<Boolean>) = with(searchPositions) {
-        when {
-            this[0] -> listOf(term)
-            this[2] -> {
-                var query = "*$term*"
-                if (!first()) query = "?$query"
-                if (!last()) query += '?'
-                listOf(query)
-            }
-
-            else -> listOfNotNull(
-                if (first()) "$term*?" else null,
-                if (last()) "?*$term" else null
-            )
-        }
-    }
-
     private suspend fun getResults(
         generalizedTerm: String,
         detectedSearchScript: SearchScript,
-        searchPositions: List<Boolean>,
+        searchPosition: SearchPosition,
         searchLanguages:  Map<SearchLanguage, Boolean>
     ) = generalizedTerm.takeIf { it.isNotBlank() }?.let {
         val simpleQuery = "*$generalizedTerm*"
-        val positionedQueries = getPositionedQueries(generalizedTerm, searchPositions)
+        val positionedQuery = searchPosition.getQuery(generalizedTerm)
 
         if (detectedSearchScript == SearchScript.NAGRI) {
-            dictionary.searchNagri(simpleQuery, positionedQueries)
+            dictionary.searchNagri(simpleQuery, positionedQuery)
         } else {
             detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
             }.flatMap { language ->
-                language.search(dictionary, simpleQuery, positionedQueries)
+                language.search(dictionary, simpleQuery, positionedQuery)
             }
         }.sortedBy(detectedSearchScript.sortAlgorithm)
     }

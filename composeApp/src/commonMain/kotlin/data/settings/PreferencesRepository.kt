@@ -33,13 +33,9 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
     fun <T> nullableFlow(key: Preferences.Key<T>): Flow<T?> =
         safePreferencesFlow.map { it[key] }
 
-    val searchPositions: Flow<List<Boolean>>
-        get() {
-            val positionFlows = SearchPosition.entries.map {
-                flow(it.settingsKey, true)
-            }.toTypedArray()
-
-            return combine(*positionFlows) { it.toList() }
+    val searchPosition: Flow<SearchPosition>
+        get() = flow(PreferenceKey.SEARCH_POSITION, 0).map {
+            SearchPosition.entries[it]
         }
 
     val searchScript: Flow<SearchScript>

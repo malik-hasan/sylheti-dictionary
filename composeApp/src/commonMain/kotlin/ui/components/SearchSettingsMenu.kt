@@ -41,16 +41,14 @@ fun SearchSettingsMenu(
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(stringResource(Res.string.search_positions), Modifier.padding(start = 8.dp))
-                MultiChoiceSegmentedButtonRow {
+                SingleChoiceSegmentedButtonRow {
                     with(SearchPosition.entries) {
                         forEachIndexed { i, position ->
                             val label = stringResource(position.label)
                             SegmentedButton(
                                 modifier = Modifier.weight(label.length.toFloat().coerceIn(5f, 8f)),
-                                checked = state.positions[i],
-                                onCheckedChange = { checked ->
-                                    onEvent(SearchSettingsEvent.SelectPosition(position, checked))
-                                },
+                                selected = state.position == position,
+                                onClick = { onEvent(SearchSettingsEvent.SelectPosition(position)) },
                                 shape = SegmentedButtonDefaults.itemShape(i, size)
                             ) { Text(label) }
                         }
