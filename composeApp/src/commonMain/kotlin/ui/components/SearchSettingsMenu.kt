@@ -19,7 +19,7 @@ import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.search_languages
-import sylhetidictionary.composeapp.generated.resources.search_positions
+import sylhetidictionary.composeapp.generated.resources.search_position
 import sylhetidictionary.composeapp.generated.resources.search_script
 import ui.screens.search.SearchSettingsEvent
 import ui.screens.search.SearchSettingsState
@@ -40,7 +40,7 @@ fun SearchSettingsMenu(
         ) {
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(Res.string.search_positions), Modifier.padding(start = 8.dp))
+                Text(stringResource(Res.string.search_position), Modifier.padding(start = 8.dp))
                 SingleChoiceSegmentedButtonRow {
                     with(SearchPosition.entries) {
                         forEachIndexed { i, position ->

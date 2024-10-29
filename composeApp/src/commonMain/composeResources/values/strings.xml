@@ -5,7 +5,7 @@
     <string name="search">Search</string>
     <string name="search_dictionary">Search dictionary</string>
 
-    <string name="search_positions">Parts of word to search</string>
+    <string name="search_position">Search part of word</string>
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="full_match">Full Match</string>
