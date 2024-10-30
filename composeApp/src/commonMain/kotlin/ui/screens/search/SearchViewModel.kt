@@ -172,7 +172,7 @@ class SearchViewModel(
                 UnicodeUtility.LATIN_IPA_CHAR_MAP[char]?.let { altChars ->
                     val charSet = "[$char${altChars.joinToString("")}]"
                     if (forRegex) {
-                        "\\E$charSet\\Q"
+                        "\\E$charSet\\Q" // escape the escaping
                     } else charSet
                 } ?: char.toString()
             }.joinToString("")
