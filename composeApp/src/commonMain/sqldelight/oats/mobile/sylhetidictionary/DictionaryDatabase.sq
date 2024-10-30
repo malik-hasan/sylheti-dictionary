@@ -23,6 +23,20 @@ getEntries:
 SELECT * FROM DictionaryEntry
 WHERE entryId IN :entryIds;
 
+searchAll:
+SELECT * FROM DictionaryEntry
+WHERE gloss GLOB :positionedQuery OR
+    definitionEN GLOB :simpleQuery OR
+    lexemeIPA GLOB :positionedQuery OR
+    citationIPA GLOB :positionedQuery OR
+    definitionIPA GLOB :simpleQuery OR
+    definitionBN GLOB :simpleQuery OR
+    lexemeBengali GLOB :positionedQuery OR
+    citationBengali GLOB :positionedQuery OR
+    lexemeNagri GLOB :positionedQuery OR
+    citationNagri GLOB :positionedQuery OR
+    definitionNagri GLOB :simpleQuery;
+
 searchEnglish:
 SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery OR
@@ -47,7 +61,7 @@ searchNagri:
 SELECT * FROM DictionaryEntry
 WHERE lexemeNagri GLOB :positionedQuery OR
     citationNagri GLOB :positionedQuery OR
-    definitionNagri GLOB :simpleQuery;
+    definitionNagri GLOB '*' || :searchTerm || '*';
 
 CREATE TABLE IF NOT EXISTS EntryCrossRef (
     senseId1 TEXT NOT NULL,

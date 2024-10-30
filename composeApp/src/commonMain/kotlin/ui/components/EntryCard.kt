@@ -38,6 +38,7 @@ import ui.utils.appendHighlighted
 fun EntryCard(
     entry: DictionaryEntry,
     highlightRegex: Regex,
+    mappedIpaHighlightRegex: Regex,
     bookmarksRepository: BookmarksRepository = koinInject(),
     onBookmark: (entryId: String, isBookmark: Boolean) -> Unit
 ) {
@@ -55,7 +56,7 @@ fun EntryCard(
             ) {
                 Text(
                     text = buildAnnotatedString {
-                        appendHighlighted(entry.citationIPA ?: entry.lexemeIPA, highlightRegex)
+                        appendHighlighted(entry.citationIPA ?: entry.lexemeIPA, mappedIpaHighlightRegex)
                         entry.citationBengali ?: entry.lexemeBengali?.let {
                             append(" • ")
                             withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
@@ -114,7 +115,7 @@ fun EntryCard(
                             append(it)
                         }
                     },
-                    highlightRegex = highlightRegex
+                    highlightRegex = mappedIpaHighlightRegex
                 )
             }
 
@@ -129,7 +130,7 @@ fun EntryCard(
                             append(it)
                         }
                     },
-                    highlightRegex = highlightRegex
+                    highlightRegex = mappedIpaHighlightRegex
                 )
             }
         }

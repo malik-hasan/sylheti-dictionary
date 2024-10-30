@@ -100,13 +100,13 @@ class SearchViewModel(
             settingsState
         ) { state, bookmarks, searchTerm, settings ->
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
-            val generalizedTerm = mapIpaChars(searchTerm, detectedSearchScript)
+            val mappedIpaTerm = mapIpaChars(searchTerm, detectedSearchScript)
             state.copy(
-                searchResults = getResults(generalizedTerm, detectedSearchScript, settings.position, settings.languages),
+                searchResults = getResults(searchTerm, mappedIpaTerm, detectedSearchScript, settings.position, settings.languages),
                 bookmarks = bookmarks,
                 recents = recentSearches.getRecentSearches(searchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript,
-                highlightRegex = Regex(generalizedTerm)
+                mappedIpaTerm = mappedIpaTerm
             )
         }
     )
@@ -165,22 +165,30 @@ class SearchViewModel(
             }.joinToString("")
         } else term
 
+    private fun getQueries(term: String, searchPosition: SearchPosition) =
+        Pair("*$searchTerm*", searchPosition.getQuery(searchTerm))
+
     private suspend fun getResults(
-        generalizedTerm: String,
+        searchTerm: String,
+        mappedIpaTerm: String,
         detectedSearchScript: SearchScript,
         searchPosition: SearchPosition,
         searchLanguages:  Map<SearchLanguage, Boolean>
-    ) = generalizedTerm.takeIf { it.isNotBlank() }?.let {
-        val simpleQuery = "*$generalizedTerm*"
-        val positionedQuery = searchPosition.getQuery(generalizedTerm)
+    ) = searchTerm.takeIf { it.isNotBlank() }?.let {
+        val (simpleQuery, positionedQuery) = getQueries(searchTerm, searchPosition)
 
-        if (detectedSearchScript == SearchScript.NAGRI) {
-            dictionary.searchNagri(simpleQuery, positionedQuery)
-        } else {
-            detectedSearchScript.languages.filter { language ->
+        when (detectedSearchScript) {
+            SearchScript.AUTO -> dictionary.searchAll(simpleQuery, positionedQuery)
+            SearchScript.NAGRI -> dictionary.searchNagri(simpleQuery, positionedQuery)
+            else -> detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
             }.flatMap { language ->
-                language.search(dictionary, simpleQuery, positionedQuery)
+                if (language == SearchLanguage.Latin.SYLHETI) {
+                    val (mappedIpaSimpleQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
+                    language.search(dictionary, mappedIpaSimpleQuery, mappedIpaPositionedQuery)
+                } else {
+                    language.search(dictionary, searchTerm, positionedQuery)
+                }
             }
         }.sortedBy(detectedSearchScript.sortAlgorithm)
     }
