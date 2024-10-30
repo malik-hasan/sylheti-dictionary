@@ -2,12 +2,12 @@ package models.search.settings
 
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res
-import sylhetidictionary.composeapp.generated.resources.start
+import sylhetidictionary.composeapp.generated.resources.anywhere
 import sylhetidictionary.composeapp.generated.resources.end
 import sylhetidictionary.composeapp.generated.resources.full_match
-import sylhetidictionary.composeapp.generated.resources.anywhere
+import sylhetidictionary.composeapp.generated.resources.start
 
-enum class SearchPosition(val label: StringResource) {
+enum class SearchPosition(override val label: StringResource): SearchSetting {
     START(Res.string.start) {
         override fun getQuery(term: String) = "$term*"
     },

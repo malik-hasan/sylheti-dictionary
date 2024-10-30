@@ -10,10 +10,10 @@ import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.sylheti
 
-sealed interface SearchLanguage {
+sealed interface SearchLanguage: SearchSetting {
 
     val settingsKey: Preferences.Key<Boolean>
-    val label: StringResource
+    override val label: StringResource
 
     val search: suspend DictionaryDataSource.(simpleQuery: String, positionedQuery: String) -> List<DictionaryEntry>
 

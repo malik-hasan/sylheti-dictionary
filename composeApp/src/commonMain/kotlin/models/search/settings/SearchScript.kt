@@ -9,11 +9,11 @@ import sylhetidictionary.composeapp.generated.resources.latin_ipa
 import sylhetidictionary.composeapp.generated.resources.nagri
 
 enum class SearchScript(
-    val label: StringResource,
+    override val label: StringResource,
     val sortAlgorithm: (DictionaryEntry) -> String?,
     val regexCharSet: Regex? = null,
     val languages: List<SearchLanguage> = emptyList()
-) {
+): SearchSetting {
 
     AUTO(
         label = Res.string.auto,

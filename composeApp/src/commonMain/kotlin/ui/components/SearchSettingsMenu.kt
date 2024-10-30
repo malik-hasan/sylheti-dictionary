@@ -2,16 +2,16 @@ package ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import models.search.settings.SearchPosition
@@ -39,39 +39,17 @@ fun SearchSettingsMenu(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(Res.string.search_position), Modifier.padding(start = 8.dp))
-                SingleChoiceSegmentedButtonRow {
-                    with(SearchPosition.entries) {
-                        forEachIndexed { i, position ->
-                            val label = stringResource(position.label)
-                            SegmentedButton(
-                                modifier = Modifier.weight(label.length.toFloat().coerceIn(5f, 8f)),
-                                selected = state.position == position,
-                                onClick = { onEvent(SearchSettingsEvent.SelectPosition(position)) },
-                                shape = SegmentedButtonDefaults.itemShape(i, size)
-                            ) { Text(label) }
-                        }
-                    }
-                }
-            }
+            SingleChoiceSegmentedSearchSetting(
+                settingLabel = stringResource(Res.string.search_position),
+                entries = SearchPosition.entries,
+                selection = state.position
+            ) { onEvent(SearchSettingsEvent.SelectPosition(it)) }
 
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(Res.string.search_script), Modifier.padding(start = 8.dp))
-                SingleChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Min)) {
-                    with(SearchScript.entries) {
-                        forEachIndexed { i, script ->
-                            val label = stringResource(script.label)
-                            SegmentedButton(
-                                modifier = Modifier.weight(label.length.toFloat().coerceIn(5f, 8f)),
-                                selected = state.script == script,
-                                onClick = { onEvent(SearchSettingsEvent.SelectScript(script)) },
-                                shape = SegmentedButtonDefaults.itemShape(i, size)
-                            ) { Text(label) }
-                        }
-                    }
-                }
-            }
+            SingleChoiceSegmentedSearchSetting(
+                settingLabel = stringResource(Res.string.search_script),
+                entries = SearchScript.entries,
+                selection = state.script
+            ) { onEvent(SearchSettingsEvent.SelectScript(it)) }
 
             with(state.languages.toList()) {
                 if (isNotEmpty()) {
@@ -89,6 +67,20 @@ fun SearchSettingsMenu(
                             }
                         }
                     }
+                }
+            }
+
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text("Also search in")
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(true, {})
+                    Text("Definitions")
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(false, {})
+                    Text("Examples")
                 }
             }
         }
