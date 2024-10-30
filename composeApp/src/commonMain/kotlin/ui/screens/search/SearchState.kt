@@ -9,5 +9,6 @@ data class SearchState(
     val bookmarks: List<DictionaryEntry> = emptyList(),
     val recents: List<String> = emptyList(),
     val detectedSearchScript: SearchScript = SearchScript.AUTO,
-    val mappedIpaTerm: String = ""
+    val highlightRegex: Regex = Regex(""),
+    val mappedIpaHighlightRegex: Regex = Regex("")
 )

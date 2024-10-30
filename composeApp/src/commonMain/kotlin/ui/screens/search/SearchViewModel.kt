@@ -100,13 +100,16 @@ class SearchViewModel(
             settingsState
         ) { state, bookmarks, searchTerm, settings ->
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
-            val mappedIpaTerm = mapIpaChars(searchTerm, detectedSearchScript)
+            val globSearchTerm = escapeGlobChars(searchTerm)
+            val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
+            val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript)
             state.copy(
-                searchResults = getResults(searchTerm, mappedIpaTerm, detectedSearchScript, settings.position, settings.languages),
+                searchResults = getResults(globSearchTerm, globMappedIpaTerm, detectedSearchScript, settings.position, settings.languages),
                 bookmarks = bookmarks,
-                recents = recentSearches.getRecentSearches(searchTerm, detectedSearchScript),
+                recents = recentSearches.getRecentSearches(globSearchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript,
-                mappedIpaTerm = mappedIpaTerm
+                highlightRegex = Regex.escape(searchTerm).toRegex(),
+                mappedIpaHighlightRegex = Regex(regexMappedIpaTerm)
             )
         }
     )
@@ -156,6 +159,13 @@ class SearchViewModel(
         return searchScriptPreference
     }
 
+    private fun escapeGlobChars(term: String) =
+        term.map { char ->
+            if (char in UnicodeUtility.GLOB_SPECIAL_CHARS) {
+                "[$char]"
+            } else char.toString()
+        }.joinToString("")
+
     private fun mapIpaChars(term: String, detectedSearchScript: SearchScript) =
         if (detectedSearchScript.isLatinOrAuto) {
             term.map { char ->
@@ -166,7 +176,7 @@ class SearchViewModel(
         } else term
 
     private fun getQueries(term: String, searchPosition: SearchPosition) =
-        Pair("*$searchTerm*", searchPosition.getQuery(searchTerm))
+        Pair("*$term*", searchPosition.getQuery(term))
 
     private suspend fun getResults(
         searchTerm: String,

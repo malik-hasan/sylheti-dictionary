@@ -4,14 +4,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.withStyle
 import utility.UnicodeUtility
 
 @Composable
 fun AnnotatedString.Builder.appendHighlighted(text: CharSequence, highlightRegex: Regex) {
     var currentIndex = 0
-    highlightRegex.findAll(text).forEach { match ->
+    highlightRegex.findAll(text).filter { it.value.isNotEmpty() }.forEach { match ->
         val highlightRange = match.range
         if (currentIndex < highlightRange.first) {
             append(text.substring(currentIndex, highlightRange.first))

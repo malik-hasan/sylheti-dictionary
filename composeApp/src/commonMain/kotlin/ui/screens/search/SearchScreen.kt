@@ -144,8 +144,8 @@ fun SearchScreen(
                 items(items) { entry ->
                     EntryCard(
                         entry = entry,
-                        highlightRegex = Regex("*$searchTerm*"),
-                        mappedIpaHighlightRegex = Regex("*${searchState.mappedIpaTerm}*"),
+                        highlightRegex = searchState.highlightRegex,
+                        mappedIpaHighlightRegex = searchState.mappedIpaHighlightRegex,
                     ) { entryId, isBookmark ->
                         onSearchEvent(SearchEvent.Bookmark(entryId, isBookmark))
                     }

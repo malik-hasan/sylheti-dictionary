@@ -2,6 +2,8 @@ package utility
 
 object UnicodeUtility {
 
+    val GLOB_SPECIAL_CHARS = "[]*?"
+
     // chars found in Sylheti IPA fields:
     // "a", "b", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "x", "z",
     // "ŋ", "ɔ", "ɖ", "ɛ", "ɡ", "ɪ", "ɱ", "ɳ", "ɽ", "ɾ", "ʂ", "ʃ", "ʈ", "ʊ", "ʒ", "ʤ", "ʧ"
