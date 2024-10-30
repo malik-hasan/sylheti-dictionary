@@ -102,7 +102,7 @@ class SearchViewModel(
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
             val globSearchTerm = escapeGlobChars(searchTerm)
             val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
-            val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript)
+            val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
             state.copy(
                 searchResults = getResults(globSearchTerm, globMappedIpaTerm, detectedSearchScript, settings.position, settings.languages),
                 bookmarks = bookmarks,
@@ -166,11 +166,14 @@ class SearchViewModel(
             } else char.toString()
         }.joinToString("")
 
-    private fun mapIpaChars(term: String, detectedSearchScript: SearchScript) =
+    private fun mapIpaChars(term: String, detectedSearchScript: SearchScript, forRegex: Boolean = false) =
         if (detectedSearchScript.isLatinOrAuto) {
             term.map { char ->
                 UnicodeUtility.LATIN_IPA_CHAR_MAP[char]?.let { altChars ->
-                    "[$char${altChars.joinToString("")}]"
+                    val charSet = "[$char${altChars.joinToString("")}]"
+                    if (forRegex) {
+                        "\\E$charSet\\Q"
+                    } else charSet
                 } ?: char.toString()
             }.joinToString("")
         } else term
