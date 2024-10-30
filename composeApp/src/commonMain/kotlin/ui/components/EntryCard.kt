@@ -40,7 +40,7 @@ fun EntryCard(
     highlightRegex: Regex,
     mappedIpaHighlightRegex: Regex,
     bookmarksRepository: BookmarksRepository = koinInject(),
-    onBookmark: (entryId: String, isBookmark: Boolean) -> Unit
+    onBookmark: (Boolean) -> Unit
 ) {
 
     var isBookmark by remember { mutableStateOf(false) }
@@ -79,7 +79,7 @@ fun EntryCard(
                         indication = ripple(bounded = false, radius = 20.dp),
                         onClick = {
                             isBookmark = !isBookmark
-                            onBookmark(entry.entryId, isBookmark)
+                            onBookmark(isBookmark)
                         }
                     ),
                     painter = painterResource(

@@ -146,8 +146,8 @@ fun SearchScreen(
                         entry = entry,
                         highlightRegex = searchState.highlightRegex,
                         mappedIpaHighlightRegex = searchState.mappedIpaHighlightRegex,
-                    ) { entryId, isBookmark ->
-                        onSearchEvent(SearchEvent.Bookmark(entryId, isBookmark))
+                    ) { isBookmark ->
+                        onSearchEvent(SearchEvent.Bookmark(entry.entryId, isBookmark))
                     }
                 }
             }
