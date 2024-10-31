@@ -1,43 +1,55 @@
 package data.dictionary
 
-import oats.mobile.sylhetidictionary.DictionaryDatabase
-import oats.mobile.sylhetidictionary.DictionaryEntry
+import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
 
-interface DictionaryDataSource {
-    suspend fun getAll(): List<DictionaryEntry>
-    suspend fun getEntries(entryIds: List<String>): List<DictionaryEntry>
-    suspend fun searchAll(simpleQuery: String, positionedQuery: String): List<DictionaryEntry>
-    suspend fun searchEnglish(simpleQuery: String, positionedQuery: String): List<DictionaryEntry>
-    suspend fun searchSylhetiLatin(simpleQuery: String, positionedQuery: String): List<DictionaryEntry>
-    suspend fun searchBengali(simpleQuery: String): List<DictionaryEntry>
-    suspend fun searchSylhetiBengali(positionedQuery: String): List<DictionaryEntry>
-    suspend fun searchNagri(searchTerm: String, positionedQuery: String): List<DictionaryEntry>
-}
-
-class DictionaryDataSourceImpl(db: DictionaryDatabase) : DictionaryDataSource {
-
-    private val queries = db.dictionaryDatabaseQueries
-
-    override suspend fun getAll() = queries.getAll().executeAsList()
-
-    override suspend fun getEntries(entryIds: List<String>) =
+class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
+    
+    fun getEntries(entryIds: List<String>) =
         queries.getEntries(entryIds).executeAsList()
 
-    override suspend fun searchAll(simpleQuery: String, positionedQuery: String) =
-        queries.searchAll(simpleQuery, positionedQuery).executeAsList()
+    fun searchAll(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+        transactionWithResult {
+            val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
+            if (searchDefinitions) {
+                result += searchAllDefinitions(simpleQuery).executeAsList()
+            }
+            result
+        }
+    }
 
-    override suspend fun searchEnglish(simpleQuery: String, positionedQuery: String) =
-        queries.searchEnglish(simpleQuery, positionedQuery).executeAsList()
+    fun searchEnglish(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+        transactionWithResult {
+            val result = searchEnglishEntry(positionedQuery).executeAsList().toMutableList()
+            if (searchDefinitions) {
+                result += searchEnglishDefinition(simpleQuery).executeAsList()
+            }
+            result
+        }
+    }
 
-    override suspend fun searchSylhetiLatin(simpleQuery: String, positionedQuery: String) =
-        queries.searchSylhetiLatin(simpleQuery, positionedQuery).executeAsList()
+    fun searchSylhetiLatin(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+        transactionWithResult {
+            val result = searchSylhetiLatinEntry(positionedQuery).executeAsList().toMutableList()
+            if (searchDefinitions) {
+                result += searchSylhetiLatinDefinition(simpleQuery).executeAsList()
+            }
+            result
+        }
+    }
 
-    override suspend fun searchBengali(simpleQuery: String) =
-        queries.searchBengali(simpleQuery).executeAsList()
+    fun searchBengali(simpleQuery: String) =
+        queries.searchBengaliDefinition(simpleQuery).executeAsList()
 
-    override suspend fun searchSylhetiBengali(positionedQuery: String) =
-        queries.searchSylhetiBengali(positionedQuery).executeAsList()
+    fun searchSylhetiBengali(positionedQuery: String) =
+        queries.searchSylhetiBengaliEntry(positionedQuery).executeAsList()
 
-    override suspend fun searchNagri(searchTerm: String, positionedQuery: String) =
-        queries.searchNagri(searchTerm, positionedQuery).executeAsList()
+    fun searchNagri(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+        transactionWithResult {
+            val result = searchNagriEntry(positionedQuery).executeAsList().toMutableList()
+            if (searchDefinitions) {
+                result += searchNagriDefinition(simpleQuery).executeAsList()
+            }
+            result
+        }
+    }
 }

@@ -16,53 +16,6 @@ CREATE TABLE IF NOT EXISTS DictionaryEntry (
     definitionNagri TEXT
 );
 
-getAll:
-SELECT * FROM DictionaryEntry;
-
-getEntries:
-SELECT * FROM DictionaryEntry
-WHERE entryId IN :entryIds;
-
-searchAll:
-SELECT * FROM DictionaryEntry
-WHERE gloss GLOB :positionedQuery OR
-    definitionEN GLOB :simpleQuery OR
-    lexemeIPA GLOB :positionedQuery OR
-    citationIPA GLOB :positionedQuery OR
-    definitionIPA GLOB :simpleQuery OR
-    definitionBN GLOB :simpleQuery OR
-    lexemeBengali GLOB :positionedQuery OR
-    citationBengali GLOB :positionedQuery OR
-    lexemeNagri GLOB :positionedQuery OR
-    citationNagri GLOB :positionedQuery OR
-    definitionNagri GLOB :simpleQuery;
-
-searchEnglish:
-SELECT * FROM DictionaryEntry
-WHERE gloss GLOB :positionedQuery OR
-    definitionEN GLOB :simpleQuery;
-
-searchSylhetiLatin:
-SELECT * FROM DictionaryEntry
-WHERE lexemeIPA GLOB :positionedQuery OR
-    citationIPA GLOB :positionedQuery OR
-    definitionIPA GLOB :simpleQuery;
-
-searchBengali:
-SELECT * FROM DictionaryEntry
-WHERE definitionBN GLOB :simpleQuery;
-
-searchSylhetiBengali:
-SELECT * FROM DictionaryEntry
-WHERE lexemeBengali GLOB :positionedQuery OR
-    citationBengali GLOB :positionedQuery;
-
-searchNagri:
-SELECT * FROM DictionaryEntry
-WHERE lexemeNagri GLOB :positionedQuery OR
-    citationNagri GLOB :positionedQuery OR
-    definitionNagri GLOB '*' || :searchTerm || '*';
-
 CREATE TABLE IF NOT EXISTS EntryCrossRef (
     senseId1 TEXT NOT NULL,
     senseId2 TEXT NOT NULL,
@@ -118,3 +71,59 @@ CREATE TABLE IF NOT EXISTS ComponentLexeme (
     FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId),
     FOREIGN KEY (componentId) REFERENCES DictionaryEntry(entryId)
 );
+
+getEntries:
+SELECT * FROM DictionaryEntry
+WHERE entryId IN :entryIds;
+
+searchAllEntries:
+SELECT * FROM DictionaryEntry
+WHERE gloss GLOB :positionedQuery OR
+    lexemeIPA GLOB :positionedQuery OR
+    citationIPA GLOB :positionedQuery OR
+    lexemeBengali GLOB :positionedQuery OR
+    citationBengali GLOB :positionedQuery OR
+    lexemeNagri GLOB :positionedQuery OR
+    citationNagri GLOB :positionedQuery;
+
+searchAllDefinitions:
+SELECT * FROM DictionaryEntry
+WHERE definitionEN GLOB :simpleQuery OR
+    definitionIPA GLOB :simpleQuery OR
+    definitionBN GLOB :simpleQuery OR
+    definitionNagri GLOB :simpleQuery;
+
+searchEnglishEntry:
+SELECT * FROM DictionaryEntry
+WHERE gloss GLOB :positionedQuery;
+
+searchEnglishDefinition:
+SELECT * FROM DictionaryEntry
+WHERE definitionEN GLOB :simpleQuery;
+
+searchSylhetiLatinEntry:
+SELECT * FROM DictionaryEntry
+WHERE lexemeIPA GLOB :positionedQuery OR
+    citationIPA GLOB :positionedQuery;
+
+searchSylhetiLatinDefinition:
+SELECT * FROM DictionaryEntry
+WHERE definitionIPA GLOB :simpleQuery;
+
+searchBengaliDefinition:
+SELECT * FROM DictionaryEntry
+WHERE definitionBN GLOB :simpleQuery;
+
+searchSylhetiBengaliEntry:
+SELECT * FROM DictionaryEntry
+WHERE lexemeBengali GLOB :positionedQuery OR
+    citationBengali GLOB :positionedQuery;
+
+searchNagriEntry:
+SELECT * FROM DictionaryEntry
+WHERE lexemeNagri GLOB :positionedQuery OR
+    citationNagri GLOB :positionedQuery;
+
+searchNagriDefinition:
+SELECT * FROM DictionaryEntry
+WHERE definitionNagri GLOB :simpleQuery;
