@@ -207,6 +207,7 @@ class SearchViewModel(
     ) = searchTerm.takeIf { it.isNotBlank() }?.let {
         val (simpleQuery, positionedQuery) = getQueries(searchTerm, searchPosition)
 
+        yield()
         when (detectedSearchScript) {
             SearchScript.AUTO -> dictionary.searchAll(simpleQuery, positionedQuery, searchDefinitions)
             SearchScript.NAGRI -> dictionary.searchNagri(simpleQuery, positionedQuery, searchDefinitions)
@@ -217,7 +218,7 @@ class SearchViewModel(
                     val (mappedIpaSimpleQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
                     language.search(dictionary, mappedIpaSimpleQuery, mappedIpaPositionedQuery, searchDefinitions)
                 } else {
-                    language.search(dictionary, searchTerm, positionedQuery, searchDefinitions)
+                    language.search(dictionary, simpleQuery, positionedQuery, searchDefinitions)
                 }
             }
         }.sortedBy(detectedSearchScript.sortAlgorithm)

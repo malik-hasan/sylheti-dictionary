@@ -2,16 +2,13 @@ package ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import models.search.settings.SearchPosition
@@ -73,18 +70,11 @@ fun SearchSettingsMenu(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text("Also search in")
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = state.searchDefinitions,
-                        onCheckedChange = { onEvent(SearchSettingsEvent.ToggleSearchDefinitions(it)) }
-                    )
-                    Text("Definitions")
+                CheckboxSearchSetting("Definitions", state.searchDefinitions) {
+                    onEvent(SearchSettingsEvent.ToggleSearchDefinitions(it))
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(false, {})
-                    Text("Examples")
-                }
+                CheckboxSearchSetting("Examples", false) {} // TODO
             }
         }
     }
