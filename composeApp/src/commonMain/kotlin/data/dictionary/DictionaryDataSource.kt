@@ -1,13 +1,18 @@
 package data.dictionary
 
 import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
+import oats.mobile.sylhetidictionary.DictionaryEntry
 
 class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     
     fun getEntries(entryIds: List<String>) =
         queries.getEntries(entryIds).executeAsList()
 
-    fun searchAll(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+    fun searchAll(
+        simpleQuery: String,
+        positionedQuery: String,
+        searchDefinitions: Boolean
+    ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
             if (searchDefinitions) {
@@ -17,7 +22,11 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         }
     }
 
-    fun searchEnglish(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+    fun searchEnglish(
+        simpleQuery: String,
+        positionedQuery: String,
+        searchDefinitions: Boolean
+    ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchEnglishEntry(positionedQuery).executeAsList().toMutableList()
             if (searchDefinitions) {
@@ -27,7 +36,11 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         }
     }
 
-    fun searchSylhetiLatin(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+    fun searchSylhetiLatin(
+        simpleQuery: String,
+        positionedQuery: String,
+        searchDefinitions: Boolean
+    ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchSylhetiLatinEntry(positionedQuery).executeAsList().toMutableList()
             if (searchDefinitions) {
@@ -37,13 +50,17 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         }
     }
 
-    fun searchBengali(simpleQuery: String) =
+    fun searchBengaliDefinition(simpleQuery: String) =
         queries.searchBengaliDefinition(simpleQuery).executeAsList()
 
-    fun searchSylhetiBengali(positionedQuery: String) =
+    fun searchSylhetiBengaliEntry(positionedQuery: String) =
         queries.searchSylhetiBengaliEntry(positionedQuery).executeAsList()
 
-    fun searchNagri(simpleQuery: String, positionedQuery: String, searchDefinitions: Boolean) = with(queries) {
+    fun searchNagri(
+        simpleQuery: String,
+        positionedQuery: String,
+        searchDefinitions: Boolean
+    ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchNagriEntry(positionedQuery).executeAsList().toMutableList()
             if (searchDefinitions) {

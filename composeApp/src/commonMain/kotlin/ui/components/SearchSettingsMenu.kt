@@ -74,7 +74,10 @@ fun SearchSettingsMenu(
                 Text("Also search in")
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(true, {})
+                    Checkbox(
+                        checked = state.searchDefinitions,
+                        onCheckedChange = { onEvent(SearchSettingsEvent.ToggleSearchDefinitions(it)) }
+                    )
                     Text("Definitions")
                 }
 

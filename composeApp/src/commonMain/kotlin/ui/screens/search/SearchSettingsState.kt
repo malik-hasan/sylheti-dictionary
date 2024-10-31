@@ -8,5 +8,6 @@ data class SearchSettingsState(
     val menuExpanded: Boolean = false,
     val position: SearchPosition = SearchPosition.START,
     val script: SearchScript = SearchScript.AUTO,
-    val languages: Map<SearchLanguage, Boolean> = emptyMap()
+    val languages: Map<SearchLanguage, Boolean> = emptyMap(),
+    val searchDefinitions: Boolean = false
 )

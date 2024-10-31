@@ -15,7 +15,11 @@ sealed interface SearchLanguage: SearchSetting {
     val settingsKey: Preferences.Key<Boolean>
     override val label: StringResource
 
-    val search: suspend DictionaryDataSource.(simpleQuery: String, positionedQuery: String) -> List<DictionaryEntry>
+    val search: DictionaryDataSource.(
+        simpleQuery: String,
+        positionedQuery: String,
+        searchDefinitions: Boolean
+    ) -> List<DictionaryEntry>
 
     companion object {
         val entries: List<SearchLanguage> =
@@ -25,7 +29,7 @@ sealed interface SearchLanguage: SearchSetting {
     enum class Latin(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: suspend DictionaryDataSource.(String, String) -> List<DictionaryEntry>
+        override val search: DictionaryDataSource.(String, String, Boolean) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         ENGLISH(
@@ -44,19 +48,21 @@ sealed interface SearchLanguage: SearchSetting {
     enum class Bengali(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: suspend DictionaryDataSource.(String, String) -> List<DictionaryEntry>
+        override val search: DictionaryDataSource.(String, String, Boolean) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         BENGALI(
             settingsKey = PreferenceKey.BENGALI_SCRIPT_BENGALI,
             label = Res.string.bengali,
-            search = { query, _ -> searchBengali(query) }
+            search = { query, _, searchDefinitions ->
+                if (searchDefinitions) searchBengaliDefinition(query) else emptyList()
+            }
         ),
 
         SYLHETI(
             settingsKey = PreferenceKey.BENGALI_SCRIPT_SYLHETI,
             label = Res.string.sylheti,
-            search = { _, positionedQueries -> searchSylhetiBengali(positionedQueries) }
+            search = { _, positionedQueries, _ -> searchSylhetiBengaliEntry(positionedQueries) }
         );
     }
 }

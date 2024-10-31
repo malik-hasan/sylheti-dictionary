@@ -49,12 +49,17 @@ class SearchViewModel(
     val settingsState = stateFlowOf(SearchSettingsState(),
         with(preferences) {
             combine(
-                _settingsState, searchPosition, searchScript, searchLanguages
-            ) { state, position, script, languages ->
+                _settingsState,
+                searchPosition,
+                searchScript,
+                searchLanguages,
+                flow(PreferenceKey.SEARCH_DEFINITIONS, false)
+            ) { state, position, script, languages, searchDefinitions ->
                 state.copy(
                     position = position,
                     script = script,
-                    languages = languages.filterKeys { it in script.languages }
+                    languages = languages.filterKeys { it in script.languages },
+                    searchDefinitions = searchDefinitions
                 )
             }
         }
@@ -63,7 +68,7 @@ class SearchViewModel(
     fun onSettingsEvent(event: SearchSettingsEvent) {
         when (event) {
             is ToggleSettingsMenu -> _settingsState.update {
-                it.copy(menuExpanded = event.value)
+                it.copy(menuExpanded = event.open)
             }
 
             is SelectPosition -> viewModelScope.launch {
@@ -82,6 +87,10 @@ class SearchViewModel(
 
                     if (atLeastOneSelected) preferences.set(language.settingsKey, selected)
                 }
+            }
+
+            is SearchSettingsEvent.ToggleSearchDefinitions -> viewModelScope.launch {
+                preferences.set(PreferenceKey.SEARCH_DEFINITIONS, event.checked)
             }
         }
     }
@@ -104,7 +113,14 @@ class SearchViewModel(
             val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
             val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
             state.copy(
-                searchResults = getResults(globSearchTerm, globMappedIpaTerm, detectedSearchScript, settings.position, settings.languages),
+                searchResults = getResults(
+                    searchTerm = globSearchTerm,
+                    mappedIpaTerm = globMappedIpaTerm,
+                    detectedSearchScript = detectedSearchScript,
+                    searchPosition = settings.position,
+                    searchLanguages = settings.languages,
+                    searchDefinitions = settings.searchDefinitions
+                ),
                 bookmarks = bookmarks,
                 recents = recentSearches.getRecentSearches(globSearchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript,
@@ -186,21 +202,22 @@ class SearchViewModel(
         mappedIpaTerm: String,
         detectedSearchScript: SearchScript,
         searchPosition: SearchPosition,
-        searchLanguages:  Map<SearchLanguage, Boolean>
+        searchLanguages:  Map<SearchLanguage, Boolean>,
+        searchDefinitions: Boolean
     ) = searchTerm.takeIf { it.isNotBlank() }?.let {
         val (simpleQuery, positionedQuery) = getQueries(searchTerm, searchPosition)
 
         when (detectedSearchScript) {
-            SearchScript.AUTO -> dictionary.searchAll(simpleQuery, positionedQuery)
-            SearchScript.NAGRI -> dictionary.searchNagri(simpleQuery, positionedQuery)
+            SearchScript.AUTO -> dictionary.searchAll(simpleQuery, positionedQuery, searchDefinitions)
+            SearchScript.NAGRI -> dictionary.searchNagri(simpleQuery, positionedQuery, searchDefinitions)
             else -> detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
             }.flatMap { language ->
                 if (language == SearchLanguage.Latin.SYLHETI) {
                     val (mappedIpaSimpleQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
-                    language.search(dictionary, mappedIpaSimpleQuery, mappedIpaPositionedQuery)
+                    language.search(dictionary, mappedIpaSimpleQuery, mappedIpaPositionedQuery, searchDefinitions)
                 } else {
-                    language.search(dictionary, searchTerm, positionedQuery)
+                    language.search(dictionary, searchTerm, positionedQuery, searchDefinitions)
                 }
             }
         }.sortedBy(detectedSearchScript.sortAlgorithm)

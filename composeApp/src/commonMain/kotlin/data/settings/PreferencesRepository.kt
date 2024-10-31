@@ -33,33 +33,27 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
     fun <T> nullableFlow(key: Preferences.Key<T>): Flow<T?> =
         safePreferencesFlow.map { it[key] }
 
-    val searchPosition: Flow<SearchPosition>
-        get() = flow(PreferenceKey.SEARCH_POSITION, 0).map {
-            SearchPosition.entries[it]
-        }
-
-    val searchScript: Flow<SearchScript>
-        get() = flow(PreferenceKey.SEARCH_SCRIPT, 0).map {
-            SearchScript.entries[it]
-        }
-
-    val searchLanguages: Flow<Map<SearchLanguage, Boolean>>
-        get() {
-            val languageFlows = SearchLanguage.entries.map { language ->
-                flow(language.settingsKey, true).map { value ->
-                    language to value
-                }
-            }.toTypedArray()
-
-            return combine(*languageFlows) { it.toMap() }
-        }
-
-    val language: Flow<Language>
-        get() = flow(PreferenceKey.LANGUAGE, Language.EN.code).map(Language::fromCode)
-
     suspend fun <T> set(key: Preferences.Key<T>, value: T) {
         preferences.edit { it[key] = value }
     }
+
+    val searchPosition = flow(PreferenceKey.SEARCH_POSITION, 0).map {
+        SearchPosition.entries[it]
+    }
+
+    val searchScript = flow(PreferenceKey.SEARCH_SCRIPT, 0).map {
+        SearchScript.entries[it]
+    }
+
+    val searchLanguages = combine(
+        *SearchLanguage.entries.map { language ->
+            flow(language.settingsKey, true).map { enabled ->
+                language to enabled
+            }
+        }.toTypedArray()
+    ) { it.toMap() }
+
+    val language = flow(PreferenceKey.LANGUAGE, Language.EN.code).map(Language::fromCode)
 
     suspend fun setLanguage(language: Language) = set(PreferenceKey.LANGUAGE, language.code)
 }
