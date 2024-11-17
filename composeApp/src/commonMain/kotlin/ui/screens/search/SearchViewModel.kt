@@ -53,13 +53,17 @@ class SearchViewModel(
                 searchPosition,
                 searchScript,
                 searchLanguages,
-                flow(PreferenceKey.SEARCH_DEFINITIONS, false)
-            ) { state, position, script, languages, searchDefinitions ->
+                combine(
+                    flow(PreferenceKey.SEARCH_DEFINITIONS, false),
+                    flow(PreferenceKey.SEARCH_EXAMPLES, false)
+                ) { searchDefinitions, searchExamples -> searchDefinitions to searchExamples }
+            ) { state, position, script, languages, (searchDefinitions, searchExamples) ->
                 state.copy(
                     position = position,
                     script = script,
                     languages = languages.filterKeys { it in script.languages },
-                    searchDefinitions = searchDefinitions
+                    searchDefinitions = searchDefinitions,
+                    searchExamples = searchExamples
                 )
             }
         }
@@ -91,6 +95,10 @@ class SearchViewModel(
 
             is SearchSettingsEvent.ToggleSearchDefinitions -> viewModelScope.launch {
                 preferences.set(PreferenceKey.SEARCH_DEFINITIONS, event.checked)
+            }
+
+            is SearchSettingsEvent.ToggleSearchExamples -> viewModelScope.launch {
+                preferences.set(PreferenceKey.SEARCH_EXAMPLES, event.checked)
             }
         }
     }

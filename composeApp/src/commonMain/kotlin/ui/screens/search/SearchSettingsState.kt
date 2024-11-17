@@ -9,5 +9,6 @@ data class SearchSettingsState(
     val position: SearchPosition = SearchPosition.START,
     val script: SearchScript = SearchScript.AUTO,
     val languages: Map<SearchLanguage, Boolean> = emptyMap(),
-    val searchDefinitions: Boolean = false
+    val searchDefinitions: Boolean = false,
+    val searchExamples: Boolean = false
 )

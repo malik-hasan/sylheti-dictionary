@@ -67,14 +67,16 @@ fun SearchSettingsMenu(
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column {
                 Text("Also search in")
 
                 CheckboxSearchSetting("Definitions", state.searchDefinitions) {
                     onEvent(SearchSettingsEvent.ToggleSearchDefinitions(it))
                 }
 
-                CheckboxSearchSetting("Examples", false) {} // TODO
+                CheckboxSearchSetting("Examples", state.searchExamples) {
+                    onEvent(SearchSettingsEvent.ToggleSearchExamples(it))
+                }
             }
         }
     }
