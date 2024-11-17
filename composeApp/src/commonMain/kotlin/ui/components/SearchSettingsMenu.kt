@@ -1,5 +1,6 @@
 package ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -26,7 +27,6 @@ fun SearchSettingsMenu(
     state: SearchSettingsState,
     onEvent: (SearchSettingsEvent) -> Unit
 ) {
-
     DropdownMenu(
         expanded = state.menuExpanded,
         onDismissRequest = { onEvent(SearchSettingsEvent.ToggleSettingsMenu(false)) }
@@ -49,7 +49,7 @@ fun SearchSettingsMenu(
             ) { onEvent(SearchSettingsEvent.SelectScript(it)) }
 
             with(state.languages.toList()) {
-                if (isNotEmpty()) {
+                AnimatedVisibility(isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(stringResource(Res.string.search_languages), Modifier.padding(start = 8.dp))
                         MultiChoiceSegmentedButtonRow {
