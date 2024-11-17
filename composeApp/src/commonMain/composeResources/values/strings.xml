@@ -20,6 +20,7 @@
     <string name="search_languages">Search languages</string>
     <string name="english">English</string>
     <string name="sylheti">Sylheti</string>
+    <string name="at_least_one_language">At least one language must be selected</string>
 
     <string name="settings">Settings</string>
     <string name="language">Language</string>

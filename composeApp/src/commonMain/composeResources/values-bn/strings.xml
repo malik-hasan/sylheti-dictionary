@@ -20,6 +20,7 @@
     <string name="search_languages">কোন ভাষায় খোঁজা</string>
     <string name="english">ইংরেজি</string>
     <string name="sylheti">সিলেটি</string>
+    <string name="at_least_one_language">অন্তত একটি ভাষা বেছে নিতে হবে</string>
 
     <string name="settings">সেটিংস</string>
     <string name="language">ভাষা</string>

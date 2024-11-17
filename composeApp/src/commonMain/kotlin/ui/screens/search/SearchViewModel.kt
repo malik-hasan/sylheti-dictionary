@@ -1,5 +1,6 @@
 package ui.screens.search
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,6 +22,9 @@ import kotlinx.coroutines.yield
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
+import org.jetbrains.compose.resources.getString
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 import ui.screens.search.SearchEvent.Bookmark
 import ui.screens.search.SearchEvent.Search
 import ui.screens.search.SearchEvent.SelectSuggestion
@@ -44,6 +48,8 @@ class SearchViewModel(
             version?.let { it >= 0 }
         }
     )
+
+    val snackbarHostState = SnackbarHostState()
 
     private val _settingsState = MutableStateFlow(SearchSettingsState())
     val settingsState = stateFlowOf(SearchSettingsState(),
@@ -89,7 +95,17 @@ class SearchViewModel(
                         this[language] = selected
                     }.any { it.value }
 
-                    if (atLeastOneSelected) preferences.set(language.settingsKey, selected)
+                    if (atLeastOneSelected) {
+                        preferences.set(language.settingsKey, selected)
+                    } else {
+                        val message = getString(Res.string.at_least_one_language)
+                        with(snackbarHostState) {
+                            if (currentSnackbarData?.visuals?.message != message) {
+                                currentSnackbarData?.dismiss()
+                                showSnackbar(message)
+                            }
+                        }
+                    }
                 }
             }
 

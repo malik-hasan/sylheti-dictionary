@@ -26,6 +26,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -52,18 +54,19 @@ import ui.utils.ifTrue
 import ui.utils.rememberIsScrollingUp
 
 @Composable
-fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
-    val assetLoaded by vm.assetLoaded.collectAsStateWithLifecycle()
-    val searchState by vm.searchState.collectAsStateWithLifecycle()
-    val settingsState by vm.settingsState.collectAsStateWithLifecycle()
+fun SearchScreen(vm: SearchViewModel = koinViewModel()) = with(vm) {
+    val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
+    val searchState by searchState.collectAsStateWithLifecycle()
+    val settingsState by settingsState.collectAsStateWithLifecycle()
 
     SearchScreen(
-        assetLoaded,
-        vm.searchTerm,
-        searchState,
-        vm::onSearchEvent,
-        settingsState,
-        vm::onSettingsEvent
+        assetLoaded = assetLoaded,
+        snackbarHostState = snackbarHostState,
+        searchTerm = searchTerm,
+        searchState = searchState,
+        onSearchEvent = ::onSearchEvent,
+        settingsState = settingsState,
+        onSettingsEvent = ::onSettingsEvent
     )
 }
 
@@ -71,17 +74,20 @@ fun SearchScreen(vm: SearchViewModel = koinViewModel()) {
 @Composable
 fun SearchScreen(
     assetLoaded: Boolean?,
+    snackbarHostState: SnackbarHostState,
     searchTerm: String,
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit
 ) {
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             SylhetiDictionaryTopBar(stringResource(Res.string.sylheti_dictionary), scrollBehavior) {
                 Box {
