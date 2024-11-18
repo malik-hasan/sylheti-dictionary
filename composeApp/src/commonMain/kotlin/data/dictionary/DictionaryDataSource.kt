@@ -11,7 +11,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     fun searchAll(
         simpleQuery: String,
         positionedQuery: String,
-        searchDefinitions: Boolean
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
@@ -25,7 +26,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     fun searchEnglish(
         simpleQuery: String,
         positionedQuery: String,
-        searchDefinitions: Boolean
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchEnglishEntry(positionedQuery).executeAsList().toMutableList()
@@ -39,7 +41,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     fun searchSylhetiLatin(
         simpleQuery: String,
         positionedQuery: String,
-        searchDefinitions: Boolean
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchSylhetiLatinEntry(positionedQuery).executeAsList().toMutableList()
@@ -59,7 +62,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     fun searchNagri(
         simpleQuery: String,
         positionedQuery: String,
-        searchDefinitions: Boolean
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
             val result = searchNagriEntry(positionedQuery).executeAsList().toMutableList()

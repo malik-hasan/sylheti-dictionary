@@ -18,7 +18,8 @@ sealed interface SearchLanguage: SearchSetting {
     val search: DictionaryDataSource.(
         simpleQuery: String,
         positionedQuery: String,
-        searchDefinitions: Boolean
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ) -> List<DictionaryEntry>
 
     companion object {
@@ -29,7 +30,7 @@ sealed interface SearchLanguage: SearchSetting {
     enum class Latin(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: DictionaryDataSource.(String, String, Boolean) -> List<DictionaryEntry>
+        override val search: DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         ENGLISH(
@@ -48,13 +49,13 @@ sealed interface SearchLanguage: SearchSetting {
     enum class Bengali(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: DictionaryDataSource.(String, String, Boolean) -> List<DictionaryEntry>
+        override val search: DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         BENGALI(
             settingsKey = PreferenceKey.BENGALI_SCRIPT_BENGALI,
             label = Res.string.bengali,
-            search = { query, _, searchDefinitions ->
+            search = { query, _, searchDefinitions, searchExamples ->
                 if (searchDefinitions) searchBengaliDefinition(query) else emptyList()
             }
         ),
@@ -62,7 +63,7 @@ sealed interface SearchLanguage: SearchSetting {
         SYLHETI(
             settingsKey = PreferenceKey.BENGALI_SCRIPT_SYLHETI,
             label = Res.string.sylheti,
-            search = { _, positionedQueries, _ -> searchSylhetiBengaliEntry(positionedQueries) }
+            search = { _, positionedQueries, _, searchExamples -> searchSylhetiBengaliEntry(positionedQueries) }
         );
     }
 }
