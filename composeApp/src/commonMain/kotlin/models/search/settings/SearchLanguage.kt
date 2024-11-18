@@ -56,14 +56,16 @@ sealed interface SearchLanguage: SearchSetting {
             settingsKey = PreferenceKey.BENGALI_SCRIPT_BENGALI,
             label = Res.string.bengali,
             search = { query, _, searchDefinitions, searchExamples ->
-                if (searchDefinitions) searchBengaliDefinition(query) else emptyList()
+                searchBengali(query, searchDefinitions, searchExamples)
             }
         ),
 
         SYLHETI(
             settingsKey = PreferenceKey.BENGALI_SCRIPT_SYLHETI,
             label = Res.string.sylheti,
-            search = { _, positionedQueries, _, searchExamples -> searchSylhetiBengaliEntry(positionedQueries) }
+            search = { query, positionedQuery, _, searchExamples ->
+                searchSylhetiBengali(query, positionedQuery, searchExamples)
+            }
         );
     }
 }

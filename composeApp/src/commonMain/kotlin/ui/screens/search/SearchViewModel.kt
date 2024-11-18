@@ -231,20 +231,20 @@ class SearchViewModel(
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = searchTerm.takeIf { it.isNotBlank() }?.let {
-        val (simpleQuery, positionedQuery) = getQueries(searchTerm, searchPosition)
+        val (query, positionedQuery) = getQueries(searchTerm, searchPosition)
 
         yield()
         when (detectedSearchScript) {
-            SearchScript.AUTO -> dictionary.searchAll(simpleQuery, positionedQuery, searchDefinitions, searchExamples)
-            SearchScript.NAGRI -> dictionary.searchNagri(simpleQuery, positionedQuery, searchDefinitions, searchExamples)
+            SearchScript.AUTO -> dictionary.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
+            SearchScript.NAGRI -> dictionary.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
             else -> detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
             }.flatMap { language ->
                 if (language == SearchLanguage.Latin.SYLHETI) {
-                    val (mappedIpaSimpleQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
-                    language.search(dictionary, mappedIpaSimpleQuery, mappedIpaPositionedQuery, searchDefinitions, searchExamples)
+                    val (mappedIpaQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
+                    language.search(dictionary, mappedIpaQuery, mappedIpaPositionedQuery, searchDefinitions, searchExamples)
                 } else {
-                    language.search(dictionary, simpleQuery, positionedQuery, searchDefinitions, searchExamples)
+                    language.search(dictionary, query, positionedQuery, searchDefinitions, searchExamples)
                 }
             }
         }.sortedBy(detectedSearchScript.sortAlgorithm)
