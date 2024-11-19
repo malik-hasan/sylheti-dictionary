@@ -122,31 +122,37 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
-    private var previousSearchTerm = ""
+    private val searchOutputsFlow = combine(
+        snapshotFlow { searchTerm },
+        settingsState
+    ) { searchTerm, settings ->
+        val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
+        val globSearchTerm = escapeGlobChars(searchTerm)
+        val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
+        val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
+
+        val results = getResults(
+            searchTerm = globSearchTerm,
+            mappedIpaTerm = globMappedIpaTerm,
+            detectedSearchScript = detectedSearchScript,
+            searchPosition = settings.position,
+            searchLanguages = settings.languages,
+            searchDefinitions = settings.searchDefinitions,
+            searchExamples = settings.searchExamples
+        )
+
+        val recentSearches = recentSearchesDataSource.getRecentSearches(globSearchTerm, detectedSearchScript)
+
+        SearchOutputs(detectedSearchScript, regexMappedIpaTerm, results, recentSearches)
+    }
 
     private val _searchState = MutableStateFlow(SearchState())
     val searchState = stateFlowOf(SearchState(),
         combine(
             _searchState,
-            snapshotFlow { searchTerm },
-            settingsState,
-            bookmarksDataSource.bookmarksFlow
-        ) { state, searchTerm, settings, bookmarks ->
-            val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
-            val globSearchTerm = escapeGlobChars(searchTerm)
-            val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
-            val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
-
-            val results = getResults(
-                searchTerm = globSearchTerm,
-                mappedIpaTerm = globMappedIpaTerm,
-                detectedSearchScript = detectedSearchScript,
-                searchPosition = settings.position,
-                searchLanguages = settings.languages,
-                searchDefinitions = settings.searchDefinitions,
-                searchExamples = settings.searchExamples
-            )
-
+            bookmarksDataSource.bookmarksFlow,
+            searchOutputsFlow
+        ) { state, bookmarks, (detectedSearchScript, regexMappedIpaTerm, results, recentSearches) ->
             state.copy(
                 searchResults = results,
                 entryItems = (results ?: dictionaryDataSource.getEntries(bookmarks))
@@ -154,13 +160,15 @@ class SearchViewModel(
                         state.entryItems[entry]?.copy(isBookmark = entry.entryId in bookmarks)
                             ?: ExtendedEntryData(isBookmark = entry.entryId in bookmarks)
                     },
-                recents = recentSearchesDataSource.getRecentSearches(globSearchTerm, detectedSearchScript),
+                recents = recentSearches,
                 detectedSearchScript = detectedSearchScript,
                 highlightRegex = Regex.escape(searchTerm).toRegex(),
                 mappedIpaHighlightRegex = Regex(regexMappedIpaTerm)
             )
         }
     )
+
+    private var previousSearchTerm = ""
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
@@ -203,7 +211,6 @@ class SearchViewModel(
     }
 
     private suspend fun detectSearchScript(term: String, searchScriptPreference: SearchScript): SearchScript {
-
         if (searchScriptPreference == SearchScript.AUTO) {
             term.forEach { char ->
                 yield()
@@ -253,6 +260,7 @@ class SearchViewModel(
         searchExamples: Boolean
     ) = searchTerm.takeIf { it.isNotBlank() }?.let {
         val (query, positionedQuery) = getQueries(searchTerm, searchPosition)
+        Logger.d("SEARCH: getResults() $positionedQuery")
 
         yield()
         when (detectedSearchScript) {
