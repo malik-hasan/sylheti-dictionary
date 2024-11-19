@@ -95,69 +95,73 @@ WHERE definitionEN GLOB :query OR
     
 searchAllExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example ON entryId
+INNER JOIN Example X ON D.entryId = X.entryId
 WHERE exampleIPA GLOB :query OR
     exampleBengali GLOB :query OR
     exampleNagri GLOB :query OR
     exampleEN GLOB :query OR
     exampleBN GLOB :query;
 
-searchEnglishEntry:
+searchEnglishEntries:
 SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery;
 
-searchEnglishDefinition:
+searchEnglishDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE definitionEN GLOB :query;
 
-searchEnglishExample:
+searchEnglishExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example ON entryId
+INNER JOIN Example X ON D.entryId = X.entryId
 WHERE exampleEN GLOB :query;
 
-searchSylhetiLatinEntry:
+searchSylhetiLatinEntries:
 SELECT * FROM DictionaryEntry
 WHERE lexemeIPA GLOB :positionedQuery OR
     citationIPA GLOB :positionedQuery;
 
-searchSylhetiLatinDefinition:
+searchSylhetiLatinDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE definitionIPA GLOB :query;
 
-searchSylhetiLatinExample:
+searchSylhetiLatinExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example ON entryId
+INNER JOIN Example X ON D.entryId = X.entryId
 WHERE exampleIPA GLOB :query;
 
-searchBengaliDefinition:
+searchBengaliDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE definitionBN GLOB :query;
 
-searchBengaliExample:
+searchBengaliExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example ON entryId
+INNER JOIN Example X ON D.entryId = X.entryId
 WHERE exampleBN GLOB :query;
 
-searchSylhetiBengaliEntry:
+searchSylhetiBengaliEntries:
 SELECT * FROM DictionaryEntry
 WHERE lexemeBengali GLOB :positionedQuery OR
     citationBengali GLOB :positionedQuery;
     
-searchSylhetiBengaliExample:
+searchSylhetiBengaliExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example ON entryId
+INNER JOIN Example X ON D.entryId = X.entryId
 WHERE exampleBengali GLOB :query;
 
-searchNagriEntry:
+searchNagriEntries:
 SELECT * FROM DictionaryEntry
 WHERE lexemeNagri GLOB :positionedQuery OR
     citationNagri GLOB :positionedQuery;
 
-searchNagriDefinition:
+searchNagriDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE definitionNagri GLOB :query;
 
-searchNagriExample:
+searchNagriExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example ON entryId
+INNER JOIN Example X ON D.entryId = X.entryId
 WHERE exampleNagri GLOB :query;
+
+getExamples:
+SELECT * FROM Example
+WHERE entryId = :entryId;

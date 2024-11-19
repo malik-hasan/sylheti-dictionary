@@ -3,13 +3,13 @@ package ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import kotlinx.coroutines.launch
 import models.Language
 import ui.utils.stateFlowOf
 import utility.refreshLanguage
 
-class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
+class AppViewModel(val preferences: PreferencesDataSource): ViewModel() {
 
     val language = stateFlowOf(Language.EN, preferences.language)
 

@@ -3,11 +3,11 @@ package ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import kotlinx.coroutines.launch
 import utility.setAppOSLanguage
 
-class SettingsViewModel(private val preferences: PreferencesRepository): ViewModel() {
+class SettingsViewModel(private val preferences: PreferencesDataSource): ViewModel() {
 
     fun onEvent(event: SettingsEvent) {
         when(event) {

@@ -2,12 +2,12 @@ package utility
 
 import co.touchlab.kermit.Logger
 import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import kotlinx.coroutines.delay
 import models.Language
 import java.util.Locale
 
-actual suspend fun PreferencesRepository.refreshLanguage() {
+actual suspend fun PreferencesDataSource.refreshLanguage() {
     val locale = Locale.getDefault()
     val languageCode = get(PreferenceKey.LANGUAGE)
     if (languageCode.isNullOrBlank()) {

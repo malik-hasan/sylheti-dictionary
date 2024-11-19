@@ -4,12 +4,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import data.bookmarks.BookmarksDataSource
 import data.bookmarks.BookmarksDatabase
-import data.bookmarks.BookmarksRepository
 import data.dictionary.DictionaryAsset
+import data.recentsearches.RecentSearchesDataSource
 import data.recentsearches.RecentSearchesDatabase
-import data.recentsearches.RecentSearchesRepository
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -20,7 +20,7 @@ import platform.Foundation.stringByAppendingPathComponent
 actual val platformModule = module {
 
     single {
-        PreferencesRepository(
+        PreferencesDataSource(
             initDataStore { fileName ->
                 NSDocumentDirectory.path.stringByAppendingPathComponent(fileName)
             }
@@ -32,14 +32,13 @@ actual val platformModule = module {
     }.bind(SqlDriver::class)
 
     single {
-        BookmarksRepository(
-            roomDatabase<BookmarksDatabase>(BookmarksDatabase.FILENAME).dao(),
-            get()
+        BookmarksDataSource(
+            roomDatabase<BookmarksDatabase>(BookmarksDatabase.FILENAME).dao()
         )
     }
 
     single {
-        RecentSearchesRepository(
+        RecentSearchesDataSource(
             roomDatabase<RecentSearchesDatabase>(RecentSearchesDatabase.FILENAME).dao()
         )
     }

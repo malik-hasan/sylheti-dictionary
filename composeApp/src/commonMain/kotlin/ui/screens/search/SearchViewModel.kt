@@ -8,11 +8,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import data.bookmarks.BookmarksRepository
+import data.bookmarks.BookmarksDataSource
 import data.dictionary.DictionaryDataSource
-import data.recentsearches.RecentSearchesRepository
+import data.recentsearches.RecentSearchesDataSource
 import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -37,10 +37,10 @@ import ui.utils.stateFlowOf
 import utility.UnicodeUtility
 
 class SearchViewModel(
-    private val dictionary: DictionaryDataSource,
-    private val bookmarks: BookmarksRepository,
-    private val preferences: PreferencesRepository,
-    private val recentSearches: RecentSearchesRepository
+    private val preferences: PreferencesDataSource,
+    private val dictionaryDataSource: DictionaryDataSource,
+    private val bookmarksDataSource: BookmarksDataSource,
+    private val recentSearchesDataSource: RecentSearchesDataSource
 ) : ViewModel() {
 
     val assetLoaded = stateFlowOf(null,
@@ -128,26 +128,33 @@ class SearchViewModel(
     val searchState = stateFlowOf(SearchState(),
         combine(
             _searchState,
-            bookmarks.getBookmarks(),
             snapshotFlow { searchTerm },
-            settingsState
-        ) { state, bookmarks, searchTerm, settings ->
+            settingsState,
+            bookmarksDataSource.bookmarksFlow
+        ) { state, searchTerm, settings, bookmarks ->
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
             val globSearchTerm = escapeGlobChars(searchTerm)
             val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
             val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
+
+            val results = getResults(
+                searchTerm = globSearchTerm,
+                mappedIpaTerm = globMappedIpaTerm,
+                detectedSearchScript = detectedSearchScript,
+                searchPosition = settings.position,
+                searchLanguages = settings.languages,
+                searchDefinitions = settings.searchDefinitions,
+                searchExamples = settings.searchExamples
+            )
+
             state.copy(
-                searchResults = getResults(
-                    searchTerm = globSearchTerm,
-                    mappedIpaTerm = globMappedIpaTerm,
-                    detectedSearchScript = detectedSearchScript,
-                    searchPosition = settings.position,
-                    searchLanguages = settings.languages,
-                    searchDefinitions = settings.searchDefinitions,
-                    searchExamples = settings.searchExamples
-                ),
-                bookmarks = bookmarks,
-                recents = recentSearches.getRecentSearches(globSearchTerm, detectedSearchScript),
+                searchResults = results,
+                entryItems = (results ?: dictionaryDataSource.getEntries(bookmarks))
+                    .associateWith { entry ->
+                        state.entryItems[entry]?.copy(isBookmark = entry.entryId in bookmarks)
+                            ?: ExtendedEntryData(isBookmark = entry.entryId in bookmarks)
+                    },
+                recents = recentSearchesDataSource.getRecentSearches(globSearchTerm, detectedSearchScript),
                 detectedSearchScript = detectedSearchScript,
                 highlightRegex = Regex.escape(searchTerm).toRegex(),
                 mappedIpaHighlightRegex = Regex(regexMappedIpaTerm)
@@ -174,8 +181,22 @@ class SearchViewModel(
             is Bookmark -> with(event) {
                 viewModelScope.launch {
                     if (isBookmark) {
-                        bookmarks.addBookmark(entryId)
-                    } else bookmarks.removeBookmark(entryId)
+                        bookmarksDataSource.addBookmark(entryId)
+                    } else bookmarksDataSource.removeBookmark(entryId)
+                }
+            }
+
+            is SearchEvent.ExpandItem -> with(event) {
+                val examples = dictionaryDataSource.getExamples(entry.entryId)
+                _searchState.update {
+                    it.copy(
+                        entryItems = it.entryItems.toMutableMap().apply {
+                            this[entry] = ExtendedEntryData(
+                                isExpanded = isExpanded,
+                                examples = examples
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -235,16 +256,16 @@ class SearchViewModel(
 
         yield()
         when (detectedSearchScript) {
-            SearchScript.AUTO -> dictionary.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
-            SearchScript.NAGRI -> dictionary.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
+            SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
+            SearchScript.NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
             else -> detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
             }.flatMap { language ->
                 if (language == SearchLanguage.Latin.SYLHETI) {
                     val (mappedIpaQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
-                    language.search(dictionary, mappedIpaQuery, mappedIpaPositionedQuery, searchDefinitions, searchExamples)
+                    language.search(dictionaryDataSource, mappedIpaQuery, mappedIpaPositionedQuery, searchDefinitions, searchExamples)
                 } else {
-                    language.search(dictionary, query, positionedQuery, searchDefinitions, searchExamples)
+                    language.search(dictionaryDataSource, query, positionedQuery, searchDefinitions, searchExamples)
                 }
             }
         }.sortedBy(detectedSearchScript.sortAlgorithm)
@@ -259,7 +280,7 @@ class SearchViewModel(
         with(searchState.value) {
             if (searchResults?.isNotEmpty() == true) {
                 viewModelScope.launch {
-                    recentSearches.cacheSearch(searchTerm, detectedSearchScript)
+                    recentSearchesDataSource.cacheSearch(searchTerm, detectedSearchScript)
                 }
             }
         }

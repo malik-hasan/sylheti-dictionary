@@ -137,23 +137,20 @@ fun SearchScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                with(searchState) {
+                    searchResults?.ifEmpty {
+                        item { Text("No results") }
+                        return@LazyColumn
+                    }
 
-                val items = with(searchState) {
-                    searchResults?.let {
-                        searchResults.ifEmpty {
-                            item { Text("No results") }
-                            return@LazyColumn
-                        }
-                    } ?: bookmarks.ifEmpty { return@LazyColumn }
-                }
-
-                items(items) { entry ->
-                    EntryCard(
-                        entry = entry,
-                        highlightRegex = searchState.highlightRegex,
-                        mappedIpaHighlightRegex = searchState.mappedIpaHighlightRegex,
-                    ) { isBookmark ->
-                        onSearchEvent(SearchEvent.Bookmark(entry.entryId, isBookmark))
+                    items(entryItems.toList()) { (entry, extendedEntry) ->
+                        EntryCard(
+                            entry = entry,
+                            extendedEntry = extendedEntry,
+                            highlightRegex = highlightRegex,
+                            mappedIpaHighlightRegex = mappedIpaHighlightRegex,
+                            onEvent = onSearchEvent
+                        )
                     }
                 }
             }

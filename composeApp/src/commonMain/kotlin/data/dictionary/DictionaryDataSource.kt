@@ -5,8 +5,7 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 
 class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     
-    fun getEntries(entryIds: List<String>) =
-        queries.getEntries(entryIds).executeAsList()
+    fun getEntries(entryIds: Collection<String>) = queries.getEntries(entryIds).executeAsList()
 
     fun searchAll(
         query: String,
@@ -33,12 +32,12 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchExamples: Boolean
     ) = with(queries) {
         transactionWithResult {
-            val result = searchEnglishEntry(positionedQuery).executeAsList().toMutableList()
+            val result = searchEnglishEntries(positionedQuery).executeAsList().toMutableList()
             if (searchDefinitions) {
-                result += searchEnglishDefinition(query).executeAsList()
+                result += searchEnglishDefinitions(query).executeAsList()
             }
             if (searchExamples) {
-                result += searchEnglishExample(query).executeAsList()
+                result += searchEnglishExamples(query).executeAsList()
             }
             result
         }
@@ -51,12 +50,12 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchExamples: Boolean
     ) = with(queries) {
         transactionWithResult {
-            val result = searchSylhetiLatinEntry(positionedQuery).executeAsList().toMutableList()
+            val result = searchSylhetiLatinEntries(positionedQuery).executeAsList().toMutableList()
             if (searchDefinitions) {
-                result += searchSylhetiLatinDefinition(query).executeAsList()
+                result += searchSylhetiLatinDefinitions(query).executeAsList()
             }
             if (searchExamples) {
-                result += searchSylhetiLatinExample(query).executeAsList()
+                result += searchSylhetiLatinExamples(query).executeAsList()
             }
             result
         }
@@ -67,13 +66,13 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = with(queries) {
-        val result = mutableListOf<DictionaryEntry>()
         transactionWithResult {
+            val result = mutableListOf<DictionaryEntry>()
             if (searchDefinitions) {
-                result += searchBengaliDefinition(query).executeAsList()
+                result += searchBengaliDefinitions(query).executeAsList()
             }
             if (searchExamples) {
-                result += searchBengaliExample(query).executeAsList()
+                result += searchBengaliExamples(query).executeAsList()
             }
             result
         }
@@ -85,9 +84,9 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchExamples: Boolean
     ) = with(queries) {
         transactionWithResult {
-            val result = searchSylhetiBengaliEntry(positionedQuery).executeAsList().toMutableList()
+            val result = searchSylhetiBengaliEntries(positionedQuery).executeAsList().toMutableList()
             if (searchExamples) {
-                result += searchSylhetiBengaliExample(query).executeAsList()
+                result += searchSylhetiBengaliExamples(query).executeAsList()
             }
             result
         }
@@ -100,14 +99,16 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchExamples: Boolean
     ): List<DictionaryEntry> = with(queries) {
         transactionWithResult {
-            val result = searchNagriEntry(positionedQuery).executeAsList().toMutableList()
+            val result = searchNagriEntries(positionedQuery).executeAsList().toMutableList()
             if (searchDefinitions) {
-                result += searchNagriDefinition(query).executeAsList()
+                result += searchNagriDefinitions(query).executeAsList()
             }
             if (searchExamples) {
-                result += searchNagriExample(query).executeAsList()
+                result += searchNagriExamples(query).executeAsList()
             }
             result
         }
     }
+
+    fun getExamples(entryId: String) = queries.getExamples(entryId).executeAsList()
 }

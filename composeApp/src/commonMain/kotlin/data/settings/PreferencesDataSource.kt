@@ -15,7 +15,7 @@ import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 
-class PreferencesRepository(private val preferences: DataStore<Preferences>) {
+class PreferencesDataSource(private val preferences: DataStore<Preferences>) {
 
     private val safePreferencesFlow: Flow<Preferences>
         get() = preferences.data.catch { exception ->

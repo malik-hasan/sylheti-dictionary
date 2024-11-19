@@ -5,7 +5,7 @@ import co.touchlab.kermit.Logger
 import data.dictionary.DictionaryAsset
 import data.dictionary.DictionaryAssetVersion
 import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import di.initKoin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -18,7 +18,7 @@ import java.io.IOException
 
 class SylhetiDictionaryApplication: Application() {
 
-    private val preferences: PreferencesRepository by inject()
+    private val preferences: PreferencesDataSource by inject()
 
     @OptIn(ExperimentalResourceApi::class)
     override fun onCreate() {

@@ -1,7 +1,7 @@
 package utility
 
 import co.touchlab.kermit.Logger
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import models.Language
 import platform.Foundation.NSLocale
 import platform.Foundation.NSUserDefaults
@@ -9,7 +9,7 @@ import platform.Foundation.languageCode
 
 private const val NSUserDefaultsLocalizationKey = "AppleLanguages"
 
-actual suspend fun PreferencesRepository.refreshLanguage() {
+actual suspend fun PreferencesDataSource.refreshLanguage() {
     val locales = NSUserDefaults.standardUserDefaults.arrayForKey(NSUserDefaultsLocalizationKey)
     Logger.d("LOCALE: refreshing language preference from: $locales")
     if (!locales.isNullOrEmpty()) {

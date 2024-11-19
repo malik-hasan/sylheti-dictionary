@@ -5,7 +5,7 @@ import co.touchlab.kermit.Logger
 import data.dictionary.DictionaryAsset
 import data.dictionary.DictionaryAssetVersion
 import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import di.initKoin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -19,7 +19,7 @@ import java.io.IOException
 fun main() {
     initKoin()
 
-    val preferences: PreferencesRepository = getKoin().get()
+    val preferences: PreferencesDataSource = getKoin().get()
     runBlocking(Dispatchers.IO) {
 
         val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1

@@ -3,11 +3,11 @@ package utility
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import co.touchlab.kermit.Logger
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import models.Language
 import java.util.Locale
 
-actual suspend fun PreferencesRepository.refreshLanguage() {
+actual suspend fun PreferencesDataSource.refreshLanguage() {
     val locale = AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.getDefault()
     Logger.d("LOCALE: refreshing language preference from: $locale")
     setLanguage(Language.fromCode(locale.language))

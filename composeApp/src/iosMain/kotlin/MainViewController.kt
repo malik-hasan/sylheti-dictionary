@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import data.dictionary.DictionaryAsset
 import data.dictionary.DictionaryAssetVersion
 import data.settings.PreferenceKey
-import data.settings.PreferencesRepository
+import data.settings.PreferencesDataSource
 import di.initKoin
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -32,7 +32,7 @@ fun MainViewController() = ComposeUIViewController(
     configure = {
         initKoin()
 
-        val preferences: PreferencesRepository = getKoin().get()
+        val preferences: PreferencesDataSource = getKoin().get()
         runBlocking(Dispatchers.IO) {
             val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
             if (DictionaryAssetVersion > currentDictionaryVersion) {

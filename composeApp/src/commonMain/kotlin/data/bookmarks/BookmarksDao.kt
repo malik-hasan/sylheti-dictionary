@@ -10,7 +10,7 @@ import models.Bookmark
 @Dao
 interface BookmarksDao {
     @Query("SELECT * FROM Bookmark")
-    fun getBookmarks(): Flow<List<Bookmark>>
+    fun bookmarksFlow(): Flow<List<Bookmark>>
 
     @Query("SELECT EXISTS(SELECT * FROM Bookmark WHERE entry_id = :entryId)")
     suspend fun checkBookmark(entryId: String): Boolean
