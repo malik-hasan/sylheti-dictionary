@@ -8,7 +8,7 @@ import androidx.compose.ui.text.withStyle
 import utility.UnicodeUtility
 
 @Composable
-fun AnnotatedString.Builder.appendHighlighted(text: CharSequence, highlightRegex: Regex) {
+fun AnnotatedString.Builder.appendHighlighted(text: String, highlightRegex: Regex) {
     var currentIndex = 0
     highlightRegex.findAll(text).filter { it.value.isNotEmpty() }.forEach { match ->
         val highlightRange = match.range
@@ -29,7 +29,7 @@ fun AnnotatedString.Builder.appendHighlighted(text: CharSequence, highlightRegex
     }
 }
 
-private fun AnnotatedString.Builder.appendHighlightedConjuncts(text: CharSequence, currentIndex: Int): Int {
+private fun AnnotatedString.Builder.appendHighlightedConjuncts(text: String, currentIndex: Int): Int {
     if (currentIndex >= text.length) return currentIndex
 
     return when (text[currentIndex]) {

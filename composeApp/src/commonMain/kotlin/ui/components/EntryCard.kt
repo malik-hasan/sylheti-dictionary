@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -32,9 +34,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.bookmark
 import sylhetidictionary.composeapp.generated.resources.bookmark_border
+import sylhetidictionary.composeapp.generated.resources.english
+import sylhetidictionary.composeapp.generated.resources.sylheti
 import ui.screens.search.ExtendedEntryData
 import ui.screens.search.SearchEvent
 import ui.theme.bengaliBodyFontFamily
@@ -60,24 +66,22 @@ fun EntryCard(
         Column(Modifier
             .padding(top = 12.dp)
             .padding(horizontal = 16.dp)
-            .fillMaxWidth()
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
                     text = buildAnnotatedString {
-                        appendHighlighted(entry.citationIPA ?: entry.lexemeIPA, mappedIpaHighlightRegex)
-                        entry.citationBengali ?: entry.lexemeBengali?.let {
-                            append(" • ")
-                            withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
+                        with(entry) {
+                            appendHighlighted(citationIPA ?: lexemeIPA, mappedIpaHighlightRegex)
+                            citationBengali ?: lexemeBengali?.let {
+                                append(" • ")
+                                withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
+                                    appendHighlighted(it, highlightRegex)
+                                }
+                            }
+                            citationNagri ?: lexemeNagri?.let {
+                                append(" • ")
                                 appendHighlighted(it, highlightRegex)
                             }
-                        }
-                        entry.citationNagri ?: entry.lexemeNagri?.let {
-                            append(" • ")
-                            appendHighlighted(it, highlightRegex)
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -85,6 +89,7 @@ fun EntryCard(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
+                
                 Icon(
                     modifier = Modifier.clickable(
                         interactionSource = remember { MutableInteractionSource() },
@@ -101,46 +106,45 @@ fun EntryCard(
                 )
             }
 
-            TaggedField(
-                tag = entry.partOfSpeech?.lowercase() ?: "unknown",
-                body = entry.gloss ?: "",
-                highlightRegex = highlightRegex
-            )
-
-            entry.definitionEN?.let { def ->
-                TaggedField("english", def, highlightRegex)
-            }
-
-            if (entry.definitionBN != null || entry.definitionBNIPA != null) {
+            with(entry) {
                 TaggedField(
-                    tag = "bengali",
-                    body = buildAnnotatedString {
-                        entry.definitionBN?.let {
-                            withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                                append("$it ")
-                            }
-                        }
-                        entry.definitionBNIPA?.let {
-                            append(it)
-                        }
-                    },
-                    highlightRegex = mappedIpaHighlightRegex
+                    tag = FieldTag(partOfSpeech ?: "unknown", true),
+                    body = FieldBody(gloss ?: ""),
+                    highlightRegex = highlightRegex
                 )
-            }
 
-            if (entry.definitionNagri != null || entry.definitionIPA != null) {
-                TaggedField(
-                    tag = "sylheti",
-                    body = buildAnnotatedString {
-                        entry.definitionNagri?.let {
-                            append("$it ")
-                        }
-                        entry.definitionIPA?.let {
-                            append(it)
-                        }
-                    },
-                    highlightRegex = mappedIpaHighlightRegex
-                )
+                definitionEN?.let { definition ->
+                    TaggedField(
+                        tag = FieldTag(stringResource(Res.string.english)),
+                        body = FieldBody(definition),
+                        highlightRegex = highlightRegex
+                    )
+                }
+
+                listOfNotNull(
+                    definitionBN,
+                    definitionBNIPA
+                ).takeIf { it.isNotEmpty() }?.let {
+                    TaggedField(
+                        tag = FieldTag(stringResource(Res.string.bengali)),
+                        bodies = listOfNotNull(
+                            definitionBN?.let { FieldBody(it, true) },
+                            definitionBNIPA?.let(::FieldBody)
+                        ),
+                        highlightRegex = mappedIpaHighlightRegex
+                    )
+                }
+
+                listOfNotNull(
+                    definitionNagri,
+                    definitionIPA
+                ).takeIf { it.isNotEmpty() }?.let { definitions ->
+                    TaggedField(
+                        tag = FieldTag(stringResource(Res.string.sylheti)),
+                        bodies = definitions.map(::FieldBody),
+                        highlightRegex = mappedIpaHighlightRegex
+                    )
+                }
             }
         }
 
@@ -155,12 +159,59 @@ fun EntryCard(
 
         expandTransition.AnimatedVisibility(
             visible = { it },
-            enter = expandVertically(),
-            exit = shrinkVertically()
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
         ) {
             HorizontalDivider()
-            extendedEntry.examples.forEach {
-                it.exampleIPA?.let { it1 -> Text(it1) }
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                extendedEntry.examples.forEachIndexed { i, example ->
+                    Column {
+                        Text("Example ${ i + 1 }")
+
+                        with(example) {
+                            listOfNotNull(
+                                exampleBengali,
+                                exampleNagri,
+                                exampleIPA
+                            ).takeIf { it.isNotEmpty() }?.let {
+                                TaggedField(
+                                    tag = FieldTag(stringResource(Res.string.sylheti)),
+                                    bodies = listOfNotNull(
+                                        exampleBengali?.let { FieldBody(it, true) },
+                                        exampleNagri?.let(::FieldBody),
+                                        exampleIPA?.let(::FieldBody)
+                                    ),
+                                    highlightRegex = mappedIpaHighlightRegex
+                                )
+                            }
+
+                            exampleEN?.let { example ->
+                                TaggedField(
+                                    tag = FieldTag(stringResource(Res.string.english)),
+                                    body = FieldBody(example),
+                                    highlightRegex = highlightRegex
+                                )
+                            }
+
+                            listOfNotNull(
+                                exampleBN,
+                                exampleBNIPA
+                            ).takeIf { it.isNotEmpty() }?.let {
+                                TaggedField(
+                                    tag = FieldTag(stringResource(Res.string.bengali)),
+                                    bodies = listOfNotNull(
+                                        exampleBN?.let { FieldBody(it, true) },
+                                        exampleBNIPA?.let(::FieldBody)
+                                    ),
+                                    highlightRegex = mappedIpaHighlightRegex
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
