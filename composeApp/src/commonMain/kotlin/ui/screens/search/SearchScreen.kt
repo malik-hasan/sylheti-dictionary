@@ -85,9 +85,7 @@ fun SearchScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             SylhetiDictionaryTopBar(stringResource(Res.string.sylheti_dictionary), scrollBehavior) {
                 Box {
@@ -113,137 +111,140 @@ fun SearchScreen(
         val listState = rememberLazyListState()
         val isScrollingUp by listState.rememberIsScrollingUp()
 
-        if (assetLoaded == false) {
-            Text(
-                "There was an error loading the dictionary data. Try restarting the app, or report a bug if the problem persists.",
-                modifier = Modifier.fillMaxWidth().padding(scaffoldPadding),
-                textAlign = TextAlign.Center
-            )
-            return@Scaffold
-        }
+        Box(Modifier.padding(scaffoldPadding)) {
+            if (assetLoaded == false) {
+                Text(
+                    text = "There was an error loading the dictionary data. Try restarting the app, or report a bug if the problem persists.",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            } else {
 
-        Box {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .padding(scaffoldPadding)
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 72.dp,
-                    bottom = 8.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                with(searchState) {
-                    searchResults?.ifEmpty {
-                        item { Text("No results") }
-                        return@LazyColumn
-                    }
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 72.dp,
+                        bottom = 8.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    with(searchState) {
+                        searchResults?.ifEmpty {
+                            item { Text("No results") }
+                            return@LazyColumn
+                        }
 
-                    items(entryItems.toList()) { (entry, extendedEntry) ->
-                        EntryCard(
-                            entry = entry,
-                            extendedEntry = extendedEntry,
-                            highlightRegex = highlightRegex,
-                            mappedIpaHighlightRegex = mappedIpaHighlightRegex,
-                            showNagri = settingsState.showNagri,
-                            onEvent = onSearchEvent
-                        )
+                        items(entryItems.toList()) { (entry, extendedEntry) ->
+                            EntryCard(
+                                entry = entry,
+                                extendedEntry = extendedEntry,
+                                highlightRegex = highlightRegex,
+                                mappedIpaHighlightRegex = mappedIpaHighlightRegex,
+                                showNagri = settingsState.showNagri,
+                                onEvent = onSearchEvent
+                            )
+                        }
                     }
                 }
-            }
 
-            AnimatedVisibility(
-                visible = isScrollingUp,
-                enter = slideInVertically(),
-                exit = slideOutVertically()
-            ) {
-                SearchBar(
-                    modifier = Modifier
-                        .padding(scaffoldPadding)
-                        .ifTrue(!searchState.searchBarActive) { padding(horizontal = 8.dp) }
-                        .fillMaxWidth(),
-                    inputField = {
-                        SearchBarDefaults.InputField(
-                            query = searchTerm,
-                            onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
-                            onSearch = { onSearchEvent(SearchEvent.Search) },
-                            expanded = searchState.searchBarActive,
-                            onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
-                            placeholder = {
-                                Text(
-                                    text = stringResource(Res.string.search_dictionary),
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
-                            },
-                            leadingIcon = {
-                                if (searchState.searchBarActive) {
-                                    IconButton({ onSearchEvent(SearchEvent.SetSearchBarActive(false)) }) {
-                                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
-                                    }
-                                } else Icon(Icons.Default.Search, "Search")
-                            },
-                            trailingIcon = {
-                                if (searchTerm.isNotBlank()) {
-                                    IconButton({ onSearchEvent(SearchEvent.UpdateSearchTerm("")) }) {
-                                        Icon(Icons.Default.Clear, "Clear")
-                                    }
-                                }
-                            }
-                        )
-                    },
-                    expanded = searchState.searchBarActive,
-                    onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
-                    tonalElevation = 50000.dp,
-                    shadowElevation = 6.dp,
-                    windowInsets = WindowInsets(0.dp)
+                AnimatedVisibility(
+                    visible = isScrollingUp,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
                 ) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(
-                            horizontal = 16.dp,
-                            vertical = 8.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-
-                        with(searchState) {
-                            items(recents) { recent ->
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Icon(painterResource(Res.drawable.history), "Recent")
+                    SearchBar(
+                        modifier = Modifier
+                            .ifTrue(!searchState.searchBarActive) { padding(horizontal = 8.dp) }
+                            .fillMaxWidth(),
+                        inputField = {
+                            SearchBarDefaults.InputField(
+                                query = searchTerm,
+                                onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
+                                onSearch = { onSearchEvent(SearchEvent.Search) },
+                                expanded = searchState.searchBarActive,
+                                onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
+                                placeholder = {
                                     Text(
-                                        text = recent,
-                                        modifier = Modifier
-                                            .clickable {
-                                                onSearchEvent(
-                                                    SearchEvent.SelectSuggestion(recent)
-                                                )
-                                            }
-                                            .fillMaxWidth()
+                                        text = stringResource(Res.string.search_dictionary),
+                                        color = MaterialTheme.colorScheme.tertiary
                                     )
+                                },
+                                leadingIcon = {
+                                    if (searchState.searchBarActive) {
+                                        IconButton({
+                                            onSearchEvent(
+                                                SearchEvent.SetSearchBarActive(
+                                                    false
+                                                )
+                                            )
+                                        }) {
+                                            Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
+                                        }
+                                    } else Icon(Icons.Default.Search, "Search")
+                                },
+                                trailingIcon = {
+                                    if (searchTerm.isNotBlank()) {
+                                        IconButton({ onSearchEvent(SearchEvent.UpdateSearchTerm("")) }) {
+                                            Icon(Icons.Default.Clear, "Clear")
+                                        }
+                                    }
                                 }
-                            }
+                            )
+                        },
+                        expanded = searchState.searchBarActive,
+                        onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
+                        tonalElevation = 50000.dp,
+                        shadowElevation = 6.dp,
+                        windowInsets = WindowInsets(0.dp)
+                    ) {
+                        LazyColumn(
+                            contentPadding = PaddingValues(
+                                horizontal = 16.dp,
+                                vertical = 8.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
 
-                            searchResults?.let { results ->
-                                if (results.isEmpty()) {
-                                    item { Text("No results") }
-                                }
-
-                                items(results) { entry ->
-                                    val word = entry.lexemeIPA
-                                    if (word !in recents) {
+                            with(searchState) {
+                                items(recents) { recent ->
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Icon(painterResource(Res.drawable.history), "Recent")
                                         Text(
-                                            text = word,
+                                            text = recent,
                                             modifier = Modifier
                                                 .clickable {
                                                     onSearchEvent(
-                                                        SearchEvent.SelectSuggestion(word)
+                                                        SearchEvent.SelectSuggestion(recent)
                                                     )
                                                 }
                                                 .fillMaxWidth()
                                         )
+                                    }
+                                }
+
+                                searchResults?.let { results ->
+                                    if (results.isEmpty()) {
+                                        item { Text("No results") }
+                                    }
+
+                                    items(results) { entry ->
+                                        val word = entry.lexemeIPA
+                                        if (word !in recents) {
+                                            Text(
+                                                text = word,
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        onSearchEvent(
+                                                            SearchEvent.SelectSuggestion(word)
+                                                        )
+                                                    }
+                                                    .fillMaxWidth()
+                                            )
+                                        }
                                     }
                                 }
                             }
