@@ -46,6 +46,7 @@ import ui.screens.search.ExtendedEntryData
 import ui.screens.search.SearchEvent
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
+import ui.utils.StringWithFont
 import ui.utils.appendHighlighted
 
 @Composable
@@ -112,15 +113,15 @@ fun EntryCard(
 
             with(entry) {
                 TaggedField(
-                    tag = FieldTag(partOfSpeech ?: "???", latinBodyFontFamily),
-                    body = FieldBody(gloss ?: "", latinBodyFontFamily),
+                    tag = StringWithFont(partOfSpeech ?: "pos?", latinBodyFontFamily),
+                    body = StringWithFont(gloss ?: "", latinBodyFontFamily),
                     highlightRegex = highlightRegex
                 )
 
                 definitionEN?.let { definition ->
                     TaggedField(
-                        tag = FieldTag(stringResource(Res.string.english)),
-                        body = FieldBody(definition, latinBodyFontFamily),
+                        tag = StringWithFont(stringResource(Res.string.english)),
+                        body = StringWithFont(definition, latinBodyFontFamily),
                         highlightRegex = highlightRegex
                     )
                 }
@@ -130,10 +131,10 @@ fun EntryCard(
                     definitionBNIPA
                 ).takeIf { it.isNotEmpty() }?.let {
                     TaggedField(
-                        tag = FieldTag(stringResource(Res.string.bengali)),
+                        tag = StringWithFont(stringResource(Res.string.bengali)),
                         bodies = listOfNotNull(
-                            definitionBN?.let { FieldBody(it, bengaliBodyFontFamily) },
-                            definitionBNIPA?.let { FieldBody(it, latinBodyFontFamily) }
+                            definitionBN?.let { StringWithFont(it, bengaliBodyFontFamily) },
+                            definitionBNIPA?.let { StringWithFont(it, latinBodyFontFamily) }
                         ),
                         highlightRegex = mappedIpaHighlightRegex
                     )
@@ -144,8 +145,8 @@ fun EntryCard(
                     definitionIPA
                 ).takeIf { it.isNotEmpty() }?.let { definitions ->
                     TaggedField(
-                        tag = FieldTag(stringResource(Res.string.sylheti)),
-                        bodies = definitions.map { FieldBody(it, latinBodyFontFamily) },
+                        tag = StringWithFont(stringResource(Res.string.sylheti)),
+                        bodies = definitions.map { StringWithFont(it, latinBodyFontFamily) },
                         highlightRegex = mappedIpaHighlightRegex
                     )
                 }
@@ -182,11 +183,11 @@ fun EntryCard(
                                 exampleIPA
                             ).takeIf { it.isNotEmpty() }?.let {
                                 TaggedField(
-                                    tag = FieldTag(stringResource(Res.string.sylheti)),
+                                    tag = StringWithFont(stringResource(Res.string.sylheti)),
                                     bodies = listOfNotNull(
-                                        exampleBengali?.let { FieldBody(it, bengaliBodyFontFamily) },
-                                        exampleNagri?.let(::FieldBody),
-                                        exampleIPA?.let { FieldBody(it, latinBodyFontFamily) }
+                                        exampleBengali?.let { StringWithFont(it, bengaliBodyFontFamily) },
+                                        exampleNagri?.let(::StringWithFont),
+                                        exampleIPA?.let { StringWithFont(it, latinBodyFontFamily) }
                                     ),
                                     highlightRegex = mappedIpaHighlightRegex
                                 )
@@ -194,8 +195,8 @@ fun EntryCard(
 
                             exampleEN?.let { example ->
                                 TaggedField(
-                                    tag = FieldTag(stringResource(Res.string.english)),
-                                    body = FieldBody(example, latinBodyFontFamily),
+                                    tag = StringWithFont(stringResource(Res.string.english)),
+                                    body = StringWithFont(example, latinBodyFontFamily),
                                     highlightRegex = highlightRegex
                                 )
                             }
@@ -205,10 +206,10 @@ fun EntryCard(
                                 exampleBNIPA
                             ).takeIf { it.isNotEmpty() }?.let {
                                 TaggedField(
-                                    tag = FieldTag(stringResource(Res.string.bengali)),
+                                    tag = StringWithFont(stringResource(Res.string.bengali)),
                                     bodies = listOfNotNull(
-                                        exampleBN?.let { FieldBody(it, bengaliBodyFontFamily) },
-                                        exampleBNIPA?.let { FieldBody(it, latinBodyFontFamily) }
+                                        exampleBN?.let { StringWithFont(it, bengaliBodyFontFamily) },
+                                        exampleBNIPA?.let { StringWithFont(it, latinBodyFontFamily) }
                                     ),
                                     highlightRegex = mappedIpaHighlightRegex
                                 )

@@ -7,35 +7,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import ui.theme.getBodyFontFamily
+import ui.utils.StringWithFont
 import ui.utils.appendHighlighted
-
-data class FieldTag(
-    val label: String,
-    val fontFamily: FontFamily? = null
-)
-
-data class FieldBody(
-    val body: String,
-    val fontFamily: FontFamily? = null
-)
 
 @Composable
 fun TaggedField(
-    tag: FieldTag,
-    body: FieldBody,
+    tag: StringWithFont,
+    body: StringWithFont,
     highlightRegex: Regex
 ) { TaggedField(tag, listOf(body), highlightRegex) }
 
 @Composable
 fun TaggedField(
-    tag: FieldTag,
-    bodies: List<FieldBody>,
+    tag: StringWithFont,
+    bodies: List<StringWithFont>,
     highlightRegex: Regex
 ) {
     val overflowIndent = 40.sp
@@ -51,7 +41,7 @@ fun TaggedField(
                         fontFamily = fontFamily ?: getBodyFontFamily(),
                         fontSize = MaterialTheme.typography.bodySmall.fontSize
                     )
-                ) { append(label.lowercase()) }
+                ) { append(string.lowercase()) }
             }
             append(' ')
             bodies.forEachIndexed { i, (body, fontFamily) ->
