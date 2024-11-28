@@ -21,6 +21,7 @@
 
     <string name="search">Search</string>
     <string name="search_dictionary">Search dictionary</string>
+    <string name="example">Example %1$d</string>
 
     <string name="settings">Settings</string>
     <string name="language">Language</string>

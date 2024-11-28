@@ -21,6 +21,7 @@
 
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
+    <string name="example">উদাহরণ %1$d</string>
 
     <string name="settings">সেটিংস</string>
     <string name="language">ভাষা</string>

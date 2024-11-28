@@ -40,6 +40,7 @@ import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.bookmark
 import sylhetidictionary.composeapp.generated.resources.bookmark_border
 import sylhetidictionary.composeapp.generated.resources.english
+import sylhetidictionary.composeapp.generated.resources.example
 import sylhetidictionary.composeapp.generated.resources.sylheti
 import ui.screens.search.ExtendedEntryData
 import ui.screens.search.SearchEvent
@@ -172,7 +173,7 @@ fun EntryCard(
             ) {
                 extendedEntry.examples.forEachIndexed { i, example ->
                     Column {
-                        Text("Example ${ i + 1 }")
+                        Text(stringResource(Res.string.example, i + 1))
 
                         with(example) {
                             listOfNotNull(
