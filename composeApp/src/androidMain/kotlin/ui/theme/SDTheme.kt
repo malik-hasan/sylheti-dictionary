@@ -15,9 +15,9 @@ import models.Language
 
 @Composable
 actual fun SDTheme(
+    dynamicTheme: Boolean,
     darkTheme: Boolean,
     language: Language,
-    dynamicTheme: Boolean,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

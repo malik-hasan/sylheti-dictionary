@@ -26,6 +26,7 @@ import platform.Foundation.create
 import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.writeToFile
 import sylhetidictionary.composeapp.generated.resources.Res
+import ui.app.App
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalForeignApi::class, BetaInteropApi::class)
 fun MainViewController() = ComposeUIViewController(

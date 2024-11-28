@@ -2,14 +2,13 @@ package ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import di.LocalDynamicTheme
-import di.LocalLanguage
 import models.Language
+import ui.app.LocalLanguage
 
 @Composable
 expect fun SDTheme(
+    dynamicTheme: Boolean,
     darkTheme: Boolean = isSystemInDarkTheme(),
     language: Language = LocalLanguage.current,
-    dynamicTheme: Boolean = LocalDynamicTheme.current,
     content: @Composable () -> Unit
 )

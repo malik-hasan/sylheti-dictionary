@@ -61,15 +61,17 @@ class SearchViewModel(
                 searchLanguages,
                 combine(
                     flow(PreferenceKey.SEARCH_DEFINITIONS, false),
-                    flow(PreferenceKey.SEARCH_EXAMPLES, false)
-                ) { searchDefinitions, searchExamples -> searchDefinitions to searchExamples }
-            ) { state, position, script, languages, (searchDefinitions, searchExamples) ->
+                    flow(PreferenceKey.SEARCH_EXAMPLES, false),
+                    flow(PreferenceKey.SHOW_NAGRI, false)
+                ) { array -> array }
+            ) { state, position, script, languages, (searchDefinitions, searchExamples, showNagri) ->
                 state.copy(
                     position = position,
                     script = script,
                     languages = languages.filterKeys { it in script.languages },
                     searchDefinitions = searchDefinitions,
-                    searchExamples = searchExamples
+                    searchExamples = searchExamples,
+                    showNagri = showNagri
                 )
             }
         }

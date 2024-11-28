@@ -12,12 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import models.search.settings.SearchSetting
 import org.jetbrains.compose.resources.stringResource
-import kotlin.enums.EnumEntries
 
 @Composable
 fun <E> SingleChoiceSegmentedSearchSetting(
     settingLabel: String,
-    entries: EnumEntries<E>,
+    entries: Collection<E>,
     selection: E,
     onSelect: (E) -> Unit
 ) where E: Enum<E>, E: SearchSetting {

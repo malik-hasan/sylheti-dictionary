@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import di.LocalLanguage
+import ui.app.LocalLanguage
 import models.Language
 import org.jetbrains.compose.resources.Font
 import sylhetidictionary.composeapp.generated.resources.Res

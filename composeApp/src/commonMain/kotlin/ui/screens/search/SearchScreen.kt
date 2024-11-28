@@ -149,6 +149,7 @@ fun SearchScreen(
                             extendedEntry = extendedEntry,
                             highlightRegex = highlightRegex,
                             mappedIpaHighlightRegex = mappedIpaHighlightRegex,
+                            showNagri = settingsState.showNagri,
                             onEvent = onSearchEvent
                         )
                     }

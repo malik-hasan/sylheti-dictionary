@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import di.LocalLanguage
+import ui.app.LocalLanguage
 import models.Language
 import org.jetbrains.compose.resources.stringResource
 import ui.theme.bengaliBodyFontFamily

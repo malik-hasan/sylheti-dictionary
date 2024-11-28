@@ -5,4 +5,5 @@ import models.Language
 sealed interface SettingsEvent {
     data class SetLanguage(val language: Language) : SettingsEvent
     data class ToggleDynamicTheme(val value: Boolean) : SettingsEvent
+    data class ToggleShowNagri(val value: Boolean) : SettingsEvent
 }

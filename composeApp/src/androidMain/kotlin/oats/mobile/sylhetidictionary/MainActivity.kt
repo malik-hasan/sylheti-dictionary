@@ -1,6 +1,6 @@
 package oats.mobile.sylhetidictionary
 
-import App
+import ui.app.App
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge

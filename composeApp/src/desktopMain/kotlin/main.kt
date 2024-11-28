@@ -12,6 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform.getKoin
 import sylhetidictionary.composeapp.generated.resources.Res
+import ui.app.App
 import java.io.FileOutputStream
 import java.io.IOException
 

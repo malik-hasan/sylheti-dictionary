@@ -44,7 +44,9 @@ fun SearchSettingsMenu(
 
             SingleChoiceSegmentedSearchSetting(
                 settingLabel = stringResource(Res.string.search_script),
-                entries = SearchScript.entries,
+                entries = if (state.showNagri) {
+                    SearchScript.entries
+                } else SearchScript.entries - SearchScript.NAGRI,
                 selection = state.script
             ) { onEvent(SearchSettingsEvent.SelectScript(it)) }
 

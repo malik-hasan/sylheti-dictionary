@@ -18,4 +18,5 @@ object PreferenceKey {
 
     val LANGUAGE = stringPreferencesKey("LANGUAGE")
     val DYNAMIC_THEME = booleanPreferencesKey("DYNAMIC_THEME")
+    val SHOW_NAGRI = booleanPreferencesKey("SHOW_NAGRI")
 }

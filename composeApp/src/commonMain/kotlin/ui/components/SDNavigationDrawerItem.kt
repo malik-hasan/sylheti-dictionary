@@ -8,8 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import di.LocalDrawerState
-import di.LocalNavController
+import ui.app.LocalDrawerState
+import ui.app.LocalNavController
 import kotlinx.coroutines.launch
 import models.Route
 

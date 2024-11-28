@@ -55,6 +55,7 @@ fun EntryCard(
     extendedEntry: ExtendedEntryData,
     highlightRegex: Regex,
     mappedIpaHighlightRegex: Regex,
+    showNagri: Boolean,
     onEvent: (SearchEvent) -> Unit
 ) {
     val isBookmark = extendedEntry.isBookmark
@@ -83,9 +84,11 @@ fun EntryCard(
                                     appendHighlighted(it, highlightRegex)
                                 }
                             }
-                            citationNagri ?: lexemeNagri?.let {
-                                append(" • ")
-                                appendHighlighted(it, highlightRegex)
+                            if (showNagri) {
+                                citationNagri ?: lexemeNagri?.let {
+                                    append(" • ")
+                                    appendHighlighted(it, highlightRegex)
+                                }
                             }
                         }
                     },
@@ -141,7 +144,7 @@ fun EntryCard(
                 }
 
                 listOfNotNull(
-                    definitionNagri,
+                    definitionNagri.takeIf { showNagri },
                     definitionIPA
                 ).takeIf { it.isNotEmpty() }?.let { definitions ->
                     TaggedField(
@@ -179,14 +182,14 @@ fun EntryCard(
                         with(example) {
                             listOfNotNull(
                                 exampleBengali,
-                                exampleNagri,
+                                exampleNagri.takeIf { showNagri },
                                 exampleIPA
                             ).takeIf { it.isNotEmpty() }?.let {
                                 TaggedField(
                                     tag = StringWithFont(stringResource(Res.string.sylheti)),
                                     bodies = listOfNotNull(
                                         exampleBengali?.let { StringWithFont(it, bengaliBodyFontFamily) },
-                                        exampleNagri?.let(::StringWithFont),
+                                        exampleNagri.takeIf { showNagri }?.let(::StringWithFont),
                                         exampleIPA?.let { StringWithFont(it, latinBodyFontFamily) }
                                     ),
                                     highlightRegex = mappedIpaHighlightRegex
