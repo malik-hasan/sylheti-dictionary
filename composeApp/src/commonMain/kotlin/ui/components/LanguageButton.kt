@@ -21,10 +21,10 @@ import ui.theme.latinDisplayFontFamily
 @Composable
 fun RowScope.LanguageButton(
     language: Language,
-    locale: Language = LocalLanguage.current,
+    selectedLanguage: Language = LocalLanguage.current,
     onSelect: (Language) -> Unit
 ) {
-    val selected = language == locale
+    val selected = language == selectedLanguage
     val textColor = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Unspecified
 
     Column(

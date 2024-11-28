@@ -1,6 +1,7 @@
 package ui.screens.settings
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +47,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 @Composable
 fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
-    locale: Language = LocalLanguage.current
+    language: Language = LocalLanguage.current
 ) {
 
     Scaffold(
@@ -82,24 +83,27 @@ fun SettingsScreen(
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                         .height(150.dp)
                 ) {
-                    val offset by animateDpAsState(if (locale == Language.BN) maxWidth * .48f else 0.dp)
+                    val offset by animateDpAsState(
+                        targetValue = if (language == Language.BN) maxWidth * .48f else 0.dp,
+                        animationSpec = tween()
+                    )
 
                     // Indicator
                     Box(
                         Modifier
                             .offset(offset)
                             .fillMaxWidth(0.52f)
+                            .fillMaxHeight()
                             .padding(8.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(MaterialTheme.colorScheme.primary)
-                            .fillMaxHeight()
                     )
 
                     Row(Modifier.selectableGroup()) {
                         Language.entries.forEach { language ->
-                            LanguageButton(
-                                language = language,
-                            ) { onEvent(SettingsEvent.SetLanguage(language)) }
+                            LanguageButton(language) {
+                                onEvent(SettingsEvent.SetLanguage(language))
+                            }
                         }
                     }
                 }
