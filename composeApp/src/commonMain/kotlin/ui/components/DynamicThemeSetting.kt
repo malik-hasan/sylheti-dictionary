@@ -5,5 +5,5 @@ import androidx.compose.runtime.Composable
 @Composable
 expect fun DynamicThemeSetting(
     dynamicThemeEnabled: Boolean,
-    onToggle: (Boolean) -> Unit
+    onToggle: () -> Unit
 )

@@ -12,9 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import ui.app.LocalLanguage
 import models.Language
 import org.jetbrains.compose.resources.stringResource
+import ui.app.LocalLanguage
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinDisplayFontFamily
 
@@ -25,7 +25,7 @@ fun RowScope.LanguageButton(
     onSelect: (Language) -> Unit
 ) {
     val selected = language == selectedLanguage
-    val textColor = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Unspecified
+    val textColor = if (selected) MaterialTheme.colorScheme.onPrimary else Color.Unspecified
 
     Column(
         modifier = Modifier

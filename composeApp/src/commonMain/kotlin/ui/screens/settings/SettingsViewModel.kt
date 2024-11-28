@@ -12,7 +12,7 @@ import utility.setAppOSLanguage
 
 class SettingsViewModel(private val preferences: PreferencesDataSource): ViewModel() {
 
-    val settingsState = stateFlowOf(SettingsState(),
+    val state = stateFlowOf(SettingsState(),
         combine(
             preferences.flow(PreferenceKey.DYNAMIC_THEME, true),
             preferences.flow(PreferenceKey.SHOW_NAGRI, false)
@@ -34,11 +34,11 @@ class SettingsViewModel(private val preferences: PreferencesDataSource): ViewMod
             }
 
             is SettingsEvent.ToggleDynamicTheme -> viewModelScope.launch {
-                preferences.set(PreferenceKey.DYNAMIC_THEME, event.value)
+                preferences.set(PreferenceKey.DYNAMIC_THEME, !state.value.dynamicThemeEnabled)
             }
 
             is SettingsEvent.ToggleShowNagri -> viewModelScope.launch {
-                preferences.set(PreferenceKey.SHOW_NAGRI, event.value)
+                preferences.set(PreferenceKey.SHOW_NAGRI, !state.value.showNagriEnabled)
                 if (preferences.get(PreferenceKey.SEARCH_SCRIPT) == SearchScript.NAGRI.ordinal) {
                     preferences.set(PreferenceKey.SEARCH_SCRIPT, 0)
                 }

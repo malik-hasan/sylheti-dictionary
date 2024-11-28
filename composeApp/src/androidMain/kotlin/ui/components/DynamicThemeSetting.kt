@@ -1,6 +1,7 @@
 package ui.components
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.painterResource
@@ -11,17 +12,13 @@ import sylhetidictionary.composeapp.generated.resources.dynamic_theme
 @Composable
 actual fun DynamicThemeSetting(
     dynamicThemeEnabled: Boolean,
-    onToggle: (Boolean) -> Unit
+    onToggle: () -> Unit
 ) {
-    Column {
-        SettingLabel(
-            iconPainter = painterResource(Res.drawable.dynamic_theme),
-            label = stringResource(Res.string.dynamic_theme),
-        )
 
-        Switch(
-            checked = dynamicThemeEnabled,
-            onCheckedChange = onToggle
-        )
-    }
+    SwitchSetting(
+        iconPainter = painterResource(Res.drawable.dynamic_theme),
+        label = stringResource(Res.string.dynamic_theme),
+        checked = dynamicThemeEnabled,
+        onToggle = onToggle
+    )
 }
