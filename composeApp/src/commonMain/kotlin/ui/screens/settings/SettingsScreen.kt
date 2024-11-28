@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import di.LocalLanguage
-import kotlinx.serialization.Serializable
 import models.Language
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -59,44 +58,49 @@ fun SettingsScreen(
                 .padding(scaffoldPadding)
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    painterResource(Res.drawable.language),
-                    stringResource(Res.string.language),
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-                Text(stringResource(Res.string.language), style = MaterialTheme.typography.bodyLarge)
-            }
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.language),
+                        stringResource(Res.string.language),
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(
+                        stringResource(Res.string.language),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .height(150.dp)
-            ) {
-                val offset by animateDpAsState(if (locale == Language.BN) maxWidth * .48f else 0.dp)
-
-                // Indicator
-                Box(
-                    Modifier
-                        .offset(offset)
-                        .fillMaxWidth(0.52f)
-                        .padding(8.dp)
+                BoxWithConstraints(
+                    modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .fillMaxHeight()
-                )
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                        .height(150.dp)
+                ) {
+                    val offset by animateDpAsState(if (locale == Language.BN) maxWidth * .48f else 0.dp)
 
-                Row(Modifier.selectableGroup()) {
-                    Language.entries.forEach { language ->
-                        LanguageButton(
-                            language = language,
-                        ) { onEvent(SettingsEvent.SetLanguage(language)) }
+                    // Indicator
+                    Box(
+                        Modifier
+                            .offset(offset)
+                            .fillMaxWidth(0.52f)
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(MaterialTheme.colorScheme.primary)
+                            .fillMaxHeight()
+                    )
+
+                    Row(Modifier.selectableGroup()) {
+                        Language.entries.forEach { language ->
+                            LanguageButton(
+                                language = language,
+                            ) { onEvent(SettingsEvent.SetLanguage(language)) }
+                        }
                     }
                 }
             }

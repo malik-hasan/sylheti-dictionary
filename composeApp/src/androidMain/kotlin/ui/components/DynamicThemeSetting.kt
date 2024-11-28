@@ -1,6 +1,7 @@
 package ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -17,20 +18,25 @@ import sylhetidictionary.composeapp.generated.resources.dynamic_theme
 
 @Composable
 actual fun DynamicThemeSetting(onToggle: (Boolean) -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Icon(
-            painterResource(Res.drawable.dynamic_theme),
-            stringResource(Res.string.dynamic_theme),
-            tint = MaterialTheme.colorScheme.secondary
-        )
-        Text(stringResource(Res.string.dynamic_theme), style = MaterialTheme.typography.bodyLarge)
-    }
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                painterResource(Res.drawable.dynamic_theme),
+                stringResource(Res.string.dynamic_theme),
+                tint = MaterialTheme.colorScheme.secondary
+            )
+            Text(
+                stringResource(Res.string.dynamic_theme),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
 
-    Switch(
-        checked = LocalDynamicTheme.current,
-        onCheckedChange = onToggle
-    )
+        Switch(
+            checked = LocalDynamicTheme.current,
+            onCheckedChange = onToggle
+        )
+    }
 }

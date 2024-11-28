@@ -12,19 +12,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import di.LocalDrawerState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SylhetiDictionaryTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    scope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = LocalDrawerState.current,
     actions: @Composable (RowScope.() -> Unit) = {}
 ) {
+    val scope = rememberCoroutineScope()
+
     TopAppBar(
         scrollBehavior = scrollBehavior,
         navigationIcon = {

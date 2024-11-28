@@ -25,6 +25,7 @@ fun RowScope.LanguageButton(
     onSelect: (Language) -> Unit
 ) {
     val selected = language == locale
+    val textColor = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Unspecified
 
     Column(
         modifier = Modifier
@@ -44,8 +45,12 @@ fun RowScope.LanguageButton(
             style = MaterialTheme.typography.displayLarge,
             fontFamily = if (language == Language.BN) bengaliBodyFontFamily else latinDisplayFontFamily,
             fontWeight = FontWeight.Medium,
-            color = if (selected) MaterialTheme.colorScheme.primary else Color.Unspecified
+            color = textColor
         )
-        Text(stringResource(language.label), style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = stringResource(language.label),
+            style = MaterialTheme.typography.titleMedium,
+            color = textColor
+        )
     }
 }
