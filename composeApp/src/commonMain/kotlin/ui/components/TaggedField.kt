@@ -7,24 +7,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
-import di.LocalLanguage
-import ui.theme.bengaliBodyFontFamily
-import ui.theme.englishBodyFontFamily
 import ui.theme.getBodyFontFamily
 import ui.utils.appendHighlighted
 
 data class FieldTag(
     val label: String,
-    val englishOnly: Boolean = false
+    val fontFamily: FontFamily? = null
 )
 
 data class FieldBody(
     val body: String,
-    val isBengaliScript: Boolean = false
+    val fontFamily: FontFamily? = null
 )
 
 @Composable
@@ -50,25 +48,21 @@ fun TaggedField(
                     SpanStyle(
                         fontStyle = FontStyle.Italic,
                         color = Color.Gray,
-                        fontFamily = if (englishOnly) {
-                            englishBodyFontFamily
-                        } else getBodyFontFamily(LocalLanguage.current),
+                        fontFamily = fontFamily ?: getBodyFontFamily(),
                         fontSize = MaterialTheme.typography.bodySmall.fontSize
                     )
                 ) { append(label.lowercase()) }
             }
             append(' ')
-            bodies.forEachIndexed { i, (body, isBengaliScript) ->
+            bodies.forEachIndexed { i, (body, fontFamily) ->
                 if (i > 0) {
                     pop()
                     pushStyle(ParagraphStyle(textIndent = TextIndent(overflowIndent, overflowIndent)))
                 }
 
-                if (isBengaliScript) {
-                    withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                        appendHighlighted(body, highlightRegex)
-                    }
-                } else appendHighlighted(body, highlightRegex)
+                withStyle(SpanStyle(fontFamily = fontFamily ?: getBodyFontFamily())) {
+                    appendHighlighted(body, highlightRegex)
+                }
             }
         },
         style = MaterialTheme.typography.bodyMedium

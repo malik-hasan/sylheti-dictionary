@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import di.LocalLanguage
 import models.Language
 import org.jetbrains.compose.resources.Font
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -23,14 +24,14 @@ import sylhetidictionary.composeapp.generated.resources.tiro_bangla
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla_italic
 
 @Composable
-fun getBodyFontFamily(language: Language) =
-    if (language == Language.BN) bengaliBodyFontFamily else englishBodyFontFamily
+fun getBodyFontFamily(language: Language = LocalLanguage.current) =
+    if (language == Language.BN) bengaliBodyFontFamily else latinBodyFontFamily
 
 @Composable
-fun getDisplayFontFamily(language: Language) =
-    if (language == Language.BN) bengaliDisplayFontFamily else englishDisplayFontFamily
+fun getDisplayFontFamily(language: Language = LocalLanguage.current) =
+    if (language == Language.BN) bengaliDisplayFontFamily else latinDisplayFontFamily
 
-val englishBodyFontFamily
+val latinBodyFontFamily
     @Composable
     get() = FontFamily(
         Font(Res.font.merriweather_regular),
@@ -43,7 +44,7 @@ val englishBodyFontFamily
         Font(Res.font.merriweather_black_italic, weight = FontWeight.Black, style = FontStyle.Italic),
     )
 
-val englishDisplayFontFamily
+val latinDisplayFontFamily
     @Composable
     get() = FontFamily(
         Font(Res.font.montserrat),

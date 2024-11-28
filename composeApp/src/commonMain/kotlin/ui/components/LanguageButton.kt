@@ -16,7 +16,7 @@ import di.LocalLanguage
 import models.Language
 import org.jetbrains.compose.resources.stringResource
 import ui.theme.bengaliBodyFontFamily
-import ui.theme.englishDisplayFontFamily
+import ui.theme.latinDisplayFontFamily
 
 @Composable
 fun RowScope.LanguageButton(
@@ -42,7 +42,7 @@ fun RowScope.LanguageButton(
         Text(
             text = language.indicator.toString(),
             style = MaterialTheme.typography.displayLarge,
-            fontFamily = if (language == Language.BN) bengaliBodyFontFamily else englishDisplayFontFamily,
+            fontFamily = if (language == Language.BN) bengaliBodyFontFamily else latinDisplayFontFamily,
             fontWeight = FontWeight.Medium,
             color = if (selected) MaterialTheme.colorScheme.primary else Color.Unspecified
         )
