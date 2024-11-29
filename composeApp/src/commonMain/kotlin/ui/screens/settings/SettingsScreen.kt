@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -36,6 +35,7 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_nagri
 import ui.app.LocalLanguage
 import ui.components.DynamicThemeSetting
 import ui.components.LanguageButton
+import ui.components.SDScaffold
 import ui.components.SettingLabel
 import ui.components.SwitchSetting
 import ui.components.SylhetiDictionaryTopBar
@@ -55,7 +55,7 @@ fun SettingsScreen(
     language: Language = LocalLanguage.current
 ) {
 
-    Scaffold(
+    SDScaffold(
         topBar = { SylhetiDictionaryTopBar(stringResource(Res.string.settings)) }
     ) { scaffoldPadding ->
 
