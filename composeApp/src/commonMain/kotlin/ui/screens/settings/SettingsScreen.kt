@@ -35,7 +35,7 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_nagri
 import ui.app.LocalLanguage
 import ui.components.DynamicThemeSetting
 import ui.components.LanguageButton
-import ui.components.SDScaffold
+import ui.components.SDScreen
 import ui.components.SettingLabel
 import ui.components.SwitchSetting
 import ui.components.SylhetiDictionaryTopBar
@@ -55,7 +55,7 @@ fun SettingsScreen(
     language: Language = LocalLanguage.current
 ) {
 
-    SDScaffold(
+    SDScreen(
         topBar = { SylhetiDictionaryTopBar(stringResource(Res.string.settings)) }
     ) { scaffoldPadding ->
 

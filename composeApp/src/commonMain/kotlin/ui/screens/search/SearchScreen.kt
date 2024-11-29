@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -47,7 +46,7 @@ import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
 import ui.components.EntryCard
-import ui.components.SDScaffold
+import ui.components.SDScreen
 import ui.components.SearchSettingsMenu
 import ui.components.SylhetiDictionaryTopBar
 import ui.utils.ifTrue
@@ -83,7 +82,7 @@ fun SearchScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    SDScaffold(
+    SDScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
@@ -198,8 +197,7 @@ fun SearchScreen(
                         expanded = searchState.searchBarActive,
                         onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
                         tonalElevation = 50000.dp,
-                        shadowElevation = 6.dp,
-                        windowInsets = WindowInsets(0.dp)
+                        shadowElevation = 6.dp
                     ) {
                         LazyColumn(
                             contentPadding = PaddingValues(
