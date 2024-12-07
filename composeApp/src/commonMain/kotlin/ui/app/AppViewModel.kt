@@ -5,7 +5,8 @@ import androidx.lifecycle.viewModelScope
 import data.settings.PreferenceKey
 import data.settings.PreferencesDataSource
 import kotlinx.coroutines.launch
-import models.Language
+import models.settings.Language
+import models.settings.Theme
 import ui.utils.stateFlowOf
 import utility.refreshLanguage
 
@@ -18,6 +19,8 @@ class AppViewModel(val preferences: PreferencesDataSource): ViewModel() {
             preferences.refreshLanguage()
         }
     }
+
+    val theme = stateFlowOf(Theme.Auto, preferences.theme)
 
     val dynamicTheme = stateFlowOf(true,
         preferences.flow(PreferenceKey.DYNAMIC_THEME, true)

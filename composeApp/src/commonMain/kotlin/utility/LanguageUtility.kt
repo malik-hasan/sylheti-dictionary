@@ -1,7 +1,7 @@
 package utility
 
 import data.settings.PreferencesDataSource
-import models.Language
+import models.settings.Language
 
 expect suspend fun PreferencesDataSource.refreshLanguage()
 

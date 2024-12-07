@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import co.touchlab.kermit.Logger
 import data.settings.PreferencesDataSource
-import models.Language
+import models.settings.Language
 import java.util.Locale
 
 actual suspend fun PreferencesDataSource.refreshLanguage() {

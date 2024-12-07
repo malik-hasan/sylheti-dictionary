@@ -2,6 +2,6 @@ package models.search.settings
 
 import org.jetbrains.compose.resources.StringResource
 
-interface SearchSetting {
+interface SettingEnum {
     val label: StringResource
 }

@@ -13,9 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,15 +29,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import models.Language
+import models.settings.Language
+import models.settings.Theme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.contrast
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.show_sylheti_nagri
 import sylhetidictionary.composeapp.generated.resources.sylheti_nagri
+import sylhetidictionary.composeapp.generated.resources.theme
 import ui.app.LocalLanguage
 import ui.components.DynamicThemeSetting
 import ui.components.LanguageButton
@@ -62,20 +71,20 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .padding(scaffoldPadding)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
         ) {
             SettingLabel(
                 iconPainter = painterResource(Res.drawable.language),
                 label = stringResource(Res.string.language)
             )
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .clip(MaterialTheme.shapes.extraLarge)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .height(150.dp)
-                    .widthIn(max = 1000.dp)
+            BoxWithConstraints(Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .clip(MaterialTheme.shapes.extraLarge)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                .height(150.dp)
+                .widthIn(max = 1000.dp)
             ) {
                 val offset by animateDpAsState(
                     targetValue = if (language == Language.BN) maxWidth * .48f else 0.dp,
@@ -83,14 +92,13 @@ fun SettingsScreen(
                 )
 
                 // Indicator
-                Box(
-                    Modifier
-                        .offset(offset)
-                        .fillMaxWidth(0.52f)
-                        .fillMaxHeight()
-                        .padding(8.dp)
-                        .shadow(8.dp, MaterialTheme.shapes.extraLarge)
-                        .background(MaterialTheme.colorScheme.primary)
+                Box(Modifier
+                    .offset(offset)
+                    .fillMaxWidth(0.52f)
+                    .fillMaxHeight()
+                    .padding(8.dp)
+                    .shadow(8.dp, MaterialTheme.shapes.extraLarge)
+                    .background(MaterialTheme.colorScheme.primary)
                 )
 
                 Row(Modifier.selectableGroup()) {
@@ -98,6 +106,29 @@ fun SettingsScreen(
                         LanguageButton(language) {
                             onEvent(SettingsEvent.SetLanguage(language))
                         }
+                    }
+                }
+            }
+
+            SettingLabel(
+                iconPainter = painterResource(Res.drawable.contrast),
+                label = stringResource(Res.string.theme)
+            )
+
+            SingleChoiceSegmentedButtonRow(Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .widthIn(max = 1000.dp)
+                .fillMaxWidth()
+            ) {
+                with(Theme.entries) {
+                    forEachIndexed { i, entry ->
+                        val label = stringResource(entry.label)
+                        SegmentedButton(
+                            modifier = Modifier.weight(label.length.toFloat().coerceIn(5f, 8f)),
+                            selected = state.theme == entry,
+                            onClick = { onEvent(SettingsEvent.SelectTheme(entry)) },
+                            shape = SegmentedButtonDefaults.itemShape(i, size)
+                        ) { Text(label) }
                     }
                 }
             }

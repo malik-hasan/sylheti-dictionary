@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import data.settings.PreferenceKey
 import data.settings.PreferencesDataSource
 import kotlinx.coroutines.delay
-import models.Language
+import models.settings.Language
 import java.util.Locale
 
 actual suspend fun PreferencesDataSource.refreshLanguage() {

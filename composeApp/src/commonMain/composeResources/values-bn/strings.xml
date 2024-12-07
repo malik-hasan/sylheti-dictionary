@@ -25,5 +25,9 @@
 
     <string name="settings">সেটিংস</string>
     <string name="language">ভাষা</string>
+    <string name="theme">থিম</string>
+    <string name="light">লাইট</string>
+    <string name="dark">ডার্ক</string>
     <string name="dynamic_theme">ডাইনামিক থিম</string>
+    <string name="show_sylheti_nagri">নাগরী লিপি দেখুন</string>
 </resources>

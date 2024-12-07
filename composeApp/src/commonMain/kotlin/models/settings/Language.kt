@@ -1,4 +1,4 @@
-package models
+package models.settings
 
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res

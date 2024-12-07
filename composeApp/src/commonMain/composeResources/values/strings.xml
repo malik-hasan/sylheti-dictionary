@@ -25,6 +25,9 @@
 
     <string name="settings">Settings</string>
     <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
     <string name="dynamic_theme">Dynamic Theme</string>
     <string name="show_sylheti_nagri">Show Sylheti Nagri</string>
 </resources>

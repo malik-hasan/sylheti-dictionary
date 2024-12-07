@@ -10,7 +10,7 @@ import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.sylheti
 
-sealed interface SearchLanguage: SearchSetting {
+sealed interface SearchLanguage: SettingEnum {
 
     val settingsKey: Preferences.Key<Boolean>
     override val label: StringResource

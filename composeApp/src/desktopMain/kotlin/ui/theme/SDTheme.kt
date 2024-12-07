@@ -2,7 +2,7 @@ package ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import models.Language
+import models.settings.Language
 
 @Composable
 actual fun SDTheme(

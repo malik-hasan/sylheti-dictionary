@@ -2,7 +2,7 @@ package utility
 
 import co.touchlab.kermit.Logger
 import data.settings.PreferencesDataSource
-import models.Language
+import models.settings.Language
 import platform.Foundation.NSLocale
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.languageCode

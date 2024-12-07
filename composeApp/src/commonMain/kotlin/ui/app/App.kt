@@ -20,11 +20,15 @@ import ui.theme.SDTheme
 
 @Composable
 fun App(vm: AppViewModel = koinViewModel()) {
+    val theme by vm.theme.collectAsStateWithLifecycle()
     val dynamicTheme by vm.dynamicTheme.collectAsStateWithLifecycle()
 
     KoinContext {
         SDProvider {
-            SDTheme(dynamicTheme) {
+            SDTheme(
+                dynamicTheme = dynamicTheme,
+                darkTheme = theme.isDarkTheme()
+            ) {
                 Box(Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)

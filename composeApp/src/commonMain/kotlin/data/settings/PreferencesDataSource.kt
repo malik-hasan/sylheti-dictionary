@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import models.Language
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
+import models.settings.Language
+import models.settings.Theme
 
 class PreferencesDataSource(private val preferences: DataStore<Preferences>) {
 
@@ -56,4 +57,8 @@ class PreferencesDataSource(private val preferences: DataStore<Preferences>) {
     val language = flow(PreferenceKey.LANGUAGE, Language.EN.code).map(Language::fromCode)
 
     suspend fun setLanguage(language: Language) = set(PreferenceKey.LANGUAGE, language.code)
+
+    val theme = flow(PreferenceKey.THEME, 0).map {
+        Theme.entries[it]
+    }
 }

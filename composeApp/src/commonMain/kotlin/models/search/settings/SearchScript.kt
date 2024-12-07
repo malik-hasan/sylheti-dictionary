@@ -13,7 +13,7 @@ enum class SearchScript(
     val sortAlgorithm: (DictionaryEntry) -> String?,
     val regexCharSet: Regex? = null,
     val languages: List<SearchLanguage> = emptyList()
-): SearchSetting {
+): SettingEnum {
 
     AUTO(
         label = Res.string.auto,

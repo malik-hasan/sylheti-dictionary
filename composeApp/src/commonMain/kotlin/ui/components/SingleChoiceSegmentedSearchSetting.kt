@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import models.search.settings.SearchSetting
+import models.search.settings.SettingEnum
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -19,7 +19,7 @@ fun <E> SingleChoiceSegmentedSearchSetting(
     entries: Collection<E>,
     selection: E,
     onSelect: (E) -> Unit
-) where E: Enum<E>, E: SearchSetting {
+) where E: Enum<E>, E: SettingEnum {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(settingLabel, Modifier.padding(start = 8.dp))
         SingleChoiceSegmentedButtonRow {

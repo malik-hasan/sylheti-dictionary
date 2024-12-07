@@ -14,10 +14,12 @@ class SettingsViewModel(private val preferences: PreferencesDataSource): ViewMod
 
     val state = stateFlowOf(SettingsState(),
         combine(
+            preferences.theme,
             preferences.flow(PreferenceKey.DYNAMIC_THEME, true),
             preferences.flow(PreferenceKey.SHOW_NAGRI, false)
-        ) { dynamicTheme, showNagri ->
+        ) { theme, dynamicTheme, showNagri ->
             SettingsState(
+                theme = theme,
                 dynamicThemeEnabled = dynamicTheme,
                 showNagriEnabled = showNagri
             )
@@ -31,6 +33,10 @@ class SettingsViewModel(private val preferences: PreferencesDataSource): ViewMod
                     setAppOSLanguage(language)
                     preferences.setLanguage(language)
                 }
+            }
+
+            is SettingsEvent.SelectTheme -> viewModelScope.launch {
+                preferences.set(PreferenceKey.THEME, event.theme.ordinal)
             }
 
             is SettingsEvent.ToggleDynamicTheme -> viewModelScope.launch {
