@@ -8,14 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import models.Route
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import ui.components.SDNavigationDrawer
-import ui.screens.search.SearchScreen
-import ui.screens.settings.SettingsScreen
 import ui.theme.SDTheme
 
 @Composable
@@ -34,14 +29,7 @@ fun App(vm: AppViewModel = koinViewModel()) {
                     .background(MaterialTheme.colorScheme.background)
                 ) {
                     SDNavigationDrawer {
-                        NavHost(LocalNavController.current, Route.Search) {
-                            composable<Route.Search> {
-                                SearchScreen()
-                            }
-                            composable<Route.Settings> {
-                                SettingsScreen()
-                            }
-                        }
+                        SDNavHost()
                     }
                 }
             }

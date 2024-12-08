@@ -22,6 +22,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -42,12 +43,12 @@ import sylhetidictionary.composeapp.generated.resources.show_sylheti_nagri
 import sylhetidictionary.composeapp.generated.resources.sylheti_nagri
 import sylhetidictionary.composeapp.generated.resources.theme
 import ui.app.LocalLanguage
+import ui.components.DrawerIconButton
 import ui.components.DynamicThemeSetting
 import ui.components.LanguageButton
 import ui.components.SDScreen
 import ui.components.SettingLabel
 import ui.components.SwitchSetting
-import ui.components.SylhetiDictionaryTopBar
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
@@ -65,14 +66,17 @@ fun SettingsScreen(
 ) {
 
     SDScreen(
-        topBar = { SylhetiDictionaryTopBar(stringResource(Res.string.settings)) }
+        topBar = {
+            TopAppBar(
+                navigationIcon = { DrawerIconButton() },
+                title = { Text(stringResource(Res.string.settings)) }
+            )
+        }
     ) { scaffoldPadding ->
 
-        Column(
-            modifier = Modifier
-                .padding(scaffoldPadding)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+        Column(Modifier
+            .padding(scaffoldPadding)
+            .verticalScroll(rememberScrollState()),
         ) {
             SettingLabel(
                 iconPainter = painterResource(Res.drawable.language),

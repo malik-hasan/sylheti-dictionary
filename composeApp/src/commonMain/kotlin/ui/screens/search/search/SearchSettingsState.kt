@@ -1,4 +1,4 @@
-package ui.screens.search
+package ui.screens.search.search
 
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
@@ -10,6 +10,5 @@ data class SearchSettingsState(
     val script: SearchScript = SearchScript.AUTO,
     val languages: Map<SearchLanguage, Boolean> = emptyMap(),
     val searchDefinitions: Boolean = false,
-    val searchExamples: Boolean = false,
-    val showNagri: Boolean = false
+    val searchExamples: Boolean = false
 )

@@ -1,37 +1,26 @@
 package ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import models.displayBengali
+import models.displayIPA
+import models.displayNagri
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -40,10 +29,10 @@ import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.bookmark
 import sylhetidictionary.composeapp.generated.resources.bookmark_border
 import sylhetidictionary.composeapp.generated.resources.english
-import sylhetidictionary.composeapp.generated.resources.example
 import sylhetidictionary.composeapp.generated.resources.sylheti
-import ui.screens.search.ExtendedEntryData
-import ui.screens.search.SearchEvent
+import ui.app.LocalShowNagri
+import ui.screens.search.LocalHighlightRegex
+import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
 import ui.utils.StringWithFont
@@ -52,40 +41,31 @@ import ui.utils.appendHighlighted
 @Composable
 fun EntryCard(
     entry: DictionaryEntry,
-    extendedEntry: ExtendedEntryData,
-    highlightRegex: Regex,
-    mappedIpaHighlightRegex: Regex,
-    showNagri: Boolean,
-    onEvent: (SearchEvent) -> Unit
+    isBookmark: Boolean,
+    onBookmark: () -> Unit,
+    modifier: Modifier = Modifier,
+    showNagri: Boolean = LocalShowNagri.current,
+    highlightRegex: Regex = LocalHighlightRegex.current,
+    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
+    additionalContent: @Composable ColumnScope.() -> Unit = {}
 ) {
-    val isBookmark = extendedEntry.isBookmark
-
-    val expanded = extendedEntry.isExpanded
-    val expandTransition = updateTransition(expanded)
-    val expandIconRotation by expandTransition.animateFloat { state ->
-        if (state) 180f else 0f
-    }
-
-    Card {
-        Column(Modifier
-            .padding(top = 12.dp)
-            .padding(horizontal = 16.dp)
-        ) {
+    Card(modifier) {
+        Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
                     text = buildAnnotatedString {
                         with(entry) {
                             withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
-                                appendHighlighted(citationIPA ?: lexemeIPA, mappedIpaHighlightRegex)
+                                appendHighlighted(displayIPA, mappedIpaHighlightRegex)
                             }
-                            citationBengali ?: lexemeBengali?.let {
+                            displayBengali?.let {
                                 append(" • ")
                                 withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
                                     appendHighlighted(it, highlightRegex)
                                 }
                             }
                             if (showNagri) {
-                                citationNagri ?: lexemeNagri?.let {
+                                displayNagri?.let {
                                     append(" • ")
                                     appendHighlighted(it, highlightRegex)
                                 }
@@ -97,12 +77,12 @@ fun EntryCard(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
-                
+
                 Icon(
                     modifier = Modifier.clickable(
-                        interactionSource = remember { MutableInteractionSource() },
+                        interactionSource = null,
                         indication = ripple(bounded = false, radius = 20.dp),
-                        onClick = { onEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark)) }
+                        onClick = onBookmark
                     ),
                     painter = painterResource(
                         if (isBookmark) {
@@ -154,73 +134,8 @@ fun EntryCard(
                     )
                 }
             }
-        }
 
-        Icon(
-            imageVector = Icons.Default.KeyboardArrowDown,
-            contentDescription = "Expand",
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onEvent(SearchEvent.ExpandItem(entry, !expanded)) }
-                .rotate(expandIconRotation)
-        )
-
-        expandTransition.AnimatedVisibility(
-            visible = { it },
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut()
-        ) {
-            HorizontalDivider()
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                extendedEntry.examples.forEachIndexed { i, example ->
-                    Column {
-                        Text(stringResource(Res.string.example, i + 1))
-
-                        with(example) {
-                            listOfNotNull(
-                                exampleBengali,
-                                exampleNagri.takeIf { showNagri },
-                                exampleIPA
-                            ).takeIf { it.isNotEmpty() }?.let {
-                                TaggedField(
-                                    tag = StringWithFont(stringResource(Res.string.sylheti)),
-                                    bodies = listOfNotNull(
-                                        exampleBengali?.let { StringWithFont(it, bengaliBodyFontFamily) },
-                                        exampleNagri.takeIf { showNagri }?.let(::StringWithFont),
-                                        exampleIPA?.let { StringWithFont(it, latinBodyFontFamily) }
-                                    ),
-                                    highlightRegex = mappedIpaHighlightRegex
-                                )
-                            }
-
-                            exampleEN?.let { example ->
-                                TaggedField(
-                                    tag = StringWithFont(stringResource(Res.string.english)),
-                                    body = StringWithFont(example, latinBodyFontFamily),
-                                    highlightRegex = highlightRegex
-                                )
-                            }
-
-                            listOfNotNull(
-                                exampleBN,
-                                exampleBNIPA
-                            ).takeIf { it.isNotEmpty() }?.let {
-                                TaggedField(
-                                    tag = StringWithFont(stringResource(Res.string.bengali)),
-                                    bodies = listOfNotNull(
-                                        exampleBN?.let { StringWithFont(it, bengaliBodyFontFamily) },
-                                        exampleBNIPA?.let { StringWithFont(it, latinBodyFontFamily) }
-                                    ),
-                                    highlightRegex = mappedIpaHighlightRegex
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            additionalContent()
         }
     }
 }

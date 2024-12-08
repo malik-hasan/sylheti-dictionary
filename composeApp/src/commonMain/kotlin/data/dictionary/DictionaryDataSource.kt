@@ -5,6 +5,8 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 
 class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     
+    fun getEntry(entryId: String) = queries.getEntry(entryId).executeAsOne()
+
     fun getEntries(entryIds: Collection<String>) = queries.getEntries(entryIds).executeAsList()
 
     fun searchAll(

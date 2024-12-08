@@ -25,4 +25,16 @@ class AppViewModel(val preferences: PreferencesDataSource): ViewModel() {
     val dynamicTheme = stateFlowOf(true,
         preferences.flow(PreferenceKey.DYNAMIC_THEME, true)
     )
+
+    val showNagri = stateFlowOf(false,
+        preferences.flow(PreferenceKey.SHOW_NAGRI, false)
+    )
+
+    val highlightRegex = stateFlowOf("",
+        preferences.flow(PreferenceKey.HIGHLIGHT_REGEX, "")
+    )
+
+    val mappedIpaHighlightRegex = stateFlowOf("",
+        preferences.flow(PreferenceKey.MAPPED_IPA_HIGHLIGHT_REGEX, "")
+    )
 }

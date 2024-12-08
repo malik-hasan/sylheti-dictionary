@@ -72,6 +72,10 @@ CREATE TABLE IF NOT EXISTS ComponentLexeme (
     FOREIGN KEY (componentId) REFERENCES DictionaryEntry(entryId)
 );
 
+getEntry:
+SELECT * FROM DictionaryEntry
+WHERE entryId = :entryId;
+
 getEntries:
 SELECT * FROM DictionaryEntry
 WHERE entryId IN :entryIds;

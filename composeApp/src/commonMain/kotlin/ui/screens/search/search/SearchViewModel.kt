@@ -1,4 +1,4 @@
-package ui.screens.search
+package ui.screens.search.search
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
@@ -13,6 +13,8 @@ import data.dictionary.DictionaryDataSource
 import data.recentsearches.RecentSearchesDataSource
 import data.settings.PreferenceKey
 import data.settings.PreferencesDataSource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -25,14 +27,14 @@ import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.getString
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
-import ui.screens.search.SearchEvent.Bookmark
-import ui.screens.search.SearchEvent.Search
-import ui.screens.search.SearchEvent.SelectSuggestion
-import ui.screens.search.SearchEvent.SetSearchBarActive
-import ui.screens.search.SearchEvent.UpdateSearchTerm
-import ui.screens.search.SearchSettingsEvent.SelectPosition
-import ui.screens.search.SearchSettingsEvent.SelectScript
-import ui.screens.search.SearchSettingsEvent.ToggleSettingsMenu
+import ui.screens.search.search.SearchEvent.Bookmark
+import ui.screens.search.search.SearchEvent.Search
+import ui.screens.search.search.SearchEvent.SelectSuggestion
+import ui.screens.search.search.SearchEvent.SetSearchBarActive
+import ui.screens.search.search.SearchEvent.UpdateSearchTerm
+import ui.screens.search.search.SearchSettingsEvent.SelectPosition
+import ui.screens.search.search.SearchSettingsEvent.SelectScript
+import ui.screens.search.search.SearchSettingsEvent.ToggleSettingsMenu
 import ui.utils.stateFlowOf
 import utility.UnicodeUtility
 
@@ -52,7 +54,8 @@ class SearchViewModel(
     val snackbarHostState = SnackbarHostState()
 
     private val _settingsState = MutableStateFlow(SearchSettingsState())
-    val settingsState = stateFlowOf(SearchSettingsState(),
+    val settingsState = stateFlowOf(
+        SearchSettingsState(),
         with(preferences) {
             combine(
                 _settingsState,
@@ -61,17 +64,15 @@ class SearchViewModel(
                 searchLanguages,
                 combine(
                     flow(PreferenceKey.SEARCH_DEFINITIONS, false),
-                    flow(PreferenceKey.SEARCH_EXAMPLES, false),
-                    flow(PreferenceKey.SHOW_NAGRI, false)
-                ) { array -> array }
-            ) { state, position, script, languages, (searchDefinitions, searchExamples, showNagri) ->
+                    flow(PreferenceKey.SEARCH_EXAMPLES, false)
+                ) { searchDefinitions, searchExamples -> searchDefinitions to searchExamples }
+            ) { state, position, script, languages, (searchDefinitions, searchExamples) ->
                 state.copy(
                     position = position,
                     script = script,
                     languages = languages.filterKeys { it in script.languages },
                     searchDefinitions = searchDefinitions,
-                    searchExamples = searchExamples,
-                    showNagri = showNagri
+                    searchExamples = searchExamples
                 )
             }
         }
@@ -128,24 +129,38 @@ class SearchViewModel(
         snapshotFlow { searchTerm },
         settingsState
     ) { searchTerm, settings ->
-        val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
-        val globSearchTerm = escapeGlobChars(searchTerm)
-        val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
-        val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
+        coroutineScope {
+            val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
+            val globSearchTerm = escapeGlobChars(searchTerm)
+            val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
 
-        val results = getResults(
-            searchTerm = globSearchTerm,
-            mappedIpaTerm = globMappedIpaTerm,
-            detectedSearchScript = detectedSearchScript,
-            searchPosition = settings.position,
-            searchLanguages = settings.languages,
-            searchDefinitions = settings.searchDefinitions,
-            searchExamples = settings.searchExamples
-        )
+            val results = async {
+                getResults(
+                    searchTerm = globSearchTerm,
+                    mappedIpaTerm = globMappedIpaTerm,
+                    detectedSearchScript = detectedSearchScript,
+                    searchPosition = settings.position,
+                    searchLanguages = settings.languages,
+                    searchDefinitions = settings.searchDefinitions,
+                    searchExamples = settings.searchExamples
+                )
+            }
 
-        val recentSearches = recentSearchesDataSource.getRecentSearches(globSearchTerm, detectedSearchScript)
+            val recentSearches = async {
+                recentSearchesDataSource.getRecentSearches(globSearchTerm, detectedSearchScript)
+            }
 
-        SearchOutputs(detectedSearchScript, regexMappedIpaTerm, results, recentSearches)
+            launch {
+                preferences.set(PreferenceKey.HIGHLIGHT_REGEX, Regex.escape(searchTerm))
+            }
+
+            launch {
+                val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
+                preferences.set(PreferenceKey.MAPPED_IPA_HIGHLIGHT_REGEX, regexMappedIpaTerm)
+            }
+
+            SearchOutputs(detectedSearchScript, results.await(), recentSearches.await())
+        }
     }
 
     private val _searchState = MutableStateFlow(SearchState())
@@ -154,18 +169,13 @@ class SearchViewModel(
             _searchState,
             bookmarksDataSource.bookmarksFlow,
             searchOutputsFlow
-        ) { state, bookmarks, (detectedSearchScript, regexMappedIpaTerm, results, recentSearches) ->
+        ) { state, bookmarks, (detectedSearchScript, results, recentSearches) ->
             state.copy(
                 searchResults = results,
-                entryItems = (results ?: dictionaryDataSource.getEntries(bookmarks))
-                    .associateWith { entry ->
-                        state.entryItems[entry]?.copy(isBookmark = entry.entryId in bookmarks)
-                            ?: ExtendedEntryData(isBookmark = entry.entryId in bookmarks)
-                    },
+                entryToBookmark = results?.associateWith { it.entryId in bookmarks }
+                    ?: dictionaryDataSource.getEntries(bookmarks).associateWith { true },
                 recents = recentSearches,
-                detectedSearchScript = detectedSearchScript,
-                highlightRegex = Regex.escape(searchTerm).toRegex(),
-                mappedIpaHighlightRegex = Regex(regexMappedIpaTerm)
+                detectedSearchScript = detectedSearchScript
             )
         }
     )
@@ -193,20 +203,6 @@ class SearchViewModel(
                     if (isBookmark) {
                         bookmarksDataSource.addBookmark(entryId)
                     } else bookmarksDataSource.removeBookmark(entryId)
-                }
-            }
-
-            is SearchEvent.ExpandItem -> with(event) {
-                val examples = dictionaryDataSource.getExamples(entry.entryId)
-                _searchState.update {
-                    it.copy(
-                        entryItems = it.entryItems.toMutableMap().apply {
-                            this[entry] = ExtendedEntryData(
-                                isExpanded = isExpanded,
-                                examples = examples
-                            )
-                        }
-                    )
                 }
             }
         }

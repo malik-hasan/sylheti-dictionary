@@ -18,6 +18,7 @@ import org.koin.compose.viewmodel.koinViewModel
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController provided") }
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
 val LocalLanguage = staticCompositionLocalOf { Language.EN }
+val LocalShowNagri = compositionLocalOf { false }
 
 @Composable
 fun SDProvider(
@@ -25,6 +26,7 @@ fun SDProvider(
     content: @Composable () -> Unit
 ) {
     val language by vm.language.collectAsStateWithLifecycle()
+    val showNagri by vm.showNagri.collectAsStateWithLifecycle()
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         vm.refreshLanguage()
@@ -33,6 +35,7 @@ fun SDProvider(
     CompositionLocalProvider(
         LocalNavController provides rememberNavController(),
         LocalDrawerState provides DrawerState(DrawerValue.Closed),
-        LocalLanguage provides language
+        LocalLanguage provides language,
+        LocalShowNagri provides showNagri
     ) { content() }
 }

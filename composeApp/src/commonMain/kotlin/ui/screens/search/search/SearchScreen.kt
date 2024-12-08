@@ -1,4 +1,4 @@
-package ui.screens.search
+package ui.screens.search.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,15 +28,19 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import models.Route
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -45,10 +50,11 @@ import sylhetidictionary.composeapp.generated.resources.search_dictionary
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
+import ui.app.LocalNavController
+import ui.components.DrawerIconButton
 import ui.components.EntryCard
 import ui.components.SDScreen
 import ui.components.SearchSettingsMenu
-import ui.components.SylhetiDictionaryTopBar
 import ui.utils.ifTrue
 import ui.utils.rememberIsScrollingUp
 
@@ -78,7 +84,8 @@ fun SearchScreen(
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
-    onSettingsEvent: (SearchSettingsEvent) -> Unit
+    onSettingsEvent: (SearchSettingsEvent) -> Unit,
+    navController: NavController = LocalNavController.current
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -86,24 +93,22 @@ fun SearchScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            SylhetiDictionaryTopBar(stringResource(Res.string.sylheti_dictionary), scrollBehavior) {
-                Box {
-                    IconButton(onClick = {
-                        onSettingsEvent(
-                            SearchSettingsEvent.ToggleSettingsMenu(
-                                true
-                            )
-                        )
-                    }) {
-                        Icon(
-                            painterResource(Res.drawable.tune),
-                            stringResource(Res.string.settings)
-                        )
-                    }
+            TopAppBar(
+                scrollBehavior = scrollBehavior,
+                navigationIcon = { DrawerIconButton() },
+                title = { Text(stringResource(Res.string.sylheti_dictionary)) },
+                actions = {
+                    Box {
+                        IconButton(
+                            onClick = { onSettingsEvent(SearchSettingsEvent.ToggleSettingsMenu(true)) }
+                        ) {
+                            Icon(painterResource(Res.drawable.tune), stringResource(Res.string.settings))
+                        }
 
-                    SearchSettingsMenu(settingsState, onSettingsEvent)
+                        SearchSettingsMenu(settingsState, onSettingsEvent)
+                    }
                 }
-            }
+            )
         }
     ) { scaffoldPadding ->
 
@@ -137,14 +142,16 @@ fun SearchScreen(
                             return@LazyColumn
                         }
 
-                        items(entryItems.toList()) { (entry, extendedEntry) ->
+                        items(entryToBookmark.toList()) { (entry, isBookmark) ->
                             EntryCard(
+                                modifier = Modifier
+                                    .clip(CardDefaults.shape)
+                                    .clickable { navController.navigate(Route.Entry(entry.entryId)) },
                                 entry = entry,
-                                extendedEntry = extendedEntry,
-                                highlightRegex = highlightRegex,
-                                mappedIpaHighlightRegex = mappedIpaHighlightRegex,
-                                showNagri = settingsState.showNagri,
-                                onEvent = onSearchEvent
+                                isBookmark = isBookmark,
+                                onBookmark = {
+                                    onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
+                                }
                             )
                         }
                     }
