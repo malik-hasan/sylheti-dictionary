@@ -3,7 +3,6 @@ package ui.components
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -34,16 +33,16 @@ fun TaggedField(
         text = buildAnnotatedString {
             pushStyle(ParagraphStyle(textIndent = TextIndent(restLine = overflowIndent)))
             with(tag) {
-                withStyle(
-                    SpanStyle(
-                        fontStyle = FontStyle.Italic,
-                        color = Color.Gray,
-                        fontFamily = fontFamily ?: getBodyFontFamily(),
-                        fontSize = MaterialTheme.typography.bodySmall.fontSize
-                    )
-                ) { append(string.lowercase()) }
+                if (string.isNotBlank()) {
+                    withStyle(
+                        MaterialTheme.typography.labelMedium.toSpanStyle().copy(
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    ) { append(string.lowercase()) }
+                    append(' ')
+                }
             }
-            append(' ')
             bodies.forEachIndexed { i, (body, fontFamily) ->
                 if (i > 0) {
                     pop()

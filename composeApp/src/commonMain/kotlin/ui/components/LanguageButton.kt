@@ -49,7 +49,7 @@ fun RowScope.LanguageButton(
         )
         Text(
             text = stringResource(language.label),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = textColor
         )
     }

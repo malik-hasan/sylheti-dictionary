@@ -22,8 +22,7 @@ fun SearchNavHost(navController: NavHostController = LocalNavController.current)
             }
 
             composable<Route.Entry> {
-                val args = it.toRoute<Route.Entry>()
-                EntryScreen(args.entryId)
+                EntryScreen(it.toRoute<Route.Entry>().entryId)
             }
         }
     }

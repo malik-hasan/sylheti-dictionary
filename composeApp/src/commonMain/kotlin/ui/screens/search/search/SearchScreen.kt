@@ -164,7 +164,7 @@ fun SearchScreen(
                 ) {
                     SearchBar(
                         modifier = Modifier
-                            .ifTrue(!searchState.searchBarActive) { padding(horizontal = 8.dp) }
+                            .ifTrue(!searchState.searchBarActive) { padding(horizontal = 16.dp) }
                             .fillMaxWidth(),
                         inputField = {
                             SearchBarDefaults.InputField(

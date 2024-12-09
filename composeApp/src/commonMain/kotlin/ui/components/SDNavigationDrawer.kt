@@ -3,6 +3,7 @@ package ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
@@ -21,9 +22,12 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import ui.app.LocalDrawerState
 
 @Composable
-fun SDNavigationDrawer(content: @Composable () -> Unit) {
+fun SDNavigationDrawer(
+    drawerState: DrawerState = LocalDrawerState.current,
+    content: @Composable () -> Unit
+) {
     ModalNavigationDrawer(
-        drawerState = LocalDrawerState.current,
+        drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
                 Column(Modifier.padding(8.dp)) {
