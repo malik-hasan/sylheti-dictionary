@@ -1,6 +1,5 @@
 package ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,20 +10,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import models.displayBengali
-import models.displayIPA
-import models.displayNagri
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -40,45 +30,28 @@ import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
 import ui.utils.StringWithFont
-import ui.utils.appendHighlighted
 
 @Composable
 fun EntryCard(
     entry: DictionaryEntry,
     isBookmark: Boolean,
-    onBookmark: () -> Unit,
     modifier: Modifier = Modifier,
     showNagri: Boolean = LocalShowNagri.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
+    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
+    onBookmark: () -> Unit
 ) {
     Card(modifier) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(
-                    text = buildAnnotatedString {
-                        with(entry) {
-                            withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
-                                appendHighlighted(displayIPA, mappedIpaHighlightRegex)
-                            }
-                            displayBengali?.let {
-                                append(" • ")
-                                withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                                    appendHighlighted(it, highlightRegex)
-                                }
-                            }
-                            if (showNagri) {
-                                displayNagri?.let {
-                                    append(" • ")
-                                    appendHighlighted(it, highlightRegex)
-                                }
-                            }
-                        }
-                    },
-                    modifier = Modifier.weight(1f),
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                with(entry) {
+                    EntryHeader(
+                        modifier = Modifier.weight(1f),
+                        displayIPA = citationIPA ?: lexemeIPA,
+                        displayBengali = citationBengali ?: lexemeBengali,
+                        displayNagri = citationNagri ?: lexemeNagri
+                    )
+                }
 
                 Icon(
                     modifier = Modifier.clickable(
@@ -97,32 +70,12 @@ fun EntryCard(
             }
 
             with(entry) {
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    partOfSpeech?.let {
-                        Text(
-                            it.lowercase(),
-                            modifier = Modifier
-                                .clip(MaterialTheme.shapes.extraSmall)
-                                .background(MaterialTheme.colorScheme.secondary)
-                                .padding(horizontal = 3.dp),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSecondary,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-
-                    gloss?.let {
-                        Text(
-                            buildAnnotatedString {
-                                appendHighlighted(it, highlightRegex)
-                            }
-                        )
-                    }
-                }
+                EntrySubHeader(
+                    partOfSpeech = partOfSpeech,
+                    partOfSpeechStyle = MaterialTheme.typography.labelMedium,
+                    gloss = gloss,
+                    glossStyle = MaterialTheme.typography.bodyLarge
+                )
 
                 listOfNotNull(
                     definitionEN,

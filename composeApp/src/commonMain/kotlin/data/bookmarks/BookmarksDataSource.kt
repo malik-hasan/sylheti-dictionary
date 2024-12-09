@@ -11,7 +11,7 @@ class BookmarksDataSource(private val dao: BookmarksDao) {
             bookmarks.mapTo(mutableSetOf()) { it.entryId }
         }
 
-    suspend fun checkBookmark(entryId: String) = dao.checkBookmark(entryId)
+    fun isBookmarkFlow(entryId: String) = dao.isBookmarkFlow(entryId)
 
     suspend fun addBookmark(entryId: String) = dao.addBookmark(Bookmark(entryId))
 

@@ -69,12 +69,7 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 navigationIcon = { DrawerIconButton() },
-                title = {
-                    Text(
-                        text = stringResource(Res.string.settings),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                }
+                title = { Text(stringResource(Res.string.settings)) }
             )
         }
     ) { scaffoldPadding ->

@@ -5,57 +5,42 @@ import androidx.lifecycle.viewModelScope
 import data.bookmarks.BookmarksDataSource
 import data.dictionary.DictionaryDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import ui.screens.settings.SettingsEvent
+import ui.utils.stateFlowOf
 
 class EntryViewModel(
-    entryId: String,
+    private val entryId: String,
     dictionaryDataSource: DictionaryDataSource,
-    bookmarksDataSource: BookmarksDataSource
+    private val bookmarksDataSource: BookmarksDataSource
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(EntryState())
-    val state = _state.asStateFlow()
+    private val initialEntryState = with(dictionaryDataSource) {
+        EntryState(
+            entry = getEntry(entryId),
+            examples = getExamples(entryId)
+        )
+    }
 
-    init {
-        viewModelScope.launch {
-            _state.update {
-                with(dictionaryDataSource) {
-                    EntryState(
-                        entry = getEntry(entryId),
-                        isBookmark = bookmarksDataSource.checkBookmark(entryId),
-                        examples = getExamples(entryId)
-                    )
+    private val _state = MutableStateFlow(initialEntryState)
+    val state = stateFlowOf(initialEntryState,
+        combine(
+            _state,
+            bookmarksDataSource.isBookmarkFlow(entryId),
+        ) { state, isBookmark ->
+            state.copy(isBookmark = isBookmark)
+        }
+    )
+
+    fun onEvent(event: EntryEvent) {
+        when(event) {
+            is EntryEvent.ToggleBookmark -> viewModelScope.launch {
+                with(bookmarksDataSource) {
+                    if (state.value.isBookmark) {
+                        removeBookmark(entryId)
+                    } else addBookmark(entryId)
                 }
             }
         }
-    }
-
-    fun onEvent(event: SettingsEvent) {
-//        when(event) {
-//            is SettingsEvent.SetLanguage -> with(event) {
-//                viewModelScope.launch {
-//                    setAppOSLanguage(language)
-//                    preferences.setLanguage(language)
-//                }
-//            }
-//
-//            is SettingsEvent.SelectTheme -> viewModelScope.launch {
-//                preferences.set(PreferenceKey.THEME, event.theme.ordinal)
-//            }
-//
-//            is SettingsEvent.ToggleDynamicTheme -> viewModelScope.launch {
-//                preferences.set(PreferenceKey.DYNAMIC_THEME, !state.value.dynamicThemeEnabled)
-//            }
-//
-//            is SettingsEvent.ToggleShowNagri -> viewModelScope.launch {
-//                preferences.set(PreferenceKey.SHOW_NAGRI, !state.value.showNagriEnabled)
-//                if (preferences.get(PreferenceKey.SEARCH_SCRIPT) == SearchScript.NAGRI.ordinal) {
-//                    preferences.set(PreferenceKey.SEARCH_SCRIPT, 0)
-//                }
-//            }
-//        }
     }
 }

@@ -96,12 +96,7 @@ fun SearchScreen(
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 navigationIcon = { DrawerIconButton() },
-                title = {
-                    Text(
-                        text = stringResource(Res.string.sylheti_dictionary),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                },
+                title = { Text(stringResource(Res.string.sylheti_dictionary)) },
                 actions = {
                     Box {
                         IconButton(
@@ -153,11 +148,8 @@ fun SearchScreen(
                                     .clip(CardDefaults.shape)
                                     .clickable { navController.navigate(Route.Entry(entry.entryId)) },
                                 entry = entry,
-                                isBookmark = isBookmark,
-                                onBookmark = {
-                                    onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
-                                }
-                            )
+                                isBookmark = isBookmark
+                            ) { onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark)) }
                         }
                     }
                 }
