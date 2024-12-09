@@ -3,6 +3,7 @@ package ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -30,7 +31,7 @@ fun SDNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Column(Modifier.padding(8.dp)) {
+                Column(Modifier.safeDrawingPadding().padding(8.dp)) {
 
                     Text(
                         text = stringResource(Res.string.sylheti_dictionary),

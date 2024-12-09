@@ -96,7 +96,12 @@ fun SearchScreen(
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 navigationIcon = { DrawerIconButton() },
-                title = { Text(stringResource(Res.string.sylheti_dictionary)) },
+                title = {
+                    Text(
+                        text = stringResource(Res.string.sylheti_dictionary),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
                 actions = {
                     Box {
                         IconButton(

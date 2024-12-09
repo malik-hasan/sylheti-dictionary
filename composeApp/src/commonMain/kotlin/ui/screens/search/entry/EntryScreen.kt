@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -49,11 +50,15 @@ fun EntryScreen(
                 title = {
                     state.entry?.let { entry ->
                        if (language == Language.BN && entry.displayBengali != null) {
-                           Text(entry.displayBengali!!)
+                           Text(
+                               text = entry.displayBengali!!,
+                               style = MaterialTheme.typography.headlineSmall
+                           )
                        } else {
                            Text(
                                text = entry.displayIPA,
-                               fontFamily = latinDisplayFontFamily
+                               fontFamily = latinDisplayFontFamily,
+                               style = MaterialTheme.typography.headlineSmall
                            )
                        }
                     }
