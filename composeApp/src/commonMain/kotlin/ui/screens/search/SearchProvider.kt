@@ -1,14 +1,29 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package ui.screens.search
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
 import ui.app.AppViewModel
 import ui.app.LocalNavController
+
+val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> {
+    error("No shared transition scope provided")
+}
+
+val LocalAnimatedContentScope = staticCompositionLocalOf<AnimatedContentScope> {
+    error("No animated content scope provided")
+}
 
 val LocalHighlightRegex = compositionLocalOf { Regex("") }
 val LocalMappedIpaHighlightRegex = compositionLocalOf { Regex("") }
@@ -21,9 +36,12 @@ fun SearchProvider(
     val highlightRegex by vm.highlightRegex.collectAsStateWithLifecycle()
     val mappedIpaHighlightRegex by vm.mappedIpaHighlightRegex.collectAsStateWithLifecycle()
 
-    CompositionLocalProvider(
-        LocalNavController provides rememberNavController(),
-        LocalHighlightRegex provides Regex(highlightRegex),
-        LocalMappedIpaHighlightRegex provides Regex(mappedIpaHighlightRegex)
-    ) { content() }
+    SharedTransitionLayout {
+        CompositionLocalProvider(
+            LocalNavController provides rememberNavController(),
+            LocalSharedTransitionScope provides this,
+            LocalHighlightRegex provides Regex(highlightRegex),
+            LocalMappedIpaHighlightRegex provides Regex(mappedIpaHighlightRegex)
+        ) { content() }
+    }
 }

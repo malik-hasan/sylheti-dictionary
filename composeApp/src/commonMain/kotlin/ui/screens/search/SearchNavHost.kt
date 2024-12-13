@@ -1,8 +1,7 @@
 package ui.screens.search
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,16 +11,17 @@ import ui.app.LocalNavController
 import ui.screens.search.entry.EntryScreen
 import ui.screens.search.search.SearchScreen
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SearchNavHost(navController: NavHostController = LocalNavController.current) {
-    SharedTransitionLayout {
-        NavHost(navController, Route.Search) {
-            composable<Route.Search> {
+    NavHost(navController, Route.Search) {
+        composable<Route.Search> {
+            CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 SearchScreen()
             }
+        }
 
-            composable<Route.Entry> {
+        composable<Route.Entry> {
+            CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 EntryScreen(it.toRoute<Route.Entry>().entryId)
             }
         }
