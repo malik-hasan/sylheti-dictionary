@@ -31,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import models.displayBengali
+import models.displayIPA
 import models.settings.Language
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -108,20 +110,12 @@ fun EntryScreen(
                                                         animatedVisibilityScope = this
                                                     ),
                                                     text = buildAnnotatedString {
-                                                        withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
-                                                            appendHighlighted(
-                                                                citationIPA ?: lexemeIPA,
-                                                                mappedIpaHighlightRegex
-                                                            )
-                                                        }
-                                                        citationBengali?.let {
-                                                            append(" • ")
+                                                        if (language == Language.BN && displayBengali != null) {
                                                             withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                                                                appendHighlighted(
-                                                                    it,
-                                                                    highlightRegex
-                                                                )
+                                                                appendHighlighted(displayBengali!!, highlightRegex)
                                                             }
+                                                        } else withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
+                                                            appendHighlighted(displayIPA, mappedIpaHighlightRegex)
                                                         }
                                                     },
                                                     fontWeight = FontWeight.Black,
@@ -150,9 +144,7 @@ fun EntryScreen(
                                                 .padding(horizontal = 16.dp)
                                                 .padding(bottom = 16.dp)
                                                 .sharedBounds(
-                                                    sharedContentState = rememberSharedContentState(
-                                                        "header-$entryId"
-                                                    ),
+                                                    sharedContentState = rememberSharedContentState("header-$entryId"),
                                                     animatedVisibilityScope = navHostAnimatedContentScope
                                                 ).sharedElement(
                                                     state = rememberSharedContentState("collapsing-header"),

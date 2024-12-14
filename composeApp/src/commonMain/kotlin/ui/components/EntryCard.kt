@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import models.displayBengali
+import models.displayIPA
+import models.displayNagri
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -61,9 +64,9 @@ fun EntryCard(
                                     sharedContentState = rememberSharedContentState("header-$entryId"),
                                     animatedVisibilityScope = animatedContentScope
                                 ),
-                            displayIPA = citationIPA ?: lexemeIPA,
-                            displayBengali = citationBengali ?: lexemeBengali,
-                            displayNagri = citationNagri ?: lexemeNagri,
+                            displayIPA = displayIPA,
+                            displayBengali = displayBengali,
+                            displayNagri = displayNagri,
                             displayStyle = MaterialTheme.typography.bodyLarge,
                             partOfSpeech = partOfSpeech,
                             partOfSpeechStyle = MaterialTheme.typography.labelMedium,

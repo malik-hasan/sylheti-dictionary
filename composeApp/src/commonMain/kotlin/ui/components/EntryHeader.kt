@@ -43,15 +43,17 @@ fun EntryHeader(
     Column(modifier) {
         Text(
             text = buildAnnotatedString {
-                withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
-                    appendHighlighted(displayIPA, mappedIpaHighlightRegex)
-                }
                 displayBengali?.let {
-                    append(" • ")
                     withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
                         appendHighlighted(it, highlightRegex)
                     }
+                    append(" • ")
                 }
+
+                withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
+                    appendHighlighted(displayIPA, mappedIpaHighlightRegex)
+                }
+
                 if (showNagri) {
                     displayNagri?.let {
                         append(" • ")

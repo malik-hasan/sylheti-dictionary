@@ -18,6 +18,7 @@ import org.koin.compose.viewmodel.koinViewModel
 val LocalNavController = compositionLocalOf<NavHostController> { error("No NavController provided") }
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
 val LocalLanguage = staticCompositionLocalOf { Language.EN }
+val LocalShowBengaliTranslations = compositionLocalOf { false }
 val LocalShowNagri = compositionLocalOf { false }
 
 @Composable
