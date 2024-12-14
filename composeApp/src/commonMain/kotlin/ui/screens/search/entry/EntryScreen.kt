@@ -2,14 +2,20 @@
 
 package ui.screens.search.entry
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,6 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import models.settings.Language
@@ -45,6 +55,8 @@ import ui.screens.search.LocalSharedTransitionScope
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
 import ui.utils.StringWithFont
+import ui.utils.appendHighlighted
+import ui.utils.rememberIsScrollingUp
 
 @Composable
 fun EntryScreen(
@@ -62,182 +74,224 @@ fun EntryScreen(
     state: EntryState,
     onEvent: (EntryEvent) -> Unit,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
-    animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current,
+    navHostAnimatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current,
     language: Language = LocalLanguage.current,
     showNagri: Boolean = LocalShowNagri.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
+    val lazyListState = rememberLazyListState()
+    val isScrollingUp by lazyListState.rememberIsScrollingUp()
+
     with(sharedTransitionScope) {
         state.entry?.let { entry ->
             with(entry) {
                 SDScreen(
-                    backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    modifier = Modifier.sharedBounds(
-                        sharedContentState = rememberSharedContentState("container-$entryId"),
-                        animatedVisibilityScope = animatedContentScope
-                    ),
                     topBar = {
-                        Column {
-                            TopAppBar(
-                                colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-                                navigationIcon = { UpIconButton() },
-                                title = {},
-                                actions = {
-                                    SearchIconButton()
-
-                                    BookmarkIconButton(
-                                        modifier = Modifier.sharedElement(
-                                            state = rememberSharedContentState("bookmark-$entryId"),
-                                            animatedVisibilityScope = animatedContentScope
-                                        ),
-                                        isBookmark = state.isBookmark
-                                    ) {
-                                        onEvent(EntryEvent.ToggleBookmark)
-                                    }
-                                }
+                        Column(Modifier
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .sharedBounds(
+                                sharedContentState = rememberSharedContentState("container-$entryId"),
+                                animatedVisibilityScope = navHostAnimatedContentScope
                             )
-
-                            EntryHeader(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .padding(bottom = 16.dp)
-                                    .sharedBounds(
-                                        sharedContentState = rememberSharedContentState("header-$entryId"),
-                                        animatedVisibilityScope = animatedContentScope
-                                    ),
-                                displayIPA = citationIPA ?: lexemeIPA,
-                                displayBengali = citationBengali ?: lexemeBengali,
-                                displayNagri = citationNagri ?: lexemeNagri,
-                                displayStyle = MaterialTheme.typography.headlineMedium,
-                                partOfSpeech = partOfSpeech,
-                                partOfSpeechStyle = MaterialTheme.typography.titleMedium,
-                                gloss = gloss,
-                                glossStyle = MaterialTheme.typography.titleLarge
-                            )
-                        }
-                    }
-
-                ) {
-                    Column(Modifier
-                        .padding(horizontal = 16.dp)
-                        .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        state.entry?.let { entry ->
-                            with(entry) {
-                                definitionEN?.let { definition ->
-                                    TaggedField(
-                                        tag = StringWithFont(stringResource(Res.string.english)),
-                                        body = StringWithFont(definition, latinBodyFontFamily),
-                                        highlightRegex = highlightRegex
-                                    )
-                                }
-
-                                listOfNotNull(
-                                    definitionBN,
-                                    definitionBNIPA
-                                ).takeIf { it.isNotEmpty() }?.let {
-                                    TaggedField(
-                                        tag = StringWithFont(stringResource(Res.string.bengali)),
-                                        bodies = listOfNotNull(
-                                            definitionBN?.let {
-                                                StringWithFont(
-                                                    it,
-                                                    bengaliBodyFontFamily
-                                                )
-                                            },
-                                            definitionBNIPA?.let {
-                                                StringWithFont(
-                                                    it,
-                                                    latinBodyFontFamily
+                        ) {
+                            AnimatedContent(isScrollingUp) {
+                                Column {
+                                    TopAppBar(
+                                        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+                                        navigationIcon = { UpIconButton() },
+                                        title = {
+                                            AnimatedVisibility(!isScrollingUp) {
+                                                Text(
+                                                    modifier = Modifier.sharedElement(
+                                                        state = rememberSharedContentState("collapsing-header"),
+                                                        animatedVisibilityScope = this
+                                                    ),
+                                                    text = buildAnnotatedString {
+                                                        withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
+                                                            appendHighlighted(
+                                                                citationIPA ?: lexemeIPA,
+                                                                mappedIpaHighlightRegex
+                                                            )
+                                                        }
+                                                        citationBengali?.let {
+                                                            append(" • ")
+                                                            withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
+                                                                appendHighlighted(
+                                                                    it,
+                                                                    highlightRegex
+                                                                )
+                                                            }
+                                                        }
+                                                    },
+                                                    fontWeight = FontWeight.Black,
+                                                    color = MaterialTheme.colorScheme.primary
                                                 )
                                             }
-                                        ),
-                                        highlightRegex = mappedIpaHighlightRegex
-                                    )
-                                }
+                                        },
+                                        actions = {
+                                            SearchIconButton()
 
-                                listOfNotNull(
-                                    definitionNagri.takeIf { showNagri },
-                                    definitionIPA
-                                ).takeIf { it.isNotEmpty() }?.let { definitions ->
-                                    TaggedField(
-                                        tag = StringWithFont(stringResource(Res.string.sylheti)),
-                                        bodies = definitions.map {
+                                            BookmarkIconButton(
+                                                modifier = Modifier.sharedElement(
+                                                    state = rememberSharedContentState("bookmark-$entryId"),
+                                                    animatedVisibilityScope = navHostAnimatedContentScope
+                                                ),
+                                                isBookmark = state.isBookmark
+                                            ) {
+                                                onEvent(EntryEvent.ToggleBookmark)
+                                            }
+                                        }
+                                    )
+
+                                    if (isScrollingUp) {
+                                        EntryHeader(
+                                            modifier = Modifier
+                                                .padding(horizontal = 16.dp)
+                                                .padding(bottom = 16.dp)
+                                                .sharedBounds(
+                                                    sharedContentState = rememberSharedContentState(
+                                                        "header-$entryId"
+                                                    ),
+                                                    animatedVisibilityScope = navHostAnimatedContentScope
+                                                ).sharedElement(
+                                                    state = rememberSharedContentState("collapsing-header"),
+                                                    animatedVisibilityScope = this@AnimatedContent
+                                                ),
+                                            displayIPA = citationIPA ?: lexemeIPA,
+                                            displayBengali = citationBengali ?: lexemeBengali,
+                                            displayNagri = citationNagri ?: lexemeNagri,
+                                            displayStyle = MaterialTheme.typography.headlineMedium,
+                                            partOfSpeech = partOfSpeech,
+                                            partOfSpeechStyle = MaterialTheme.typography.titleMedium,
+                                            gloss = gloss,
+                                            glossStyle = MaterialTheme.typography.titleLarge
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ) {
+                    LazyColumn(
+                        state = lazyListState,
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        item {
+                            definitionEN?.let { definition ->
+                                TaggedField(
+                                    tag = StringWithFont(stringResource(Res.string.english)),
+                                    body = StringWithFont(definition, latinBodyFontFamily),
+                                    highlightRegex = highlightRegex
+                                )
+                            }
+
+                            listOfNotNull(
+                                definitionBN,
+                                definitionBNIPA
+                            ).takeIf { it.isNotEmpty() }?.let {
+                                TaggedField(
+                                    tag = StringWithFont(stringResource(Res.string.bengali)),
+                                    bodies = listOfNotNull(
+                                        definitionBN?.let {
+                                            StringWithFont(
+                                                it,
+                                                bengaliBodyFontFamily
+                                            )
+                                        },
+                                        definitionBNIPA?.let {
                                             StringWithFont(
                                                 it,
                                                 latinBodyFontFamily
                                             )
-                                        },
-                                        highlightRegex = mappedIpaHighlightRegex
-                                    )
-                                }
+                                        }
+                                    ),
+                                    highlightRegex = mappedIpaHighlightRegex
+                                )
                             }
-                        }
 
-                        state.examples.forEachIndexed { i, example ->
-                            Column {
-                                Text(stringResource(Res.string.example, i + 1))
-
-                                with(example) {
-                                    listOfNotNull(
-                                        exampleBengali,
-                                        exampleNagri.takeIf { showNagri },
-                                        exampleIPA
-                                    ).takeIf { it.isNotEmpty() }?.let {
-                                        TaggedField(
-                                            tag = StringWithFont(stringResource(Res.string.sylheti)),
-                                            bodies = listOfNotNull(
-                                                exampleBengali?.let {
-                                                    StringWithFont(
-                                                        it,
-                                                        bengaliBodyFontFamily
-                                                    )
-                                                },
-                                                exampleNagri.takeIf { showNagri }
-                                                    ?.let(::StringWithFont),
-                                                exampleIPA?.let {
-                                                    StringWithFont(
-                                                        it,
-                                                        latinBodyFontFamily
-                                                    )
-                                                }
-                                            ),
-                                            highlightRegex = mappedIpaHighlightRegex
+                            listOfNotNull(
+                                definitionNagri.takeIf { showNagri },
+                                definitionIPA
+                            ).takeIf { it.isNotEmpty() }?.let { definitions ->
+                                TaggedField(
+                                    tag = StringWithFont(stringResource(Res.string.sylheti)),
+                                    bodies = definitions.map {
+                                        StringWithFont(
+                                            it,
+                                            latinBodyFontFamily
                                         )
-                                    }
+                                    },
+                                    highlightRegex = mappedIpaHighlightRegex
+                                )
+                            }
 
-                                    exampleEN?.let { example ->
-                                        TaggedField(
-                                            tag = StringWithFont(stringResource(Res.string.english)),
-                                            body = StringWithFont(example, latinBodyFontFamily),
-                                            highlightRegex = highlightRegex
-                                        )
-                                    }
+                            Spacer(Modifier.height(900.dp))
 
-                                    listOfNotNull(
-                                        exampleBN,
-                                        exampleBNIPA
-                                    ).takeIf { it.isNotEmpty() }?.let {
-                                        TaggedField(
-                                            tag = StringWithFont(stringResource(Res.string.bengali)),
-                                            bodies = listOfNotNull(
-                                                exampleBN?.let {
-                                                    StringWithFont(
-                                                        it,
-                                                        bengaliBodyFontFamily
-                                                    )
-                                                },
-                                                exampleBNIPA?.let {
-                                                    StringWithFont(
-                                                        it,
-                                                        latinBodyFontFamily
-                                                    )
-                                                }
-                                            ),
-                                            highlightRegex = mappedIpaHighlightRegex
-                                        )
+                            state.examples.forEachIndexed { i, example ->
+                                Column {
+                                    Text(stringResource(Res.string.example, i + 1))
+
+                                    with(example) {
+                                        listOfNotNull(
+                                            exampleBengali,
+                                            exampleNagri.takeIf { showNagri },
+                                            exampleIPA
+                                        ).takeIf { it.isNotEmpty() }?.let {
+                                            TaggedField(
+                                                tag = StringWithFont(stringResource(Res.string.sylheti)),
+                                                bodies = listOfNotNull(
+                                                    exampleBengali?.let {
+                                                        StringWithFont(
+                                                            it,
+                                                            bengaliBodyFontFamily
+                                                        )
+                                                    },
+                                                    exampleNagri.takeIf { showNagri }
+                                                        ?.let(::StringWithFont),
+                                                    exampleIPA?.let {
+                                                        StringWithFont(
+                                                            it,
+                                                            latinBodyFontFamily
+                                                        )
+                                                    }
+                                                ),
+                                                highlightRegex = mappedIpaHighlightRegex
+                                            )
+                                        }
+
+                                        exampleEN?.let { example ->
+                                            TaggedField(
+                                                tag = StringWithFont(stringResource(Res.string.english)),
+                                                body = StringWithFont(example, latinBodyFontFamily),
+                                                highlightRegex = highlightRegex
+                                            )
+                                        }
+
+                                        listOfNotNull(
+                                            exampleBN,
+                                            exampleBNIPA
+                                        ).takeIf { it.isNotEmpty() }?.let {
+                                            TaggedField(
+                                                tag = StringWithFont(stringResource(Res.string.bengali)),
+                                                bodies = listOfNotNull(
+                                                    exampleBN?.let {
+                                                        StringWithFont(
+                                                            it,
+                                                            bengaliBodyFontFamily
+                                                        )
+                                                    },
+                                                    exampleBNIPA?.let {
+                                                        StringWithFont(
+                                                            it,
+                                                            latinBodyFontFamily
+                                                        )
+                                                    }
+                                                ),
+                                                highlightRegex = mappedIpaHighlightRegex
+                                            )
+                                        }
                                     }
                                 }
                             }
