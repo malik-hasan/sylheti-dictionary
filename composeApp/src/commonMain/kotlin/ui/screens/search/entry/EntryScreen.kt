@@ -4,7 +4,6 @@ package ui.screens.search.entry
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
@@ -97,17 +96,17 @@ fun EntryScreen(
                                 animatedVisibilityScope = navHostAnimatedContentScope
                             )
                         ) {
-                            AnimatedContent(isScrollingUp) {
+                            AnimatedContent(isScrollingUp) { scrollingUpTarget ->
                                 Column {
                                     TopAppBar(
                                         colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
                                         navigationIcon = { UpIconButton() },
                                         title = {
-                                            AnimatedVisibility(!isScrollingUp) {
+                                            if (!scrollingUpTarget) {
                                                 Text(
                                                     modifier = Modifier.sharedElement(
                                                         state = rememberSharedContentState("collapsing-header"),
-                                                        animatedVisibilityScope = this
+                                                        animatedVisibilityScope = this@AnimatedContent
                                                     ),
                                                     text = buildAnnotatedString {
                                                         if (language == Language.BN && displayBengali != null) {
@@ -132,13 +131,11 @@ fun EntryScreen(
                                                     animatedVisibilityScope = navHostAnimatedContentScope
                                                 ),
                                                 isBookmark = state.isBookmark
-                                            ) {
-                                                onEvent(EntryEvent.ToggleBookmark)
-                                            }
+                                            ) { onEvent(EntryEvent.ToggleBookmark) }
                                         }
                                     )
 
-                                    if (isScrollingUp) {
+                                    if (scrollingUpTarget) {
                                         EntryHeader(
                                             modifier = Modifier
                                                 .padding(horizontal = 16.dp)
@@ -149,7 +146,7 @@ fun EntryScreen(
                                                 ).sharedElement(
                                                     state = rememberSharedContentState("collapsing-header"),
                                                     animatedVisibilityScope = this@AnimatedContent
-                                                ),
+                                                ).skipToLookaheadSize(),
                                             displayIPA = citationIPA ?: lexemeIPA,
                                             displayBengali = citationBengali ?: lexemeBengali,
                                             displayNagri = citationNagri ?: lexemeNagri,

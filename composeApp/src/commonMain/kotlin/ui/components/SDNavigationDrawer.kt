@@ -11,9 +11,11 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import models.Route
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -27,9 +29,17 @@ fun SDNavigationDrawer(
     drawerState: DrawerState = LocalDrawerState.current,
     content: @Composable () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
+            BackHandler(drawerState.isOpen) {
+                scope.launch {
+                    drawerState.close()
+                }
+            }
+
             ModalDrawerSheet {
                 Column(Modifier.safeDrawingPadding().padding(8.dp)) {
 
