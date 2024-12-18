@@ -2,7 +2,6 @@
 
 package ui.screens.search.entry
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -10,11 +9,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,14 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import models.displayBengali
-import models.displayIPA
 import models.settings.Language
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,8 +46,6 @@ import ui.screens.search.LocalSharedTransitionScope
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
 import ui.utils.StringWithFont
-import ui.utils.appendHighlighted
-import ui.utils.rememberIsScrollingUp
 
 @Composable
 fun EntryScreen(
@@ -81,9 +69,6 @@ fun EntryScreen(
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
-    val lazyListState = rememberLazyListState()
-    val isScrollingUp by lazyListState.rememberIsScrollingUp()
-
     with(sharedTransitionScope) {
         state.entry?.let { entry ->
             with(entry) {
@@ -91,79 +76,49 @@ fun EntryScreen(
                     topBar = {
                         Column(Modifier
                             .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .sharedBounds(
-                                sharedContentState = rememberSharedContentState("container-$entryId"),
+                            .sharedElement(
+                                state = rememberSharedContentState("container-$entryId"),
                                 animatedVisibilityScope = navHostAnimatedContentScope
                             )
                         ) {
-                            AnimatedContent(isScrollingUp) { scrollingUpTarget ->
-                                Column {
-                                    TopAppBar(
-                                        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-                                        navigationIcon = { UpIconButton() },
-                                        title = {
-                                            if (!scrollingUpTarget) {
-                                                Text(
-                                                    modifier = Modifier.sharedElement(
-                                                        state = rememberSharedContentState("collapsing-header"),
-                                                        animatedVisibilityScope = this@AnimatedContent
-                                                    ),
-                                                    text = buildAnnotatedString {
-                                                        if (language == Language.BN && displayBengali != null) {
-                                                            withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                                                                appendHighlighted(displayBengali!!, highlightRegex)
-                                                            }
-                                                        } else withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
-                                                            appendHighlighted(displayIPA, mappedIpaHighlightRegex)
-                                                        }
-                                                    },
-                                                    fontWeight = FontWeight.Black,
-                                                    color = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        },
-                                        actions = {
-                                            SearchIconButton()
+                            TopAppBar(
+                                colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+                                navigationIcon = { UpIconButton() },
+                                title = {},
+                                actions = {
+                                    SearchIconButton()
 
-                                            BookmarkIconButton(
-                                                modifier = Modifier.sharedElement(
-                                                    state = rememberSharedContentState("bookmark-$entryId"),
-                                                    animatedVisibilityScope = navHostAnimatedContentScope
-                                                ),
-                                                isBookmark = state.isBookmark
-                                            ) { onEvent(EntryEvent.ToggleBookmark) }
-                                        }
-                                    )
-
-                                    if (scrollingUpTarget) {
-                                        EntryHeader(
-                                            modifier = Modifier
-                                                .padding(horizontal = 16.dp)
-                                                .padding(bottom = 16.dp)
-                                                .sharedBounds(
-                                                    sharedContentState = rememberSharedContentState("header-$entryId"),
-                                                    animatedVisibilityScope = navHostAnimatedContentScope
-                                                ).sharedElement(
-                                                    state = rememberSharedContentState("collapsing-header"),
-                                                    animatedVisibilityScope = this@AnimatedContent
-                                                ).skipToLookaheadSize(),
-                                            displayIPA = citationIPA ?: lexemeIPA,
-                                            displayBengali = citationBengali ?: lexemeBengali,
-                                            displayNagri = citationNagri ?: lexemeNagri,
-                                            displayStyle = MaterialTheme.typography.headlineMedium,
-                                            partOfSpeech = partOfSpeech,
-                                            partOfSpeechStyle = MaterialTheme.typography.titleMedium,
-                                            gloss = gloss,
-                                            glossStyle = MaterialTheme.typography.titleLarge
-                                        )
-                                    }
+                                    BookmarkIconButton(
+                                        modifier = Modifier.sharedElement(
+                                            state = rememberSharedContentState("bookmark-$entryId"),
+                                            animatedVisibilityScope = navHostAnimatedContentScope
+                                        ),
+                                        isBookmark = state.isBookmark
+                                    ) { onEvent(EntryEvent.ToggleBookmark) }
                                 }
-                            }
+                            )
+
+                            EntryHeader(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 16.dp)
+                                    .sharedBounds(
+                                        sharedContentState = rememberSharedContentState("header-$entryId"),
+                                        animatedVisibilityScope = navHostAnimatedContentScope
+                                    ),
+                                displayIPA = citationIPA ?: lexemeIPA,
+                                displayBengali = citationBengali ?: lexemeBengali,
+                                displayNagri = citationNagri ?: lexemeNagri,
+                                displayStyle = MaterialTheme.typography.headlineMedium,
+                                partOfSpeech = partOfSpeech,
+                                partOfSpeechStyle = MaterialTheme.typography.titleMedium,
+                                gloss = gloss,
+                                glossStyle = MaterialTheme.typography.titleLarge
+                            )
                         }
                     }
                 ) {
                     LazyColumn(
-                        state = lazyListState,
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
@@ -215,8 +170,6 @@ fun EntryScreen(
                                     highlightRegex = mappedIpaHighlightRegex
                                 )
                             }
-
-                            Spacer(Modifier.height(900.dp))
 
                             state.examples.forEachIndexed { i, example ->
                                 Column {

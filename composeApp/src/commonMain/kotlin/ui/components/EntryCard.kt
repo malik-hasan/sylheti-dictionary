@@ -49,8 +49,8 @@ fun EntryCard(
     with(sharedTransitionScope) {
         with(entry) {
             Card(
-                modifier = modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState("container-$entryId"),
+                modifier = modifier.sharedElement(
+                    state = rememberSharedContentState("container-$entryId"),
                     animatedVisibilityScope = animatedContentScope
                 )
             ) {
