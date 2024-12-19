@@ -16,14 +16,14 @@ import ui.utils.appendHighlighted
 
 @Composable
 fun TaggedField(
-    tag: StringWithFont,
+    tag: String,
     body: StringWithFont,
     highlightRegex: Regex
 ) { TaggedField(tag, listOf(body), highlightRegex) }
 
 @Composable
 fun TaggedField(
-    tag: StringWithFont,
+    tag: String,
     bodies: List<StringWithFont>,
     highlightRegex: Regex
 ) {
@@ -32,17 +32,14 @@ fun TaggedField(
     Text(
         text = buildAnnotatedString {
             pushStyle(ParagraphStyle(textIndent = TextIndent(restLine = overflowIndent)))
-            with(tag) {
-                if (string.isNotBlank()) {
-                    withStyle(
-                        MaterialTheme.typography.labelMedium.toSpanStyle().copy(
-                            fontStyle = FontStyle.Italic,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    ) { append(string.lowercase()) }
-                    append(' ')
-                }
-            }
+            withStyle(
+                MaterialTheme.typography.labelMedium.toSpanStyle().copy(
+                    fontStyle = FontStyle.Italic,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) { append(tag.lowercase()) }
+            append(' ')
+
             bodies.forEachIndexed { i, (body, fontFamily) ->
                 if (i > 0) {
                     pop()
