@@ -82,29 +82,29 @@ WHERE entryId IN :entryIds;
 
 searchAllEntries:
 SELECT * FROM DictionaryEntry
-WHERE gloss GLOB :positionedQuery OR
-    lexemeIPA GLOB :positionedQuery OR
-    citationIPA GLOB :positionedQuery OR
-    lexemeBengali GLOB :positionedQuery OR
-    citationBengali GLOB :positionedQuery OR
-    lexemeNagri GLOB :positionedQuery OR
-    citationNagri GLOB :positionedQuery;
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery;
 
 searchAllDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionEN GLOB :query OR
-    definitionIPA GLOB :query OR
-    definitionBN GLOB :query OR
-    definitionNagri GLOB :query;
+WHERE definitionEN GLOB :query
+    OR definitionIPA GLOB :query
+    OR definitionBN GLOB :query
+    OR definitionNagri GLOB :query;
     
 searchAllExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example X ON D.entryId = X.entryId
-WHERE exampleIPA GLOB :query OR
-    exampleBengali GLOB :query OR
-    exampleNagri GLOB :query OR
-    exampleEN GLOB :query OR
-    exampleBN GLOB :query;
+JOIN Example X ON D.entryId = X.entryId
+WHERE exampleIPA GLOB :query
+    OR exampleBengali GLOB :query
+    OR exampleNagri GLOB :query
+    OR exampleEN GLOB :query
+    OR exampleBN GLOB :query;
 
 searchEnglishEntries:
 SELECT * FROM DictionaryEntry
@@ -116,13 +116,13 @@ WHERE definitionEN GLOB :query;
 
 searchEnglishExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example X ON D.entryId = X.entryId
+JOIN Example X ON D.entryId = X.entryId
 WHERE exampleEN GLOB :query;
 
 searchSylhetiLatinEntries:
 SELECT * FROM DictionaryEntry
-WHERE lexemeIPA GLOB :positionedQuery OR
-    citationIPA GLOB :positionedQuery;
+WHERE lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery;
 
 searchSylhetiLatinDefinitions:
 SELECT * FROM DictionaryEntry
@@ -130,7 +130,7 @@ WHERE definitionIPA GLOB :query;
 
 searchSylhetiLatinExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example X ON D.entryId = X.entryId
+JOIN Example X ON D.entryId = X.entryId
 WHERE exampleIPA GLOB :query;
 
 searchBengaliDefinitions:
@@ -139,23 +139,23 @@ WHERE definitionBN GLOB :query;
 
 searchBengaliExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example X ON D.entryId = X.entryId
+JOIN Example X ON D.entryId = X.entryId
 WHERE exampleBN GLOB :query;
 
 searchSylhetiBengaliEntries:
 SELECT * FROM DictionaryEntry
-WHERE lexemeBengali GLOB :positionedQuery OR
-    citationBengali GLOB :positionedQuery;
+WHERE lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery;
     
 searchSylhetiBengaliExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example X ON D.entryId = X.entryId
+JOIN Example X ON D.entryId = X.entryId
 WHERE exampleBengali GLOB :query;
 
 searchNagriEntries:
 SELECT * FROM DictionaryEntry
-WHERE lexemeNagri GLOB :positionedQuery OR
-    citationNagri GLOB :positionedQuery;
+WHERE lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery;
 
 searchNagriDefinitions:
 SELECT * FROM DictionaryEntry
@@ -163,9 +163,30 @@ WHERE definitionNagri GLOB :query;
 
 searchNagriExamples:
 SELECT D.* FROM DictionaryEntry D
-INNER JOIN Example X ON D.entryId = X.entryId
-WHERE exampleNagri GLOB :query;
+JOIN Example X ON D.entryId = X.entryId
+WHERE X.exampleNagri GLOB :query;
 
 getExamples:
 SELECT * FROM Example
 WHERE entryId = :entryId;
+
+getVariants:
+SELECT * FROM Variant
+WHERE entryId = :entryId;
+
+getComponentLexemes:
+SELECT D.* FROM DictionaryEntry D
+JOIN ComponentLexeme CL ON D.entryId = CL.componentId
+WHERE CL.entryId = :entryId;
+
+getEntryDomains:
+SELECT D.* FROM Domain D
+JOIN EntryDomainCrossRef ED ON D.domainId = ED.domainId
+WHERE ED.entryId = :entryId;
+
+getRelatedEntries:
+SELECT D.* FROM DictionaryEntry D
+JOIN EntryCrossRef EE ON D.senseId = EE.senseId1
+    OR D.senseId = EE.senseId2
+WHERE (EE.senseId1 = :senseId OR EE.senseId2 = :senseId)
+    AND D.senseId != :senseId;

@@ -7,20 +7,18 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -28,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ui.components.BookmarkIconButton
+import ui.components.EntryCard
 import ui.components.EntryDefinitions
 import ui.components.EntryDivider
 import ui.components.EntryExample
@@ -123,13 +122,28 @@ fun EntryScreen(
                         }
 
                         itemsIndexed(state.examples) { i, example ->
-                            if (i == 0) {
-                                Box(Modifier.fillMaxWidth()) {
-                                    EntryDivider(Modifier.align(Alignment.Center))
-                                }
-                            }
-
+                            if (i == 0) EntryDivider()
                             EntryExample(example, i)
+                        }
+
+                        itemsIndexed(state.domains) { i, domain ->
+                            if (i == 0) EntryDivider()
+                            Text("Domain ${domain.domainId} ${domain.description}")
+                        }
+
+                        itemsIndexed(state.variants) { i, variant ->
+                            if (i == 0) EntryDivider()
+                            Text("Variant ${variant.variantBengali} ${variant.variantIPA}")
+                        }
+
+                        itemsIndexed(state.componentLexemes) { i, componentEntry ->
+                            if (i == 0) EntryDivider()
+                            EntryCard(componentEntry, false) {}
+                        }
+
+                        itemsIndexed(state.relatedEntries) { i, relatedEntry ->
+                            if (i == 0) EntryDivider()
+                            EntryCard(relatedEntry, false) {}
                         }
                     }
                 }

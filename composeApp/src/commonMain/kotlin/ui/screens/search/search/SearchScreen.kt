@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,13 +35,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import models.Route
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -146,13 +143,9 @@ fun SearchScreen(
                     }
 
                     items(entryToBookmark.toList()) { (entry, isBookmark) ->
-                        EntryCard(
-                            modifier = Modifier
-                                .clip(CardDefaults.shape)
-                                .clickable { navController.navigate(Route.Entry(entry.entryId)) },
-                            entry = entry,
-                            isBookmark = isBookmark
-                        ) { onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark)) }
+                        EntryCard(entry, isBookmark) {
+                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
+                        }
                     }
                 }
             }

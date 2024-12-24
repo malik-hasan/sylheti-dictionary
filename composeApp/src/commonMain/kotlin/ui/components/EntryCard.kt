@@ -3,19 +3,25 @@ package ui.components
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import models.Route
 import models.displayBengali
 import models.displayIPA
 import models.displayNagri
 import oats.mobile.sylhetidictionary.DictionaryEntry
+import ui.app.LocalNavController
 import ui.screens.search.LocalAnimatedContentScope
 import ui.screens.search.LocalSharedTransitionScope
 
@@ -25,14 +31,17 @@ fun EntryCard(
     entry: DictionaryEntry,
     isBookmark: Boolean,
     modifier: Modifier = Modifier,
+    navController: NavController = LocalNavController.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current,
     onBookmark: () -> Unit
 ) {
     with(sharedTransitionScope) {
         with(entry) {
-            Card(
-                modifier = modifier.sharedElement(
+            Card(modifier
+                .clip(CardDefaults.shape)
+                .clickable { navController.navigate(Route.Entry(entry.entryId)) }
+                .sharedElement(
                     state = rememberSharedContentState("container-$entryId"),
                     animatedVisibilityScope = animatedContentScope
                 )

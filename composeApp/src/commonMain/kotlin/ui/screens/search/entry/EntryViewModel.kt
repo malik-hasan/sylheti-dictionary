@@ -6,6 +6,7 @@ import data.bookmarks.BookmarksDataSource
 import data.dictionary.DictionaryDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.utils.stateFlowOf
 
@@ -15,15 +16,25 @@ class EntryViewModel(
     private val bookmarksDataSource: BookmarksDataSource
 ) : ViewModel() {
 
-    private val initialEntryState = with(dictionaryDataSource) {
-        EntryState(
-            entry = getEntry(entryId),
-            examples = getExamples(entryId)
-        )
+    private val _state = MutableStateFlow(EntryState())
+
+    init {
+        _state.update {
+            with(dictionaryDataSource) {
+                val entry = getEntry(entryId)
+                EntryState(
+                    entry = entry,
+                    examples = getExamples(entryId),
+                    variants = getVariants(entryId),
+                    componentLexemes = getComponentLexemes(entryId),
+                    domains = getEntryDomains(entryId),
+                    relatedEntries = entry.senseId?.let { getRelatedEntries(it) } ?: emptyList()
+                )
+            }
+        }
     }
 
-    private val _state = MutableStateFlow(initialEntryState)
-    val state = stateFlowOf(initialEntryState,
+    val state = stateFlowOf(EntryState(),
         combine(
             _state,
             bookmarksDataSource.isBookmarkFlow(entryId),

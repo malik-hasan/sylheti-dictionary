@@ -3,7 +3,6 @@ package ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import models.FieldTag
 import models.settings.Language
@@ -56,9 +55,7 @@ fun EntryDefinitions(
 
         if (definitions.isNotEmpty()) {
             Column(modifier) {
-                if (showDivider) {
-                    EntryDivider(Modifier.align(Alignment.CenterHorizontally))
-                }
+                if (showDivider) EntryDivider()
 
                 if (language != Language.BN) EnglishDefinition()
 
