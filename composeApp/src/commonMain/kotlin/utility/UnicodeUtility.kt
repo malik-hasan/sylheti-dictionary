@@ -2,7 +2,7 @@ package utility
 
 object UnicodeUtility {
 
-    val GLOB_SPECIAL_CHARS = "[]*?"
+    const val GLOB_SPECIAL_CHARS = "[]*?"
 
     // chars found in Sylheti IPA fields:
     // "a", "b", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "x", "z",
@@ -29,12 +29,9 @@ object UnicodeUtility {
 
     const val BENGALI_HOSHONTO = '্'
     const val SYLHETI_HOSHONTO = '꠆'
-
     val HOSHONTO = setOf(BENGALI_HOSHONTO, SYLHETI_HOSHONTO)
 
     val BENGALI_DIACRITICS = setOf('া', 'ি', 'ী', 'ু', 'ূ', 'ৃ', 'ৄ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ', 'ঁ', 'ং', 'ঃ', '়', '্', 'ৢ', 'ৣ')
-
     val NAGRI_DIACRITICS = setOf('ꠣ', 'ꠤ', 'ꠥ', 'ꠦ', 'ꠧ', 'ꠂ', '꠆', 'ꠋ', '꠬')
-
     val ABUGIDA_DIACRITICS = BENGALI_DIACRITICS + NAGRI_DIACRITICS
 }

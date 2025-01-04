@@ -18,7 +18,7 @@ import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
-import ui.utils.StringWithFont
+import ui.utils.SDString
 import utility.validateStrings
 
 @Composable
@@ -47,8 +47,7 @@ fun EntryDefinitions(
             definitions[FieldTag.EN]?.let { definition ->
                 TaggedField(
                     tag = stringResource(Res.string.english),
-                    body = StringWithFont(definition, latinBodyFontFamily),
-                    highlightRegex = highlightRegex
+                    body = SDString(definition, highlightRegex, latinBodyFontFamily)
                 )
             }
         }
@@ -64,25 +63,24 @@ fun EntryDefinitions(
                         tag = stringResource(Res.string.bengali),
                         bodies = listOfNotNull(
                             definitions[FieldTag.BN]?.let {
-                                StringWithFont(it, bengaliBodyFontFamily)
+                                SDString(it, highlightRegex, bengaliBodyFontFamily)
                             },
                             definitions[FieldTag.BNIPA]?.let {
-                                StringWithFont(it, latinBodyFontFamily)
+                                SDString(it, mappedIpaHighlightRegex, latinBodyFontFamily)
                             }
-                        ),
-                        highlightRegex = mappedIpaHighlightRegex
+                        )
                     )
                 }
 
                 if (language == Language.BN) EnglishDefinition()
 
+                // There is no Sylheti Bengali definitions so no need to account for it
                 FieldTag.sylhetiTags.filter { it in definitions }.takeIf { it.isNotEmpty() }?.let { sylhetiTags ->
                     TaggedField(
                         tag = stringResource(Res.string.sylheti),
                         bodies = sylhetiTags.map {
-                            StringWithFont(definitions[it]!!, latinBodyFontFamily)
-                        },
-                        highlightRegex = mappedIpaHighlightRegex
+                            SDString(definitions[it]!!, mappedIpaHighlightRegex, latinBodyFontFamily)
+                        }
                     )
                 }
             }

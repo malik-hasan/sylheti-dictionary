@@ -4,28 +4,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
-import ui.theme.getBodyFontFamily
-import ui.utils.StringWithFont
+import ui.utils.SDString
 import ui.utils.appendHighlighted
 
 @Composable
 fun TaggedField(
     tag: String,
-    body: StringWithFont,
-    highlightRegex: Regex
-) { TaggedField(tag, listOf(body), highlightRegex) }
+    body: SDString
+) { TaggedField(tag, listOf(body)) }
 
 @Composable
 fun TaggedField(
     tag: String,
-    bodies: List<StringWithFont>,
-    highlightRegex: Regex
+    bodies: List<SDString>
 ) {
     val overflowIndent = 40.sp
 
@@ -40,15 +36,13 @@ fun TaggedField(
             ) { append(tag.lowercase()) }
             append(' ')
 
-            bodies.forEachIndexed { i, (body, fontFamily) ->
+            bodies.forEachIndexed { i, dictionaryString ->
                 if (i > 0) {
                     pop()
                     pushStyle(ParagraphStyle(textIndent = TextIndent(overflowIndent, overflowIndent)))
                 }
 
-                withStyle(SpanStyle(fontFamily = fontFamily ?: getBodyFontFamily())) {
-                    appendHighlighted(body, highlightRegex)
-                }
+                appendHighlighted(dictionaryString)
             }
         },
         style = MaterialTheme.typography.bodyMedium

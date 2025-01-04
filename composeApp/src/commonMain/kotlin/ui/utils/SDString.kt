@@ -2,7 +2,8 @@ package ui.utils
 
 import androidx.compose.ui.text.font.FontFamily
 
-data class StringWithFont(
-    val string: String,
+data class SDString(
+    val text: String,
+    val highlightRegex: Regex = Regex(""),
     val fontFamily: FontFamily? = null
 )

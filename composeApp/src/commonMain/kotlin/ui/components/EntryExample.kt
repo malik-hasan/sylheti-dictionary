@@ -18,7 +18,7 @@ import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
-import ui.utils.StringWithFont
+import ui.utils.SDString
 import utility.validateStrings
 
 @Composable
@@ -49,8 +49,7 @@ fun EntryExample(
             examples[FieldTag.EN]?.let { example ->
                 TaggedField(
                     tag = stringResource(Res.string.english),
-                    body = StringWithFont(example, latinBodyFontFamily),
-                    highlightRegex = highlightRegex
+                    body = SDString(example, highlightRegex, latinBodyFontFamily)
                 )
             }
         }
@@ -60,14 +59,15 @@ fun EntryExample(
                 tag = stringResource(Res.string.sylheti),
                 bodies = listOfNotNull(
                     examples[FieldTag.BENGALI]?.let {
-                        StringWithFont(it, bengaliBodyFontFamily)
+                        SDString(it, highlightRegex, bengaliBodyFontFamily)
                     },
                     examples[FieldTag.IPA]?.let {
-                        StringWithFont(it, latinBodyFontFamily)
+                        SDString(it, mappedIpaHighlightRegex, latinBodyFontFamily)
                     },
-                    examples[FieldTag.NAGRI]?.let(::StringWithFont)
-                ),
-                highlightRegex = mappedIpaHighlightRegex
+                    examples[FieldTag.NAGRI]?.let {
+                        SDString(it, highlightRegex)
+                    }
+                )
             )
         }
 
@@ -78,13 +78,12 @@ fun EntryExample(
                 tag = stringResource(Res.string.bengali),
                 bodies = listOfNotNull(
                     examples[FieldTag.BN]?.let {
-                        StringWithFont(it, bengaliBodyFontFamily)
+                        SDString(it, highlightRegex, bengaliBodyFontFamily)
                     },
                     examples[FieldTag.BNIPA]?.let {
-                        StringWithFont(it, latinBodyFontFamily)
+                        SDString(it, mappedIpaHighlightRegex, latinBodyFontFamily)
                     }
-                ),
-                highlightRegex = mappedIpaHighlightRegex
+                )
             )
         }
 

@@ -4,11 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +38,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import models.displayBengali
+import models.displayIPA
+import models.displayNagri
+import models.search.settings.SearchLanguage
+import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -47,13 +50,19 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.history
 import sylhetidictionary.composeapp.generated.resources.search_dictionary
 import sylhetidictionary.composeapp.generated.resources.settings
+import sylhetidictionary.composeapp.generated.resources.suggestion
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
-import ui.app.LocalNavController
 import ui.components.DrawerIconButton
 import ui.components.EntryCard
 import ui.components.SDScreen
 import ui.components.SearchSettingsMenu
+import ui.components.SearchSuggestion
+import ui.screens.search.LocalHighlightRegex
+import ui.screens.search.LocalMappedIpaHighlightRegex
+import ui.theme.bengaliBodyFontFamily
+import ui.theme.latinBodyFontFamily
+import ui.utils.SDString
 import ui.utils.ifTrue
 import ui.utils.rememberIsScrollingUp
 
@@ -86,7 +95,8 @@ fun SearchScreen(
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
-    navController: NavController = LocalNavController.current
+    highlightRegex: Regex = LocalHighlightRegex.current,
+    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -210,39 +220,64 @@ fun SearchScreen(
 
                         with(searchState) {
                             items(recents) { recent ->
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Icon(painterResource(Res.drawable.history), "Recent")
-                                    Text(
-                                        text = recent,
-                                        modifier = Modifier
-                                            .clickable {
-                                                onSearchEvent(
-                                                    SearchEvent.SelectSuggestion(recent)
-                                                )
-                                            }
-                                            .fillMaxWidth()
+                                SearchSuggestion(
+                                    suggestion = SDString(recent, mappedIpaHighlightRegex, if (detectedSearchScript == SearchScript.BENGALI) bengaliBodyFontFamily else latinBodyFontFamily),
+                                    onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent)) }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.history),
+                                        contentDescription = "Recent"
                                     )
                                 }
                             }
 
-                            searchResults?.let { results ->
-                                if (results.isEmpty()) {
-                                    item { Text("No results") }
-                                }
+                            item {
+                                searchResults?.let { results ->
+                                    if (results.isEmpty()) {
+                                        Text("No results")
+                                    }
 
-                                items(results) { entry ->
-                                    val word = entry.lexemeIPA
-                                    if (word !in recents) {
-                                        Text(
-                                            text = word,
-                                            modifier = Modifier
-                                                .clickable {
-                                                    onSearchEvent(
-                                                        SearchEvent.SelectSuggestion(word)
-                                                    )
+                                    val suggestions = mutableSetOf<SDString>()
+                                    results.forEach { entry ->
+                                        with(entry) {
+                                            when {
+                                                detectedSearchScript == SearchScript.BENGALI && displayBengali != null ->
+                                                    suggestions += SDString(displayBengali!!, highlightRegex, bengaliBodyFontFamily)
+
+                                                detectedSearchScript == SearchScript.NAGRI && displayNagri != null ->
+                                                    suggestions += SDString(displayNagri!!, highlightRegex)
+
+                                                else -> {
+                                                    if (displayIPA.contains(mappedIpaHighlightRegex) && (
+                                                                settingsState.languages.isEmpty() || SearchLanguage.Latin.SYLHETI in settingsState.languages
+                                                                )
+                                                    ) {
+                                                        suggestions += SDString(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
+                                                    }
+
+                                                    if (gloss?.contains(highlightRegex) == true && (
+                                                                settingsState.languages.isEmpty() || SearchLanguage.Latin.ENGLISH in settingsState.languages
+                                                                )
+                                                    ) {
+                                                        suggestions += SDString(gloss, highlightRegex, latinBodyFontFamily)
+                                                    }
                                                 }
-                                                .fillMaxWidth()
-                                        )
+                                            }
+                                        }
+                                    }
+
+                                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        suggestions.filter { it.text !in recents }.forEach { suggestion ->
+                                            SearchSuggestion(
+                                                suggestion = suggestion,
+                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.suggestion),
+                                                    contentDescription = "Suggestion"
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }

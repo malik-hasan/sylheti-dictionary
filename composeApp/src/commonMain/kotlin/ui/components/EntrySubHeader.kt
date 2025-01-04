@@ -50,10 +50,9 @@ fun EntrySubHeader(
         gloss?.let {
             Text(
                 text = buildAnnotatedString {
-                    appendHighlighted(it, highlightRegex)
+                    appendHighlighted(it, highlightRegex, latinBodyFontFamily)
                 },
-                style = glossStyle,
-                fontFamily = latinBodyFontFamily
+                style = glossStyle
             )
         }
     }

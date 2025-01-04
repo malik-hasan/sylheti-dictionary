@@ -11,11 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import ui.app.LocalShowNagri
 import ui.screens.search.LocalHighlightRegex
@@ -44,15 +42,11 @@ fun EntryHeader(
         Text(
             text = buildAnnotatedString {
                 displayBengali?.let {
-                    withStyle(SpanStyle(fontFamily = bengaliBodyFontFamily)) {
-                        appendHighlighted(it, highlightRegex)
-                    }
+                    appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                     append(" • ")
                 }
 
-                withStyle(SpanStyle(fontFamily = latinBodyFontFamily)) {
-                    appendHighlighted(displayIPA, mappedIpaHighlightRegex)
-                }
+                appendHighlighted(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
 
                 if (showNagri) {
                     displayNagri?.let {
@@ -87,10 +81,9 @@ fun EntryHeader(
             gloss?.let {
                 Text(
                     text = buildAnnotatedString {
-                        appendHighlighted(it, highlightRegex)
+                        appendHighlighted(it, highlightRegex, latinBodyFontFamily)
                     },
-                    style = glossStyle,
-                    fontFamily = latinBodyFontFamily
+                    style = glossStyle
                 )
             }
         }

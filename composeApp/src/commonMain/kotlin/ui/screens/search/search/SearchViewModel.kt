@@ -147,7 +147,7 @@ class SearchViewModel(
             }
 
             val recentSearches = async {
-                recentSearchesDataSource.getRecentSearches(globSearchTerm, detectedSearchScript)
+                recentSearchesDataSource.getRecentSearches(settings.position.getQuery(globMappedIpaTerm), detectedSearchScript)
             }
 
             launch {

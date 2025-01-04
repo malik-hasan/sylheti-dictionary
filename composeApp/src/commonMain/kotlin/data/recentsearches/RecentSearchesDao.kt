@@ -15,10 +15,10 @@ interface RecentSearchesDao {
     @Query("SELECT term FROM RecentSearch WHERE script = :script ORDER BY timestamp DESC LIMIT 10")
     suspend fun getRecentSearches(script: SearchScript): List<String>
 
-    @Query("SELECT term FROM RecentSearch WHERE term GLOB :term || '*' ORDER BY timestamp DESC LIMIT 10")
+    @Query("SELECT term FROM RecentSearch WHERE term GLOB :term ORDER BY timestamp DESC LIMIT 10")
     suspend fun getRecentSearches(term: String): List<String>
 
-    @Query("SELECT term FROM RecentSearch WHERE script = :script AND term GLOB :term || '*' ORDER BY timestamp DESC LIMIT 10")
+    @Query("SELECT term FROM RecentSearch WHERE script = :script AND term GLOB :term ORDER BY timestamp DESC LIMIT 10")
     suspend fun getRecentSearches(term: String, script: SearchScript): List<String>
 
     @Upsert
