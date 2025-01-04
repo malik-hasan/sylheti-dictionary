@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import models.FieldTag
+import models.search.settings.SearchScript
 import models.settings.Language
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.stringResource
@@ -16,8 +17,6 @@ import ui.app.LocalLanguage
 import ui.app.LocalShowNagri
 import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
-import ui.theme.bengaliBodyFontFamily
-import ui.theme.latinBodyFontFamily
 import ui.utils.SDString
 import utility.validateStrings
 
@@ -47,7 +46,7 @@ fun EntryDefinitions(
             definitions[FieldTag.EN]?.let { definition ->
                 TaggedField(
                     tag = stringResource(Res.string.english),
-                    body = SDString(definition, highlightRegex, latinBodyFontFamily)
+                    body = SDString(definition, highlightRegex, SearchScript.LATIN)
                 )
             }
         }
@@ -63,10 +62,10 @@ fun EntryDefinitions(
                         tag = stringResource(Res.string.bengali),
                         bodies = listOfNotNull(
                             definitions[FieldTag.BN]?.let {
-                                SDString(it, highlightRegex, bengaliBodyFontFamily)
+                                SDString(it, highlightRegex, SearchScript.BENGALI)
                             },
                             definitions[FieldTag.BNIPA]?.let {
-                                SDString(it, mappedIpaHighlightRegex, latinBodyFontFamily)
+                                SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
                             }
                         )
                     )
@@ -79,7 +78,7 @@ fun EntryDefinitions(
                     TaggedField(
                         tag = stringResource(Res.string.sylheti),
                         bodies = sylhetiTags.map {
-                            SDString(definitions[it]!!, mappedIpaHighlightRegex, latinBodyFontFamily)
+                            SDString(definitions[it]!!, mappedIpaHighlightRegex, SearchScript.LATIN)
                         }
                     )
                 }

@@ -6,11 +6,18 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
+import models.search.settings.SearchScript
+import ui.theme.bengaliBodyFontFamily
+import ui.theme.latinBodyFontFamily
 import utility.UnicodeUtility
 
 @Composable
 fun AnnotatedString.Builder.appendHighlighted(dictionaryString: SDString) = with(dictionaryString) {
-    appendHighlighted(text, highlightRegex, fontFamily)
+    appendHighlighted(
+        text = text,
+        highlightRegex = highlightRegex,
+        fontFamily = script?.let { if (it == SearchScript.BENGALI) bengaliBodyFontFamily else latinBodyFontFamily }
+    )
 }
 
 @Composable

@@ -21,9 +21,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import models.displayBengali
+import models.displayIPA
+import models.displayNagri
 import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
+import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.getString
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
@@ -35,6 +39,7 @@ import ui.screens.search.search.SearchEvent.UpdateSearchTerm
 import ui.screens.search.search.SearchSettingsEvent.SelectPosition
 import ui.screens.search.search.SearchSettingsEvent.SelectScript
 import ui.screens.search.search.SearchSettingsEvent.ToggleSettingsMenu
+import ui.utils.SDString
 import ui.utils.stateFlowOf
 import utility.UnicodeUtility
 
@@ -133,9 +138,13 @@ class SearchViewModel(
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
             val globSearchTerm = escapeGlobChars(searchTerm)
             val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
+            val regexSearchTerm = Regex.escape(searchTerm)
+            val regexMappedIpaTerm = mapIpaChars(regexSearchTerm, detectedSearchScript, true)
+            val highlightRegex = Regex(regexSearchTerm)
+            val mappedIpaHighlightRegex = Regex(regexMappedIpaTerm)
 
-            val results = async {
-                getResults(
+            val searchResultsJob = async {
+                getSearchResults(
                     searchTerm = globSearchTerm,
                     mappedIpaTerm = globMappedIpaTerm,
                     detectedSearchScript = detectedSearchScript,
@@ -146,20 +155,31 @@ class SearchViewModel(
                 )
             }
 
-            val recentSearches = async {
+            val recentSearchesJob = async {
                 recentSearchesDataSource.getRecentSearches(settings.position.getQuery(globMappedIpaTerm), detectedSearchScript)
             }
 
             launch {
-                preferences.set(PreferenceKey.HIGHLIGHT_REGEX, Regex.escape(searchTerm))
+                preferences.set(PreferenceKey.HIGHLIGHT_REGEX, regexSearchTerm)
             }
 
             launch {
-                val regexMappedIpaTerm = mapIpaChars(Regex.escape(searchTerm), detectedSearchScript, true)
                 preferences.set(PreferenceKey.MAPPED_IPA_HIGHLIGHT_REGEX, regexMappedIpaTerm)
             }
 
-            SearchOutputs(detectedSearchScript, results.await(), recentSearches.await())
+            val searchResults = searchResultsJob.await()
+            val recentSearches = recentSearchesJob.await()
+
+            val suggestions = getSuggestions(
+                searchResults,
+                recentSearches,
+                detectedSearchScript,
+                highlightRegex,
+                mappedIpaHighlightRegex,
+                settings.languages
+            )
+
+            SearchOutputs(detectedSearchScript, searchResults, suggestions, recentSearches)
         }
     }
 
@@ -169,10 +189,11 @@ class SearchViewModel(
             _searchState,
             bookmarksDataSource.bookmarksFlow,
             searchOutputsFlow
-        ) { state, bookmarks, (detectedSearchScript, results, recentSearches) ->
+        ) { state, bookmarks, (detectedSearchScript, searchResults, suggestions, recentSearches) ->
             state.copy(
-                searchResults = results,
-                entryToBookmark = results?.associateWith { it.entryId in bookmarks }
+                searchResults = searchResults,
+                suggestions = suggestions,
+                entryToBookmark = searchResults?.associateWith { it.entryId in bookmarks }
                     ?: dictionaryDataSource.getEntries(bookmarks).associateWith { true },
                 recents = recentSearches,
                 detectedSearchScript = detectedSearchScript
@@ -248,7 +269,7 @@ class SearchViewModel(
     private fun getQueries(term: String, searchPosition: SearchPosition) =
         Pair("*$term*", searchPosition.getQuery(term))
 
-    private suspend fun getResults(
+    private suspend fun getSearchResults(
         searchTerm: String,
         mappedIpaTerm: String,
         detectedSearchScript: SearchScript,
@@ -275,6 +296,44 @@ class SearchViewModel(
                 }
             }
         }.sortedBy(detectedSearchScript.sortAlgorithm)
+    }
+
+    private suspend fun getSuggestions(
+        searchResults: List<DictionaryEntry>?,
+        recentSearches: List<String>,
+        detectedSearchScript: SearchScript,
+        highlightRegex: Regex,
+        mappedIpaHighlightRegex: Regex,
+        searchLanguages: Map<SearchLanguage, Boolean>
+    ) = searchResults?.let { results ->
+        val suggestions = mutableSetOf<SDString>()
+        results.forEach { entry ->
+            yield()
+            with(entry) {
+                when {
+                    detectedSearchScript == SearchScript.BENGALI && displayBengali != null ->
+                        suggestions += SDString(displayBengali!!, highlightRegex, SearchScript.BENGALI)
+
+                    detectedSearchScript == SearchScript.NAGRI && displayNagri != null ->
+                        suggestions += SDString(displayNagri!!, highlightRegex)
+
+                    else -> {
+                        if (displayIPA.contains(mappedIpaHighlightRegex) && (
+                            searchLanguages.isEmpty() || searchLanguages[models.search.settings.SearchLanguage.Latin.SYLHETI] == true
+                        )) {
+                            suggestions += SDString(displayIPA, mappedIpaHighlightRegex, SearchScript.LATIN)
+                        }
+
+                        if (gloss?.contains(highlightRegex) == true && (
+                            searchLanguages.isEmpty() || searchLanguages[models.search.settings.SearchLanguage.Latin.ENGLISH] == true
+                        )) {
+                            suggestions += SDString(gloss, highlightRegex, SearchScript.LATIN)
+                        }
+                    }
+                }
+            }
+        }
+        suggestions.filter { it.text !in recentSearches }
     }
 
     private fun setSearchBarActive(value: Boolean) {

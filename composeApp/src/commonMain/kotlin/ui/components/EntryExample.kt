@@ -4,6 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import models.FieldTag
+import models.search.settings.SearchScript
 import models.settings.Language
 import oats.mobile.sylhetidictionary.Example
 import org.jetbrains.compose.resources.stringResource
@@ -16,8 +17,6 @@ import ui.app.LocalLanguage
 import ui.app.LocalShowNagri
 import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
-import ui.theme.bengaliBodyFontFamily
-import ui.theme.latinBodyFontFamily
 import ui.utils.SDString
 import utility.validateStrings
 
@@ -49,7 +48,7 @@ fun EntryExample(
             examples[FieldTag.EN]?.let { example ->
                 TaggedField(
                     tag = stringResource(Res.string.english),
-                    body = SDString(example, highlightRegex, latinBodyFontFamily)
+                    body = SDString(example, highlightRegex, SearchScript.LATIN)
                 )
             }
         }
@@ -59,10 +58,10 @@ fun EntryExample(
                 tag = stringResource(Res.string.sylheti),
                 bodies = listOfNotNull(
                     examples[FieldTag.BENGALI]?.let {
-                        SDString(it, highlightRegex, bengaliBodyFontFamily)
+                        SDString(it, highlightRegex, SearchScript.BENGALI)
                     },
                     examples[FieldTag.IPA]?.let {
-                        SDString(it, mappedIpaHighlightRegex, latinBodyFontFamily)
+                        SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
                     },
                     examples[FieldTag.NAGRI]?.let {
                         SDString(it, highlightRegex)
@@ -78,10 +77,10 @@ fun EntryExample(
                 tag = stringResource(Res.string.bengali),
                 bodies = listOfNotNull(
                     examples[FieldTag.BN]?.let {
-                        SDString(it, highlightRegex, bengaliBodyFontFamily)
+                        SDString(it, highlightRegex, SearchScript.BENGALI)
                     },
                     examples[FieldTag.BNIPA]?.let {
-                        SDString(it, mappedIpaHighlightRegex, latinBodyFontFamily)
+                        SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
                     }
                 )
             )
