@@ -136,10 +136,11 @@ class SearchViewModel(
     ) { searchTerm, settings ->
         coroutineScope {
             val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
-            val globSearchTerm = escapeGlobChars(searchTerm)
-            val globMappedIpaTerm = mapIpaChars(globSearchTerm, detectedSearchScript)
-            val regexSearchTerm = Regex.escape(searchTerm)
-            val regexMappedIpaTerm = mapIpaChars(regexSearchTerm, detectedSearchScript, true)
+
+            val globSearchTerm = mapChars(escapeGlobChars(searchTerm), UnicodeUtility.STOP_CHAR_MAP, detectedSearchScript)
+            val globMappedIpaTerm = mapChars(globSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, detectedSearchScript)
+            val regexSearchTerm = mapChars(Regex.escape(searchTerm), UnicodeUtility.STOP_CHAR_MAP, detectedSearchScript, true)
+            val regexMappedIpaTerm = mapChars(regexSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, detectedSearchScript, true)
             val highlightRegex = Regex(regexSearchTerm)
             val mappedIpaHighlightRegex = Regex(regexMappedIpaTerm)
 
@@ -254,10 +255,10 @@ class SearchViewModel(
             } else char.toString()
         }.joinToString("")
 
-    private fun mapIpaChars(term: String, detectedSearchScript: SearchScript, forRegex: Boolean = false) =
+    private fun mapChars(term: String, charMap: Map<Char, Set<Char>>, detectedSearchScript: SearchScript, forRegex: Boolean = false) =
         if (detectedSearchScript.isLatinOrAuto) {
             term.map { char ->
-                UnicodeUtility.LATIN_IPA_CHAR_MAP[char]?.let { altChars ->
+                charMap[char]?.let { altChars ->
                     val charSet = "[$char${altChars.joinToString("")}]"
                     if (forRegex) {
                         "\\E$charSet\\Q" // escape the escaping

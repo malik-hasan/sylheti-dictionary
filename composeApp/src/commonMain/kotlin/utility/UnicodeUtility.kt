@@ -2,6 +2,10 @@ package utility
 
 object UnicodeUtility {
 
+    val STOP_CHAR_MAP = mapOf(
+        ' ' to setOf('.', '/', '(', ')', '-') // hyphen must be last
+    )
+
     const val GLOB_SPECIAL_CHARS = "[]*?"
 
     // chars found in Sylheti IPA fields:

@@ -225,10 +225,6 @@ fun SearchScreen(
 
 
                             suggestions?.let { suggestions ->
-                                if (suggestions.isEmpty()) {
-                                    item { Text("No results") }
-                                }
-
                                 items(suggestions) { suggestion ->
                                     SearchSuggestion(
                                         suggestion = suggestion,
