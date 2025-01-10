@@ -223,7 +223,6 @@ fun SearchScreen(
                                 }
                             }
 
-
                             suggestions?.let { suggestions ->
                                 items(suggestions) { suggestion ->
                                     SearchSuggestion(
