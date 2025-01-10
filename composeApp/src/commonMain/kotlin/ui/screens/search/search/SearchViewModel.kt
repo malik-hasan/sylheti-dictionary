@@ -154,7 +154,7 @@ class SearchViewModel(
                     searchLanguages = settings.languages,
                     searchDefinitions = settings.searchDefinitions,
                     searchExamples = settings.searchExamples,
-                    showSylhetiNagri = showNagri
+                    showNagri = showNagri
                 )
             }
 
