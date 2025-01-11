@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,26 +40,28 @@ fun EntryHeader(
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
 ) {
     Column(modifier) {
-        Text(
-            text = buildAnnotatedString {
-                displayBengali?.let {
-                    appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
-                    append(" • ")
-                }
-
-                appendHighlighted(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
-
-                if (showNagri) {
-                    displayNagri?.let {
+        SelectionContainer {
+            Text(
+                text = buildAnnotatedString {
+                    displayBengali?.let {
+                        appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                         append(" • ")
-                        appendHighlighted(it, highlightRegex)
                     }
-                }
-            },
-            fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.primary,
-            style = displayStyle
-        )
+
+                    appendHighlighted(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
+
+                    if (showNagri) {
+                        displayNagri?.let {
+                            append(" • ")
+                            appendHighlighted(it, highlightRegex)
+                        }
+                    }
+                },
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.primary,
+                style = displayStyle
+            )
+        }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -79,12 +82,14 @@ fun EntryHeader(
             }
 
             gloss?.let {
-                Text(
-                    text = buildAnnotatedString {
-                        appendHighlighted(it, highlightRegex, latinBodyFontFamily)
-                    },
-                    style = glossStyle
-                )
+                SelectionContainer {
+                    Text(
+                        text = buildAnnotatedString {
+                            appendHighlighted(it, highlightRegex, latinBodyFontFamily)
+                        },
+                        style = glossStyle
+                    )
+                }
             }
         }
     }

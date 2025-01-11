@@ -1,14 +1,16 @@
 package ui.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import ui.utils.SDString
 import ui.utils.appendHighlighted
 
@@ -23,28 +25,22 @@ fun TaggedField(
     tag: String,
     bodies: List<SDString>
 ) {
-    val overflowIndent = 40.sp
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            text = tag.lowercase(),
+            modifier = Modifier.padding(top = 2.dp),
+            style = MaterialTheme.typography.labelMedium,
+            fontStyle = FontStyle.Italic,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
-    Text(
-        text = buildAnnotatedString {
-            pushStyle(ParagraphStyle(textIndent = TextIndent(restLine = overflowIndent)))
-            withStyle(
-                MaterialTheme.typography.labelMedium.toSpanStyle().copy(
-                    fontStyle = FontStyle.Italic,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) { append(tag.lowercase()) }
-            append(' ')
-
-            bodies.forEachIndexed { i, dictionaryString ->
-                if (i > 0) {
-                    pop()
-                    pushStyle(ParagraphStyle(textIndent = TextIndent(overflowIndent, overflowIndent)))
-                }
-
-                appendHighlighted(dictionaryString)
-            }
-        },
-        style = MaterialTheme.typography.bodyMedium
-    )
+        SelectionContainer {
+            Text(
+                text = buildAnnotatedString {
+                    bodies.forEach { appendHighlighted(it) }
+                },
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
 }
