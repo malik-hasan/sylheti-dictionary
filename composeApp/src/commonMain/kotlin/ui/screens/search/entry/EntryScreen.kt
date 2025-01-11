@@ -113,7 +113,7 @@ fun EntryScreen(
                                 entry = entry,
                                 showDivider = false,
                                 modifier = Modifier
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .padding(horizontal = 16.dp).padding(top = 8.dp)
                                     .sharedBounds(
                                         sharedContentState = rememberSharedContentState("definitions-$entryId"),
                                         animatedVisibilityScope = animatedContentScope
@@ -122,13 +122,8 @@ fun EntryScreen(
                         }
 
                         itemsIndexed(state.examples) { i, example ->
-                            if (i == 0) EntryDivider()
-                            EntryExample(example, i)
-                        }
-
-                        itemsIndexed(state.domains) { i, domain ->
-                            if (i == 0) EntryDivider()
-                            Text("Domain ${domain.domainId} ${domain.description}")
+                            if (i == 0) EntryDivider(Modifier.padding(vertical = 8.dp))
+                            EntryExample(example, i, Modifier.padding(horizontal = 16.dp))
                         }
 
                         itemsIndexed(state.variants) { i, variant ->

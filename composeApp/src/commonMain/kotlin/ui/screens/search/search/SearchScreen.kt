@@ -2,6 +2,7 @@ package ui.screens.search.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +56,6 @@ import ui.components.SearchSuggestion
 import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.utils.SDString
-import ui.utils.ifTrue
 import ui.utils.rememberIsScrollingUp
 
 @Composable
@@ -144,13 +144,18 @@ fun SearchScreen(
                         return@LazyColumn
                     }
 
-                    items(entryToBookmark.toList()) { (entry, isBookmark) ->
+                    items(
+                        items = entryToBookmark.toList(),
+                        key = { (entry, _) -> entry.entryId }
+                    ) { (entry, isBookmark) ->
                         EntryCard(entry, isBookmark) {
                             onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
                         }
                     }
                 }
             }
+
+            val searchBarPadding by animateDpAsState(if (searchState.searchBarActive) 0.dp else 16.dp)
 
             AnimatedVisibility(
                 visible = isScrollingUp,
@@ -159,7 +164,7 @@ fun SearchScreen(
             ) {
                 SearchBar(
                     modifier = Modifier
-                        .ifTrue(!searchState.searchBarActive) { padding(horizontal = 16.dp) }
+                        .padding(horizontal = searchBarPadding)
                         .fillMaxWidth(),
                     inputField = {
                         SearchBarDefaults.InputField(

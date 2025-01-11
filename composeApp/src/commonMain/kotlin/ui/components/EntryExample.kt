@@ -1,8 +1,10 @@
 package ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import models.FieldTag
 import models.search.settings.SearchScript
 import models.settings.Language
@@ -24,68 +26,71 @@ import utility.validateStrings
 fun EntryExample(
     example: Example,
     index: Int,
+    modifier: Modifier = Modifier,
     language: Language = LocalLanguage.current,
     showNagri: Boolean = LocalShowNagri.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
-    Text(stringResource(Res.string.example, index + 1))
+    Column(modifier) {
+        Text(stringResource(Res.string.example, index + 1))
 
-    with(example) {
-        val examples = remember {
-            mapOf(
-                FieldTag.BENGALI to exampleBengali,
-                FieldTag.NAGRI to exampleNagri.takeIf { showNagri },
-                FieldTag.IPA to exampleIPA,
-                FieldTag.EN to exampleEN,
-                FieldTag.BN to exampleBN,
-                FieldTag.BNIPA to exampleBNIPA
-            ).validateStrings()
-        }
+        with(example) {
+            val examples = remember {
+                mapOf(
+                    FieldTag.BENGALI to exampleBengali,
+                    FieldTag.NAGRI to exampleNagri.takeIf { showNagri },
+                    FieldTag.IPA to exampleIPA,
+                    FieldTag.EN to exampleEN,
+                    FieldTag.BN to exampleBN,
+                    FieldTag.BNIPA to exampleBNIPA
+                ).validateStrings()
+            }
 
-        @Composable
-        fun EnglishExample() {
-            examples[FieldTag.EN]?.let { example ->
+            @Composable
+            fun EnglishExample() {
+                examples[FieldTag.EN]?.let { example ->
+                    TaggedField(
+                        tag = stringResource(Res.string.english),
+                        body = SDString(example, highlightRegex, SearchScript.LATIN)
+                    )
+                }
+            }
+
+            if (FieldTag.sylhetiTags.any { it in examples }) {
                 TaggedField(
-                    tag = stringResource(Res.string.english),
-                    body = SDString(example, highlightRegex, SearchScript.LATIN)
+                    tag = stringResource(Res.string.sylheti),
+                    bodies = listOfNotNull(
+                        examples[FieldTag.BENGALI]?.let {
+                            SDString(it, highlightRegex, SearchScript.BENGALI)
+                        },
+                        examples[FieldTag.IPA]?.let {
+                            SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
+                        },
+                        examples[FieldTag.NAGRI]?.let {
+                            SDString(it, highlightRegex)
+                        }
+                    )
                 )
             }
-        }
 
-        if (FieldTag.sylhetiTags.any { it in examples }) {
-            TaggedField(
-                tag = stringResource(Res.string.sylheti),
-                bodies = listOfNotNull(
-                    examples[FieldTag.BENGALI]?.let {
-                        SDString(it, highlightRegex, SearchScript.BENGALI)
-                    },
-                    examples[FieldTag.IPA]?.let {
-                        SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
-                    },
-                    examples[FieldTag.NAGRI]?.let {
-                        SDString(it, highlightRegex)
-                    }
+            if (language != Language.BN) EnglishExample()
+
+            if (FieldTag.bengaliTags.any { it in examples }) {
+                TaggedField(
+                    tag = stringResource(Res.string.bengali),
+                    bodies = listOfNotNull(
+                        examples[FieldTag.BN]?.let {
+                            SDString(it, highlightRegex, SearchScript.BENGALI)
+                        },
+                        examples[FieldTag.BNIPA]?.let {
+                            SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
+                        }
+                    )
                 )
-            )
+            }
+
+            if (language == Language.BN) EnglishExample()
         }
-
-        if (language != Language.BN) EnglishExample()
-
-        if (FieldTag.bengaliTags.any { it in examples }) {
-            TaggedField(
-                tag = stringResource(Res.string.bengali),
-                bodies = listOfNotNull(
-                    examples[FieldTag.BN]?.let {
-                        SDString(it, highlightRegex, SearchScript.BENGALI)
-                    },
-                    examples[FieldTag.BNIPA]?.let {
-                        SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
-                    }
-                )
-            )
-        }
-
-        if (language == Language.BN) EnglishExample()
     }
 }
