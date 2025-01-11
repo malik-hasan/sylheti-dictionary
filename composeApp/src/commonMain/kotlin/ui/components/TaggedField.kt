@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -17,18 +18,20 @@ import ui.utils.appendHighlighted
 @Composable
 fun TaggedField(
     tag: String,
-    body: SDString
-) { TaggedField(tag, listOf(body)) }
+    body: SDString,
+    bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
+) { TaggedField(tag, listOf(body), bodyStyle) }
 
 @Composable
 fun TaggedField(
     tag: String,
-    bodies: List<SDString>
+    bodies: List<SDString>,
+    bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = tag.lowercase(),
-            modifier = Modifier.padding(top = 2.dp),
+            modifier = Modifier.padding(top = 3.dp),
             style = MaterialTheme.typography.labelMedium,
             fontStyle = FontStyle.Italic,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -42,7 +45,7 @@ fun TaggedField(
                         appendHighlighted(body)
                     }
                 },
-                style = MaterialTheme.typography.bodyMedium
+                style = bodyStyle
             )
         }
     }

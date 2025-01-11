@@ -112,6 +112,7 @@ fun EntryScreen(
                             EntryDefinitions(
                                 entry = entry,
                                 showDivider = false,
+                                definitionStyle = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp).padding(top = 8.dp)
                                     .sharedBounds(
