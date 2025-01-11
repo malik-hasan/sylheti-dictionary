@@ -1,10 +1,14 @@
 package ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import models.settings.Language
 import org.jetbrains.compose.resources.Font
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -22,6 +26,15 @@ import sylhetidictionary.composeapp.generated.resources.noto_sans_bengali
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla_italic
 import ui.app.LocalLanguage
+
+val TextLinkStyle
+    @Composable
+    get() = TextLinkStyles(
+        style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline),
+        focusedStyle = SpanStyle(color = MaterialTheme.colorScheme.inversePrimary),
+        hoveredStyle = SpanStyle(color = MaterialTheme.colorScheme.inversePrimary),
+        pressedStyle = SpanStyle(color = MaterialTheme.colorScheme.inversePrimary)
+    )
 
 @Composable
 fun getBodyFontFamily(language: Language = LocalLanguage.current) =

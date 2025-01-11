@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import models.Route
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.ipa_help
 import sylhetidictionary.composeapp.generated.resources.search
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
@@ -56,11 +57,7 @@ fun SDNavigationDrawer(
 
                     SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings)
 
-                    NavigationDrawerItem(
-                        label = { Text("Domains") },
-                        selected = false,
-                        onClick = { /*TODO*/ }
-                    )
+                    SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp)
 
                     NavigationDrawerItem(
                         label = { Text("About") },

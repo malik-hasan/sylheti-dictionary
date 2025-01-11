@@ -32,4 +32,6 @@
     <string name="dark">Dark</string>
     <string name="dynamic_theme">Dynamic Theme</string>
     <string name="show_sylheti_nagri">Show Sylheti Nagri</string>
+
+    <string name="ipa_help">IPA Help</string>
 </resources>

@@ -128,7 +128,7 @@ fun EntryScreen(
 
                         itemsIndexed(state.variants) { i, variant ->
                             if (i == 0) EntryDivider()
-                            Text("Variant ${variant.variantBengali} ${variant.variantIPA}")
+                            Text("Variant  ${variant.variantIPA} ${variant.variantBengali} ${variant.variantNagri} ${variant.environment}")
                         }
 
                         itemsIndexed(state.componentLexemes) { i, componentEntry ->

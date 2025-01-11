@@ -37,7 +37,10 @@ fun TaggedField(
         SelectionContainer {
             Text(
                 text = buildAnnotatedString {
-                    bodies.forEach { appendHighlighted(it) }
+                    bodies.forEachIndexed { i, body ->
+                        if (i > 0) append('\n')
+                        appendHighlighted(body)
+                    }
                 },
                 style = MaterialTheme.typography.bodyMedium
             )

@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import models.Route
+import ui.screens.IpaHelpScreen
 import ui.screens.search.SearchNavHost
 import ui.screens.search.SearchProvider
 import ui.screens.settings.SettingsScreen
@@ -20,6 +21,10 @@ fun SDNavHost(navController: NavHostController = LocalNavController.current) {
 
         composable<Route.Settings> {
             SettingsScreen()
+        }
+
+        composable<Route.IpaHelp> {
+            IpaHelpScreen()
         }
     }
 }
