@@ -40,8 +40,8 @@ fun SearchProvider(
         CompositionLocalProvider(
             LocalNavController provides rememberNavController(),
             LocalSharedTransitionScope provides this,
-            LocalHighlightRegex provides Regex(highlightRegex),
-            LocalMappedIpaHighlightRegex provides Regex(mappedIpaHighlightRegex)
+            LocalHighlightRegex provides Regex(highlightRegex, RegexOption.IGNORE_CASE),
+            LocalMappedIpaHighlightRegex provides Regex(mappedIpaHighlightRegex, RegexOption.IGNORE_CASE)
         ) { content() }
     }
 }

@@ -8,6 +8,9 @@ object UnicodeUtility {
 
     const val GLOB_SPECIAL_CHARS = "[]*?"
 
+    val CASE_MAP = ('a'..'z').associateWith { setOf(it.uppercaseChar()) } +
+        ('A'..'Z').associateWith { setOf(it.lowercaseChar()) }
+
     // chars found in Sylheti IPA fields:
     // "a", "b", "d", "e", "f", "h", "i", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "x", "z",
     // "ŋ", "ɔ", "ɖ", "ɛ", "ɡ", "ɪ", "ɱ", "ɳ", "ɽ", "ɾ", "ʂ", "ʃ", "ʈ", "ʊ", "ʒ", "ʤ", "ʧ"

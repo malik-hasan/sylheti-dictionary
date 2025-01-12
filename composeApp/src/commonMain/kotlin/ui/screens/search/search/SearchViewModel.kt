@@ -136,14 +136,21 @@ class SearchViewModel(
         preferences.flow(PreferenceKey.SHOW_NAGRI, false)
     ) { searchTerm, settings, showNagri ->
         coroutineScope {
-            val detectedSearchScript = detectSearchScript(searchTerm, settings.script)
+            val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
 
-            val globSearchTerm = mapChars(escapeGlobChars(searchTerm), UnicodeUtility.STOP_CHAR_MAP, detectedSearchScript)
-            val globMappedIpaTerm = mapChars(globSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, detectedSearchScript)
-            val regexSearchTerm = mapChars(Regex.escape(searchTerm), UnicodeUtility.STOP_CHAR_MAP, detectedSearchScript, true)
-            val regexMappedIpaTerm = mapChars(regexSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, detectedSearchScript, true)
-            val highlightRegex = Regex(regexSearchTerm)
-            val mappedIpaHighlightRegex = Regex(regexMappedIpaTerm)
+            val globSearchTerm = mapChars(
+                term = mapChars(escapeGlobChars(searchTerm), UnicodeUtility.STOP_CHAR_MAP),
+                charMap = UnicodeUtility.CASE_MAP
+            )
+            val globMappedIpaTerm = mapChars(globSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, remapped = true)
+            val regexSearchTerm = mapChars(Regex.escape(searchTerm), UnicodeUtility.STOP_CHAR_MAP, forRegex = true)
+            val regexMappedIpaTerm = mapChars(regexSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, forRegex = true)
+            val highlightRegex = Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
+            val mappedIpaHighlightRegex = Regex(regexMappedIpaTerm, RegexOption.IGNORE_CASE)
+
+            Logger.d("MALIK $globSearchTerm $globMappedIpaTerm $regexSearchTerm $regexMappedIpaTerm")
+
+            val detectedSearchScript = detectSearchScriptJob.await()
 
             val searchResultsJob = async {
                 getSearchResults(
@@ -259,17 +266,16 @@ class SearchViewModel(
             } else char.toString()
         }.joinToString("")
 
-    private fun mapChars(term: String, charMap: Map<Char, Set<Char>>, detectedSearchScript: SearchScript, forRegex: Boolean = false) =
-        if (detectedSearchScript.isLatinOrAuto) {
-            term.map { char ->
-                charMap[char]?.let { altChars ->
-                    val charSet = "[$char${altChars.joinToString("")}]"
-                    if (forRegex) {
-                        "\\E$charSet\\Q" // escape the escaping
-                    } else charSet
-                } ?: char.toString()
-            }.joinToString("")
-        } else term
+    private fun mapChars(term: String, charMap: Map<Char, Set<Char>>, forRegex: Boolean = false, remapped: Boolean = false) =
+        term.map { char ->
+            charMap[char]?.let { altChars ->
+                var charSet = "$char${altChars.joinToString("")}"
+                if (!remapped) charSet = "[$charSet]"
+                if (forRegex) {
+                    "\\E$charSet\\Q" // escape the escaping
+                } else charSet
+            } ?: char.toString()
+        }.joinToString("")
 
     private fun getQueries(term: String, searchPosition: SearchPosition) =
         Pair("*$term*", searchPosition.getQuery(term))

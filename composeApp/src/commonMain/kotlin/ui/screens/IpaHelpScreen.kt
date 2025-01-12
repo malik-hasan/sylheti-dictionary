@@ -26,7 +26,7 @@ import sylhetidictionary.composeapp.generated.resources.ipa_help
 import ui.components.DrawerIconButton
 import ui.components.SDScreen
 import ui.theme.TextLinkStyle
-import utility.UnicodeUtility.LATIN_IPA_CHAR_MAP
+import utility.UnicodeUtility
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +79,7 @@ fun IpaHelpScreen() {
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            LATIN_IPA_CHAR_MAP.forEach { (char, charSet) ->
+            UnicodeUtility.LATIN_IPA_CHAR_MAP.forEach { (char, charSet) ->
                 Text(
                     text = buildAnnotatedString {
                         withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
