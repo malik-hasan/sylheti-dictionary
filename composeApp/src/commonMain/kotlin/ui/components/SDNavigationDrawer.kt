@@ -8,7 +8,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,6 +18,7 @@ import kotlinx.coroutines.launch
 import models.Route
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.about
 import sylhetidictionary.composeapp.generated.resources.ipa_help
 import sylhetidictionary.composeapp.generated.resources.search
 import sylhetidictionary.composeapp.generated.resources.settings
@@ -59,11 +59,7 @@ fun SDNavigationDrawer(
 
                     SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp)
 
-                    NavigationDrawerItem(
-                        label = { Text("About") },
-                        selected = false,
-                        onClick = { /*TODO*/ }
-                    )
+                    SDNavigationDrawerItem(stringResource(Res.string.about), Route.About)
                 }
             }
         },
