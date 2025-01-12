@@ -148,7 +148,10 @@ class SearchViewModel(
             val highlightRegex = Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
             val mappedIpaHighlightRegex = Regex(regexMappedIpaTerm, RegexOption.IGNORE_CASE)
 
-            Logger.d("MALIK $globSearchTerm $globMappedIpaTerm $regexSearchTerm $regexMappedIpaTerm")
+            Logger.d("SEARCH: GLOB: $globSearchTerm")
+            Logger.d("SEARCH: GLOB IPA: $globMappedIpaTerm")
+            Logger.d("SEARCH: REGEX: $regexSearchTerm")
+            Logger.d("SEARCH: REGEX IPA: $regexMappedIpaTerm")
 
             val detectedSearchScript = detectSearchScriptJob.await()
 
