@@ -26,8 +26,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import models.search.settings.SearchScript
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.component_lexemes
+import sylhetidictionary.composeapp.generated.resources.primary
+import sylhetidictionary.composeapp.generated.resources.related_entries
 import ui.components.BookmarkIconButton
 import ui.components.Chip
 import ui.components.EntryCard
@@ -57,7 +62,7 @@ fun EntryScreen(
     EntryScreen(state, ::onEvent)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun EntryScreen(
     state: EntryState,
@@ -163,7 +168,7 @@ fun EntryScreen(
                             if (i == 0) {
                                 EntryDivider(Modifier.padding(vertical = 8.dp))
                                 Text(
-                                    text = "Component Lexemes",
+                                    text = stringResource(Res.string.component_lexemes),
                                     style = MaterialTheme.typography.titleSmall,
                                     modifier = Modifier.fillMaxWidth(),
                                     textAlign = TextAlign.Center
@@ -171,7 +176,7 @@ fun EntryScreen(
                             }
 
                             if (componentEntry.isPrimaryComponent) {
-                                Chip("Primary")
+                                Chip(stringResource(Res.string.primary))
                             }
                             componentEntry.complexFormType?.let {
                                 Text(it, style = MaterialTheme.typography.bodySmall)
@@ -192,7 +197,7 @@ fun EntryScreen(
                             if (i == 0) {
                                 EntryDivider(Modifier.padding(vertical = 8.dp))
                                 Text(
-                                    text = "Related Entries",
+                                    text = stringResource(Res.string.related_entries),
                                     style = MaterialTheme.typography.titleSmall,
                                     modifier = Modifier.fillMaxWidth(),
                                     textAlign = TextAlign.Center
