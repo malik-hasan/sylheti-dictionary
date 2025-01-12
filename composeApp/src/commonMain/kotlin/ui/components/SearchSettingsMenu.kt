@@ -16,6 +16,9 @@ import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.also_search
+import sylhetidictionary.composeapp.generated.resources.definitions
+import sylhetidictionary.composeapp.generated.resources.examples
 import sylhetidictionary.composeapp.generated.resources.search_languages
 import sylhetidictionary.composeapp.generated.resources.search_position
 import sylhetidictionary.composeapp.generated.resources.search_script
@@ -72,13 +75,13 @@ fun SearchSettingsMenu(
             }
 
             Column {
-                Text("Also search in")
+                Text(stringResource(Res.string.also_search))
 
-                CheckboxSearchSetting("Definitions", state.searchDefinitions) {
+                CheckboxSearchSetting(stringResource(Res.string.definitions), state.searchDefinitions) {
                     onEvent(SearchSettingsEvent.ToggleSearchDefinitions(it))
                 }
 
-                CheckboxSearchSetting("Examples", state.searchExamples) {
+                CheckboxSearchSetting(stringResource(Res.string.examples), state.searchExamples) {
                     onEvent(SearchSettingsEvent.ToggleSearchExamples(it))
                 }
             }

@@ -19,6 +19,10 @@
     <string name="sylheti">সিলেটি</string>
     <string name="at_least_one_language">অন্তত একটি ভাষা বেছে নিতে হবে</string>
 
+    <string name="also_search">এতেও খুঁজুন</string>
+    <string name="definitions">সংজ্ঞা</string>
+    <string name="examples">উদাহরণ</string>
+
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
     <string name="part_of_speech">পদ</string>
@@ -32,4 +36,8 @@
     <string name="dark">ডার্ক</string>
     <string name="dynamic_theme">ডাইনামিক থিম</string>
     <string name="show_sylheti_nagri">নাগরী লিপি দেখুন</string>
+
+    <string name="ipa_help">আধ্বব সাহায্য</string>
+
+    <string name="about">অভিধান সম্পর্কে</string>
 </resources>

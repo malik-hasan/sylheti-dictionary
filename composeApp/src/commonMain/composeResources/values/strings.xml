@@ -19,6 +19,10 @@
     <string name="sylheti">Sylheti</string>
     <string name="at_least_one_language">At least one language must be selected</string>
 
+    <string name="also_search">Also search in</string>
+    <string name="definitions">Definitions</string>
+    <string name="examples">Examples</string>
+
     <string name="search">Search</string>
     <string name="search_dictionary">Search dictionary</string>
     <string name="part_of_speech">Part of Speech</string>
