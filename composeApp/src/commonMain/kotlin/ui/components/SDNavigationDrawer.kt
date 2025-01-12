@@ -1,9 +1,12 @@
 package ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -11,6 +14,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,8 +46,11 @@ fun SDNavigationDrawer(
             }
 
             ModalDrawerSheet {
-                Column(Modifier.safeDrawingPadding().padding(8.dp)) {
-
+                Column(Modifier
+                    .safeDrawingPadding()
+                    .padding(8.dp)
+                    .verticalScroll(rememberScrollState())
+                ) {
                     Text(
                         text = stringResource(Res.string.sylheti_dictionary),
                         style = MaterialTheme.typography.headlineSmall,
@@ -60,6 +67,13 @@ fun SDNavigationDrawer(
                     SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp)
 
                     SDNavigationDrawerItem(stringResource(Res.string.about), Route.About)
+
+                    Spacer(Modifier.weight(1f))
+
+                    Text(
+                        text = "Developed by Oats Mobile",
+                        modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 24.dp)
+                    )
                 }
             }
         },
