@@ -11,6 +11,6 @@ data class EntryState(
     val isBookmark: Boolean = false,
     val examples: List<Example> = emptyList(),
     val variants: List<Variant> = emptyList(),
-    val componentLexemes: List<ComponentEntry> = emptyList(),
-    val relatedEntries: List<RelatedEntry> = emptyList()
+    val componentLexemeToBookmark: Map<ComponentEntry, Boolean> = emptyMap(),
+    val relatedEntryToBookmark: Map<RelatedEntry, Boolean> = emptyMap()
 )

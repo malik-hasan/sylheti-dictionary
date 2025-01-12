@@ -224,9 +224,11 @@ class SearchViewModel(
 
             is Bookmark -> with(event) {
                 viewModelScope.launch {
-                    if (isBookmark) {
-                        bookmarksDataSource.addBookmark(entryId)
-                    } else bookmarksDataSource.removeBookmark(entryId)
+                    with(bookmarksDataSource) {
+                        if (isBookmark) {
+                            addBookmark(entryId)
+                        } else removeBookmark(entryId)
+                    }
                 }
             }
         }

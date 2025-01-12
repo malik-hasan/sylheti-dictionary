@@ -6,7 +6,6 @@ import data.bookmarks.BookmarksDataSource
 import data.dictionary.DictionaryDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.utils.stateFlowOf
 
@@ -18,37 +17,36 @@ class EntryViewModel(
 
     private val _state = MutableStateFlow(EntryState())
 
-    init {
-        _state.update {
-            with(dictionaryDataSource) {
-                val entry = getEntry(entryId)
-                EntryState(
-                    entry = entry,
-                    examples = getExamples(entryId),
-                    variants = getVariants(entryId),
-                    componentLexemes = getComponentLexemes(entryId),
-                    relatedEntries = entry.senseId?.let { getRelatedEntries(it) } ?: emptyList()
-                )
-            }
-        }
-    }
-
     val state = stateFlowOf(EntryState(),
         combine(
             _state,
-            bookmarksDataSource.isBookmarkFlow(entryId),
-        ) { state, isBookmark ->
-            state.copy(isBookmark = isBookmark)
+            bookmarksDataSource.bookmarksFlow
+        ) { state, bookmarks ->
+            with(dictionaryDataSource) {
+                val entry = getEntry(entryId)
+                state.copy(
+                    entry = entry,
+                    isBookmark = entryId in bookmarks,
+                    examples = getExamples(entryId),
+                    variants = getVariants(entryId),
+                    componentLexemeToBookmark = getComponentLexemes(entryId).associateWith { it.entryId in bookmarks },
+                    relatedEntryToBookmark = entry.senseId?.let { senseId ->
+                        getRelatedEntries(senseId).associateWith { it.entryId in bookmarks }
+                    } ?: emptyMap()
+                )
+            }
         }
     )
 
     fun onEvent(event: EntryEvent) {
         when(event) {
-            is EntryEvent.ToggleBookmark -> viewModelScope.launch {
-                with(bookmarksDataSource) {
-                    if (state.value.isBookmark) {
-                        removeBookmark(entryId)
-                    } else addBookmark(entryId)
+            is EntryEvent.Bookmark -> with(event) {
+                viewModelScope.launch {
+                    with(bookmarksDataSource) {
+                        if (isBookmark) {
+                            addBookmark(entryId)
+                        } else removeBookmark(entryId)
+                    }
                 }
             }
         }

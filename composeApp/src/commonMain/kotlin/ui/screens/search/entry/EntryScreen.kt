@@ -92,7 +92,7 @@ fun EntryScreen(
                                             animatedVisibilityScope = animatedContentScope
                                         ),
                                         isBookmark = state.isBookmark
-                                    ) { onEvent(EntryEvent.ToggleBookmark) }
+                                    ) { onEvent(EntryEvent.Bookmark(entryId, !state.isBookmark)) }
                                 }
                             )
 
@@ -157,9 +157,9 @@ fun EntryScreen(
                         }
 
                         itemsIndexed(
-                            items = state.componentLexemes,
-                            key = { _, componentEntry -> componentEntry.entryId + "Component" }
-                        ) { i, componentEntry ->
+                            items = state.componentLexemeToBookmark.toList(),
+                            key = { _, (componentEntry, _) -> componentEntry.entryId + "Component" }
+                        ) { i, (componentEntry, isBookmark) ->
                             if (i == 0) {
                                 EntryDivider(Modifier.padding(vertical = 8.dp))
                                 Text(
@@ -179,13 +179,16 @@ fun EntryScreen(
                             componentEntry.variantType?.let {
                                 Text(it, style = MaterialTheme.typography.bodySmall)
                             }
-                            EntryCard(componentEntry.toDictionaryEntry(), false) {}
+                            EntryCard(
+                                entry = componentEntry.toDictionaryEntry(),
+                                isBookmark = isBookmark
+                            ) { onEvent(EntryEvent.Bookmark(componentEntry.entryId, !isBookmark)) }
                         }
 
                         itemsIndexed(
-                            items = state.relatedEntries,
-                            key = { _, relatedEntry -> relatedEntry.entryId + "Related" }
-                        ) { i, relatedEntry ->
+                            items = state.relatedEntryToBookmark.toList(),
+                            key = { _, (relatedEntry, _) -> relatedEntry.entryId + "Related" }
+                        ) { i, (relatedEntry, isBookmark) ->
                             if (i == 0) {
                                 EntryDivider(Modifier.padding(vertical = 8.dp))
                                 Text(
@@ -199,9 +202,9 @@ fun EntryScreen(
                             Text(relatedEntry.relationType, style = MaterialTheme.typography.bodySmall)
                             EntryCard(
                                 entry = relatedEntry.toDictionaryEntry(),
-                                isBookmark = false,
-                                includeAnimation = relatedEntry.entryId !in state.componentLexemes.map { it.entryId }
-                            ) {}
+                                isBookmark = isBookmark,
+                                includeAnimation = relatedEntry.entryId !in state.componentLexemeToBookmark.map { it.key.entryId }
+                            ) { onEvent(EntryEvent.Bookmark(relatedEntry.entryId, !isBookmark)) }
                         }
                     }
                 }

@@ -53,7 +53,6 @@ import ui.components.EntryCard
 import ui.components.SDScreen
 import ui.components.SearchSettingsMenu
 import ui.components.SearchSuggestion
-import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.utils.SDString
 import ui.utils.rememberIsScrollingUp
@@ -87,7 +86,6 @@ fun SearchScreen(
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
-    highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
