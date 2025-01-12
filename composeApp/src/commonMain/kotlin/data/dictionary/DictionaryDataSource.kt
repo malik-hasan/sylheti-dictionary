@@ -123,7 +123,6 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
 
     fun getExamples(entryId: String) = queries.getExamples(entryId).executeAsList()
     fun getVariants(entryId: String) = queries.getVariants(entryId).executeAsList()
-    fun getComponentLexemes(entryId: String) = queries.getComponentLexemes(entryId).executeAsList()
-    fun getEntryDomains(entryId: String) = queries.getEntryDomains(entryId).executeAsList()
-    fun getRelatedEntries(senseId: String) = queries.getRelatedEntries(senseId).executeAsList()
+    fun getComponentLexemes(entryId: String) = queries.componentEntry(entryId).executeAsList()
+    fun getRelatedEntries(senseId: String) = queries.relatedEntry(senseId).executeAsList()
 }

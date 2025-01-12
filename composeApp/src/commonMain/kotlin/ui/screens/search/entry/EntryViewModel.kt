@@ -27,7 +27,6 @@ class EntryViewModel(
                     examples = getExamples(entryId),
                     variants = getVariants(entryId),
                     componentLexemes = getComponentLexemes(entryId),
-                    domains = getEntryDomains(entryId),
                     relatedEntries = entry.senseId?.let { getRelatedEntries(it) } ?: emptyList()
                 )
             }

@@ -1,17 +1,14 @@
 package ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -21,7 +18,6 @@ import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.theme.bengaliBodyFontFamily
 import ui.theme.latinBodyFontFamily
-import ui.theme.latinDisplayFontFamily
 import ui.utils.appendHighlighted
 
 @Composable
@@ -37,7 +33,7 @@ fun EntryHeader(
     modifier: Modifier = Modifier,
     showNagri: Boolean = LocalShowNagri.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
+    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
     Column(modifier) {
         SelectionContainer {
@@ -68,17 +64,7 @@ fun EntryHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             partOfSpeech?.let {
-                Text(
-                    text = it.lowercase(),
-                    modifier = Modifier
-                        .clip(MaterialTheme.shapes.extraSmall)
-                        .background(MaterialTheme.colorScheme.secondary)
-                        .padding(horizontal = 3.dp),
-                    style = partOfSpeechStyle,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = latinDisplayFontFamily
-                )
+                Chip(it.lowercase(), partOfSpeechStyle)
             }
 
             gloss?.let {

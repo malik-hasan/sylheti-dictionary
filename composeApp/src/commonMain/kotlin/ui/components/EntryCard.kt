@@ -24,6 +24,7 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 import ui.app.LocalNavController
 import ui.screens.search.LocalAnimatedContentScope
 import ui.screens.search.LocalSharedTransitionScope
+import ui.utils.ifTrue
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -31,6 +32,7 @@ fun EntryCard(
     entry: DictionaryEntry,
     isBookmark: Boolean,
     modifier: Modifier = Modifier,
+    includeAnimation: Boolean = true,
     navController: NavController = LocalNavController.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current,
@@ -41,10 +43,12 @@ fun EntryCard(
             Card(modifier
                 .clip(CardDefaults.shape)
                 .clickable { navController.navigate(Route.Entry(entry.entryId)) }
-                .sharedElement(
-                    state = rememberSharedContentState("container-$entryId"),
-                    animatedVisibilityScope = animatedContentScope
-                )
+                .ifTrue(includeAnimation) {
+                    sharedElement(
+                        state = rememberSharedContentState("container-$entryId"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                }
             ) {
                 Column(Modifier.padding(bottom = 12.dp)) {
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
@@ -52,10 +56,12 @@ fun EntryCard(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 16.dp, top = 8.dp)
-                                .sharedBounds(
-                                    sharedContentState = rememberSharedContentState("header-$entryId"),
-                                    animatedVisibilityScope = animatedContentScope
-                                ),
+                                .ifTrue(includeAnimation) {
+                                    sharedBounds(
+                                        sharedContentState = rememberSharedContentState("header-$entryId"),
+                                        animatedVisibilityScope = animatedContentScope
+                                    )
+                                },
                             displayIPA = displayIPA,
                             displayBengali = displayBengali,
                             displayNagri = displayNagri,
@@ -67,10 +73,12 @@ fun EntryCard(
                         )
 
                         BookmarkIconButton(
-                            modifier = Modifier.sharedElement(
-                                state = rememberSharedContentState("bookmark-$entryId"),
-                                animatedVisibilityScope = animatedContentScope
-                            ),
+                            modifier = Modifier.ifTrue(includeAnimation) {
+                                sharedElement(
+                                    state = rememberSharedContentState("bookmark-$entryId"),
+                                    animatedVisibilityScope = animatedContentScope
+                                )
+                            },
                             isBookmark = isBookmark,
                             onClick = onBookmark
                         )
@@ -81,10 +89,12 @@ fun EntryCard(
                         showDivider = true,
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
-                            .sharedBounds(
-                                sharedContentState = rememberSharedContentState("definitions-$entryId"),
-                                animatedVisibilityScope = animatedContentScope
-                            )
+                            .ifTrue(includeAnimation) {
+                                sharedBounds(
+                                    sharedContentState = rememberSharedContentState("definitions-$entryId"),
+                                    animatedVisibilityScope = animatedContentScope
+                                )
+                            }
                     )
                 }
             }

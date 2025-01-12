@@ -19,16 +19,23 @@ import ui.utils.appendHighlighted
 fun TaggedField(
     tag: String,
     body: SDString,
+    modifier: Modifier = Modifier,
+    separator: String = "\n",
     bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
-) { TaggedField(tag, listOf(body), bodyStyle) }
+) { TaggedField(tag, listOf(body), modifier, separator, bodyStyle) }
 
 @Composable
 fun TaggedField(
     tag: String,
     bodies: List<SDString>,
+    modifier: Modifier = Modifier,
+    separator: String = "\n",
     bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         Text(
             text = tag.lowercase(),
             modifier = Modifier.padding(top = 3.dp),
@@ -41,7 +48,7 @@ fun TaggedField(
             Text(
                 text = buildAnnotatedString {
                     bodies.forEachIndexed { i, body ->
-                        if (i > 0) append('\n')
+                        if (i > 0) append(separator)
                         appendHighlighted(body)
                     }
                 },
