@@ -38,6 +38,10 @@
     <string name="show_sylheti_nagri">Show Sylheti Nagri</string>
 
     <string name="ipa_help">IPA Help</string>
+    <string name="what_is_ipa">What is IPA?</string>
+    <string name="how_does_ipa_rep_sylheti">How does IPA represent Sylheti sounds?</string>
+    <string name="how_to_search_ipa">How do I search in IPA?</string>
+    <string name="ipa_equivalences">This app supports the following equivalences between Latin and IPA characters so that you may search using a standard QWERTY keyboard.</string>
 
     <string name="about">About</string>
 </resources>

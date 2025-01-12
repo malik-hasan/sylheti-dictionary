@@ -38,6 +38,10 @@
     <string name="show_sylheti_nagri">নাগরী লিপি দেখুন</string>
 
     <string name="ipa_help">আধ্বব সাহায্য</string>
+    <string name="what_is_ipa">আধ্বব কী?</string>
+    <string name="how_does_ipa_rep_sylheti">আধ্ববতে সিলেটি ধ্বনি কীভাবে লেখা হয়?</string>
+    <string name="how_to_search_ipa">আমি আধ্ববতে কিভাবে খুঁজব?</string>
+    <string name="ipa_equivalences">এই অ্যাপটি ল্যাটিন এবং আধ্বব অক্ষরের মধ্যে নিম্নলিখিত সমতা সমর্থন করে যাতে আপনি একটি স্ট্যান্ডার্ড QWERTY কীবোর্ড ব্যবহার করে খুঁজতে পারেন।</string>
 
     <string name="about">অভিধান সম্পর্কে</string>
 </resources>
