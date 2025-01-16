@@ -59,11 +59,11 @@ fun EntryExample(
                 TaggedField(
                     tag = stringResource(Res.string.sylheti),
                     bodies = listOfNotNull(
-                        examples[FieldTag.BENGALI]?.let {
-                            SDString(it, highlightRegex, SearchScript.BENGALI)
-                        },
                         examples[FieldTag.IPA]?.let {
                             SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
+                        },
+                        examples[FieldTag.BENGALI]?.let {
+                            SDString(it, highlightRegex, SearchScript.BENGALI)
                         },
                         examples[FieldTag.NAGRI]?.let {
                             SDString(it, highlightRegex)

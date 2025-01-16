@@ -13,23 +13,16 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         query: String,
         positionedQuery: String,
         searchDefinitions: Boolean,
-        searchExamples: Boolean,
-        showNagri: Boolean
+        searchExamples: Boolean
     ) = with(queries) {
         transactionWithResult {
-            val result = (
-                if (showNagri) searchAllEntries(positionedQuery) else searchAllEntriesNoNagri(positionedQuery)
-            ).executeAsList().toMutableList()
+            val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
 
             if (searchDefinitions) {
-                result += (
-                    if (showNagri) searchAllDefinitions(query) else searchAllDefinitionsNoNagri(query)
-                ).executeAsList()
+                result += searchAllDefinitions(query).executeAsList()
             }
             if (searchExamples) {
-                result += (
-                    if (showNagri) searchAllExamples(query) else searchAllExamplesNoNagri(query)
-                ).executeAsList()
+                result += searchAllExamples(query).executeAsList()
             }
 
             result

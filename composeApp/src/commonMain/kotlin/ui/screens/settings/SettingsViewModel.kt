@@ -6,7 +6,6 @@ import data.settings.PreferenceKey
 import data.settings.PreferencesDataSource
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import models.search.settings.SearchScript
 import ui.utils.stateFlowOf
 import utility.setAppOSLanguage
 
@@ -15,13 +14,11 @@ class SettingsViewModel(private val preferences: PreferencesDataSource): ViewMod
     val state = stateFlowOf(SettingsState(),
         combine(
             preferences.theme,
-            preferences.flow(PreferenceKey.DYNAMIC_THEME, true),
-            preferences.flow(PreferenceKey.SHOW_NAGRI, false)
-        ) { theme, dynamicTheme, showNagri ->
+            preferences.flow(PreferenceKey.DYNAMIC_THEME, true)
+        ) { theme, dynamicTheme ->
             SettingsState(
                 theme = theme,
-                dynamicThemeEnabled = dynamicTheme,
-                showNagriEnabled = showNagri
+                dynamicThemeEnabled = dynamicTheme
             )
         }
     )

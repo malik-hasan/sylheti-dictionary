@@ -40,8 +40,8 @@ fun EntryHeader(
                     appendHighlighted(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
 
                     displayBengali?.let {
-                        appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                         append(" • ")
+                        appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                     }
 
                     displayNagri?.let {

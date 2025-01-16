@@ -132,9 +132,8 @@ class SearchViewModel(
 
     private val searchOutputsFlow = combine(
         snapshotFlow { searchTerm },
-        settingsState,
-        preferences.flow(PreferenceKey.SHOW_NAGRI, false)
-    ) { searchTerm, settings, showNagri ->
+        settingsState
+    ) { searchTerm, settings ->
         coroutineScope {
             val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
 
@@ -163,8 +162,7 @@ class SearchViewModel(
                     searchPosition = settings.position,
                     searchLanguages = settings.languages,
                     searchDefinitions = settings.searchDefinitions,
-                    searchExamples = settings.searchExamples,
-                    showNagri = showNagri
+                    searchExamples = settings.searchExamples
                 )
             }
 
@@ -290,18 +288,15 @@ class SearchViewModel(
         searchPosition: SearchPosition,
         searchLanguages:  Map<SearchLanguage, Boolean>,
         searchDefinitions: Boolean,
-        searchExamples: Boolean,
-        showNagri: Boolean
+        searchExamples: Boolean
     ) = searchTerm.takeIf { it.isNotBlank() }?.let {
         val (query, positionedQuery) = getQueries(searchTerm, searchPosition)
         Logger.d("SEARCH: getResults() $positionedQuery")
 
         yield()
         when (detectedSearchScript) {
-            SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples, showNagri)
-            SearchScript.NAGRI -> if (showNagri) {
-                dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
-            } else dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples, false)
+            SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
+            SearchScript.NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
 
             else -> detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true

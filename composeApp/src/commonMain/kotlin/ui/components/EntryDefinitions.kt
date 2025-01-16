@@ -76,7 +76,7 @@ fun EntryDefinitions(
 
                 if (language == Language.BN) EnglishDefinition()
 
-                // There is no Sylheti Bengali definitions so no need to account for it
+                // There is no Bengali script Sylheti definitions so no need to account for it
                 FieldTag.sylhetiTags.filter { it in definitions }.takeIf { it.isNotEmpty() }?.let { sylhetiTags ->
                     TaggedField(
                         tag = stringResource(Res.string.sylheti),
