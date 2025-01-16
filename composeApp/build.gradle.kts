@@ -14,6 +14,14 @@ plugins {
 }
 
 kotlin {
+    targets.all {
+        compilations.all {
+            compileTaskProvider.configure {
+                compilerOptions.freeCompilerArgs.addAll("-Xexpect-actual-classes")
+            }
+        }
+    }
+
     androidTarget {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
     }
