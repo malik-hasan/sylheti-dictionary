@@ -42,13 +42,6 @@ class SettingsViewModel(private val preferences: PreferencesDataSource): ViewMod
             is SettingsEvent.ToggleDynamicTheme -> viewModelScope.launch {
                 preferences.set(PreferenceKey.DYNAMIC_THEME, !state.value.dynamicThemeEnabled)
             }
-
-            is SettingsEvent.ToggleShowNagri -> viewModelScope.launch {
-                preferences.set(PreferenceKey.SHOW_NAGRI, !state.value.showNagriEnabled)
-                if (preferences.get(PreferenceKey.SEARCH_SCRIPT) == SearchScript.NAGRI.ordinal) {
-                    preferences.set(PreferenceKey.SEARCH_SCRIPT, 0)
-                }
-            }
         }
     }
 }

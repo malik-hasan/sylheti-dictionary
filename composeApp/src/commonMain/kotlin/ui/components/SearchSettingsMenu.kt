@@ -22,15 +22,13 @@ import sylhetidictionary.composeapp.generated.resources.examples
 import sylhetidictionary.composeapp.generated.resources.search_languages
 import sylhetidictionary.composeapp.generated.resources.search_position
 import sylhetidictionary.composeapp.generated.resources.search_script
-import ui.app.LocalShowNagri
 import ui.screens.search.search.SearchSettingsEvent
 import ui.screens.search.search.SearchSettingsState
 
 @Composable
 fun SearchSettingsMenu(
     state: SearchSettingsState,
-    onEvent: (SearchSettingsEvent) -> Unit,
-    showNagri: Boolean = LocalShowNagri.current
+    onEvent: (SearchSettingsEvent) -> Unit
 ) {
     DropdownMenu(
         expanded = state.menuExpanded,
@@ -49,9 +47,7 @@ fun SearchSettingsMenu(
 
             SingleChoiceSegmentedSearchSetting(
                 settingLabel = stringResource(Res.string.search_script),
-                entries = if (showNagri) {
-                    SearchScript.entries
-                } else SearchScript.entries - SearchScript.NAGRI,
+                entries = SearchScript.entries,
                 selection = state.script
             ) { onEvent(SearchSettingsEvent.SelectScript(it)) }
 

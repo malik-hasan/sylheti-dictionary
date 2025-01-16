@@ -93,28 +93,6 @@ WHERE exampleIPA GLOB :query
     OR exampleEN GLOB :query
     OR exampleBN GLOB :query;
 
-searchAllEntriesNoNagri:
-SELECT * FROM DictionaryEntry
-WHERE gloss GLOB :positionedQuery
-    OR lexemeIPA GLOB :positionedQuery
-    OR citationIPA GLOB :positionedQuery
-    OR lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery;
-
-searchAllDefinitionsNoNagri:
-SELECT * FROM DictionaryEntry
-WHERE definitionEN GLOB :query
-    OR definitionIPA GLOB :query
-    OR definitionBN GLOB :query;
-
-searchAllExamplesNoNagri:
-SELECT D.* FROM DictionaryEntry D
-JOIN Example X ON D.entryId = X.entryId
-WHERE exampleIPA GLOB :query
-    OR exampleBengali GLOB :query
-    OR exampleEN GLOB :query
-    OR exampleBN GLOB :query;
-
 searchEnglishEntries:
 SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery;

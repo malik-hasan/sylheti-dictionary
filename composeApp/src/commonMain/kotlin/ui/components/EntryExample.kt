@@ -16,7 +16,6 @@ import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.example
 import sylhetidictionary.composeapp.generated.resources.sylheti
 import ui.app.LocalLanguage
-import ui.app.LocalShowNagri
 import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.utils.SDString
@@ -28,7 +27,6 @@ fun EntryExample(
     index: Int,
     modifier: Modifier = Modifier,
     language: Language = LocalLanguage.current,
-    showNagri: Boolean = LocalShowNagri.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
@@ -38,9 +36,9 @@ fun EntryExample(
         with(example) {
             val examples = remember {
                 mapOf(
-                    FieldTag.BENGALI to exampleBengali,
-                    FieldTag.NAGRI to exampleNagri.takeIf { showNagri },
                     FieldTag.IPA to exampleIPA,
+                    FieldTag.BENGALI to exampleBengali,
+                    FieldTag.NAGRI to exampleNagri,
                     FieldTag.EN to exampleEN,
                     FieldTag.BN to exampleBN,
                     FieldTag.BNIPA to exampleBNIPA

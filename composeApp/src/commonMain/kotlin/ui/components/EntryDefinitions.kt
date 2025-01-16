@@ -16,7 +16,6 @@ import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.sylheti
 import ui.app.LocalLanguage
-import ui.app.LocalShowNagri
 import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.utils.SDString
@@ -29,7 +28,6 @@ fun EntryDefinitions(
     modifier: Modifier = Modifier,
     definitionStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     language: Language = LocalLanguage.current,
-    showNagri: Boolean = LocalShowNagri.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
@@ -39,7 +37,7 @@ fun EntryDefinitions(
                 FieldTag.EN to definitionEN,
                 FieldTag.BN to definitionBN,
                 FieldTag.BNIPA to definitionBNIPA,
-                FieldTag.NAGRI to definitionNagri.takeIf { showNagri },
+                FieldTag.NAGRI to definitionNagri,
                 FieldTag.IPA to definitionIPA
             ).validateStrings()
         }

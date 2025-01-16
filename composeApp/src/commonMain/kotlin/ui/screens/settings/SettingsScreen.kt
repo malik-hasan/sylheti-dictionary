@@ -39,8 +39,6 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.contrast
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
-import sylhetidictionary.composeapp.generated.resources.show_sylheti_nagri
-import sylhetidictionary.composeapp.generated.resources.sylheti_nagri
 import sylhetidictionary.composeapp.generated.resources.theme
 import ui.app.LocalLanguage
 import ui.components.DrawerIconButton
@@ -48,7 +46,6 @@ import ui.components.DynamicThemeSetting
 import ui.components.LanguageButton
 import ui.components.SDScreen
 import ui.components.SettingLabel
-import ui.components.SwitchSetting
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
@@ -136,13 +133,6 @@ fun SettingsScreen(
             DynamicThemeSetting(state.dynamicThemeEnabled) {
                 onEvent(SettingsEvent.ToggleDynamicTheme)
             }
-
-            SwitchSetting(
-                iconPainter = painterResource(Res.drawable.sylheti_nagri),
-                label = stringResource(Res.string.show_sylheti_nagri),
-                checked = state.showNagriEnabled,
-                onToggle = { onEvent(SettingsEvent.ToggleShowNagri) }
-            )
         }
     }
 }

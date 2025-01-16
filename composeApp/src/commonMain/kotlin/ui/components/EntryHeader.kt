@@ -13,7 +13,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ui.app.LocalShowNagri
 import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.theme.bengaliBodyFontFamily
@@ -31,7 +30,6 @@ fun EntryHeader(
     gloss: String?,
     glossStyle: TextStyle,
     modifier: Modifier = Modifier,
-    showNagri: Boolean = LocalShowNagri.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
@@ -39,18 +37,16 @@ fun EntryHeader(
         SelectionContainer {
             Text(
                 text = buildAnnotatedString {
+                    appendHighlighted(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
+
                     displayBengali?.let {
                         appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                         append(" • ")
                     }
 
-                    appendHighlighted(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
-
-                    if (showNagri) {
-                        displayNagri?.let {
-                            append(" • ")
-                            appendHighlighted(it, highlightRegex)
-                        }
+                    displayNagri?.let {
+                        append(" • ")
+                        appendHighlighted(it, highlightRegex)
                     }
                 },
                 fontWeight = FontWeight.Black,
