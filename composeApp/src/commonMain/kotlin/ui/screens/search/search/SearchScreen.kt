@@ -205,14 +205,7 @@ fun SearchScreen(
                     shadowElevation = 6.dp,
                     windowInsets = WindowInsets(0)
                 ) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(
-                            horizontal = 16.dp,
-                            vertical = 8.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-
+                    LazyColumn {
                         with(searchState) {
                             items(recents) { recent ->
                                 SearchSuggestion(
