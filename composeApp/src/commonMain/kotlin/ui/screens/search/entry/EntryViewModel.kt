@@ -7,6 +7,9 @@ import data.dictionary.DictionaryDataSource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import models.CardEntry
+import models.toDictionaryEntry
+import oats.mobile.sylhetidictionary.VariantEntry
 import ui.utils.stateFlowOf
 
 class EntryViewModel(
@@ -30,9 +33,33 @@ class EntryViewModel(
                     examples = getExamples(entryId),
                     variants = getVariants(entryId),
                     variantEntries = getVariantEntries(entryId),
-                    componentLexemeToBookmark = getComponentLexemes(entryId).associateWith { it.entryId in bookmarks },
-                    relatedEntryToBookmark = entry.senseId?.let { senseId ->
-                        getRelatedEntries(senseId).associateWith { it.entryId in bookmarks }
+                    componentLexemes = getComponentLexemes(entryId).mapNotNull {
+                        var variantEntries = emptyList<VariantEntry>()
+                        if (it.definitionEN.isNullOrBlank()) {
+                            variantEntries = getVariantEntries(it.entryId)
+                            if (variantEntries.isEmpty()) return@mapNotNull null
+                        }
+
+                        it to CardEntry(
+                            dictionaryEntry = it.toDictionaryEntry(),
+                            isBookmark = it.entryId in bookmarks,
+                            variantEntries = variantEntries
+                        )
+                    }.toMap(),
+                    relatedEntries = entry.senseId?.let { senseId ->
+                        getRelatedEntries(senseId).mapNotNull {
+                            var variantEntries = emptyList<VariantEntry>()
+                            if (it.definitionEN.isNullOrBlank()) {
+                                variantEntries = getVariantEntries(it.entryId)
+                                if (variantEntries.isEmpty()) return@mapNotNull null
+                            }
+
+                            it to CardEntry(
+                                dictionaryEntry = it.toDictionaryEntry(),
+                                isBookmark = it.entryId in bookmarks,
+                                variantEntries = variantEntries
+                            )
+                        }.toMap()
                     } ?: emptyMap()
                 )
             }

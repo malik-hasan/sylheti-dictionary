@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import models.search.settings.SearchScript
-import models.toDictionaryEntry
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -181,9 +180,9 @@ fun EntryScreen(
                         }
 
                         itemsIndexed(
-                            items = state.componentLexemeToBookmark.toList(),
+                            items = state.componentLexemes.toList(),
                             key = { _, (componentEntry, _) -> componentEntry.entryId + "Component" }
-                        ) { i, (componentEntry, isBookmark) ->
+                        ) { i, (componentEntry, cardEntry) ->
                             if (i == 0) {
                                 if (state.variants.isNotEmpty() || definitions.isNotEmpty() || state.examples.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
@@ -204,29 +203,35 @@ fun EntryScreen(
                                 )
                             }
 
-                            EntryCard(
-                                entry = componentEntry.toDictionaryEntry(),
-                                isBookmark = isBookmark
-                            ) { onEvent(EntryEvent.Bookmark(componentEntry.entryId, !isBookmark)) }
+                            with(cardEntry) {
+                                EntryCard(
+                                    entry = dictionaryEntry,
+                                    isBookmark = isBookmark,
+                                    variantEntries = variantEntries,
+                                ) { onEvent(EntryEvent.Bookmark(componentEntry.entryId, !isBookmark)) }
+                            }
                         }
 
                         itemsIndexed(
-                            items = state.relatedEntryToBookmark.toList(),
+                            items = state.relatedEntries.toList(),
                             key = { _, (relatedEntry, _) -> relatedEntry.entryId + "Related" }
-                        ) { i, (relatedEntry, isBookmark) ->
+                        ) { i, (relatedEntry, cardEntry) ->
                             if (i == 0) {
-                                if (state.variants.isNotEmpty() || definitions.isNotEmpty() || state.examples.isNotEmpty() || state.componentLexemeToBookmark.isNotEmpty()) {
+                                if (state.variants.isNotEmpty() || definitions.isNotEmpty() || state.examples.isNotEmpty() || state.componentLexemes.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
                                 EntrySubHeader(stringResource(Res.string.related_words))
                             }
 
                             Text(relatedEntry.relationType, style = MaterialTheme.typography.bodySmall)
-                            EntryCard(
-                                entry = relatedEntry.toDictionaryEntry(),
-                                isBookmark = isBookmark,
-                                includeAnimation = relatedEntry.entryId !in state.componentLexemeToBookmark.map { it.key.entryId }
-                            ) { onEvent(EntryEvent.Bookmark(relatedEntry.entryId, !isBookmark)) }
+                            with(cardEntry) {
+                                EntryCard(
+                                    entry = dictionaryEntry,
+                                    isBookmark = isBookmark,
+                                    variantEntries = variantEntries,
+                                    includeAnimation = relatedEntry.entryId !in state.componentLexemes.map { it.key.entryId }
+                                ) { onEvent(EntryEvent.Bookmark(relatedEntry.entryId, !isBookmark)) }
+                            }
                         }
                     }
                 }

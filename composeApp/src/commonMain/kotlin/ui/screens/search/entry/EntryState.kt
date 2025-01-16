@@ -1,5 +1,6 @@
 package ui.screens.search.entry
 
+import models.CardEntry
 import oats.mobile.sylhetidictionary.ComponentEntry
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.Example
@@ -13,6 +14,6 @@ data class EntryState(
     val examples: List<Example> = emptyList(),
     val variants: List<Variant> = emptyList(),
     val variantEntries: List<VariantEntry> = emptyList(),
-    val componentLexemeToBookmark: Map<ComponentEntry, Boolean> = emptyMap(),
-    val relatedEntryToBookmark: Map<RelatedEntry, Boolean> = emptyMap()
+    val componentLexemes: Map<ComponentEntry, CardEntry> = emptyMap(),
+    val relatedEntries: Map<RelatedEntry, CardEntry> = emptyMap()
 )

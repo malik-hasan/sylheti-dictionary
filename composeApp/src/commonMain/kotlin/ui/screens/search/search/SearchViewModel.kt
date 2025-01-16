@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import models.CardEntry
 import models.displayBengali
 import models.displayIPA
 import models.displayNagri
@@ -28,6 +29,7 @@ import models.search.settings.SearchLanguage
 import models.search.settings.SearchPosition
 import models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.DictionaryEntry
+import oats.mobile.sylhetidictionary.VariantEntry
 import org.jetbrains.compose.resources.getString
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
@@ -204,8 +206,19 @@ class SearchViewModel(
             state.copy(
                 searchResults = searchResults,
                 suggestions = suggestions,
-                entryToBookmark = searchResults?.associateWith { it.entryId in bookmarks }
-                    ?: dictionaryDataSource.getEntries(bookmarks).associateWith { true },
+                entries = (searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
+                    var variantEntries = emptyList<VariantEntry>()
+                    if (it.definitionEN.isNullOrBlank()) {
+                        variantEntries = dictionaryDataSource.getVariantEntries(it.entryId)
+                        if (variantEntries.isEmpty()) return@mapNotNull null
+                    }
+
+                    CardEntry(
+                        dictionaryEntry = it,
+                        isBookmark = it.entryId in bookmarks,
+                        variantEntries = variantEntries
+                    )
+                },
                 recents = recentSearches,
                 detectedSearchScript = detectedSearchScript
             )
