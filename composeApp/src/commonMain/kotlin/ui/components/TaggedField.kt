@@ -20,15 +20,17 @@ fun TaggedField(
     tag: String,
     body: SDString,
     modifier: Modifier = Modifier,
+    enableSelection: Boolean = true,
     separator: String = "\n",
     bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
-) { TaggedField(tag, listOf(body), modifier, separator, bodyStyle) }
+) { TaggedField(tag, listOf(body), modifier, enableSelection, separator, bodyStyle) }
 
 @Composable
 fun TaggedField(
     tag: String,
     bodies: List<SDString>,
     modifier: Modifier = Modifier,
+    enableSelection: Boolean = true,
     separator: String = "\n",
     bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
 ) {
@@ -44,16 +46,21 @@ fun TaggedField(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        SelectionContainer {
-            Text(
-                text = buildAnnotatedString {
-                    bodies.forEachIndexed { i, body ->
-                        if (i > 0) append(separator)
-                        appendHighlighted(body)
-                    }
-                },
-                style = bodyStyle
-            )
-        }
+        @Composable
+        fun BodyText() = Text(
+            text = buildAnnotatedString {
+                bodies.forEachIndexed { i, body ->
+                    if (i > 0) append(separator)
+                    appendHighlighted(body)
+                }
+            },
+            style = bodyStyle
+        )
+
+        if (enableSelection) {
+            SelectionContainer {
+                BodyText()
+            }
+        } else BodyText()
     }
 }

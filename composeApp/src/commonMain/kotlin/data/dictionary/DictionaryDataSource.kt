@@ -2,6 +2,8 @@ package data.dictionary
 
 import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
 import oats.mobile.sylhetidictionary.DictionaryEntry
+import oats.mobile.sylhetidictionary.Variant
+import kotlin.random.Random
 
 class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     
@@ -115,8 +117,42 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     fun getExamples(entryId: String) = queries.getExamples(entryId).executeAsList()
-    fun getVariants(entryId: String) = queries.getVariants(entryId).executeAsList()
+
+    fun getVariants(entryId: String): List<Variant> {
+        val allVariants = queries.getVariants(entryId).executeAsList() +
+            queries.getAdditionalVariants(entryId) {
+                returnedEntryId, citationIPA, lexemeIPA, citationBengali, lexemeBengali, citationNagri, lexemeNagri, variantType ->
+                    Variant(
+                        id = Random.nextLong(),
+                        entryId = returnedEntryId,
+                        variantIPA = citationIPA ?: lexemeIPA,
+                        variantBengali = citationBengali ?: lexemeBengali,
+                        variantNagri = citationNagri ?: lexemeNagri,
+                        environment = variantType
+                    )
+            }.executeAsList()
+
+        return allVariants
+            .groupBy { it.variantIPA }
+            .mapNotNull { grouping ->
+                if (grouping.value.size > 1) {
+                    val option1 = grouping.value.first()
+                    val option2 = grouping.value.last()
+                    Variant(
+                        id = option1.id,
+                        entryId = option1.entryId,
+                        variantIPA = option1.variantIPA,
+                        variantBengali = option1.variantBengali ?: option2.variantBengali,
+                        variantNagri = option1.variantNagri ?: option2.variantNagri,
+                        environment = option1.environment?.takeIf { it != "Unspecified Variant" } ?: option2.environment
+                    )
+                } else grouping.value.firstOrNull()
+            }
+    }
+
     fun getVariantEntries(entryId: String) = queries.variantEntry(entryId).executeAsList()
+
     fun getComponentLexemes(entryId: String) = queries.componentEntry(entryId).executeAsList()
+
     fun getRelatedEntries(senseId: String) = queries.relatedEntry(senseId).executeAsList()
 }

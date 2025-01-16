@@ -27,9 +27,9 @@
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
     <string name="part_of_speech">পদ</string>
 
+    <string name="see">দেখুন</string>
     <string name="example">উদাহরণ %1$d</string>
     <string name="component_lexemes">শামিল শব্দ %1$s</string>
-    <string name="primary">প্রাথমিক</string>
     <string name="related_entries">সম্পর্কিত শব্দ</string>
 
     <string name="settings">সেটিংস</string>

@@ -29,6 +29,7 @@ class EntryViewModel(
                     isBookmark = entryId in bookmarks,
                     examples = getExamples(entryId),
                     variants = getVariants(entryId),
+                    variantEntries = getVariantEntries(entryId),
                     componentLexemeToBookmark = getComponentLexemes(entryId).associateWith { it.entryId in bookmarks },
                     relatedEntryToBookmark = entry.senseId?.let { senseId ->
                         getRelatedEntries(senseId).associateWith { it.entryId in bookmarks }

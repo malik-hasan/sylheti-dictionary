@@ -18,11 +18,9 @@ object UnicodeUtility {
         'c' to setOf('ʧ'),
         'd' to setOf('ɖ', 'ɽ'),
         'e' to setOf('ɛ'),
-        'g' to setOf('ɡ'), // If after 'n' make it optional
-//        'h' to '', // If after s, c, k make it optional
+        'g' to setOf('ɡ'),
         'i' to setOf('ɪ'),
         'j' to setOf('ʤ', 'ʒ'),
-        'k' to setOf('x'),
         'm' to setOf('ɱ'),
         'n' to setOf('ŋ', 'ɱ', 'ɳ'),
         'o' to setOf('ɔ'),

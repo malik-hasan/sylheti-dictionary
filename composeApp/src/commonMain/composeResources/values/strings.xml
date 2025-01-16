@@ -27,9 +27,9 @@
     <string name="search_dictionary">Search dictionary</string>
     <string name="part_of_speech">Part of Speech</string>
 
+    <string name="see">see</string>
     <string name="example">Example %1$d</string>
     <string name="component_lexemes">Component Lexemes %1$s</string>
-    <string name="primary">Primary</string>
     <string name="related_entries">Related Entries</string>
 
     <string name="settings">Settings</string>

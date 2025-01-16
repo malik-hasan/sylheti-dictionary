@@ -164,6 +164,13 @@ getVariants:
 SELECT * FROM Variant
 WHERE entryId = :entryId;
 
+getAdditionalVariants:
+SELECT D.entryId, citationIPA, lexemeIPA, citationBengali, lexemeBengali, citationNagri, lexemeNagri, variantType
+FROM DictionaryEntry D
+JOIN ComponentLexeme CL ON D.entryId = CL.entryId
+WHERE CL.componentId = :entryId
+    AND variantType IS NOT NULL;
+
 variantEntry:
 SELECT D.*, variantType FROM DictionaryEntry D
 JOIN ComponentLexeme CL ON D.entryId = CL.componentId

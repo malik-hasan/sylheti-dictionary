@@ -7,11 +7,13 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +44,7 @@ import ui.components.EntryExample
 import ui.components.EntryHeader
 import ui.components.SDScreen
 import ui.components.SearchIconButton
+import ui.components.SeeVariantButton
 import ui.components.TaggedField
 import ui.components.UpIconButton
 import ui.screens.search.LocalAnimatedContentScope
@@ -122,14 +126,20 @@ fun EntryScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        items(state.variantEntries) { variantEntry ->
+                            Box(Modifier.fillMaxWidth(), Alignment.Center) {
+                                SeeVariantButton(variantEntry)
+                            }
+                        }
+
                         itemsIndexed(state.variants) { i, variant ->
                             TaggedField(
                                 modifier = Modifier.padding(horizontal = 16.dp),
-                                tag = variant.environment ?: "variant",
+                                tag = variant.environment?.lowercase().takeIf { it != "unspecified variant" } ?: "variant",
                                 bodies = listOfNotNull(
                                     SDString(variant.variantIPA, mappedIpaHighlightRegex, SearchScript.LATIN),
                                     variant.variantBengali?.let { SDString(it, highlightRegex, SearchScript.BENGALI) },
-                                    variant.variantNagri?.let { SDString(it, highlightRegex) },
+                                    variant.variantNagri?.let { SDString(it, highlightRegex) }
                                 ),
                                 separator = " • "
                             )
