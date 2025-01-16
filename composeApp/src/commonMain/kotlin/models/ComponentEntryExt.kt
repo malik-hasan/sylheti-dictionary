@@ -1,9 +1,9 @@
-package utility
+package models
 
+import oats.mobile.sylhetidictionary.ComponentEntry
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.RelatedEntry
 
-fun RelatedEntry.toDictionaryEntry() = DictionaryEntry(
+fun ComponentEntry.toDictionaryEntry() = DictionaryEntry(
     entryId = entryId,
     lexemeIPA = lexemeIPA,
     lexemeBengali = lexemeBengali,

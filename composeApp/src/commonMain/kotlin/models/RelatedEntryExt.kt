@@ -1,9 +1,9 @@
-package utility
+package models
 
-import oats.mobile.sylhetidictionary.ComponentEntry
 import oats.mobile.sylhetidictionary.DictionaryEntry
+import oats.mobile.sylhetidictionary.RelatedEntry
 
-fun ComponentEntry.toDictionaryEntry() = DictionaryEntry(
+fun RelatedEntry.toDictionaryEntry() = DictionaryEntry(
     entryId = entryId,
     lexemeIPA = lexemeIPA,
     lexemeBengali = lexemeBengali,
@@ -20,5 +20,3 @@ fun ComponentEntry.toDictionaryEntry() = DictionaryEntry(
     definitionIPA = definitionIPA,
     definitionNagri = definitionNagri
 )
-
-val ComponentEntry.isPrimaryComponent get() = isPrimary.toInt() != 0

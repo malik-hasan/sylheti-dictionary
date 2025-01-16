@@ -26,15 +26,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import models.search.settings.SearchScript
+import models.toDictionaryEntry
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
-import sylhetidictionary.composeapp.generated.resources.primary
 import sylhetidictionary.composeapp.generated.resources.related_entries
 import ui.components.BookmarkIconButton
-import ui.components.Chip
 import ui.components.EntryCard
 import ui.components.EntryDefinitions
 import ui.components.EntryDivider
@@ -49,8 +48,6 @@ import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.screens.search.LocalSharedTransitionScope
 import ui.utils.SDString
-import utility.isPrimaryComponent
-import utility.toDictionaryEntry
 
 @Composable
 fun EntryScreen(
@@ -167,23 +164,26 @@ fun EntryScreen(
                         ) { i, (componentEntry, isBookmark) ->
                             if (i == 0) {
                                 EntryDivider(Modifier.padding(vertical = 8.dp))
+
+                                val complexFormType = componentEntry.complexFormType
+                                    .takeIf { it != "Unspecified Complex Form" }
+                                    ?.split(" ")
+                                    ?.joinToString(" ") {
+                                        it.replaceFirstChar(Char::titlecase)
+                                    }?.let {
+                                        "($it)"
+                                    }.orEmpty()
+
                                 Text(
-                                    text = stringResource(Res.string.component_lexemes),
+                                    text = stringResource(Res.string.component_lexemes, complexFormType),
                                     style = MaterialTheme.typography.titleSmall,
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 8.dp),
                                     textAlign = TextAlign.Center
                                 )
                             }
 
-                            if (componentEntry.isPrimaryComponent) {
-                                Chip(stringResource(Res.string.primary))
-                            }
-                            componentEntry.complexFormType?.let {
-                                Text(it, style = MaterialTheme.typography.bodySmall)
-                            }
-                            componentEntry.variantType?.let {
-                                Text(it, style = MaterialTheme.typography.bodySmall)
-                            }
                             EntryCard(
                                 entry = componentEntry.toDictionaryEntry(),
                                 isBookmark = isBookmark
