@@ -1,6 +1,7 @@
 package ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,7 +32,10 @@ fun EntryExample(
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
     Column(modifier) {
-        Text(stringResource(Res.string.example, index + 1))
+        Text(
+            text = stringResource(Res.string.example, index + 1),
+            style = MaterialTheme.typography.titleSmall,
+        )
 
         with(example) {
             val examples = remember {

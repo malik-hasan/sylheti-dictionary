@@ -32,7 +32,7 @@ import org.koin.core.parameter.parametersOf
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
 import sylhetidictionary.composeapp.generated.resources.definitions
-import sylhetidictionary.composeapp.generated.resources.related_entries
+import sylhetidictionary.composeapp.generated.resources.related_words
 import ui.components.BookmarkIconButton
 import ui.components.EntryCard
 import ui.components.EntryDefinitions
@@ -139,33 +139,44 @@ fun EntryScreen(
                                 ),
                                 separator = " • "
                             )
+                        }
 
-                            if (i == state.variants.lastIndex) {
-                                EntryDivider(Modifier.padding(top = 8.dp))
+                        val definitions = listOfNotNull(
+                            definitionEN,
+                            definitionBN,
+                            definitionBNIPA,
+                            definitionNagri,
+                            definitionIPA
+                        )
+
+                        if (definitions.isNotEmpty()) {
+                            item {
+                                if (state.variants.isNotEmpty()) EntryDivider()
+
+                                EntrySubHeader(
+                                    text = stringResource(Res.string.definitions),
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+
+                                EntryDefinitions(
+                                    entry = entry,
+                                    showDivider = false,
+                                    definitionStyle = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .sharedBounds(
+                                            sharedContentState = rememberSharedContentState("definitions-$entryId"),
+                                            animatedVisibilityScope = animatedContentScope
+                                        )
+                                )
                             }
                         }
 
-                        item {
-                            EntrySubHeader(
-                                text = stringResource(Res.string.definitions),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-
-                            EntryDefinitions(
-                                entry = entry,
-                                showDivider = false,
-                                definitionStyle = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .sharedBounds(
-                                        sharedContentState = rememberSharedContentState("definitions-$entryId"),
-                                        animatedVisibilityScope = animatedContentScope
-                                    )
-                            )
-                        }
-
                         itemsIndexed(state.examples) { i, example ->
-                            if (i == 0) EntryDivider(Modifier.padding(vertical = 8.dp))
+                            if (i == 0 && (state.variants.isNotEmpty() || definitions.isNotEmpty())) {
+                                EntryDivider(Modifier.padding(bottom = 8.dp))
+                            }
+
                             EntryExample(example, i, Modifier.padding(horizontal = 16.dp))
                         }
 
@@ -174,7 +185,9 @@ fun EntryScreen(
                             key = { _, (componentEntry, _) -> componentEntry.entryId + "Component" }
                         ) { i, (componentEntry, isBookmark) ->
                             if (i == 0) {
-                                EntryDivider(Modifier.padding(vertical = 8.dp))
+                                if (state.variants.isNotEmpty() || definitions.isNotEmpty() || state.examples.isNotEmpty()) {
+                                    EntryDivider(Modifier.padding(bottom = 8.dp))
+                                }
 
                                 val complexFormType = componentEntry.complexFormType
                                     .takeIf { it != "Unspecified Complex Form" }
@@ -202,8 +215,10 @@ fun EntryScreen(
                             key = { _, (relatedEntry, _) -> relatedEntry.entryId + "Related" }
                         ) { i, (relatedEntry, isBookmark) ->
                             if (i == 0) {
-                                EntryDivider(Modifier.padding(vertical = 8.dp))
-                                EntrySubHeader(stringResource(Res.string.related_entries))
+                                if (state.variants.isNotEmpty() || definitions.isNotEmpty() || state.examples.isNotEmpty() || state.componentLexemeToBookmark.isNotEmpty()) {
+                                    EntryDivider(Modifier.padding(bottom = 8.dp))
+                                }
+                                EntrySubHeader(stringResource(Res.string.related_words))
                             }
 
                             Text(relatedEntry.relationType, style = MaterialTheme.typography.bodySmall)
