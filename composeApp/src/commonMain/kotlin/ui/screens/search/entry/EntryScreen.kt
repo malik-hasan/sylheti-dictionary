@@ -223,7 +223,12 @@ fun EntryScreen(
                                 EntrySubHeader(stringResource(Res.string.related_words))
                             }
 
-                            Text(relatedEntry.relationType, style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                text = relatedEntry.relationType.replaceFirstChar(Char::titlecase).takeIf { it != "Synonyms" } ?: "Synonym",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(horizontal = 3.dp)
+                            )
+
                             with(cardEntry) {
                                 EntryCard(
                                     entry = dictionaryEntry,
