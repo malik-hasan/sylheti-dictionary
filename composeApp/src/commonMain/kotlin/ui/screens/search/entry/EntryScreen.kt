@@ -7,10 +7,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,10 +20,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import models.search.settings.SearchScript
@@ -35,6 +31,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
+import sylhetidictionary.composeapp.generated.resources.definitions
 import sylhetidictionary.composeapp.generated.resources.related_entries
 import ui.components.BookmarkIconButton
 import ui.components.EntryCard
@@ -42,6 +39,7 @@ import ui.components.EntryDefinitions
 import ui.components.EntryDivider
 import ui.components.EntryExample
 import ui.components.EntryHeader
+import ui.components.EntrySubHeader
 import ui.components.SDScreen
 import ui.components.SearchIconButton
 import ui.components.SeeVariantButton
@@ -127,9 +125,7 @@ fun EntryScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(state.variantEntries) { variantEntry ->
-                            Box(Modifier.fillMaxWidth(), Alignment.Center) {
-                                SeeVariantButton(variantEntry)
-                            }
+                            SeeVariantButton(variantEntry)
                         }
 
                         itemsIndexed(state.variants) { i, variant ->
@@ -145,11 +141,16 @@ fun EntryScreen(
                             )
 
                             if (i == state.variants.lastIndex) {
-                                EntryDivider(Modifier.padding(vertical = 8.dp))
+                                EntryDivider(Modifier.padding(top = 8.dp))
                             }
                         }
 
                         item {
+                            EntrySubHeader(
+                                text = stringResource(Res.string.definitions),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+
                             EntryDefinitions(
                                 entry = entry,
                                 showDivider = false,
@@ -184,13 +185,9 @@ fun EntryScreen(
                                         "($it)"
                                     }.orEmpty()
 
-                                Text(
+                                EntrySubHeader(
                                     text = stringResource(Res.string.component_lexemes, complexFormType),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 8.dp),
-                                    textAlign = TextAlign.Center
+                                    modifier = Modifier.padding(bottom = 8.dp)
                                 )
                             }
 
@@ -206,12 +203,7 @@ fun EntryScreen(
                         ) { i, (relatedEntry, isBookmark) ->
                             if (i == 0) {
                                 EntryDivider(Modifier.padding(vertical = 8.dp))
-                                Text(
-                                    text = stringResource(Res.string.related_entries),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    textAlign = TextAlign.Center
-                                )
+                                EntrySubHeader(stringResource(Res.string.related_entries))
                             }
 
                             Text(relatedEntry.relationType, style = MaterialTheme.typography.bodySmall)

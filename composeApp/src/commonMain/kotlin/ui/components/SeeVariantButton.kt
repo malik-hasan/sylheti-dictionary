@@ -1,7 +1,11 @@
 package ui.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import models.Route
 import models.search.settings.SearchScript
@@ -21,20 +25,22 @@ fun SeeVariantButton(
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
-    OutlinedButton({
-        navController.navigate(Route.Entry(variantEntry.entryId))
-    }) {
-        TaggedField(
-            enableSelection = false,
-            tag = stringResource(Res.string.see),
-            bodies = listOfNotNull(
-                SDString(variantEntry.citationIPA ?: variantEntry.lexemeIPA, mappedIpaHighlightRegex, SearchScript.LATIN),
-                (variantEntry.citationBengali ?: variantEntry.lexemeBengali)?.let {
-                    SDString(it, highlightRegex, SearchScript.BENGALI)
-                },
-                (variantEntry.citationNagri ?: variantEntry.lexemeNagri)?.let { SDString(it, highlightRegex) }
-            ),
-            separator = " • "
-        )
+    Box(Modifier.fillMaxWidth(), Alignment.Center) {
+        OutlinedButton(
+            onClick = { navController.navigate(Route.Entry(variantEntry.entryId)) }
+        ) {
+            TaggedField(
+                enableSelection = false,
+                tag = stringResource(Res.string.see),
+                bodies = listOfNotNull(
+                    SDString(variantEntry.citationIPA ?: variantEntry.lexemeIPA, mappedIpaHighlightRegex, SearchScript.LATIN),
+                    (variantEntry.citationBengali ?: variantEntry.lexemeBengali)?.let {
+                        SDString(it, highlightRegex, SearchScript.BENGALI)
+                    },
+                    (variantEntry.citationNagri ?: variantEntry.lexemeNagri)?.let { SDString(it, highlightRegex) }
+                ),
+                separator = " • "
+            )
+        }
     }
 }

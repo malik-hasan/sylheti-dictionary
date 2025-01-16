@@ -12,15 +12,23 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import data.dictionary.DictionaryDataSource
 import models.Route
 import models.displayBengali
 import models.displayIPA
 import models.displayNagri
 import oats.mobile.sylhetidictionary.DictionaryEntry
+import oats.mobile.sylhetidictionary.VariantEntry
+import org.koin.compose.koinInject
 import ui.app.LocalNavController
 import ui.screens.search.LocalAnimatedContentScope
 import ui.screens.search.LocalSharedTransitionScope
@@ -36,8 +44,17 @@ fun EntryCard(
     navController: NavController = LocalNavController.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current,
+    dictionaryDataSource: DictionaryDataSource = koinInject(),
     onBookmark: () -> Unit
 ) {
+    var variantEntries by remember { mutableStateOf(emptyList<VariantEntry>()) }
+
+    LaunchedEffect(Unit) {
+        if (entry.definitionEN.isNullOrBlank()) {
+            variantEntries = dictionaryDataSource.getVariantEntries(entry.entryId)
+        }
+    }
+
     with(sharedTransitionScope) {
         with(entry) {
             Card(modifier
@@ -96,6 +113,8 @@ fun EntryCard(
                                 )
                             }
                     )
+
+                    variantEntries.forEach { SeeVariantButton(it) }
                 }
             }
         }
