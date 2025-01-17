@@ -20,8 +20,8 @@
     <string name="at_least_one_language">At least one language must be selected</string>
 
     <string name="also_search">Also search in</string>
-    <string name="definitions">Definitions</string>
-    <string name="examples">Examples</string>
+    <string name="in_definitions">Definitions</string>
+    <string name="in_examples">Examples</string>
 
     <string name="search">Search</string>
     <string name="search_dictionary">Search dictionary</string>
@@ -30,6 +30,7 @@
     <string name="part_of_speech">Part of Speech</string>
 
     <string name="see">see</string>
+    <string name="definitions">Definitions</string>
     <string name="example">Example %1$d</string>
     <string name="component_lexemes">Component Lexemes %1$s</string>
     <string name="related_words">Related Words</string>
@@ -43,7 +44,9 @@
 
     <string name="ipa_help">IPA Help</string>
     <string name="what_is_ipa">What is IPA?</string>
+    <string name="ipa_url">https://en.wikipedia.org/wiki/International_Phonetic_Alphabet</string>
     <string name="how_does_ipa_rep_sylheti">How does IPA represent Sylheti sounds?</string>
+    <string name="sylheti_ipa_url">https://en.wikipedia.org/wiki/Help:IPA/Sylheti</string>
     <string name="how_to_search_ipa">How do I search in IPA?</string>
     <string name="ipa_equivalences">This app supports the following equivalences between Latin and IPA characters so that you may search using a standard QWERTY keyboard.</string>
 

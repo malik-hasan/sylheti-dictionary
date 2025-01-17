@@ -19,9 +19,9 @@
     <string name="sylheti">সিলেটি</string>
     <string name="at_least_one_language">অন্তত একটি ভাষা বেছে নিতে হবে</string>
 
-    <string name="also_search">এতেও খুঁজুন</string>
-    <string name="definitions">সংজ্ঞা</string>
-    <string name="examples">উদাহরণ</string>
+    <string name="also_search">এছাড়াও খুঁজুন</string>
+    <string name="in_definitions">সংজ্ঞায়</string>
+    <string name="in_examples">উদাহরণে</string>
 
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
@@ -30,9 +30,10 @@
     <string name="part_of_speech">পদ</string>
 
     <string name="see">দেখুন</string>
+    <string name="definitions">সংজ্ঞা</string>
     <string name="example">উদাহরণ %1$d</string>
     <string name="component_lexemes">শামিল শব্দ %1$s</string>
-    <string name="related_entries">সম্পর্কিত শব্দ</string>
+    <string name="related_words">সম্পর্কিত শব্দ</string>
 
     <string name="settings">সেটিংস</string>
     <string name="language">ভাষা</string>
@@ -43,7 +44,9 @@
 
     <string name="ipa_help">আধ্বব সাহায্য</string>
     <string name="what_is_ipa">আধ্বব কী?</string>
+    <string name="ipa_url">https://bn.wikipedia.org/wiki/%E0%A6%86%E0%A6%A8%E0%A7%8D%E0%A6%A4%E0%A6%B0%E0%A7%8D%E0%A6%9C%E0%A6%BE%E0%A6%A4%E0%A6%BF%E0%A6%95_%E0%A6%A7%E0%A7%8D%E0%A6%AC%E0%A6%A8%E0%A6%BF%E0%A6%AE%E0%A7%82%E0%A6%B2%E0%A6%95_%E0%A6%AC%E0%A6%B0%E0%A7%8D%E0%A6%A3%E0%A6%AE%E0%A6%BE%E0%A6%B2%E0%A6%BE</string>
     <string name="how_does_ipa_rep_sylheti">আধ্ববতে সিলেটি ধ্বনি কীভাবে লেখা হয়?</string>
+    <string name="sylheti_ipa_url">https://bn.wikipedia.org/wiki/%E0%A6%B8%E0%A6%BE%E0%A6%B9%E0%A6%BE%E0%A6%AF%E0%A7%8D%E0%A6%AF:%E0%A6%86%E0%A6%A7%E0%A7%8D%E0%A6%AC%E0%A6%AC/%E0%A6%B8%E0%A6%BF%E0%A6%B2%E0%A7%87%E0%A6%9F%E0%A6%BF</string>
     <string name="how_to_search_ipa">আমি আধ্ববতে কিভাবে খুঁজব?</string>
     <string name="ipa_equivalences">এই অ্যাপটি ল্যাটিন এবং আধ্বব অক্ষরের মধ্যে নিম্নলিখিত সমতা সমর্থন করে যাতে আপনি একটি স্ট্যান্ডার্ড QWERTY কীবোর্ড ব্যবহার করে খুঁজতে পারেন।</string>
 
