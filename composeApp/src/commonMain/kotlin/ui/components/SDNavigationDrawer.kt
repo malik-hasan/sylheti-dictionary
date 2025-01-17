@@ -73,7 +73,7 @@ fun SDNavigationDrawer(
                     Spacer(Modifier.weight(1f))
 
                     Text(
-                        text = "Developed by Oats Mobile",
+                        text = "Powered by Oats Mobile",
                         modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 24.dp)
                     )
                 }
