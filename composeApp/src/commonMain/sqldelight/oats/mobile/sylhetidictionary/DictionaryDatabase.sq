@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS DictionaryEntry (
 CREATE TABLE IF NOT EXISTS EntryCrossRef (
     senseId1 TEXT NOT NULL,
     senseId2 TEXT NOT NULL,
-    relationType TEXT NOT NULL,
+    relationType1 TEXT NOT NULL,
+    relationType2 TEXT NOT NULL,
     FOREIGN KEY (senseId1) REFERENCES DictionaryEntry(senseId),
     FOREIGN KEY (senseId2) REFERENCES DictionaryEntry(senseId),
     PRIMARY KEY (senseId1, senseId2),
@@ -184,7 +185,12 @@ WHERE CL.entryId = :entryId
     AND complexFormType IS NOT NULL;
 
 relatedEntry:
-SELECT D.*, relationType FROM DictionaryEntry D
+SELECT D.*,
+    CASE
+        WHEN EE.senseId1 = :senseId THEN EE.relationType1
+        ELSE EE.relationType2
+    END AS relationType
+FROM DictionaryEntry D
 JOIN EntryCrossRef EE ON D.senseId = EE.senseId1
     OR D.senseId = EE.senseId2
 WHERE (EE.senseId1 = :senseId OR EE.senseId2 = :senseId)
