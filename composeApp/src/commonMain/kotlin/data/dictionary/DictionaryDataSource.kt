@@ -1,5 +1,7 @@
 package data.dictionary
 
+import app.cash.sqldelight.async.coroutines.awaitAsList
+import app.cash.sqldelight.async.coroutines.awaitAsOne
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -12,11 +14,11 @@ import kotlin.random.Random
 class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     
     suspend fun getEntry(entryId: String) = withContext(Dispatchers.IO) {
-        queries.getEntry(entryId).executeAsOne()
+        queries.getEntry(entryId).awaitAsOne()
     }
 
     suspend fun getEntries(entryIds: Collection<String>) = withContext(Dispatchers.IO) {
-        queries.getEntries(entryIds).executeAsList()
+        queries.getEntries(entryIds).awaitAsList()
     }
 
     suspend fun searchAll(
@@ -25,6 +27,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
+        yield()
         with(queries) {
             transactionWithResult {
                 val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
@@ -47,6 +50,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
+        yield()
         with(queries) {
             transactionWithResult {
                 val result = searchEnglishEntries(positionedQuery).executeAsList().toMutableList()
@@ -67,6 +71,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
+        yield()
         with(queries) {
             transactionWithResult {
                 val result = searchSylhetiLatinEntries(positionedQuery).executeAsList().toMutableList()
@@ -86,6 +91,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
+        yield()
         with(queries) {
             transactionWithResult {
                 val result = mutableListOf<DictionaryEntry>()
@@ -105,6 +111,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         positionedQuery: String,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
+        yield()
         with(queries) {
             transactionWithResult {
                 val result = searchSylhetiBengaliEntries(positionedQuery).executeAsList().toMutableList()
@@ -122,6 +129,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ): List<DictionaryEntry> = withContext(Dispatchers.IO) {
+        yield()
         with(queries) {
             transactionWithResult {
                 val result = searchNagriEntries(positionedQuery).executeAsList().toMutableList()
@@ -137,10 +145,11 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun getExamples(entryId: String) = withContext(Dispatchers.IO) {
-        queries.getExamples(entryId).executeAsList()
+        queries.getExamples(entryId).awaitAsList()
     }
 
     suspend fun getVariants(entryId: String) = withContext(Dispatchers.IO) {
+        yield()
         val allVariants = with(queries) {
             transactionWithResult {
                 getVariants(entryId).executeAsList() +
@@ -180,14 +189,14 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun getVariantEntries(entryId: String) = withContext(Dispatchers.IO) {
-        queries.variantEntry(entryId).executeAsList()
+        queries.variantEntry(entryId).awaitAsList()
     }
 
     suspend fun getComponentLexemes(entryId: String) = withContext(Dispatchers.IO) {
-        queries.componentEntry(entryId).executeAsList()
+        queries.componentEntry(entryId).awaitAsList()
     }
 
     suspend fun getRelatedEntries(senseId: String) = withContext(Dispatchers.IO) {
-        queries.relatedEntry(senseId).executeAsList()
+        queries.relatedEntry(senseId).awaitAsList()
     }
 }

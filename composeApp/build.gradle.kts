@@ -58,6 +58,7 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
                 implementation(libs.sqldelight.coroutines.extensions)
+                implementation(libs.sqldelight.async.extensions)
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite.bundled)
                 implementation(libs.datastore.preferences)
