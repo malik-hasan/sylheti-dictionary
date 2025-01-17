@@ -13,11 +13,13 @@ import data.dictionary.DictionaryDataSource
 import data.recentsearches.RecentSearchesDataSource
 import data.settings.PreferenceKey
 import data.settings.PreferencesDataSource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -45,6 +47,7 @@ import ui.utils.SDString
 import ui.utils.stateFlowOf
 import utility.UnicodeUtility
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(
     private val preferences: PreferencesDataSource,
     private val dictionaryDataSource: DictionaryDataSource,
@@ -136,6 +139,8 @@ class SearchViewModel(
         snapshotFlow { searchTerm },
         settingsState
     ) { searchTerm, settings ->
+        searchTerm to settings
+    }.transformLatest { (searchTerm, settings) ->
         coroutineScope {
             val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
 
@@ -192,7 +197,7 @@ class SearchViewModel(
                 searchLanguages = settings.languages
             )
 
-            SearchOutputs(detectedSearchScript, searchResults, suggestions, recentSearches)
+            emit(SearchOutputs(detectedSearchScript, searchResults, suggestions, recentSearches))
         }
     }
 
@@ -202,8 +207,11 @@ class SearchViewModel(
             _searchState,
             bookmarksDataSource.bookmarksFlow,
             searchOutputsFlow
-        ) { state, bookmarks, (detectedSearchScript, searchResults, suggestions, recentSearches) ->
-            state.copy(
+        ) { state, bookmarks, searchOutputs ->
+            Triple(state, bookmarks, searchOutputs)
+        }.transformLatest { (state, bookmarks, searchOutputs) ->
+            val (detectedSearchScript, searchResults, suggestions, recentSearches) = searchOutputs
+            emit(state.copy(
                 searchResults = searchResults,
                 suggestions = suggestions,
                 entries = (searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
@@ -221,7 +229,7 @@ class SearchViewModel(
                 },
                 recents = recentSearches,
                 detectedSearchScript = detectedSearchScript
-            )
+            ))
         }
     )
 
@@ -306,7 +314,6 @@ class SearchViewModel(
         val (query, positionedQuery) = getQueries(searchTerm, searchPosition)
         Logger.d("SEARCH: getSearchResults() $positionedQuery")
 
-        yield()
         when (detectedSearchScript) {
             SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
             SearchScript.NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
