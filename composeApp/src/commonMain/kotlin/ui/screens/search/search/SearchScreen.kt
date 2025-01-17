@@ -42,7 +42,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.asset_load_error
 import sylhetidictionary.composeapp.generated.resources.history
+import sylhetidictionary.composeapp.generated.resources.no_results
 import sylhetidictionary.composeapp.generated.resources.search_dictionary
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.suggestion
@@ -118,7 +120,7 @@ fun SearchScreen(
 
         if (assetLoaded == false) {
             Text(
-                text = "There was an error loading the dictionary data. Try restarting the app, or report a bug if the problem persists.",
+                text = stringResource(Res.string.asset_load_error),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
@@ -138,7 +140,7 @@ fun SearchScreen(
                 ) {
                     with(searchState) {
                         searchResults?.ifEmpty {
-                            item { Text("No results") }
+                            item { Text(stringResource(Res.string.no_results)) }
                             return@LazyColumn
                         }
 
@@ -179,13 +181,9 @@ fun SearchScreen(
                             },
                             leadingIcon = {
                                 if (searchState.searchBarActive) {
-                                    IconButton({
-                                        onSearchEvent(
-                                            SearchEvent.SetSearchBarActive(
-                                                false
-                                            )
-                                        )
-                                    }) {
+                                    IconButton(
+                                        onClick = { onSearchEvent(SearchEvent.SetSearchBarActive(false)) }
+                                    ) {
                                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
                                     }
                                 } else Icon(Icons.Default.Search, "Search")

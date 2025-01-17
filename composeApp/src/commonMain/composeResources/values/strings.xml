@@ -25,6 +25,8 @@
 
     <string name="search">Search</string>
     <string name="search_dictionary">Search dictionary</string>
+    <string name="asset_load_error">There was an error loading the dictionary data. Try restarting the app, or report a bug if the problem persists.</string>
+    <string name="no_results">No results</string>
     <string name="part_of_speech">Part of Speech</string>
 
     <string name="see">see</string>
