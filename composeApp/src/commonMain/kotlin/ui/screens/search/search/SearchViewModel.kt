@@ -184,12 +184,12 @@ class SearchViewModel(
             val recentSearches = recentSearchesJob.await()
 
             val suggestions = getSuggestions(
-                searchResults,
-                recentSearches,
-                detectedSearchScript,
-                highlightRegex,
-                mappedIpaHighlightRegex,
-                settings.languages
+                searchResults = searchResults,
+                recentSearches = recentSearches,
+                detectedSearchScript = detectedSearchScript,
+                highlightRegex = highlightRegex,
+                mappedIpaHighlightRegex = mappedIpaHighlightRegex,
+                searchLanguages = settings.languages
             )
 
             SearchOutputs(detectedSearchScript, searchResults, suggestions, recentSearches)
@@ -304,7 +304,7 @@ class SearchViewModel(
         searchExamples: Boolean
     ) = searchTerm.takeIf { it.isNotBlank() }?.let {
         val (query, positionedQuery) = getQueries(searchTerm, searchPosition)
-        Logger.d("SEARCH: getResults() $positionedQuery")
+        Logger.d("SEARCH: getSearchResults() $positionedQuery")
 
         yield()
         when (detectedSearchScript) {

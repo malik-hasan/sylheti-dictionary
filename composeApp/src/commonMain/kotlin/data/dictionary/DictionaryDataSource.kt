@@ -1,5 +1,9 @@
 package data.dictionary
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.Variant
@@ -7,121 +11,140 @@ import kotlin.random.Random
 
 class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     
-    fun getEntry(entryId: String) = queries.getEntry(entryId).executeAsOne()
+    suspend fun getEntry(entryId: String) = withContext(Dispatchers.IO) {
+        queries.getEntry(entryId).executeAsOne()
+    }
 
-    fun getEntries(entryIds: Collection<String>) = queries.getEntries(entryIds).executeAsList()
+    suspend fun getEntries(entryIds: Collection<String>) = withContext(Dispatchers.IO) {
+        queries.getEntries(entryIds).executeAsList()
+    }
 
-    fun searchAll(
+    suspend fun searchAll(
         query: String,
         positionedQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = with(queries) {
-        transactionWithResult {
-            val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
+    ) = withContext(Dispatchers.IO) {
+        with(queries) {
+            transactionWithResult {
+                val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
 
-            if (searchDefinitions) {
-                result += searchAllDefinitions(query).executeAsList()
-            }
-            if (searchExamples) {
-                result += searchAllExamples(query).executeAsList()
-            }
+                if (searchDefinitions) {
+                    result += searchAllDefinitions(query).executeAsList()
+                }
+                if (searchExamples) {
+                    result += searchAllExamples(query).executeAsList()
+                }
 
-            result
+                result
+            }
         }
     }
 
-    fun searchEnglish(
+    suspend fun searchEnglish(
         query: String,
         positionedQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = with(queries) {
-        transactionWithResult {
-            val result = searchEnglishEntries(positionedQuery).executeAsList().toMutableList()
-            if (searchDefinitions) {
-                result += searchEnglishDefinitions(query).executeAsList()
+    ) = withContext(Dispatchers.IO) {
+        with(queries) {
+            transactionWithResult {
+                val result = searchEnglishEntries(positionedQuery).executeAsList().toMutableList()
+                if (searchDefinitions) {
+                    result += searchEnglishDefinitions(query).executeAsList()
+                }
+                if (searchExamples) {
+                    result += searchEnglishExamples(query).executeAsList()
+                }
+                result
             }
-            if (searchExamples) {
-                result += searchEnglishExamples(query).executeAsList()
-            }
-            result
         }
     }
 
-    fun searchSylhetiLatin(
+    suspend fun searchSylhetiLatin(
         query: String,
         positionedQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = with(queries) {
-        transactionWithResult {
-            val result = searchSylhetiLatinEntries(positionedQuery).executeAsList().toMutableList()
-            if (searchDefinitions) {
-                result += searchSylhetiLatinDefinitions(query).executeAsList()
+    ) = withContext(Dispatchers.IO) {
+        with(queries) {
+            transactionWithResult {
+                val result = searchSylhetiLatinEntries(positionedQuery).executeAsList().toMutableList()
+                if (searchDefinitions) {
+                    result += searchSylhetiLatinDefinitions(query).executeAsList()
+                }
+                if (searchExamples) {
+                    result += searchSylhetiLatinExamples(query).executeAsList()
+                }
+                result
             }
-            if (searchExamples) {
-                result += searchSylhetiLatinExamples(query).executeAsList()
-            }
-            result
         }
     }
 
-    fun searchBengali(
+    suspend fun searchBengali(
         query: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = with(queries) {
-        transactionWithResult {
-            val result = mutableListOf<DictionaryEntry>()
-            if (searchDefinitions) {
-                result += searchBengaliDefinitions(query).executeAsList()
+    ) = withContext(Dispatchers.IO) {
+        with(queries) {
+            transactionWithResult {
+                val result = mutableListOf<DictionaryEntry>()
+                if (searchDefinitions) {
+                    result += searchBengaliDefinitions(query).executeAsList()
+                }
+                if (searchExamples) {
+                    result += searchBengaliExamples(query).executeAsList()
+                }
+                result
             }
-            if (searchExamples) {
-                result += searchBengaliExamples(query).executeAsList()
-            }
-            result
         }
     }
 
-    fun searchSylhetiBengali(
+    suspend fun searchSylhetiBengali(
         query: String,
         positionedQuery: String,
         searchExamples: Boolean
-    ) = with(queries) {
-        transactionWithResult {
-            val result = searchSylhetiBengaliEntries(positionedQuery).executeAsList().toMutableList()
-            if (searchExamples) {
-                result += searchSylhetiBengaliExamples(query).executeAsList()
+    ) = withContext(Dispatchers.IO) {
+        with(queries) {
+            transactionWithResult {
+                val result = searchSylhetiBengaliEntries(positionedQuery).executeAsList().toMutableList()
+                if (searchExamples) {
+                    result += searchSylhetiBengaliExamples(query).executeAsList()
+                }
+                result
             }
-            result
         }
     }
 
-    fun searchNagri(
+    suspend fun searchNagri(
         query: String,
         positionedQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ): List<DictionaryEntry> = with(queries) {
-        transactionWithResult {
-            val result = searchNagriEntries(positionedQuery).executeAsList().toMutableList()
-            if (searchDefinitions) {
-                result += searchNagriDefinitions(query).executeAsList()
+    ): List<DictionaryEntry> = withContext(Dispatchers.IO) {
+        with(queries) {
+            transactionWithResult {
+                val result = searchNagriEntries(positionedQuery).executeAsList().toMutableList()
+                if (searchDefinitions) {
+                    result += searchNagriDefinitions(query).executeAsList()
+                }
+                if (searchExamples) {
+                    result += searchNagriExamples(query).executeAsList()
+                }
+                result
             }
-            if (searchExamples) {
-                result += searchNagriExamples(query).executeAsList()
-            }
-            result
         }
     }
 
-    fun getExamples(entryId: String) = queries.getExamples(entryId).executeAsList()
+    suspend fun getExamples(entryId: String) = withContext(Dispatchers.IO) {
+        queries.getExamples(entryId).executeAsList()
+    }
 
-    fun getVariants(entryId: String): List<Variant> {
-        val allVariants = queries.getVariants(entryId).executeAsList() +
-            queries.getAdditionalVariants(entryId) {
-                returnedEntryId, citationIPA, lexemeIPA, citationBengali, lexemeBengali, citationNagri, lexemeNagri, variantType ->
+    suspend fun getVariants(entryId: String) = withContext(Dispatchers.IO) {
+        val allVariants = with(queries) {
+            transactionWithResult {
+                getVariants(entryId).executeAsList() +
+                getAdditionalVariants(entryId) { returnedEntryId, citationIPA, lexemeIPA, citationBengali, lexemeBengali, citationNagri, lexemeNagri, variantType ->
                     Variant(
                         id = Random.nextLong(),
                         entryId = returnedEntryId,
@@ -130,11 +153,17 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
                         variantNagri = citationNagri ?: lexemeNagri,
                         environment = variantType
                     )
-            }.executeAsList()
+                }.executeAsList()
+            }
+        }
 
-        return allVariants
-            .groupBy { it.variantIPA }
+        allVariants
+            .groupBy {
+                yield()
+                it.variantIPA
+            }
             .mapNotNull { grouping ->
+                yield()
                 if (grouping.value.size > 1) {
                     val option1 = grouping.value.first()
                     val option2 = grouping.value.last()
@@ -150,9 +179,15 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
             }
     }
 
-    fun getVariantEntries(entryId: String) = queries.variantEntry(entryId).executeAsList()
+    suspend fun getVariantEntries(entryId: String) = withContext(Dispatchers.IO) {
+        queries.variantEntry(entryId).executeAsList()
+    }
 
-    fun getComponentLexemes(entryId: String) = queries.componentEntry(entryId).executeAsList()
+    suspend fun getComponentLexemes(entryId: String) = withContext(Dispatchers.IO) {
+        queries.componentEntry(entryId).executeAsList()
+    }
 
-    fun getRelatedEntries(senseId: String) = queries.relatedEntry(senseId).executeAsList()
+    suspend fun getRelatedEntries(senseId: String) = withContext(Dispatchers.IO) {
+        queries.relatedEntry(senseId).executeAsList()
+    }
 }

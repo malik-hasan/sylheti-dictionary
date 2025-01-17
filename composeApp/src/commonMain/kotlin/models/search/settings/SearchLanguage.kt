@@ -15,7 +15,7 @@ sealed interface SearchLanguage: SettingEnum {
     val settingsKey: Preferences.Key<Boolean>
     override val label: StringResource
 
-    val search: DictionaryDataSource.(
+    val search: suspend DictionaryDataSource.(
         simpleQuery: String,
         positionedQuery: String,
         searchDefinitions: Boolean,
@@ -30,7 +30,7 @@ sealed interface SearchLanguage: SettingEnum {
     enum class Latin(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
+        override val search: suspend DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         ENGLISH(
@@ -49,7 +49,7 @@ sealed interface SearchLanguage: SettingEnum {
     enum class Bengali(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
-        override val search: DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
+        override val search: suspend DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         BENGALI(
