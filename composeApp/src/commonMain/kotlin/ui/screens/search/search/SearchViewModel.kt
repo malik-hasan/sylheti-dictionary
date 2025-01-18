@@ -328,7 +328,8 @@ class SearchViewModel(
                     language.search(dictionaryDataSource, query, positionedQuery, searchDefinitions, searchExamples)
                 }
             }
-        }.sortedBy(detectedSearchScript.sortAlgorithm)
+        }.distinct()
+            .sortedBy(detectedSearchScript.sortAlgorithm)
     }
 
     private suspend fun getSuggestions(

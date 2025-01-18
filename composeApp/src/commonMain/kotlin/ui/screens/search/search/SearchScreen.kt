@@ -114,7 +114,6 @@ fun SearchScreen(
             )
         }
     ) {
-
         val listState = rememberLazyListState()
         val isScrollingUp by listState.rememberIsScrollingUp()
 
@@ -125,32 +124,30 @@ fun SearchScreen(
                 textAlign = TextAlign.Center
             )
         } else {
-            if (!searchState.searchBarActive) {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 72.dp,
-                        bottom = 8.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    with(searchState) {
-                        searchResults?.ifEmpty {
-                            item { Text(stringResource(Res.string.no_results)) }
-                            return@LazyColumn
-                        }
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 72.dp,
+                    bottom = 8.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                with(searchState) {
+                    searchResults?.ifEmpty {
+                        item { Text(stringResource(Res.string.no_results)) }
+                        return@LazyColumn
+                    }
 
-                        items(
-                            items = entries,
-                            key = { (entry, _) -> entry.entryId }
-                        ) { (entry, isBookmark, variantEntries) ->
-                            EntryCard(entry, isBookmark, variantEntries) {
-                                onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
-                            }
+                    items(
+                        items = entries,
+                        key = { (entry, _) -> entry.entryId }
+                    ) { (entry, isBookmark, variantEntries) ->
+                        EntryCard(entry, isBookmark, variantEntries) {
+                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
                         }
                     }
                 }

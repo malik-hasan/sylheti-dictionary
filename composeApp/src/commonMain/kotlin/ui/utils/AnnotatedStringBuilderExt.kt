@@ -26,24 +26,25 @@ fun AnnotatedString.Builder.appendHighlighted(
     highlightRegex: Regex = Regex(""),
     fontFamily: FontFamily? = null
 ) {
+    val trimmedText = text.trim(',', ' ')
     var currentIndex = 0
     withStyle(SpanStyle(fontFamily = fontFamily)) {
-        highlightRegex.findAll(text).filter { it.value.isNotEmpty() }.forEach { match ->
+        highlightRegex.findAll(trimmedText).filter { it.value.isNotEmpty() }.forEach { match ->
             val highlightRange = match.range
             if (currentIndex < highlightRange.first) {
-                append(text.substring(currentIndex, highlightRange.first))
+                append(trimmedText.substring(currentIndex, highlightRange.first))
             }
             withStyle(SpanStyle(background = MaterialTheme.colorScheme.primaryContainer)) {
-                val stopIndex = if (text[highlightRange.last] in UnicodeUtility.HOSHONTO) {
+                val stopIndex = if (trimmedText[highlightRange.last] in UnicodeUtility.HOSHONTO) {
                     highlightRange.last // exclusive
                 } else highlightRange.last + 1 // inclusive
 
-                append(text.substring(highlightRange.first, stopIndex))
-                currentIndex = appendHighlightedConjuncts(text, stopIndex)
+                append(trimmedText.substring(highlightRange.first, stopIndex))
+                currentIndex = appendHighlightedConjuncts(trimmedText, stopIndex)
             }
         }
-        if (currentIndex < text.length) {
-            append(text.substring(currentIndex))
+        if (currentIndex < trimmedText.length) {
+            append(trimmedText.substring(currentIndex))
         }
     }
 }
