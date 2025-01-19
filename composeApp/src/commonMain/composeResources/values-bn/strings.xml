@@ -34,7 +34,7 @@
     <string name="variants">বৈকল্পিক</string>
     <string name="examples">উদাহরণ</string>
     <string name="example">উদাহরণ %1$d</string>
-    <string name="component_lexemes">শামিল শব্দ %1$s</string>
+    <string name="component_lexemes">শামিল শব্দ</string>
     <string name="related_words">সম্পর্কিত শব্দ</string>
 
     <string name="settings">সেটিংস</string>
