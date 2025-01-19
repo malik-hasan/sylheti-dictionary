@@ -16,7 +16,7 @@ fun EntrySubHeader(
 ) {
     Text(
         text = text,
-        style = MaterialTheme.typography.titleSmall,
+        style = MaterialTheme.typography.titleMedium,
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)

@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -29,7 +28,6 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
-import sylhetidictionary.composeapp.generated.resources.definitions
 import sylhetidictionary.composeapp.generated.resources.examples
 import sylhetidictionary.composeapp.generated.resources.related_words
 import sylhetidictionary.composeapp.generated.resources.variants
@@ -41,14 +39,14 @@ import ui.components.EntryExample
 import ui.components.EntryHeader
 import ui.components.EntrySubHeader
 import ui.components.EntryVariant
+import ui.components.FieldTag
 import ui.components.SDScreen
 import ui.components.SearchIconButton
 import ui.components.SeeVariantButton
 import ui.components.UpIconButton
 import ui.screens.search.LocalAnimatedContentScope
-import ui.screens.search.LocalHighlightRegex
-import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.screens.search.LocalSharedTransitionScope
+import ui.theme.latinDisplayFontFamily
 
 @Composable
 fun EntryScreen(
@@ -66,9 +64,7 @@ fun EntryScreen(
     state: EntryState,
     onEvent: (EntryEvent) -> Unit,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
-    animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current,
-    highlightRegex: Regex = LocalHighlightRegex.current,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
+    animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
     with(sharedTransitionScope) {
         state.entry?.let { entry ->
@@ -136,8 +132,6 @@ fun EntryScreen(
                         )
                         if (definitions.isNotEmpty()) {
                             item {
-                                EntrySubHeader(stringResource(Res.string.definitions))
-
                                 EntryDefinitions(
                                     entry = entry,
                                     showDivider = false,
@@ -185,7 +179,7 @@ fun EntryScreen(
 
                         itemsIndexed(
                             items = state.componentLexemes.toList(),
-                            key = { _, (componentEntry, _) -> componentEntry.entryId + "Component" }
+                            key = { _, (componentEntry) -> componentEntry.entryId + "Component" }
                         ) { i, (componentEntry, cardEntry) ->
                             if (i == 0) {
                                 if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty()) {
@@ -215,7 +209,7 @@ fun EntryScreen(
 
                         itemsIndexed(
                             items = state.relatedEntries.toList(),
-                            key = { _, (relatedEntry, _) -> relatedEntry.entryId + "Related" }
+                            key = { _, (relatedEntry) -> relatedEntry.entryId + "Related" }
                         ) { i, (relatedEntry, cardEntry) ->
                             if (i == 0) {
                                 if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.componentLexemes.isNotEmpty()) {
@@ -225,10 +219,10 @@ fun EntryScreen(
                                 EntrySubHeader(stringResource(Res.string.related_words))
                             }
 
-                            Text(
-                                text = relatedEntry.relationType.replaceFirstChar(Char::titlecase).takeIf { it != "Synonyms" } ?: "Synonym",
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(horizontal = 3.dp)
+                            FieldTag(
+                                tag = relatedEntry.relationType.takeIf { it != "Synonyms" } ?: "Synonym",
+                                tagFontFamily = latinDisplayFontFamily,
+                                modifier = Modifier.padding(horizontal = 16.dp)
                             )
 
                             with(cardEntry) {
