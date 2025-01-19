@@ -155,7 +155,7 @@ fun SearchScreen(
 
                     items(
                         items = entries,
-                        key = { (entry, _) -> entry.entryId }
+                        key = { (entry) -> entry.entryId }
                     ) { (entry, isBookmark, variantEntries) ->
                         EntryCard(entry, isBookmark, variantEntries) {
                             onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))

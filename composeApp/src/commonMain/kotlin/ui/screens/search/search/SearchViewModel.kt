@@ -38,14 +38,6 @@ import oats.mobile.sylhetidictionary.VariantEntry
 import org.jetbrains.compose.resources.getString
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
-import ui.screens.search.search.SearchEvent.Bookmark
-import ui.screens.search.search.SearchEvent.Search
-import ui.screens.search.search.SearchEvent.SelectSuggestion
-import ui.screens.search.search.SearchEvent.SetSearchBarActive
-import ui.screens.search.search.SearchEvent.UpdateSearchTerm
-import ui.screens.search.search.SearchSettingsEvent.SelectPosition
-import ui.screens.search.search.SearchSettingsEvent.SelectScript
-import ui.screens.search.search.SearchSettingsEvent.ToggleSettingsMenu
 import ui.utils.SDString
 import ui.utils.stateFlowOf
 import utility.UnicodeUtility
@@ -93,15 +85,15 @@ class SearchViewModel(
 
     fun onSettingsEvent(event: SearchSettingsEvent) {
         when (event) {
-            is ToggleSettingsMenu -> _settingsState.update {
+            is SearchSettingsEvent.ToggleSettingsMenu -> _settingsState.update {
                 it.copy(menuExpanded = event.open)
             }
 
-            is SelectPosition -> viewModelScope.launch {
+            is SearchSettingsEvent.SelectPosition -> viewModelScope.launch {
                 preferences.set(PreferenceKey.SEARCH_POSITION, event.position.ordinal)
             }
 
-            is SelectScript -> viewModelScope.launch {
+            is SearchSettingsEvent.SelectScript -> viewModelScope.launch {
                 preferences.set(PreferenceKey.SEARCH_SCRIPT, event.script.ordinal)
             }
 
@@ -245,21 +237,21 @@ class SearchViewModel(
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
-            is SetSearchBarActive -> with(event) {
+            is SearchEvent.SetSearchBarActive -> with(event) {
                 if (value) {
                     previousSearchTerm = searchTerm
                 } else searchTerm = previousSearchTerm
                 setSearchBarActive(value)
             }
 
-            is UpdateSearchTerm -> searchTerm = event.value
-            Search -> search()
-            is SelectSuggestion -> {
+            is SearchEvent.UpdateSearchTerm -> searchTerm = event.value
+            SearchEvent.Search -> search()
+            is SearchEvent.SelectSuggestion -> {
                 searchTerm = event.value
                 search()
             }
 
-            is Bookmark -> with(event) {
+            is SearchEvent.Bookmark -> with(event) {
                 viewModelScope.launch {
                     with(bookmarksDataSource) {
                         if (isBookmark) {
