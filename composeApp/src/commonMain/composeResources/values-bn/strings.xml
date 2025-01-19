@@ -11,11 +11,12 @@
     <string name="search_script">কোন লিপিতে খোঁজা</string>
     <string name="auto">অটোমেটিক</string>
     <string name="latin_ipa">রোমান/আধ্বব</string>
-    <string name="bengali">বাংলা</string>
-    <string name="nagri">নাগরি</string>
+    <string name="eastern_nagri">পূর্বী নাগরি</string>
+    <string name="sylheti_nagri">সিলেটি নাগরি</string>
 
     <string name="search_languages">কোন ভাষায় খোঁজা</string>
     <string name="english">ইংরেজি</string>
+    <string name="bengali">বাংলা</string>
     <string name="sylheti">সিলেটি</string>
     <string name="at_least_one_language">অন্তত একটি ভাষা বেছে নিতে হবে</string>
 

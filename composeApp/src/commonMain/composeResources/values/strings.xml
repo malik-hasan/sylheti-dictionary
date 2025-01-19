@@ -11,11 +11,12 @@
     <string name="search_script">Search script</string>
     <string name="auto">Auto</string>
     <string name="latin_ipa">Latin/IPA</string>
-    <string name="bengali">Bengali</string>
-    <string name="nagri">Nagri</string>
+    <string name="eastern_nagri">Eastern Nagri</string>
+    <string name="sylheti_nagri">Sylheti Nagri</string>
 
     <string name="search_languages">Search languages</string>
     <string name="english">English</string>
+    <string name="bengali">Bengali</string>
     <string name="sylheti">Sylheti</string>
     <string name="at_least_one_language">At least one language must be selected</string>
 

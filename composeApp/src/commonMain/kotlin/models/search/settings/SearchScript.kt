@@ -4,9 +4,9 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.auto
-import sylhetidictionary.composeapp.generated.resources.bengali
+import sylhetidictionary.composeapp.generated.resources.eastern_nagri
 import sylhetidictionary.composeapp.generated.resources.latin_ipa
-import sylhetidictionary.composeapp.generated.resources.nagri
+import sylhetidictionary.composeapp.generated.resources.sylheti_nagri
 
 enum class SearchScript(
     override val label: StringResource,
@@ -28,18 +28,15 @@ enum class SearchScript(
     ),
 
     BENGALI(
-        label = Res.string.bengali,
+        label = Res.string.eastern_nagri,
         sortAlgorithm = { it.citationBengali ?: it.lexemeBengali },
         regexCharSet = Regex("\\p{IsBengali}"),
         languages = SearchLanguage.Bengali.entries
     ),
 
     NAGRI(
-        label = Res.string.nagri,
+        label = Res.string.sylheti_nagri,
         sortAlgorithm = { it.citationNagri ?: it.lexemeNagri },
         regexCharSet = Regex("\\p{IsSyloti_Nagri}")
     );
-
-    val isLatinOrAuto: Boolean
-        get() = this in setOf(LATIN, AUTO)
 }
