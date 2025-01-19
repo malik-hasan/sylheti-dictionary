@@ -170,14 +170,6 @@ class SearchViewModel(
                 recentSearchesDataSource.getRecentSearches(settings.position.getQuery(globMappedIpaTerm), detectedSearchScript)
             }
 
-            launch {
-                preferences.set(PreferenceKey.HIGHLIGHT_REGEX, regexSearchTerm)
-            }
-
-            launch {
-                preferences.set(PreferenceKey.MAPPED_IPA_HIGHLIGHT_REGEX, regexMappedIpaTerm)
-            }
-
             val searchResults = searchResultsJob.await()
             val recentSearches = recentSearchesJob.await()
 
@@ -190,7 +182,14 @@ class SearchViewModel(
                 searchLanguages = settings.languages
             )
 
-            emit(SearchOutputs(detectedSearchScript, searchResults, suggestions, recentSearches))
+            emit(SearchOutputs(
+                detectedSearchScript = detectedSearchScript,
+                searchResults = searchResults,
+                suggestions = suggestions,
+                recentSearches = recentSearches,
+                regexSearchTerm = regexSearchTerm,
+                regexMappedIpaTerm = regexMappedIpaTerm
+            ))
         }
     }
 
@@ -199,21 +198,32 @@ class SearchViewModel(
     ) { searchOutputs, bookmarks ->
         searchOutputs to bookmarks
     }.transformLatest { (searchOutputs, bookmarks) ->
-        val entries = (searchOutputs.searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
-            var variantEntries = emptyList<VariantEntry>()
-            if (it.definitionEN.isNullOrBlank()) {
-                variantEntries = dictionaryDataSource.getVariantEntries(it.entryId)
-                if (variantEntries.isEmpty()) return@mapNotNull null
+        coroutineScope {
+            val entries = (searchOutputs.searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
+                var variantEntries = emptyList<VariantEntry>()
+                if (it.definitionEN.isNullOrBlank()) {
+                    variantEntries = dictionaryDataSource.getVariantEntries(it.entryId)
+                    if (variantEntries.isEmpty()) return@mapNotNull null
+                }
+
+                CardEntry(
+                    dictionaryEntry = it,
+                    isBookmark = it.entryId in bookmarks,
+                    variantEntries = variantEntries
+                )
             }
 
-            CardEntry(
-                dictionaryEntry = it,
-                isBookmark = it.entryId in bookmarks,
-                variantEntries = variantEntries
-            )
+            launch {
+                preferences.set(PreferenceKey.HIGHLIGHT_REGEX, searchOutputs.regexSearchTerm)
+            }
+
+            launch {
+                preferences.set(PreferenceKey.MAPPED_IPA_HIGHLIGHT_REGEX, searchOutputs.regexMappedIpaTerm)
+            }
+
+            resultsLoading = false
+            emit(searchOutputs.toSearchEntryOutputs(entries))
         }
-        resultsLoading = false
-        emit(searchOutputs.toSearchEntryOutputs(entries))
     }
 
     private val _searchState = MutableStateFlow(SearchState())
