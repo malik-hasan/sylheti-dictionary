@@ -1,6 +1,7 @@
 package ui.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
@@ -16,7 +17,7 @@ fun SDScreen(
     topBar: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {},
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) {
     Scaffold(
         modifier = modifier,

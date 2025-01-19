@@ -13,9 +13,13 @@ import kotlin.random.Random
 
 class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     
-    suspend fun getEntry(entryId: String) = queries.getEntry(entryId).awaitAsOne()
+    suspend fun getEntry(entryId: String) = withContext(Dispatchers.IO) {
+        queries.getEntry(entryId).awaitAsOne()
+    }
 
-    suspend fun getEntries(entryIds: Collection<String>) = queries.getEntries(entryIds).awaitAsList()
+    suspend fun getEntries(entryIds: Collection<String>) = withContext(Dispatchers.IO) {
+        queries.getEntries(entryIds).awaitAsList()
+    }
 
     suspend fun searchAll(
         query: String,
@@ -140,7 +144,9 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
         }
     }
 
-    suspend fun getExamples(entryId: String) = queries.getExamples(entryId).awaitAsList()
+    suspend fun getExamples(entryId: String) = withContext(Dispatchers.IO) {
+        queries.getExamples(entryId).awaitAsList()
+    }
 
     suspend fun getVariants(entryId: String) = withContext(Dispatchers.IO) {
         yield()
@@ -182,9 +188,15 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
             }
     }
 
-    suspend fun getVariantEntries(entryId: String) = queries.variantEntry(entryId).awaitAsList()
+    suspend fun getVariantEntries(entryId: String) = withContext(Dispatchers.IO) {
+        queries.variantEntry(entryId).awaitAsList()
+    }
 
-    suspend fun getComponentLexemes(entryId: String) = queries.componentEntry(entryId).awaitAsList()
+    suspend fun getComponentLexemes(entryId: String) = withContext(Dispatchers.IO) {
+        queries.componentEntry(entryId).awaitAsList()
+    }
 
-    suspend fun getRelatedEntries(senseId: String) = queries.relatedEntry(senseId).awaitAsList()
+    suspend fun getRelatedEntries(senseId: String) = withContext(Dispatchers.IO) {
+        queries.relatedEntry(senseId).awaitAsList()
+    }
 }

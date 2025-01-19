@@ -13,11 +13,14 @@ import data.dictionary.DictionaryDataSource
 import data.recentsearches.RecentSearchesDataSource
 import data.settings.PreferenceKey
 import data.settings.PreferencesDataSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
@@ -135,6 +138,9 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
+    var resultsLoading by mutableStateOf(false)
+        private set
+
     private val searchOutputsFlow = combine(
         snapshotFlow { searchTerm },
         settingsState
@@ -142,6 +148,7 @@ class SearchViewModel(
         searchTerm to settings
     }.transformLatest { (searchTerm, settings) ->
         coroutineScope {
+            resultsLoading = true
             val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
 
             val globSearchTerm = mapChars(
@@ -230,7 +237,8 @@ class SearchViewModel(
                 recents = recentSearches,
                 detectedSearchScript = detectedSearchScript
             ))
-        }
+            resultsLoading = false
+        }.flowOn(Dispatchers.IO)
     )
 
     private var previousSearchTerm = ""

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,6 +70,7 @@ fun SearchScreen(
 
     SearchScreen(
         assetLoaded = assetLoaded,
+        resultsLoading = resultsLoading,
         snackbarHostState = snackbarHostState,
         searchTerm = searchTerm,
         searchState = searchState,
@@ -82,6 +84,7 @@ fun SearchScreen(
 @Composable
 fun SearchScreen(
     assetLoaded: Boolean?,
+    resultsLoading: Boolean,
     snackbarHostState: SnackbarHostState,
     searchTerm: String,
     searchState: SearchState,
@@ -230,6 +233,10 @@ fun SearchScreen(
                         }
                     }
                 }
+            }
+
+            if (resultsLoading) {
+                CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         }
     }
