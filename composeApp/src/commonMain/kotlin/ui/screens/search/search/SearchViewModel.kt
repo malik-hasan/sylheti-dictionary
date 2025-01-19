@@ -190,7 +190,6 @@ class SearchViewModel(
                 searchLanguages = settings.languages
             )
 
-            resultsLoading = false
             emit(SearchOutputs(detectedSearchScript, searchResults, suggestions, recentSearches))
         }
     }
@@ -213,6 +212,7 @@ class SearchViewModel(
                 variantEntries = variantEntries
             )
         }
+        resultsLoading = false
         emit(searchOutputs.toSearchEntryOutputs(entries))
     }
 
