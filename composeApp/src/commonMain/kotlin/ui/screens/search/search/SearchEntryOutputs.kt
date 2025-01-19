@@ -5,17 +5,10 @@ import models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import ui.utils.SDString
 
-data class SearchOutputs(
+data class SearchEntryOutputs(
     val detectedSearchScript: SearchScript,
     val searchResults: List<DictionaryEntry>?,
+    val entries: List<CardEntry>,
     val suggestions:  List<SDString>?,
     val recentSearches: List<String>
-) {
-    fun toSearchEntryOutputs(entries: List<CardEntry>) = SearchEntryOutputs(
-        detectedSearchScript = detectedSearchScript,
-        searchResults = searchResults,
-        entries = entries,
-        suggestions = suggestions,
-        recentSearches = recentSearches
-    )
-}
+)

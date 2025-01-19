@@ -27,12 +27,14 @@ import ui.screens.search.search.SearchSettingsState
 
 @Composable
 fun SearchSettingsMenu(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
     state: SearchSettingsState,
     onEvent: (SearchSettingsEvent) -> Unit
 ) {
     DropdownMenu(
-        expanded = state.menuExpanded,
-        onDismissRequest = { onEvent(SearchSettingsEvent.ToggleSettingsMenu(false)) }
+        expanded = expanded,
+        onDismissRequest = onDismiss
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

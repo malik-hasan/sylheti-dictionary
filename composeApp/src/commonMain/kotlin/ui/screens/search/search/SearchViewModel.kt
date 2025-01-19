@@ -59,8 +59,7 @@ class SearchViewModel(
     val snackbarHostState = SnackbarHostState()
 
     private val _settingsState = MutableStateFlow(SearchSettingsState())
-    val settingsState = stateFlowOf(
-        SearchSettingsState(),
+    val settingsState = stateFlowOf(SearchSettingsState(),
         with(preferences) {
             combine(
                 _settingsState,
@@ -85,10 +84,6 @@ class SearchViewModel(
 
     fun onSettingsEvent(event: SearchSettingsEvent) {
         when (event) {
-            is SearchSettingsEvent.ToggleSettingsMenu -> _settingsState.update {
-                it.copy(menuExpanded = event.open)
-            }
-
             is SearchSettingsEvent.SelectPosition -> viewModelScope.launch {
                 preferences.set(PreferenceKey.SEARCH_POSITION, event.position.ordinal)
             }
@@ -133,8 +128,7 @@ class SearchViewModel(
     var resultsLoading by mutableStateOf(false)
         private set
 
-    private val searchOutputsFlow = combine(
-        snapshotFlow { searchTerm },
+    private val searchOutputsFlow = snapshotFlow { searchTerm }.combine(
         settingsState
     ) { searchTerm, settings ->
         searchTerm to settings
@@ -196,47 +190,55 @@ class SearchViewModel(
                 searchLanguages = settings.languages
             )
 
+            resultsLoading = false
             emit(SearchOutputs(detectedSearchScript, searchResults, suggestions, recentSearches))
         }
     }
 
+    private val searchEntryOutputsFlow = searchOutputsFlow.combine(
+        bookmarksDataSource.bookmarksFlow
+    ) { searchOutputs, bookmarks ->
+        searchOutputs to bookmarks
+    }.transformLatest { (searchOutputs, bookmarks) ->
+        val entries = (searchOutputs.searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
+            var variantEntries = emptyList<VariantEntry>()
+            if (it.definitionEN.isNullOrBlank()) {
+                variantEntries = dictionaryDataSource.getVariantEntries(it.entryId)
+                if (variantEntries.isEmpty()) return@mapNotNull null
+            }
+
+            CardEntry(
+                dictionaryEntry = it,
+                isBookmark = it.entryId in bookmarks,
+                variantEntries = variantEntries
+            )
+        }
+        emit(searchOutputs.toSearchEntryOutputs(entries))
+    }
+
     private val _searchState = MutableStateFlow(SearchState())
     val searchState = stateFlowOf(SearchState(),
-        combine(
-            _searchState,
-            bookmarksDataSource.bookmarksFlow,
-            searchOutputsFlow
-        ) { state, bookmarks, searchOutputs ->
-            Triple(state, bookmarks, searchOutputs)
-        }.transformLatest { (state, bookmarks, searchOutputs) ->
-            val (detectedSearchScript, searchResults, suggestions, recentSearches) = searchOutputs
-            emit(state.copy(
+        _searchState.combine(
+            searchEntryOutputsFlow.flowOn(Dispatchers.IO)
+        ) { state, (detectedSearchScript, searchResults, entries, suggestions, recentSearches) ->
+            state.copy(
                 searchResults = searchResults,
                 suggestions = suggestions,
-                entries = (searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
-                    var variantEntries = emptyList<VariantEntry>()
-                    if (it.definitionEN.isNullOrBlank()) {
-                        variantEntries = dictionaryDataSource.getVariantEntries(it.entryId)
-                        if (variantEntries.isEmpty()) return@mapNotNull null
-                    }
-
-                    CardEntry(
-                        dictionaryEntry = it,
-                        isBookmark = it.entryId in bookmarks,
-                        variantEntries = variantEntries
-                    )
-                },
+                entries = entries,
                 recents = recentSearches,
                 detectedSearchScript = detectedSearchScript
-            ))
-            resultsLoading = false
-        }.flowOn(Dispatchers.IO)
+            )
+        }
     )
 
     private var previousSearchTerm = ""
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
+            is SearchEvent.ToggleSettingsMenu -> _searchState.update {
+                it.copy(menuExpanded = event.expanded)
+            }
+
             is SearchEvent.SetSearchBarActive -> with(event) {
                 if (value) {
                     previousSearchTerm = searchTerm

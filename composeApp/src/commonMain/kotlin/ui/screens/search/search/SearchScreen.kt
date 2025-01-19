@@ -106,13 +106,21 @@ fun SearchScreen(
                 title = { Text(stringResource(Res.string.sylheti_dictionary)) },
                 actions = {
                     Box {
-                        IconButton(
-                            onClick = { onSettingsEvent(SearchSettingsEvent.ToggleSettingsMenu(true)) }
-                        ) {
-                            Icon(painterResource(Res.drawable.tune), stringResource(Res.string.settings))
+                        IconButton({
+                            onSearchEvent(SearchEvent.ToggleSettingsMenu(true))
+                        }) {
+                            Icon(
+                                painter = painterResource(Res.drawable.tune),
+                                contentDescription = stringResource(Res.string.settings)
+                            )
                         }
 
-                        SearchSettingsMenu(settingsState, onSettingsEvent)
+                        SearchSettingsMenu(
+                            expanded = searchState.menuExpanded,
+                            onDismiss = { onSearchEvent(SearchEvent.ToggleSettingsMenu(false)) },
+                            state = settingsState,
+                            onEvent = onSettingsEvent
+                        )
                     }
                 }
             )
