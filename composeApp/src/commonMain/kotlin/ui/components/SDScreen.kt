@@ -23,9 +23,7 @@ fun SDScreen(
         topBar = {
             Box(Modifier.windowInsetsPadding(
                 WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-            )) {
-                topBar()
-            }
+            )) { topBar() }
         },
         snackbarHost = snackbarHost,
         content = { scaffoldPadding ->
@@ -34,9 +32,7 @@ fun SDScreen(
                 .windowInsetsPadding(
                     WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
                 )
-            ) {
-                content()
-            }
+            ) { content() }
         }
     )
 }
