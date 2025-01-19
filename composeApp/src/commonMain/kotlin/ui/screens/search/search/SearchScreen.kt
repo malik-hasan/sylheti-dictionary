@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -117,9 +118,6 @@ fun SearchScreen(
             )
         }
     ) {
-        val listState = rememberLazyListState()
-        val isScrollingUp by listState.rememberIsScrollingUp()
-
         if (assetLoaded == false) {
             Text(
                 text = stringResource(Res.string.asset_load_error),
@@ -127,8 +125,18 @@ fun SearchScreen(
                 textAlign = TextAlign.Center
             )
         } else {
+            val resultsState = rememberLazyListState()
+            val isScrollingUp by resultsState.rememberIsScrollingUp()
+
+            SideEffect {
+                resultsState.requestScrollToItem(
+                    index = resultsState.firstVisibleItemIndex,
+                    scrollOffset = resultsState.firstVisibleItemScrollOffset
+                )
+            }
+
             LazyColumn(
-                state = listState,
+                state = resultsState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 16.dp,
@@ -203,7 +211,16 @@ fun SearchScreen(
                     shadowElevation = 6.dp,
                     windowInsets = WindowInsets(0)
                 ) {
-                    LazyColumn {
+                    val suggestionsState = rememberLazyListState()
+
+                    SideEffect {
+                        suggestionsState.requestScrollToItem(
+                            index = suggestionsState.firstVisibleItemIndex,
+                            scrollOffset = suggestionsState.firstVisibleItemScrollOffset
+                        )
+                    }
+
+                    LazyColumn(state = suggestionsState) {
                         with(searchState) {
                             items(recents) { recent ->
                                 SearchSuggestion(
