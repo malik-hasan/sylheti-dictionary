@@ -139,11 +139,10 @@ fun EntryScreen(
                             item {
                                 EntryDefinitions(
                                     entry = entry,
-                                    showDivider = false,
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
-                                        .sharedBounds(
-                                            sharedContentState = rememberSharedContentState("definitions-$entryId"),
+                                        .sharedElement(
+                                            state = rememberSharedContentState("definitions-$entryId"),
                                             animatedVisibilityScope = animatedContentScope
                                         )
                                 )

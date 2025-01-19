@@ -22,7 +22,6 @@ import utility.validateStrings
 @Composable
 fun EntryDefinitions(
     entry: DictionaryEntry,
-    showDivider: Boolean,
     modifier: Modifier = Modifier,
     language: Language = LocalLanguage.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
@@ -51,8 +50,6 @@ fun EntryDefinitions(
 
         if (definitions.isNotEmpty()) {
             Column(modifier) {
-                if (showDivider) EntryDivider()
-
                 if (language != Language.BN) EnglishDefinition()
 
                 if (FieldTag.bengaliTags.any { it in definitions }) {

@@ -86,14 +86,15 @@ fun EntryCard(
                         )
                     }
 
+                    EntryDivider(Modifier.padding(horizontal = 16.dp))
+
                     EntryDefinitions(
                         entry = entry,
-                        showDivider = true,
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .ifTrue(includeAnimation) {
-                                sharedBounds(
-                                    sharedContentState = rememberSharedContentState("definitions-$entryId"),
+                                sharedElement(
+                                    state = rememberSharedContentState("definitions-$entryId"),
                                     animatedVisibilityScope = animatedContentScope
                                 )
                             }
