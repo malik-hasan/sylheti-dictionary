@@ -44,8 +44,8 @@ fun EntryExample(
                 val examples = remember {
                     mapOf(
                         FieldTag.IPA to exampleIPA,
-                        FieldTag.BENGALI to exampleBengali,
-                        FieldTag.NAGRI to exampleNagri,
+                        FieldTag.EASTERN_NAGRI to exampleBengali,
+                        FieldTag.SYLHETI_NAGRI to exampleNagri,
                         FieldTag.EN to exampleEN,
                         FieldTag.BN to exampleBN,
                         FieldTag.BNIPA to exampleBNIPA
@@ -69,10 +69,10 @@ fun EntryExample(
                             examples[FieldTag.IPA]?.let {
                                 SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
                             },
-                            examples[FieldTag.BENGALI]?.let {
-                                SDString(it, highlightRegex, SearchScript.BENGALI)
+                            examples[FieldTag.EASTERN_NAGRI]?.let {
+                                SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                             },
-                            examples[FieldTag.NAGRI]?.let {
+                            examples[FieldTag.SYLHETI_NAGRI]?.let {
                                 SDString(it, highlightRegex)
                             }
                         )
@@ -86,7 +86,7 @@ fun EntryExample(
                         tag = stringResource(Res.string.bengali),
                         bodies = listOfNotNull(
                             examples[FieldTag.BN]?.let {
-                                SDString(it, highlightRegex, SearchScript.BENGALI)
+                                SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                             },
                             examples[FieldTag.BNIPA]?.let {
                                 SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)

@@ -1,6 +1,5 @@
 package models.search.settings
 
-import oats.mobile.sylhetidictionary.DictionaryEntry
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.auto
@@ -10,33 +9,26 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_nagri
 
 enum class SearchScript(
     override val label: StringResource,
-    val sortAlgorithm: (DictionaryEntry) -> String?,
     val regexCharSet: Regex? = null,
     val languages: List<SearchLanguage> = emptyList()
 ): SettingEnum {
 
-    AUTO(
-        label = Res.string.auto,
-        sortAlgorithm = { it.citationIPA ?: it.lexemeIPA }
-    ),
+    AUTO(Res.string.auto),
 
     LATIN(
         label = Res.string.latin_ipa,
-        sortAlgorithm = { it.citationIPA ?: it.lexemeIPA },
         regexCharSet = Regex("\\p{IsLatin}"),
         languages = SearchLanguage.Latin.entries
     ),
 
-    BENGALI(
+    EASTERN_NAGRI(
         label = Res.string.eastern_nagri,
-        sortAlgorithm = { it.citationBengali ?: it.lexemeBengali },
         regexCharSet = Regex("\\p{IsBengali}"),
-        languages = SearchLanguage.Bengali.entries
+        languages = SearchLanguage.EasternNagri.entries
     ),
 
-    NAGRI(
+    SYLHETI_NAGRI(
         label = Res.string.sylheti_nagri,
-        sortAlgorithm = { it.citationNagri ?: it.lexemeNagri },
         regexCharSet = Regex("\\p{IsSyloti_Nagri}")
     );
 }

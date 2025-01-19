@@ -24,7 +24,7 @@ sealed interface SearchLanguage: SettingEnum {
 
     companion object {
         val entries: List<SearchLanguage> =
-            SearchLanguage.Latin.entries + SearchLanguage.Bengali.entries
+            SearchLanguage.Latin.entries + SearchLanguage.EasternNagri.entries
     }
 
     enum class Latin(
@@ -34,26 +34,26 @@ sealed interface SearchLanguage: SettingEnum {
     ) : SearchLanguage {
 
         ENGLISH(
-            settingsKey = PreferenceKey.LATIN_SCRIPT_ENGLISH,
+            settingsKey = PreferenceKey.ENGLISH_SEARCH_LANGUAGE,
             label = Res.string.english,
             search = DictionaryDataSource::searchEnglish
         ),
 
         SYLHETI(
-            settingsKey = PreferenceKey.LATIN_SCRIPT_SYLHETI,
+            settingsKey = PreferenceKey.LATIN_SCRIPT_SYLHETI_SEARCH_LANGUAGE,
             label = Res.string.sylheti,
             search = DictionaryDataSource::searchSylhetiLatin
         );
     }
 
-    enum class Bengali(
+    enum class EasternNagri(
         override val settingsKey: Preferences.Key<Boolean>,
         override val label: StringResource,
         override val search: suspend DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
     ) : SearchLanguage {
 
         BENGALI(
-            settingsKey = PreferenceKey.BENGALI_SCRIPT_BENGALI,
+            settingsKey = PreferenceKey.BENGALI_SEARCH_LANGUAGE,
             label = Res.string.bengali,
             search = { query, _, searchDefinitions, searchExamples ->
                 searchBengali(query, searchDefinitions, searchExamples)
@@ -61,7 +61,7 @@ sealed interface SearchLanguage: SettingEnum {
         ),
 
         SYLHETI(
-            settingsKey = PreferenceKey.BENGALI_SCRIPT_SYLHETI,
+            settingsKey = PreferenceKey.EASTERN_NAGRI_SCRIPT_SYLHETI_SEARCH_LANGUAGE,
             label = Res.string.sylheti,
             search = { query, positionedQuery, _, searchExamples ->
                 searchSylhetiBengali(query, positionedQuery, searchExamples)

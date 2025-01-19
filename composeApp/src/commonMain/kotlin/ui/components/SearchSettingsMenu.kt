@@ -1,6 +1,10 @@
 package ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -10,6 +14,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import models.search.settings.SearchPosition
@@ -54,7 +59,11 @@ fun SearchSettingsMenu(
             ) { onEvent(SearchSettingsEvent.SelectScript(it)) }
 
             with(state.languages.toList()) {
-                AnimatedVisibility(isNotEmpty()) {
+                AnimatedVisibility(
+                    visible = isNotEmpty(),
+                    enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+                    exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+                ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(stringResource(Res.string.search_languages), Modifier.padding(start = 8.dp))
                         MultiChoiceSegmentedButtonRow {

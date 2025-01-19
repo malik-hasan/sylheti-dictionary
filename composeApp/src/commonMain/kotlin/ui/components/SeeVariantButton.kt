@@ -35,7 +35,7 @@ fun SeeVariantButton(
                 bodies = listOfNotNull(
                     SDString(variantEntry.citationIPA ?: variantEntry.lexemeIPA, mappedIpaHighlightRegex, SearchScript.LATIN),
                     (variantEntry.citationBengali ?: variantEntry.lexemeBengali)?.let {
-                        SDString(it, highlightRegex, SearchScript.BENGALI)
+                        SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                     },
                     (variantEntry.citationNagri ?: variantEntry.lexemeNagri)?.let { SDString(it, highlightRegex) }
                 ),

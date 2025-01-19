@@ -33,7 +33,7 @@ fun EntryVariant(
             tagFontFamily = latinDisplayFontFamily,
             bodies = listOfNotNull(
                 SDString(variant.variantIPA, mappedIpaHighlightRegex, SearchScript.LATIN),
-                variant.variantBengali?.let { SDString(it, highlightRegex, SearchScript.BENGALI) },
+                variant.variantBengali?.let { SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI) },
                 variant.variantNagri?.let { SDString(it, highlightRegex) }
             ),
             separator = " • "

@@ -16,7 +16,7 @@ fun AnnotatedString.Builder.appendHighlighted(dictionaryString: SDString) = with
     appendHighlighted(
         text = text,
         highlightRegex = highlightRegex,
-        fontFamily = script?.let { if (it == SearchScript.BENGALI) bengaliBodyFontFamily else latinBodyFontFamily }
+        fontFamily = script?.let { if (it == SearchScript.EASTERN_NAGRI) bengaliBodyFontFamily else latinBodyFontFamily }
     )
 }
 

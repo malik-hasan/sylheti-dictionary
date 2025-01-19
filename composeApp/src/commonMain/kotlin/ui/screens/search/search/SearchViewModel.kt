@@ -328,7 +328,7 @@ class SearchViewModel(
 
         when (detectedSearchScript) {
             SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
-            SearchScript.NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
+            SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
 
             else -> detectedSearchScript.languages.filter { language ->
                 settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
@@ -341,7 +341,7 @@ class SearchViewModel(
                 }
             }
         }.distinct()
-            .sortedBy(detectedSearchScript.sortAlgorithm)
+            .sortedBy { it.displayIPA }
     }
 
     private suspend fun getSuggestions(
@@ -357,10 +357,10 @@ class SearchViewModel(
             yield()
             with(entry) {
                 when {
-                    detectedSearchScript == SearchScript.BENGALI && displayBengali != null ->
-                        suggestions += SDString(displayBengali!!, highlightRegex, SearchScript.BENGALI)
+                    detectedSearchScript == SearchScript.EASTERN_NAGRI && displayBengali != null ->
+                        suggestions += SDString(displayBengali!!, highlightRegex, SearchScript.EASTERN_NAGRI)
 
-                    detectedSearchScript == SearchScript.NAGRI && displayNagri != null ->
+                    detectedSearchScript == SearchScript.SYLHETI_NAGRI && displayNagri != null ->
                         suggestions += SDString(displayNagri!!, highlightRegex)
 
                     else -> {

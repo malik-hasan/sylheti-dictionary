@@ -32,6 +32,7 @@ import sylhetidictionary.composeapp.generated.resources.what_is_ipa
 import ui.components.DrawerIconButton
 import ui.components.SDScreen
 import ui.theme.TextLinkStyle
+import ui.theme.latinBodyFontFamily
 import utility.UnicodeUtility
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,8 +93,9 @@ fun IpaHelpScreen() {
                         withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
                             append("$char — ")
                         }
-                        append("$char, ${charSet.joinToString(", ")}")
-                    }
+                        append(charSet.joinToString(", "))
+                    },
+                    fontFamily = latinBodyFontFamily
                 )
             }
         }

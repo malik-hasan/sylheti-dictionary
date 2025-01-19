@@ -34,7 +34,7 @@ fun EntryDefinitions(
                 FieldTag.EN to definitionEN,
                 FieldTag.BN to definitionBN,
                 FieldTag.BNIPA to definitionBNIPA,
-                FieldTag.NAGRI to definitionNagri,
+                FieldTag.SYLHETI_NAGRI to definitionNagri,
                 FieldTag.IPA to definitionIPA
             ).validateStrings()
         }
@@ -60,7 +60,7 @@ fun EntryDefinitions(
                         tag = stringResource(Res.string.bengali),
                         bodies = listOfNotNull(
                             definitions[FieldTag.BN]?.let {
-                                SDString(it, highlightRegex, SearchScript.BENGALI)
+                                SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                             },
                             definitions[FieldTag.BNIPA]?.let {
                                 SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
