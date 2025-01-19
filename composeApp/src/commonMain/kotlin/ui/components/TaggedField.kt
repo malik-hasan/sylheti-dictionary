@@ -8,8 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import ui.utils.SDString
@@ -20,19 +20,19 @@ fun TaggedField(
     tag: String,
     body: SDString,
     modifier: Modifier = Modifier,
+    tagFontFamily: FontFamily? = null,
     enableSelection: Boolean = true,
     separator: String = "\n",
-    bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
-) { TaggedField(tag, listOf(body), modifier, enableSelection, separator, bodyStyle) }
+) { TaggedField(tag, listOf(body), modifier, tagFontFamily, enableSelection, separator) }
 
 @Composable
 fun TaggedField(
     tag: String,
     bodies: List<SDString>,
     modifier: Modifier = Modifier,
+    tagFontFamily: FontFamily? = null,
     enableSelection: Boolean = true,
-    separator: String = "\n",
-    bodyStyle: TextStyle = MaterialTheme.typography.bodyMedium
+    separator: String = "\n"
 ) {
     Row(
         modifier = modifier,
@@ -40,10 +40,11 @@ fun TaggedField(
     ) {
         Text(
             text = tag.lowercase(),
-            modifier = Modifier.padding(top = 3.dp),
+            modifier = Modifier.padding(top = 4.dp),
             style = MaterialTheme.typography.labelMedium,
             fontStyle = FontStyle.Italic,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = tagFontFamily
         )
 
         @Composable
@@ -53,8 +54,7 @@ fun TaggedField(
                     if (i > 0) append(separator)
                     appendHighlighted(body)
                 }
-            },
-            style = bodyStyle
+            }
         )
 
         if (enableSelection) {

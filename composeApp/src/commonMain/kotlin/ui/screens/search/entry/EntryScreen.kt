@@ -24,14 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import models.search.settings.SearchScript
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
 import sylhetidictionary.composeapp.generated.resources.definitions
+import sylhetidictionary.composeapp.generated.resources.examples
 import sylhetidictionary.composeapp.generated.resources.related_words
+import sylhetidictionary.composeapp.generated.resources.variants
 import ui.components.BookmarkIconButton
 import ui.components.EntryCard
 import ui.components.EntryDefinitions
@@ -39,16 +40,15 @@ import ui.components.EntryDivider
 import ui.components.EntryExample
 import ui.components.EntryHeader
 import ui.components.EntrySubHeader
+import ui.components.EntryVariant
 import ui.components.SDScreen
 import ui.components.SearchIconButton
 import ui.components.SeeVariantButton
-import ui.components.TaggedField
 import ui.components.UpIconButton
 import ui.screens.search.LocalAnimatedContentScope
 import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.screens.search.LocalSharedTransitionScope
-import ui.utils.SDString
 
 @Composable
 fun EntryScreen(
@@ -127,19 +127,6 @@ fun EntryScreen(
                             SeeVariantButton(variantEntry)
                         }
 
-                        itemsIndexed(state.variants) { i, variant ->
-                            TaggedField(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                tag = variant.environment?.lowercase().takeIf { it != "unspecified variant" } ?: "variant",
-                                bodies = listOfNotNull(
-                                    SDString(variant.variantIPA, mappedIpaHighlightRegex, SearchScript.LATIN),
-                                    variant.variantBengali?.let { SDString(it, highlightRegex, SearchScript.BENGALI) },
-                                    variant.variantNagri?.let { SDString(it, highlightRegex) }
-                                ),
-                                separator = " • "
-                            )
-                        }
-
                         val definitions = listOfNotNull(
                             definitionEN,
                             definitionBN,
@@ -147,20 +134,13 @@ fun EntryScreen(
                             definitionNagri,
                             definitionIPA
                         )
-
                         if (definitions.isNotEmpty()) {
                             item {
-                                if (state.variants.isNotEmpty()) EntryDivider()
-
-                                EntrySubHeader(
-                                    text = stringResource(Res.string.definitions),
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
+                                EntrySubHeader(stringResource(Res.string.definitions))
 
                                 EntryDefinitions(
                                     entry = entry,
                                     showDivider = false,
-                                    definitionStyle = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp)
                                         .sharedBounds(
@@ -171,12 +151,36 @@ fun EntryScreen(
                             }
                         }
 
-                        itemsIndexed(state.examples) { i, example ->
-                            if (i == 0 && (state.variants.isNotEmpty() || definitions.isNotEmpty())) {
-                                EntryDivider(Modifier.padding(bottom = 8.dp))
+                        itemsIndexed(state.variants) { i, variant ->
+                            if (i == 0) {
+                                if (definitions.isNotEmpty()) {
+                                    EntryDivider(Modifier.padding(bottom = 8.dp))
+                                }
+
+                                EntrySubHeader(stringResource(Res.string.variants))
                             }
 
-                            EntryExample(example, i, Modifier.padding(horizontal = 16.dp))
+                            EntryVariant(
+                                variant = variant,
+                                index = i,
+                                showIndex = state.variants.size > 1
+                            )
+                        }
+
+                        itemsIndexed(state.examples) { i, example ->
+                            if (i == 0) {
+                                if (definitions.isNotEmpty() || state.variants.isNotEmpty()) {
+                                    EntryDivider(Modifier.padding(bottom = 8.dp))
+                                }
+
+                                EntrySubHeader(stringResource(Res.string.examples))
+                            }
+
+                            EntryExample(
+                                example = example,
+                                index = i,
+                                showIndex = state.examples.size > 1
+                            )
                         }
 
                         itemsIndexed(
@@ -184,7 +188,7 @@ fun EntryScreen(
                             key = { _, (componentEntry, _) -> componentEntry.entryId + "Component" }
                         ) { i, (componentEntry, cardEntry) ->
                             if (i == 0) {
-                                if (state.variants.isNotEmpty() || definitions.isNotEmpty() || state.examples.isNotEmpty()) {
+                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 
@@ -197,10 +201,7 @@ fun EntryScreen(
                                         "($it)"
                                     }.orEmpty()
 
-                                EntrySubHeader(
-                                    text = stringResource(Res.string.component_lexemes, complexFormType),
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
+                                EntrySubHeader(stringResource(Res.string.component_lexemes, complexFormType))
                             }
 
                             with(cardEntry) {
@@ -217,9 +218,10 @@ fun EntryScreen(
                             key = { _, (relatedEntry, _) -> relatedEntry.entryId + "Related" }
                         ) { i, (relatedEntry, cardEntry) ->
                             if (i == 0) {
-                                if (state.variants.isNotEmpty() || definitions.isNotEmpty() || state.examples.isNotEmpty() || state.componentLexemes.isNotEmpty()) {
+                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.componentLexemes.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
+
                                 EntrySubHeader(stringResource(Res.string.related_words))
                             }
 

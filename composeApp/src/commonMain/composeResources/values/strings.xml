@@ -31,6 +31,8 @@
 
     <string name="see">see</string>
     <string name="definitions">Definitions</string>
+    <string name="variants">Variants</string>
+    <string name="examples">Examples</string>
     <string name="example">Example %1$d</string>
     <string name="component_lexemes">Component Lexemes %1$s</string>
     <string name="related_words">Related Words</string>

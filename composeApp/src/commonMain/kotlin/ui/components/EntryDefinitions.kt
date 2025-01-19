@@ -1,11 +1,9 @@
 package ui.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import models.FieldTag
 import models.search.settings.SearchScript
 import models.settings.Language
@@ -26,7 +24,6 @@ fun EntryDefinitions(
     entry: DictionaryEntry,
     showDivider: Boolean,
     modifier: Modifier = Modifier,
-    definitionStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     language: Language = LocalLanguage.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
@@ -47,8 +44,7 @@ fun EntryDefinitions(
             definitions[FieldTag.EN]?.let { definition ->
                 TaggedField(
                     tag = stringResource(Res.string.english),
-                    body = SDString(definition, highlightRegex, SearchScript.LATIN),
-                    bodyStyle = definitionStyle
+                    body = SDString(definition, highlightRegex, SearchScript.LATIN)
                 )
             }
         }
@@ -69,8 +65,7 @@ fun EntryDefinitions(
                             definitions[FieldTag.BNIPA]?.let {
                                 SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
                             }
-                        ),
-                        bodyStyle = definitionStyle
+                        )
                     )
                 }
 
@@ -82,8 +77,7 @@ fun EntryDefinitions(
                         tag = stringResource(Res.string.sylheti),
                         bodies = sylhetiTags.map {
                             SDString(definitions[it]!!, mappedIpaHighlightRegex, SearchScript.LATIN)
-                        },
-                        bodyStyle = definitionStyle
+                        }
                     )
                 }
             }

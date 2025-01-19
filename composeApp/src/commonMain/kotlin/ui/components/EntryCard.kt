@@ -99,7 +99,7 @@ fun EntryCard(
                             }
                     )
 
-                    variantEntries?.forEach { SeeVariantButton(it) }
+                    variantEntries.forEach { SeeVariantButton(it) }
                 }
             }
         }
