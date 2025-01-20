@@ -86,7 +86,7 @@ fun EntryHeader(
                                 sharedContentState = rememberSharedContentState("part-of-speech-$entryId"),
                                 animatedVisibilityScope = animatedContentScope
                             )
-                        },
+                        }
                     )
                 }
 
@@ -102,7 +102,7 @@ fun EntryHeader(
                                     sharedContentState = rememberSharedContentState("gloss-$entryId"),
                                     animatedVisibilityScope = animatedContentScope
                                 )
-                            },
+                            }
                         )
                     }
                 }
