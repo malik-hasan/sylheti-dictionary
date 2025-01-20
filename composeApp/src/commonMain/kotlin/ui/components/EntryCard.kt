@@ -2,6 +2,8 @@ package ui.components
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.EnterExitState
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDp
@@ -97,7 +99,17 @@ fun EntryCard(
                         )
                     }
 
-                    EntryDivider(Modifier.padding(horizontal = 16.dp))
+                    EntryDivider(Modifier
+                        .padding(horizontal = 16.dp)
+                        .ifTrue(includeAnimation) {
+                            sharedBounds(
+                                sharedContentState = rememberSharedContentState("definition-divider-$entryId"),
+                                animatedVisibilityScope = animatedContentScope,
+                                enter = EnterTransition.None,
+                                exit = ExitTransition.None
+                            )
+                        }
+                    )
 
                     EntryDefinitions(
                         entry = entry,

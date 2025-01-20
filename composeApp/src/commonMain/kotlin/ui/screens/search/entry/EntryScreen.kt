@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -126,6 +127,14 @@ fun EntryScreen(
                                 partOfSpeechStyle = MaterialTheme.typography.titleMedium,
                                 gloss = gloss,
                                 glossStyle = MaterialTheme.typography.titleLarge
+                            )
+
+                            Spacer(Modifier
+                                .fillMaxWidth()
+                                .sharedBounds(
+                                    sharedContentState = rememberSharedContentState("definition-divider-$entryId"),
+                                    animatedVisibilityScope = animatedContentScope
+                                )
                             )
                         }
                     }
