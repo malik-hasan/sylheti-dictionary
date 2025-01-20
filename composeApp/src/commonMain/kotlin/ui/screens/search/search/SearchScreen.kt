@@ -254,7 +254,7 @@ fun SearchScreen(
                 }
             }
 
-            if (resultsLoading) {
+            if (searchTerm.isNotEmpty() && resultsLoading) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         }
