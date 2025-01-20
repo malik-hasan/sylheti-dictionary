@@ -57,13 +57,9 @@ fun EntryCard(
                         EntryHeader(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(start = 16.dp, top = 8.dp)
-                                .ifTrue(includeAnimation) {
-                                    sharedBounds(
-                                        sharedContentState = rememberSharedContentState("header-$entryId"),
-                                        animatedVisibilityScope = animatedContentScope
-                                    )
-                                },
+                                .padding(start = 16.dp, top = 8.dp),
+                            entryId = entryId,
+                            includeAnimation = includeAnimation,
                             displayIPA = displayIPA,
                             displayBengali = displayBengali,
                             displayNagri = displayNagri,

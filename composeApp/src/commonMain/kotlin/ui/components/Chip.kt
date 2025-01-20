@@ -13,10 +13,14 @@ import androidx.compose.ui.unit.dp
 import ui.theme.latinDisplayFontFamily
 
 @Composable
-fun Chip(text: String, style: TextStyle = MaterialTheme.typography.labelMedium) {
+fun Chip(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.labelMedium
+) {
     Text(
         text = text,
-        modifier = Modifier
+        modifier = modifier
             .clip(MaterialTheme.shapes.extraSmall)
             .background(MaterialTheme.colorScheme.secondary)
             .padding(horizontal = 3.dp),

@@ -103,11 +103,8 @@ fun EntryScreen(
                             EntryHeader(
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
-                                    .padding(bottom = 16.dp)
-                                    .sharedBounds(
-                                        sharedContentState = rememberSharedContentState("header-$entryId"),
-                                        animatedVisibilityScope = animatedContentScope
-                                    ),
+                                    .padding(bottom = 16.dp),
+                                entryId = entryId,
                                 displayIPA = citationIPA ?: lexemeIPA,
                                 displayBengali = citationBengali ?: lexemeBengali,
                                 displayNagri = citationNagri ?: lexemeNagri,
