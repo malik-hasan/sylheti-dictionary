@@ -68,23 +68,13 @@ class EntryViewModel(
                 }
 
                 _state.update {
-                    it.copy(variantEntries = variantEntries.await())
-                }
-
-                _state.update {
-                    it.copy(variants = variants.await())
-                }
-
-                _state.update {
-                    it.copy(examples = examples.await())
-                }
-
-                _state.update {
-                    it.copy(componentLexemes = componentLexemes.await())
-                }
-
-                _state.update {
-                    it.copy(relatedEntries = relatedEntries.await())
+                    it.copy(
+                        variantEntries = variantEntries.await(),
+                        variants = variants.await(),
+                        examples = examples.await(),
+                        componentLexemes = componentLexemes.await(),
+                        relatedEntries = relatedEntries.await()
+                    )
                 }
             }
         }
