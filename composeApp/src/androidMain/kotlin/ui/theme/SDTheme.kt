@@ -41,6 +41,7 @@ actual fun SDTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = getTypography(language),
+        shapes = MaterialTheme.shapes,
         content = content
     )
 }

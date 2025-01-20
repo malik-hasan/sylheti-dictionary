@@ -3,8 +3,10 @@
 package ui.screens.search.entry
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateDp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -76,12 +79,22 @@ fun EntryScreen(
             with(entry) {
                 SDScreen(
                     topBar = {
+                        val containerCornerRounding by animatedContentScope.transition
+                            .animateDp(label = "containerCornerAnimation") { state ->
+                                when (state) {
+                                    EnterExitState.PreEnter -> 12.dp
+                                    EnterExitState.Visible -> 0.dp
+                                    EnterExitState.PostExit -> 12.dp
+                                }
+                            }
+
                         Column(Modifier
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .sharedElement(
-                                state = rememberSharedContentState("container-$entryId"),
-                                animatedVisibilityScope = animatedContentScope
-                            )
+                            .sharedBounds(
+                                sharedContentState = rememberSharedContentState("container-$entryId"),
+                                animatedVisibilityScope = animatedContentScope,
+                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                                clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(containerCornerRounding))
+                            ).background(MaterialTheme.colorScheme.surfaceContainerHighest)
                         ) {
                             TopAppBar(
                                 colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),

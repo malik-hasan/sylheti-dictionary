@@ -1,17 +1,20 @@
 package ui.components
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateDp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -42,13 +45,25 @@ fun EntryCard(
 ) {
     with(sharedTransitionScope) {
         with(entry) {
+            val containerCornerRounding by animatedContentScope.transition
+                .animateDp(label = "containerCornerAnimation") { state ->
+                    when (state) {
+                        EnterExitState.PreEnter -> 0.dp
+                        EnterExitState.Visible -> 12.dp
+                        EnterExitState.PostExit -> 0.dp
+                    }
+                }
+
+            val cardShape = RoundedCornerShape(containerCornerRounding)
             Card(modifier
-                .clip(CardDefaults.shape)
+                .clip(cardShape)
                 .clickable { navController.navigate(Route.Entry(entry.entryId)) }
                 .ifTrue(includeAnimation) {
-                    sharedElement(
-                        state = rememberSharedContentState("container-$entryId"),
-                        animatedVisibilityScope = animatedContentScope
+                    sharedBounds(
+                        sharedContentState = rememberSharedContentState("container-$entryId"),
+                        animatedVisibilityScope = animatedContentScope,
+                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                        clipInOverlayDuringTransition = OverlayClip(cardShape)
                     )
                 }
             ) {
