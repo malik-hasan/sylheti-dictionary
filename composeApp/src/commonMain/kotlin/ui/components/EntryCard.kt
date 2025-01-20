@@ -113,14 +113,7 @@ fun EntryCard(
 
                     EntryDefinitions(
                         entry = entry,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .ifTrue(includeAnimation) {
-                                sharedElement(
-                                    state = rememberSharedContentState("definitions-$entryId"),
-                                    animatedVisibilityScope = animatedContentScope
-                                )
-                            }
+                        includeAnimation = includeAnimation
                     )
 
                     variantEntries.forEach { SeeVariantButton(it) }

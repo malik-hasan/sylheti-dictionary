@@ -155,17 +155,7 @@ fun EntryScreen(
                             definitionIPA
                         )
                         if (definitions.isNotEmpty()) {
-                            item {
-                                EntryDefinitions(
-                                    entry = entry,
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .sharedElement(
-                                            state = rememberSharedContentState("definitions-$entryId"),
-                                            animatedVisibilityScope = animatedContentScope
-                                        )
-                                )
-                            }
+                            item { EntryDefinitions(entry) }
                         }
 
                         itemsIndexed(state.variants) { i, variant ->
