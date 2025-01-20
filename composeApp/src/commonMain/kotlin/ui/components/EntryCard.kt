@@ -72,7 +72,7 @@ fun EntryCard(
                     )
                 }
             ) {
-                Column(Modifier.padding(bottom = 12.dp)) {
+                Column {
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
                         EntryHeader(
                             modifier = Modifier
@@ -122,7 +122,8 @@ fun EntryCard(
                     variantEntries.forEach {
                         SeeVariantButton(
                             variantEntry = it,
-                            entryId = entryId
+                            entryId = entryId,
+                            includeAnimation = includeAnimation
                         )
                     }
 

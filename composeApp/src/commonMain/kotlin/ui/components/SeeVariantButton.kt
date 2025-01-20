@@ -22,12 +22,14 @@ import ui.screens.search.LocalHighlightRegex
 import ui.screens.search.LocalMappedIpaHighlightRegex
 import ui.screens.search.LocalSharedTransitionScope
 import ui.utils.SDString
+import ui.utils.ifTrue
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SeeVariantButton(
     variantEntry: VariantEntry,
     entryId: String,
+    includeAnimation: Boolean = true,
     navController: NavController = LocalNavController.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
@@ -37,10 +39,12 @@ fun SeeVariantButton(
     Box(Modifier.fillMaxWidth(), Alignment.Center) {
         with(sharedTransitionScope) {
             OutlinedButton(
-                modifier = Modifier.sharedBounds(
-                    sharedContentState = rememberSharedContentState("see-variant-$entryId-${variantEntry.entryId}"),
-                    animatedVisibilityScope = animatedContentScope
-                ),
+                modifier = Modifier.ifTrue(includeAnimation) {
+                    sharedBounds(
+                        sharedContentState = rememberSharedContentState("see-variant-$entryId-${variantEntry.entryId}"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                },
                 onClick = { navController.navigate(Route.Entry(variantEntry.entryId)) }
             ) {
                 TaggedField(
