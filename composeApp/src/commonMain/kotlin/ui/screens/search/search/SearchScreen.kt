@@ -7,10 +7,13 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,10 +22,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -127,135 +130,139 @@ fun SearchScreen(
                 textAlign = TextAlign.Center
             )
         } else {
-            val resultsState = rememberLazyListState()
-            val isScrollingUp by resultsState.rememberIsScrollingUp()
+            Column {
+                if (searchTerm.isNotEmpty() && resultsLoading) {
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                } else Spacer(Modifier.height(4.dp))
 
-            SideEffect {
-                resultsState.requestScrollToItem(
-                    index = resultsState.firstVisibleItemIndex,
-                    scrollOffset = resultsState.firstVisibleItemScrollOffset
-                )
-            }
-
-            LazyColumn(
-                state = resultsState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 72.dp,
-                    bottom = 8.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                with(searchState) {
-                    searchResults?.ifEmpty {
-                        item { Text(stringResource(Res.string.no_results)) }
-                        return@LazyColumn
-                    }
-
-                    items(
-                        items = entries,
-                        key = { (entry) -> entry.entryId }
-                    ) { (entry, isBookmark, variantEntries) ->
-                        EntryCard(entry, isBookmark, variantEntries) {
-                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
-                        }
-                    }
-                }
-            }
-
-            AnimatedVisibility(
-                visible = isScrollingUp,
-                enter = expandVertically(),
-                exit = shrinkVertically()
-            ) {
-                val searchBarPadding by animateDpAsState(if (searchState.searchBarActive) 0.dp else 16.dp)
-                SearchBar(
-                    modifier = Modifier
-                        .padding(horizontal = searchBarPadding)
-                        .fillMaxWidth(),
-                    inputField = {
-                        SearchBarDefaults.InputField(
-                            query = searchTerm,
-                            onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
-                            onSearch = { onSearchEvent(SearchEvent.Search) },
-                            expanded = searchState.searchBarActive,
-                            onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
-                            placeholder = {
-                                Text(
-                                    text = stringResource(Res.string.search_dictionary),
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
-                            },
-                            leadingIcon = {
-                                if (searchState.searchBarActive) {
-                                    IconButton(
-                                        onClick = { onSearchEvent(SearchEvent.SetSearchBarActive(false)) }
-                                    ) {
-                                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
-                                    }
-                                } else Icon(Icons.Default.Search, "Search")
-                            },
-                            trailingIcon = {
-                                if (searchTerm.isNotBlank()) {
-                                    IconButton({ onSearchEvent(SearchEvent.UpdateSearchTerm("")) }) {
-                                        Icon(Icons.Default.Clear, "Clear")
-                                    }
-                                }
-                            }
-                        )
-                    },
-                    expanded = searchState.searchBarActive,
-                    onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
-                    tonalElevation = 50000.dp,
-                    shadowElevation = 6.dp,
-                    windowInsets = WindowInsets(0)
-                ) {
-                    val suggestionsState = rememberLazyListState()
+                Box {
+                    val resultsState = rememberLazyListState()
+                    val isScrollingUp by resultsState.rememberIsScrollingUp()
 
                     SideEffect {
-                        suggestionsState.requestScrollToItem(
-                            index = suggestionsState.firstVisibleItemIndex,
-                            scrollOffset = suggestionsState.firstVisibleItemScrollOffset
+                        resultsState.requestScrollToItem(
+                            index = resultsState.firstVisibleItemIndex,
+                            scrollOffset = resultsState.firstVisibleItemScrollOffset
                         )
                     }
 
-                    LazyColumn(state = suggestionsState) {
+                    LazyColumn(
+                        state = resultsState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 72.dp,
+                            bottom = 8.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         with(searchState) {
-                            items(recents) { recent ->
-                                SearchSuggestion(
-                                    suggestion = SDString(recent, mappedIpaHighlightRegex, detectedSearchScript),
-                                    onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent)) }
-                                ) {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.history),
-                                        contentDescription = "Recent"
-                                    )
-                                }
+                            searchResults?.ifEmpty {
+                                item { Text(stringResource(Res.string.no_results)) }
+                                return@LazyColumn
                             }
 
-                            suggestions?.let { suggestions ->
-                                items(suggestions) { suggestion ->
-                                    SearchSuggestion(
-                                        suggestion = suggestion,
-                                        onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(Res.drawable.suggestion),
-                                            contentDescription = "Suggestion"
+                            items(
+                                items = entries,
+                                key = { (entry) -> entry.entryId }
+                            ) { (entry, isBookmark, variantEntries) ->
+                                EntryCard(entry, isBookmark, variantEntries) {
+                                    onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
+                                }
+                            }
+                        }
+                    }
+
+                    this@Column.AnimatedVisibility(
+                        visible = isScrollingUp,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        val searchBarPadding by animateDpAsState(if (searchState.searchBarActive) 0.dp else 16.dp)
+                        SearchBar(
+                            modifier = Modifier
+                                .padding(horizontal = searchBarPadding)
+                                .fillMaxWidth(),
+                            inputField = {
+                                SearchBarDefaults.InputField(
+                                    query = searchTerm,
+                                    onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
+                                    onSearch = { onSearchEvent(SearchEvent.Search) },
+                                    expanded = searchState.searchBarActive,
+                                    onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
+                                    placeholder = {
+                                        Text(
+                                            text = stringResource(Res.string.search_dictionary),
+                                            color = MaterialTheme.colorScheme.tertiary
                                         )
+                                    },
+                                    leadingIcon = {
+                                        if (searchState.searchBarActive) {
+                                            IconButton(
+                                                onClick = { onSearchEvent(SearchEvent.SetSearchBarActive(false)) }
+                                            ) {
+                                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
+                                            }
+                                        } else Icon(Icons.Default.Search, "Search")
+                                    },
+                                    trailingIcon = {
+                                        if (searchTerm.isNotBlank()) {
+                                            IconButton({ onSearchEvent(SearchEvent.UpdateSearchTerm("")) }) {
+                                                Icon(Icons.Default.Clear, "Clear")
+                                            }
+                                        }
+                                    }
+                                )
+                            },
+                            expanded = searchState.searchBarActive,
+                            onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
+                            tonalElevation = 50000.dp,
+                            shadowElevation = 6.dp,
+                            windowInsets = WindowInsets(0)
+                        ) {
+                            val suggestionsState = rememberLazyListState()
+
+                            SideEffect {
+                                suggestionsState.requestScrollToItem(
+                                    index = suggestionsState.firstVisibleItemIndex,
+                                    scrollOffset = suggestionsState.firstVisibleItemScrollOffset
+                                )
+                            }
+
+                            LazyColumn(state = suggestionsState) {
+                                with(searchState) {
+                                    items(recents) { recent ->
+                                        SearchSuggestion(
+                                            suggestion = SDString(recent, mappedIpaHighlightRegex, detectedSearchScript),
+                                            onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent)) }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.history),
+                                                contentDescription = "Recent"
+                                            )
+                                        }
+                                    }
+
+                                    suggestions?.let { suggestions ->
+                                        items(suggestions) { suggestion ->
+                                            SearchSuggestion(
+                                                suggestion = suggestion,
+                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.suggestion),
+                                                    contentDescription = "Suggestion"
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
-
-            if (searchTerm.isNotEmpty() && resultsLoading) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
             }
         }
     }
