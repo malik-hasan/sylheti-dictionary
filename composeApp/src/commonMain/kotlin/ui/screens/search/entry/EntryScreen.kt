@@ -7,6 +7,9 @@ import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -97,22 +100,36 @@ fun EntryScreen(
                                 clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(containerCornerRounding))
                             ).background(MaterialTheme.colorScheme.surfaceContainerHighest)
                         ) {
-                            TopAppBar(
-                                colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-                                navigationIcon = { UpIconButton() },
-                                title = {},
-                                actions = {
-                                    SearchIconButton()
+                            with(animatedContentScope) {
+                                TopAppBar(
+                                    colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+                                    navigationIcon = {
+                                        UpIconButton(Modifier
+                                            .animateEnterExit(
+                                                enter = fadeIn(tween(delayMillis = 300)),
+                                                exit = fadeOut(tween(10))
+                                            )
+                                        )
+                                    },
+                                    title = {},
+                                    actions = {
+                                        SearchIconButton(Modifier
+                                            .animateEnterExit(
+                                                enter = fadeIn(tween(delayMillis = 300)),
+                                                exit = fadeOut(tween(10))
+                                            )
+                                        )
 
-                                    BookmarkIconButton(
-                                        modifier = Modifier.sharedElement(
-                                            state = rememberSharedContentState("bookmark-$entryId"),
-                                            animatedVisibilityScope = animatedContentScope
-                                        ),
-                                        isBookmark = state.isBookmark
-                                    ) { onEvent(EntryEvent.Bookmark(entryId, !state.isBookmark)) }
-                                }
-                            )
+                                        BookmarkIconButton(
+                                            modifier = Modifier.sharedElement(
+                                                state = rememberSharedContentState("bookmark-$entryId"),
+                                                animatedVisibilityScope = animatedContentScope
+                                            ),
+                                            isBookmark = state.isBookmark
+                                        ) { onEvent(EntryEvent.Bookmark(entryId, !state.isBookmark)) }
+                                    }
+                                )
+                            }
 
                             EntryHeader(
                                 modifier = Modifier
