@@ -162,8 +162,8 @@ fun EntryScreen(
                         modifier = Modifier.sharedBounds(
                             sharedContentState = rememberSharedContentState("expanding-details-$entryId"),
                             animatedVisibilityScope = animatedContentScope,
-                            enter = fadeIn() + expandVertically(),
-                            exit = fadeOut() + shrinkVertically()
+                            enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+                            exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top)
                         ),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
