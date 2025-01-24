@@ -11,9 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -72,7 +69,7 @@ fun EntryCard(
                     )
                 }
             ) {
-                Column {
+                Column(Modifier.padding(bottom = 12.dp)) {
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
                         EntryHeader(
                             modifier = Modifier
@@ -126,15 +123,6 @@ fun EntryCard(
                             includeAnimation = includeAnimation
                         )
                     }
-
-                    Spacer(Modifier
-                        .fillMaxWidth()
-                        .height(12.dp)
-                        .sharedBounds(
-                            sharedContentState = rememberSharedContentState("expanding-details-$entryId"),
-                            animatedVisibilityScope = animatedContentScope,
-                        )
-                    )
                 }
             }
         }
