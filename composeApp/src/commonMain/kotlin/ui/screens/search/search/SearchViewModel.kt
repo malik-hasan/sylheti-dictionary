@@ -341,7 +341,11 @@ class SearchViewModel(
                 }
             }
         }.distinct()
-            .sortedBy { it.displayIPA }
+            .sortedWith(
+                compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
+                    it.displayIPA
+                }
+            )
     }
 
     private suspend fun getSuggestions(

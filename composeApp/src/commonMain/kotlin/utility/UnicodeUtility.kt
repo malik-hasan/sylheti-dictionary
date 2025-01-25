@@ -12,70 +12,20 @@ object UnicodeUtility {
         ('A'..'Z').associateWith { setOf(it.lowercaseChar()) }
 
     // chars found in Sylheti IPA fields:
-    val SYLHETI_IPA_CHARS = setOf(
-        'a', 'b', 'd', 'ɖ', 'ʤ', 'ɖ', 'e', 'ɛ', 'f', 'ɡ', 'h', 'i', 'ɪ', 'k', 'l', 'm', 'ɱ', 'n', 'ɳ', 'ŋ',
+    val SYLHETI_IPA_CHARS = listOf(
+        'a', 'b', 'd', 'ɖ', 'ʤ', 'e', 'ɛ', 'f', 'ɡ', 'h', 'i', 'ɪ', 'k', 'l', 'm', 'ɱ', 'n', 'ɳ', 'ŋ',
         'o', 'ɔ', 'p', 'r', 'ɾ', 'ɽ', 's', 'ʂ', 'ʃ', 't', 'ʈ', 'ʧ', 'u', 'ʊ', 'x', 'z', 'ʒ'
     )
 
-    val SORTER = Comparator<String> { a, b ->
-        // TODO
-        if (a == b) return@Comparator 0
-
-        for (i in 0..minOf(a.length, b.length)) {
-            when {
-                a[i] < b[i] -> return@Comparator -1
-                a[i] > b[i] -> return@Comparator 1
-            }
+    val SYLHETI_IPA_SORTER = Comparator<String> { a, b ->
+        for (i in 0 until minOf(a.length, b.length)) {
+            with(SYLHETI_IPA_CHARS) {
+                indexOf(a[i]).compareTo(indexOf(b[i]))
+            }.takeIf { it != 0 }
+                ?.let { return@Comparator it }
         }
 
-        1
-    }
-
-    val SYLHETI_IPA_SORTER = compareBy<String> { word ->
-        val letter = word.firstOrNull { it in SYLHETI_IPA_CHARS }
-        // TODO
-
-        SYLHETI_IPA_CHARS.indexOf(letter)
-
-        when (letter) {
-            'a' -> 0
-            'b' -> 1
-            'd' -> 2
-            'ɖ' -> 3
-            'ʤ' -> 4
-            'e' -> 5
-            'ɛ' -> 6
-            'f' -> 7
-            'ɡ' -> 8
-            'h' -> 9
-            'i' -> 10
-            'ɪ' -> 11
-            'k' -> 12
-            'l' -> 13
-            'm' -> 14
-            'ɱ' -> 15
-            'n' -> 16
-            'ɳ' -> 17
-            'ŋ' -> 18
-            'o' -> 19
-            'ɔ' -> 20
-            'p' -> 21
-            'r' -> 22
-            'ɾ' -> 23
-            'ɽ' -> 24
-            's' -> 25
-            'ʂ' -> 26
-            'ʃ' -> 27
-            't' -> 28
-            'ʈ' -> 29
-            'ʧ' -> 30
-            'u' -> 31
-            'ʊ' -> 32
-            'x' -> 33
-            'z' -> 34
-            'ʒ' -> 35
-            else -> Int.MIN_VALUE
-        }
+        a.length - b.length
     }
 
     val LATIN_IPA_CHAR_MAP = mapOf(
