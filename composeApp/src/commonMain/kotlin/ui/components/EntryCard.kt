@@ -17,6 +17,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -47,20 +50,26 @@ fun EntryCard(
 ) {
     with(sharedTransitionScope) {
         with(entry) {
+            var isNavigatingToThisEntry by remember { mutableStateOf(false) }
+
             val containerCornerRounding by animatedContentScope.transition
                 .animateDp(label = "containerCornerAnimation") { state ->
-                    when (state) {
-                        EnterExitState.PreEnter -> 0.dp
-                        EnterExitState.Visible -> 12.dp
-                        EnterExitState.PostExit -> 0.dp
-                    }
+                    if (isNavigatingToThisEntry) {
+                        when (state) {
+                            EnterExitState.PreEnter -> 0.dp
+                            EnterExitState.Visible -> 24.dp
+                            EnterExitState.PostExit -> 0.dp
+                        }
+                    } else 24.dp
                 }
 
             val cardShape = RoundedCornerShape(containerCornerRounding)
             Card(modifier
                 .clip(cardShape)
-                .clickable { navController.navigate(Route.Entry(entry.entryId)) }
-                .ifTrue(includeAnimation) {
+                .clickable {
+                    isNavigatingToThisEntry = true
+                    navController.navigate(Route.Entry(entry.entryId))
+                }.ifTrue(includeAnimation) {
                     sharedBounds(
                         sharedContentState = rememberSharedContentState("container-$entryId"),
                         animatedVisibilityScope = animatedContentScope,

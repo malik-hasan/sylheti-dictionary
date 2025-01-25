@@ -86,9 +86,9 @@ fun EntryScreen(
                         val containerCornerRounding by animatedContentScope.transition
                             .animateDp(label = "containerCornerAnimation") { state ->
                                 when (state) {
-                                    EnterExitState.PreEnter -> 12.dp
+                                    EnterExitState.PreEnter -> 24.dp
                                     EnterExitState.Visible -> 0.dp
-                                    EnterExitState.PostExit -> 12.dp
+                                    EnterExitState.PostExit -> 24.dp
                                 }
                             }
 
