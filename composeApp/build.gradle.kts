@@ -87,6 +87,10 @@ kotlin {
             implementation(libs.sqldelight.sqlite.driver)
             implementation(libs.kotlinx.coroutines.swing)
         }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
     }
 }
 

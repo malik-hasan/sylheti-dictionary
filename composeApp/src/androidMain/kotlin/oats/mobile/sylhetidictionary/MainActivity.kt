@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import oats.mobile.sylhetidictionary.ui.app.App
 import org.koin.core.component.KoinComponent
-import ui.app.App
 
 class MainActivity : AppCompatActivity(), KoinComponent {
 

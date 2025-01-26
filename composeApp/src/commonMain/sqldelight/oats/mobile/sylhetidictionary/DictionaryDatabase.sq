@@ -1,5 +1,4 @@
 IMPORT kotlin.Boolean;
-IMPORT models.ComponentEntry;
 
 CREATE TABLE IF NOT EXISTS DictionaryEntry (
     entryId TEXT PRIMARY KEY NOT NULL,
