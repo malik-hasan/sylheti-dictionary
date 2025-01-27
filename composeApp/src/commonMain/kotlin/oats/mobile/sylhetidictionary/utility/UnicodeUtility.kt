@@ -17,81 +17,16 @@ object UnicodeUtility {
         'o', 'ɔ', 'p', 'r', 'ɾ', 'ɽ', 's', 'ʂ', 'ʃ', 't', 'ʈ', 'ʧ', 'u', 'ʊ', 'x', 'z', 'ʒ'
     ).withIndex().associate { it.value to it.index }
 
-    // ALL non-ipa chars go first
-//    val SYLHETI_IPA_SORTER = Comparator<String> { a, b ->
-//        for (i in 0 until minOf(a.length, b.length)) {
-//            with(SYLHETI_IPA_CHARS) {
-//                indexOf(a[i]).compareTo(indexOf(b[i]))
-//            }.takeIf { it != 0 }
-//                ?.let { return@Comparator it }
-//        }
-//
-//        a.length - b.length
-//    }
-
-//    val SYLHETI_IPA_SORTER = Comparator<String> { str1, str2 ->
-//        var i1 = 0
-//        var i2 = 0
-//        while (i1 < str1.length && i2 < str2.length) {
-//            var sortIndex1 = SYLHETI_IPA_CHARS[str1[i1]]
-//            while (sortIndex1 == null && ++i1 < str1.length) {
-//                sortIndex1 = SYLHETI_IPA_CHARS[str1[i1]]
-//            }
-//
-//            var sortIndex2 = SYLHETI_IPA_CHARS[str2[i2]]
-//            while (sortIndex2 == null && ++i2 < str2.length) {
-//                sortIndex2 = SYLHETI_IPA_CHARS[str2[i2]]
-//            }
-//
-//            if (sortIndex1 == null || sortIndex2 == null) break
-//
-//            val comparison = sortIndex1.compareTo(sortIndex2)
-//            if (comparison != 0) {
-//                return@Comparator comparison
-//            } else {
-//                i1++
-//                i2++
-//            }
-//        }
-//
-//        val indexComparison = i2.compareTo(i1)
-//        if (indexComparison != 0) {
-//            indexComparison
-//        } else str1.length - str2.length
-//    }
-
     val SYLHETI_IPA_SORTER = Comparator<String> { str1, str2 ->
-        val sortValues1 = str1.mapNotNull { SYLHETI_IPA_CHARS[it] }
-        val sortValues2 = str2.mapNotNull { SYLHETI_IPA_CHARS[it] }
+        val sortValues1 = str1.map { SYLHETI_IPA_CHARS[it] }.dropWhile { it == null }
+        val sortValues2 = str2.map { SYLHETI_IPA_CHARS[it] }.dropWhile { it == null }
 
         sortValues1.zip(sortValues2)
             .firstNotNullOfOrNull { (sortValue1, sortValue2) ->
-                sortValue1.compareTo(sortValue2).takeIf { it != 0 }
-            } ?: run {
-                val sortValuesSizeComparison = sortValues2.size - sortValues1.size
-                if (sortValuesSizeComparison != 0) {
-                    sortValuesSizeComparison
-                } else str1.length - str2.length
-            }
+                compareValues(sortValue1, sortValue2).takeIf { it != 0 }
+            } ?: (sortValues1.size - sortValues2.size).takeIf { it != 0 }
+            ?: ((str2.length - sortValues2.size) - (str1.length - sortValues1.size))
     }
-
-//        val comparison = validIndices1.zip(validIndices2)
-//            .map { (i1, i2) ->
-//                compareValues(SYLHETI_IPA_CHARS[str1[i1]], SYLHETI_IPA_CHARS[str2[i2]])
-//            }.firstOrNull { it != 0 }
-//
-//        if (comparison != null) {
-//            comparison
-//        } else {
-//            val validCount1 = validIndices1.count()
-//            val validCount2 = validIndices2.count()
-//            if (validCount1 != validCount2) {
-//                validCount2 - validCount1
-//            } else {
-//                str1.length - str2.length
-//            }
-//        }
-//    }
 
     val LATIN_IPA_CHAR_MAP = mapOf(
         'c' to setOf('ʧ'),

@@ -1,5 +1,0 @@
-package utility
-
-class UnicodeUtilityTest {
-
-}
