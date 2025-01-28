@@ -1,5 +1,3 @@
-package oats.mobile.sylhetidictionary
-
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import co.touchlab.kermit.Logger
