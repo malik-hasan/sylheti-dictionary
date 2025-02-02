@@ -18,14 +18,26 @@ object UnicodeUtility {
     ).withIndex().associate { it.value to it.index }
 
     val SYLHETI_IPA_SORTER = Comparator<String> { str1, str2 ->
-        val sortValues1 = str1.map { SYLHETI_IPA_CHARS[it] }.dropWhile { it == null }
-        val sortValues2 = str2.map { SYLHETI_IPA_CHARS[it] }.dropWhile { it == null }
+        var i1 = 0
+        var i2 = 0
+        while (i1 < str1.length && i2 < str2.length) {
+            val char1 = str1[i1]
+            val char2 = str2[i2]
 
-        sortValues1.zip(sortValues2)
-            .firstNotNullOfOrNull { (sortValue1, sortValue2) ->
-                compareValues(sortValue1, sortValue2).takeIf { it != 0 }
-            } ?: (sortValues1.size - sortValues2.size).takeIf { it != 0 }
-            ?: ((str2.length - sortValues2.size) - (str1.length - sortValues1.size))
+            val sortValue1 = SYLHETI_IPA_CHARS[char1]
+            val sortValue2 = SYLHETI_IPA_CHARS[char2]
+
+            val comparison = if (sortValue1 == null && sortValue2 == null) {
+                char1.compareTo(char2)
+            } else compareValues(sortValue1, sortValue2)
+
+            if (comparison != 0) return@Comparator comparison
+
+            i1++
+            i2++
+        }
+
+        str1.length - str2.length
     }
 
     val LATIN_IPA_CHAR_MAP = mapOf(
