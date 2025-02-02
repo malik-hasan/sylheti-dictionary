@@ -58,11 +58,11 @@ object UnicodeUtility {
         'y' to setOf('ɪ', 'ɛ')
     )
     
-    const val BENGALI_HOSHONTO = '্'
-    const val SYLHETI_HOSHONTO = '꠆'
+    private const val BENGALI_HOSHONTO = '্'
+    private const val SYLHETI_HOSHONTO = '꠆'
     val HOSHONTO = setOf(BENGALI_HOSHONTO, SYLHETI_HOSHONTO)
 
-    val BENGALI_DIACRITICS = setOf('া', 'ি', 'ী', 'ু', 'ূ', 'ৃ', 'ৄ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ', 'ঁ', 'ং', 'ঃ', '়', '্', 'ৢ', 'ৣ')
-    val NAGRI_DIACRITICS = setOf('ꠣ', 'ꠤ', 'ꠥ', 'ꠦ', 'ꠧ', 'ꠂ', '꠆', 'ꠋ', '꠬')
+    private val BENGALI_DIACRITICS = setOf('া', 'ি', 'ী', 'ু', 'ূ', 'ৃ', 'ৄ', 'ে', 'ৈ', 'ো', 'ৌ', 'ৗ', 'ঁ', 'ং', 'ঃ', '়', '্', 'ৢ', 'ৣ')
+    private val NAGRI_DIACRITICS = setOf('ꠣ', 'ꠤ', 'ꠥ', 'ꠦ', 'ꠧ', 'ꠂ', '꠆', 'ꠋ', '꠬')
     val ABUGIDA_DIACRITICS = BENGALI_DIACRITICS + NAGRI_DIACRITICS
 }
