@@ -61,7 +61,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -74,6 +73,7 @@ import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalMappedIpaHighlightRegex
+import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
 import oats.mobile.sylhetidictionary.ui.utils.SDString
 import oats.mobile.sylhetidictionary.ui.utils.rememberIsScrollingUp
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
@@ -89,8 +89,6 @@ import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.suggestion
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.set
 
 @Composable
@@ -300,6 +298,7 @@ fun SearchScreen(
                     var backgroundColor by remember { mutableStateOf(Color.Unspecified) }
                     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
                     var dragPosition by remember { mutableStateOf<Offset?>(null) }
+                    var touchedItem by remember { mutableStateOf<Char?>(null) }
 
                     Column(
                         modifier = Modifier
@@ -308,18 +307,27 @@ fun SearchScreen(
                             .background(backgroundColor)
                             .draggable(
                                 state = rememberDraggableState { delta ->
-                                    dragPosition = dragPosition?.copy(y = dragPosition!!.y + delta)
+                                    dragPosition?.let {
+                                        dragPosition = it.copy(y = it.y + delta)
+                                        touchedItem = itemCoordinates.entries.find { (_, coordinates) ->
+                                            coordinates.isAttached && coordinates.boundsInParent().contains(dragPosition!!)
+                                        }?.key
+                                    }
                                 },
                                 startDragImmediately = true,
                                 orientation = Orientation.Vertical,
                                 onDragStarted = { startedPosition ->
-                                    dragPosition = startedPosition
                                     backgroundColor = surfaceContainerColor
+                                    dragPosition = startedPosition
+                                    touchedItem = itemCoordinates.entries.find { (_, coordinates) ->
+                                        coordinates.isAttached && coordinates.boundsInParent().contains(startedPosition)
+                                    }?.key
                                 },
                                 onDragStopped = {
                                     delay(300)
                                     backgroundColor = Color.Unspecified
                                     dragPosition = null
+                                    touchedItem = null
                                 }
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -329,12 +337,19 @@ fun SearchScreen(
                         UnicodeUtility.SYLHETI_IPA_CHARS.keys.forEach { char ->
                             var readyToDraw by remember { mutableStateOf(false) }
                             var textStyle by remember { mutableStateOf(labelLarge) }
+//                            val interactionSource = remember { MutableInteractionSource() }
+//                            val isHovered by interactionSource.collectIsHoveredAsState()
+//
+//                            LaunchedEffect(isHovered) {
+//                                touchedItem = if (isHovered) char else null
+//                            }
 
                             Text(
                                 text = char.toString(),
                                 textAlign = TextAlign.Center,
                                 style = textStyle,
                                 softWrap = false,
+                                fontFamily = latinDisplayFontFamily,
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxWidth()
@@ -342,7 +357,7 @@ fun SearchScreen(
                                         if (readyToDraw) drawContent()
                                     }.onGloballyPositioned { coordinates ->
                                         itemCoordinates[char] = coordinates
-                                    },
+                                    },//.hoverable(interactionSource),
                                 onTextLayout = { textLayoutResult ->
                                     if (textLayoutResult.didOverflowHeight) {
                                         textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
@@ -351,29 +366,25 @@ fun SearchScreen(
                             )
                         }
 
-                        dragPosition?.let { offset ->
-                            itemCoordinates.entries.firstOrNull { (_, coordinates) ->
-                                coordinates.isAttached && coordinates.boundsInParent().contains(offset)
-                            }?.let { (char, coordinates) ->
-                                val indicatorOffset by animateIntOffsetAsState(
-                                    IntOffset(0, coordinates.boundsInParent().top.toInt())
-                                )
+                        itemCoordinates[touchedItem]?.let { coordinates ->
+                            val indicatorOffset by animateIntOffsetAsState(
+                                IntOffset(0, coordinates.boundsInParent().top.toInt())
+                            )
 
-                                Popup(offset = indicatorOffset) {
-                                    Box(
-                                        modifier = Modifier
-                                            .offset(8.dp)
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.tertiary),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = char.toString(),
-                                            color = MaterialTheme.colorScheme.onTertiary,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
+                            Popup(offset = indicatorOffset) {
+                                Box(
+                                    modifier = Modifier
+                                        .offset(8.dp)
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.tertiary),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = touchedItem.toString(),
+                                        color = MaterialTheme.colorScheme.onTertiary,
+                                        fontFamily = latinDisplayFontFamily
+                                    )
                                 }
                             }
                         }
