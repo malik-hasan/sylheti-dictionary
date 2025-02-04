@@ -334,60 +334,63 @@ fun SearchScreen(
                     ) {
                         val labelLarge = MaterialTheme.typography.labelLarge
 
-                        UnicodeUtility.SYLHETI_IPA_CHARS.keys.forEach { char ->
-                            var readyToDraw by remember { mutableStateOf(false) }
-                            var textStyle by remember { mutableStateOf(labelLarge) }
-//                            val interactionSource = remember { MutableInteractionSource() }
-//                            val isHovered by interactionSource.collectIsHoveredAsState()
-//
-//                            LaunchedEffect(isHovered) {
-//                                touchedItem = if (isHovered) char else null
-//                            }
+                        UnicodeUtility.SYLHETI_IPA_CHARS.keys.toMutableList()
+                            .apply { add(0, '-') }
+                            .filter { it !in UnicodeUtility.NON_INITIAL_CHARS }
+                            .forEach { char ->
+                                var readyToDraw by remember { mutableStateOf(false) }
+                                var textStyle by remember { mutableStateOf(labelLarge) }
+    //                            val interactionSource = remember { MutableInteractionSource() }
+    //                            val isHovered by interactionSource.collectIsHoveredAsState()
+    //
+    //                            LaunchedEffect(isHovered) {
+    //                                touchedItem = if (isHovered) char else null
+    //                            }
 
-                            Text(
-                                text = char.toString(),
-                                textAlign = TextAlign.Center,
-                                style = textStyle,
-                                softWrap = false,
-                                fontFamily = latinDisplayFontFamily,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxWidth()
-                                    .drawWithContent {
-                                        if (readyToDraw) drawContent()
-                                    }.onGloballyPositioned { coordinates ->
-                                        itemCoordinates[char] = coordinates
-                                    },//.hoverable(interactionSource),
-                                onTextLayout = { textLayoutResult ->
-                                    if (textLayoutResult.didOverflowHeight) {
-                                        textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
-                                    } else readyToDraw = true
-                                }
-                            )
-                        }
-
-                        itemCoordinates[touchedItem]?.let { coordinates ->
-                            val indicatorOffset by animateIntOffsetAsState(
-                                IntOffset(0, coordinates.boundsInParent().top.toInt())
-                            )
-
-                            Popup(offset = indicatorOffset) {
-                                Box(
+                                Text(
+                                    text = char.toString(),
+                                    textAlign = TextAlign.Center,
+                                    style = textStyle,
+                                    softWrap = false,
+                                    fontFamily = latinDisplayFontFamily,
                                     modifier = Modifier
-                                        .offset(8.dp)
-                                        .size(40.dp)
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.tertiary),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = touchedItem.toString(),
-                                        color = MaterialTheme.colorScheme.onTertiary,
-                                        fontFamily = latinDisplayFontFamily
-                                    )
+                                        .weight(1f)
+                                        .fillMaxWidth()
+                                        .drawWithContent {
+                                            if (readyToDraw) drawContent()
+                                        }.onGloballyPositioned { coordinates ->
+                                            itemCoordinates[char] = coordinates
+                                        },//.hoverable(interactionSource),
+                                    onTextLayout = { textLayoutResult ->
+                                        if (textLayoutResult.didOverflowHeight) {
+                                            textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
+                                        } else readyToDraw = true
+                                    }
+                                )
+                            }
+
+                            itemCoordinates[touchedItem]?.let { coordinates ->
+                                val indicatorOffset by animateIntOffsetAsState(
+                                    IntOffset(0, coordinates.boundsInParent().top.toInt())
+                                )
+
+                                Popup(offset = indicatorOffset) {
+                                    Box(
+                                        modifier = Modifier
+                                            .offset(8.dp)
+                                            .size(40.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.tertiary),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = touchedItem.toString(),
+                                            color = MaterialTheme.colorScheme.onTertiary,
+                                            fontFamily = latinDisplayFontFamily
+                                        )
+                                    }
                                 }
                             }
-                        }
                     }
                 }
             }

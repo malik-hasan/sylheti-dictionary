@@ -11,6 +11,8 @@ object UnicodeUtility {
     val CASE_MAP = ('a'..'z').associateWith { setOf(it.uppercaseChar()) } +
         ('A'..'Z').associateWith { setOf(it.lowercaseChar()) }
 
+    val NON_INITIAL_CHARS = listOf('ɱ', 'ŋ', 'ɽ', 'ʂ')
+
     // chars found in Sylheti IPA fields:
     val SYLHETI_IPA_CHARS = listOf(
         'a', 'b', 'd', 'ɖ', 'ʤ', 'e', 'ɛ', 'f', 'ɡ', 'h', 'i', 'ɪ', 'k', 'l', 'm', 'ɱ', 'n', 'ɳ', 'ŋ',
