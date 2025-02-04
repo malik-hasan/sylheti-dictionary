@@ -2,8 +2,11 @@ package oats.mobile.sylhetidictionary.ui.screens.search.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
@@ -324,7 +327,7 @@ fun SearchScreen(
                                     }?.key
                                 },
                                 onDragStopped = {
-                                    delay(300)
+                                    delay(700)
                                     backgroundColor = Color.Unspecified
                                     dragPosition = null
                                     touchedItem = null
@@ -371,14 +374,15 @@ fun SearchScreen(
 
                             itemCoordinates[touchedItem]?.let { coordinates ->
                                 val indicatorOffset by animateIntOffsetAsState(
-                                    IntOffset(0, coordinates.boundsInParent().top.toInt())
+                                    targetValue = IntOffset(0, coordinates.boundsInParent().top.toInt()),
+                                    animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
                                 )
 
                                 Popup(offset = indicatorOffset) {
                                     Box(
                                         modifier = Modifier
-                                            .offset(8.dp)
-                                            .size(40.dp)
+                                            .offset(12.dp)
+                                            .size(48.dp)
                                             .clip(CircleShape)
                                             .background(MaterialTheme.colorScheme.tertiary),
                                         contentAlignment = Alignment.Center
