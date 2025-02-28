@@ -167,7 +167,7 @@ class SearchViewModel(
             }
 
             val recentSearchesJob = async {
-                recentSearchesDataSource.getRecentSearches(settings.position.getQuery(globMappedIpaTerm), detectedSearchScript)
+                recentSearchesDataSource.getRecentSearches(settings.position.getPositionedQuery(globMappedIpaTerm), detectedSearchScript)
             }
 
             val searchResults = searchResultsJob.await()
@@ -312,7 +312,50 @@ class SearchViewModel(
         }.joinToString("")
 
     private fun getQueries(term: String, searchPosition: SearchPosition) =
-        Pair("*$term*", searchPosition.getQuery(term))
+        searchPosition.getPositionedQuery(term) to "*$term*"
+
+    private suspend fun getResults(
+        positionedQuery: String,
+        mappedIpaTerm: String,
+        detectedSearchScript: SearchScript,
+        searchPosition: SearchPosition,
+        searchLanguages: Map<SearchLanguage, Boolean>,
+        simpleQuery: String = "",
+        searchDefinitions: Boolean = false,
+        searchExamples: Boolean = false
+    ) {
+        when (detectedSearchScript) {
+            SearchScript.AUTO -> dictionaryDataSource.searchAll(
+                positionedQuery = positionedQuery,
+                simpleQuery = simpleQuery,
+                searchDefinitions = searchDefinitions,
+                searchExamples = searchExamples
+            )
+
+            SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(
+                positionedQuery = positionedQuery,
+                simpleQuery = simpleQuery,
+                searchDefinitions = searchDefinitions,
+                searchExamples = searchExamples
+            )
+
+            else -> detectedSearchScript.languages.filter { language ->
+                settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
+            }.flatMap { language ->
+                if (language == SearchLanguage.Latin.SYLHETI) {
+                    val (mappedIpaPositionedQuery, mappedIpaSimpleQuery) = getQueries(mappedIpaTerm, searchPosition)
+                    language.search(dictionaryDataSource, mappedIpaPositionedQuery, mappedIpaSimpleQuery, searchDefinitions, searchExamples)
+                } else {
+                    language.search(dictionaryDataSource, positionedQuery, simpleQuery, searchDefinitions, searchExamples)
+                }
+            }
+        }.distinct()
+            .sortedWith(
+                compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
+                    it.displayIPA
+                }
+            )
+    }
 
     private suspend fun getSearchResults(
         searchTerm: String,
@@ -349,13 +392,38 @@ class SearchViewModel(
     }
 
     private suspend fun getSuggestions(
-        searchResults: List<DictionaryEntry>?,
+        searchTerm: String,
+        searchPosition: SearchPosition,
+//        searchResults: List<DictionaryEntry>?,
         recentSearches: List<String>,
         detectedSearchScript: SearchScript,
         highlightRegex: Regex,
         mappedIpaHighlightRegex: Regex,
         searchLanguages: Map<SearchLanguage, Boolean>
-    ) = searchResults?.let { results ->
+    ) {
+        val positionedQuery = searchPosition.getSuggestionQuery(searchTerm)
+
+        when (detectedSearchScript) {
+            SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
+            SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
+
+            else -> detectedSearchScript.languages.filter { language ->
+                settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
+            }.flatMap { language ->
+                if (language == SearchLanguage.Latin.SYLHETI) {
+                    val (mappedIpaQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
+                    language.search(dictionaryDataSource, mappedIpaQuery, mappedIpaPositionedQuery, searchDefinitions, searchExamples)
+                } else {
+                    language.search(dictionaryDataSource, query, positionedQuery, searchDefinitions, searchExamples)
+                }
+            }
+        }.distinct()
+            .sortedWith(
+                compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
+                    it.displayIPA
+                }
+            )
+
         val suggestions = mutableSetOf<SDString>()
         results.forEach { entry ->
             yield()

@@ -82,19 +82,19 @@ WHERE gloss GLOB :positionedQuery
 
 searchAllDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionEN GLOB :query
-    OR definitionIPA GLOB :query
-    OR definitionBN GLOB :query
-    OR definitionNagri GLOB :query;
+WHERE definitionEN GLOB :simpleQuery
+    OR definitionIPA GLOB :simpleQuery
+    OR definitionBN GLOB :simpleQuery
+    OR definitionNagri GLOB :simpleQuery;
     
 searchAllExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleIPA GLOB :query
-    OR exampleBengali GLOB :query
-    OR exampleNagri GLOB :query
-    OR exampleEN GLOB :query
-    OR exampleBN GLOB :query;
+WHERE exampleIPA GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery
+    OR exampleNagri GLOB :simpleQuery
+    OR exampleEN GLOB :simpleQuery
+    OR exampleBN GLOB :simpleQuery;
 
 searchEnglishEntries:
 SELECT * FROM DictionaryEntry
@@ -102,12 +102,12 @@ WHERE gloss GLOB :positionedQuery;
 
 searchEnglishDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionEN GLOB :query;
+WHERE definitionEN GLOB :simpleQuery;
 
 searchEnglishExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleEN GLOB :query;
+WHERE exampleEN GLOB :simpleQuery;
 
 searchSylhetiLatinEntries:
 SELECT * FROM DictionaryEntry
@@ -116,21 +116,21 @@ WHERE lexemeIPA GLOB :positionedQuery
 
 searchSylhetiLatinDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionIPA GLOB :query;
+WHERE definitionIPA GLOB :simpleQuery;
 
 searchSylhetiLatinExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleIPA GLOB :query;
+WHERE exampleIPA GLOB :simpleQuery;
 
 searchBengaliDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionBN GLOB :query;
+WHERE definitionBN GLOB :simpleQuery;
 
 searchBengaliExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleBN GLOB :query;
+WHERE exampleBN GLOB :simpleQuery;
 
 searchSylhetiBengaliEntries:
 SELECT * FROM DictionaryEntry
@@ -140,7 +140,7 @@ WHERE lexemeBengali GLOB :positionedQuery
 searchSylhetiBengaliExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleBengali GLOB :query;
+WHERE exampleBengali GLOB :simpleQuery;
 
 searchNagriEntries:
 SELECT * FROM DictionaryEntry
@@ -149,12 +149,12 @@ WHERE lexemeNagri GLOB :positionedQuery
 
 searchNagriDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionNagri GLOB :query;
+WHERE definitionNagri GLOB :simpleQuery;
 
 searchNagriExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE X.exampleNagri GLOB :query;
+WHERE X.exampleNagri GLOB :simpleQuery;
 
 getExamples:
 SELECT * FROM Example

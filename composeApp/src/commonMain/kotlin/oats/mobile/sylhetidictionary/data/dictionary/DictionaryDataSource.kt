@@ -22,8 +22,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun searchAll(
-        query: String,
         positionedQuery: String,
+        simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
@@ -33,10 +33,10 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
                 val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
 
                 if (searchDefinitions) {
-                    result += searchAllDefinitions(query).executeAsList()
+                    result += searchAllDefinitions(simpleQuery).executeAsList()
                 }
                 if (searchExamples) {
-                    result += searchAllExamples(query).executeAsList()
+                    result += searchAllExamples(simpleQuery).executeAsList()
                 }
 
                 result
@@ -45,8 +45,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun searchEnglish(
-        query: String,
         positionedQuery: String,
+        simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
@@ -55,10 +55,10 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
             transactionWithResult {
                 val result = searchEnglishEntries(positionedQuery).executeAsList().toMutableList()
                 if (searchDefinitions) {
-                    result += searchEnglishDefinitions(query).executeAsList()
+                    result += searchEnglishDefinitions(simpleQuery).executeAsList()
                 }
                 if (searchExamples) {
-                    result += searchEnglishExamples(query).executeAsList()
+                    result += searchEnglishExamples(simpleQuery).executeAsList()
                 }
                 result
             }
@@ -66,8 +66,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun searchSylhetiLatin(
-        query: String,
         positionedQuery: String,
+        simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
@@ -76,10 +76,10 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
             transactionWithResult {
                 val result = searchSylhetiLatinEntries(positionedQuery).executeAsList().toMutableList()
                 if (searchDefinitions) {
-                    result += searchSylhetiLatinDefinitions(query).executeAsList()
+                    result += searchSylhetiLatinDefinitions(simpleQuery).executeAsList()
                 }
                 if (searchExamples) {
-                    result += searchSylhetiLatinExamples(query).executeAsList()
+                    result += searchSylhetiLatinExamples(simpleQuery).executeAsList()
                 }
                 result
             }
@@ -87,7 +87,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun searchBengali(
-        query: String,
+        simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
@@ -96,10 +96,10 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
             transactionWithResult {
                 val result = mutableListOf<DictionaryEntry>()
                 if (searchDefinitions) {
-                    result += searchBengaliDefinitions(query).executeAsList()
+                    result += searchBengaliDefinitions(simpleQuery).executeAsList()
                 }
                 if (searchExamples) {
-                    result += searchBengaliExamples(query).executeAsList()
+                    result += searchBengaliExamples(simpleQuery).executeAsList()
                 }
                 result
             }
@@ -107,8 +107,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun searchSylhetiBengali(
-        query: String,
         positionedQuery: String,
+        simpleQuery: String,
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
         yield()
@@ -116,7 +116,7 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
             transactionWithResult {
                 val result = searchSylhetiBengaliEntries(positionedQuery).executeAsList().toMutableList()
                 if (searchExamples) {
-                    result += searchSylhetiBengaliExamples(query).executeAsList()
+                    result += searchSylhetiBengaliExamples(simpleQuery).executeAsList()
                 }
                 result
             }
@@ -124,8 +124,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun searchNagri(
-        query: String,
         positionedQuery: String,
+        simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ): List<DictionaryEntry> = withContext(Dispatchers.IO) {
@@ -134,10 +134,10 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
             transactionWithResult {
                 val result = searchNagriEntries(positionedQuery).executeAsList().toMutableList()
                 if (searchDefinitions) {
-                    result += searchNagriDefinitions(query).executeAsList()
+                    result += searchNagriDefinitions(simpleQuery).executeAsList()
                 }
                 if (searchExamples) {
-                    result += searchNagriExamples(query).executeAsList()
+                    result += searchNagriExamples(simpleQuery).executeAsList()
                 }
                 result
             }
