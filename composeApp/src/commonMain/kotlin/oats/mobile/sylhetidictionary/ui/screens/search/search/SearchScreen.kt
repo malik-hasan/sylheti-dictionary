@@ -49,6 +49,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -70,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
+import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
@@ -168,6 +170,8 @@ fun SearchScreen(
                 } else Spacer(Modifier.height(4.dp))
 
                 Row {
+                    var touchedItem by remember { mutableStateOf<Char?>(null) }
+
                     Box(Modifier.weight(1f)) {
                         val resultsState = rememberLazyListState()
                         val isScrollingUp by resultsState.rememberIsScrollingUp()
@@ -177,6 +181,17 @@ fun SearchScreen(
                                 index = resultsState.firstVisibleItemIndex,
                                 scrollOffset = resultsState.firstVisibleItemScrollOffset
                             )
+                        }
+
+                        LaunchedEffect(touchedItem) {
+                            touchedItem?.let { char ->
+                                val touchedItemIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: 0
+                                resultsState.scrollToItem(
+                                    searchState.entries.indexOfFirst {
+                                        (UnicodeUtility.SYLHETI_IPA_CHARS[it.dictionaryEntry.displayIPA.first()] ?: 0) >= touchedItemIndex
+                                    }
+                                )
+                            }
                         }
 
                         LazyColumn(
@@ -301,7 +316,6 @@ fun SearchScreen(
                     var backgroundColor by remember { mutableStateOf(Color.Unspecified) }
                     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
                     var dragPosition by remember { mutableStateOf<Offset?>(null) }
-                    var touchedItem by remember { mutableStateOf<Char?>(null) }
 
                     Column(
                         modifier = Modifier
