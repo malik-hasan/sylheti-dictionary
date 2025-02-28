@@ -35,14 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
-import sylhetidictionary.composeapp.generated.resources.Res
-import sylhetidictionary.composeapp.generated.resources.component_lexemes
-import sylhetidictionary.composeapp.generated.resources.examples
-import sylhetidictionary.composeapp.generated.resources.related_words
-import sylhetidictionary.composeapp.generated.resources.variants
 import oats.mobile.sylhetidictionary.ui.components.BookmarkIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.EntryDefinitions
@@ -59,6 +51,14 @@ import oats.mobile.sylhetidictionary.ui.components.UpIconButton
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.component_lexemes
+import sylhetidictionary.composeapp.generated.resources.examples
+import sylhetidictionary.composeapp.generated.resources.related_words
+import sylhetidictionary.composeapp.generated.resources.variants
 
 @Composable
 fun EntryScreen(
@@ -122,7 +122,7 @@ fun EntryScreen(
 
                                         BookmarkIconButton(
                                             modifier = Modifier.sharedElement(
-                                                state = rememberSharedContentState("bookmark-$entryId"),
+                                                rememberSharedContentState("bookmark-$entryId"),
                                                 animatedVisibilityScope = animatedContentScope
                                             ),
                                             isBookmark = state.isBookmark

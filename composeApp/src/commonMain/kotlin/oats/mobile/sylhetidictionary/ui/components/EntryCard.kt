@@ -99,7 +99,7 @@ fun EntryCard(
                         BookmarkIconButton(
                             modifier = Modifier.ifTrue(includeAnimation) {
                                 sharedElement(
-                                    state = rememberSharedContentState("bookmark-$entryId"),
+                                    rememberSharedContentState("bookmark-$entryId"),
                                     animatedVisibilityScope = animatedContentScope
                                 )
                             },
