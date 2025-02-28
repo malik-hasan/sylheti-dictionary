@@ -186,11 +186,14 @@ fun SearchScreen(
                         LaunchedEffect(touchedItem) {
                             touchedItem?.let { char ->
                                 val touchedItemIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: 0
-                                resultsState.scrollToItem(
-                                    searchState.entries.indexOfFirst {
-                                        (UnicodeUtility.SYLHETI_IPA_CHARS[it.dictionaryEntry.displayIPA.first()] ?: 0) >= touchedItemIndex
-                                    }
-                                )
+
+                                val itemIndex = searchState.entries.indexOfFirst {
+                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.dictionaryEntry.displayIPA.first()] ?: 0) >= touchedItemIndex
+                                }.takeUnless { it < 0 } ?: searchState.entries.lastIndex.takeUnless { it < 0 }
+
+                                itemIndex?.let {
+                                    resultsState.scrollToItem(it)
+                                }
                             }
                         }
 
