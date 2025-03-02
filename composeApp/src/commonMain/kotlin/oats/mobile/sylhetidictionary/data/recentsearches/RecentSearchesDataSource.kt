@@ -4,14 +4,14 @@ import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 
 class RecentSearchesDataSource(private val dao: RecentSearchesDao) {
 
-    suspend fun getRecentSearches(term: String, script: SearchScript) = with(dao) {
-        if (term.isBlank()) {
+    suspend fun getRecentSearches(suggestionQuery: String?, script: SearchScript) = with(dao) {
+        if (suggestionQuery == null) {
             if (script == SearchScript.AUTO) {
                 getRecentSearches()
             } else getRecentSearches(script)
         } else if (script == SearchScript.AUTO) {
-            getRecentSearches(term)
-        } else getRecentSearches(term, script)
+            getRecentSearches(suggestionQuery)
+        } else getRecentSearches(suggestionQuery, script)
     }
 
     suspend fun cacheSearch(term: String, script: SearchScript) = dao.cacheSearch(term, script)

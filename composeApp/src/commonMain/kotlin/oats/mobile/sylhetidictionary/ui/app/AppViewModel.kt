@@ -29,8 +29,4 @@ class AppViewModel(val preferences: PreferencesDataSource): ViewModel() {
     val highlightRegex = stateFlowOf("",
         preferences.flow(PreferenceKey.HIGHLIGHT_REGEX, "")
     )
-
-    val mappedIpaHighlightRegex = stateFlowOf("",
-        preferences.flow(PreferenceKey.MAPPED_IPA_HIGHLIGHT_REGEX, "")
-    )
 }

@@ -9,20 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import oats.mobile.sylhetidictionary.Example
 import oats.mobile.sylhetidictionary.models.FieldTag
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.models.settings.Language
-import oats.mobile.sylhetidictionary.Example
+import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
+import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
+import oats.mobile.sylhetidictionary.ui.utils.SDString
+import oats.mobile.sylhetidictionary.utility.validateStrings
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.sylheti
-import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
-import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
-import oats.mobile.sylhetidictionary.ui.screens.search.LocalMappedIpaHighlightRegex
-import oats.mobile.sylhetidictionary.ui.utils.SDString
-import oats.mobile.sylhetidictionary.utility.validateStrings
 
 @Composable
 fun EntryExample(
@@ -30,8 +29,7 @@ fun EntryExample(
     index: Int,
     showIndex: Boolean,
     language: Language = LocalLanguage.current,
-    highlightRegex: Regex = LocalHighlightRegex.current,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
+    highlightRegex: Regex = LocalHighlightRegex.current
 ) {
     Row(
         modifier = Modifier.padding(horizontal = 16.dp),
@@ -67,7 +65,7 @@ fun EntryExample(
                         tag = stringResource(Res.string.sylheti),
                         bodies = listOfNotNull(
                             examples[FieldTag.IPA]?.let {
-                                SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
+                                SDString(it, highlightRegex, SearchScript.LATIN)
                             },
                             examples[FieldTag.EASTERN_NAGRI]?.let {
                                 SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
@@ -89,7 +87,7 @@ fun EntryExample(
                                 SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                             },
                             examples[FieldTag.BNIPA]?.let {
-                                SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
+                                SDString(it, highlightRegex, SearchScript.LATIN)
                             }
                         )
                     )

@@ -18,7 +18,6 @@ import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.ui.app.LocalNavController
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
-import oats.mobile.sylhetidictionary.ui.screens.search.LocalMappedIpaHighlightRegex
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.utils.SDString
 import oats.mobile.sylhetidictionary.ui.utils.ifTrue
@@ -34,7 +33,6 @@ fun SeeVariantButton(
     includeAnimation: Boolean = true,
     navController: NavController = LocalNavController.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
@@ -55,7 +53,7 @@ fun SeeVariantButton(
                     enableSelection = false,
                     tag = stringResource(Res.string.see),
                     bodies = listOfNotNull(
-                        SDString(variantEntry.citationIPA ?: variantEntry.lexemeIPA, mappedIpaHighlightRegex, SearchScript.LATIN),
+                        SDString(variantEntry.citationIPA ?: variantEntry.lexemeIPA, highlightRegex, SearchScript.LATIN),
                         (variantEntry.citationBengali ?: variantEntry.lexemeBengali)?.let {
                             SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                         },

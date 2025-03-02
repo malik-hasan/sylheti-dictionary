@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
-import oats.mobile.sylhetidictionary.ui.screens.search.LocalMappedIpaHighlightRegex
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.theme.bengaliBodyFontFamily
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
@@ -40,7 +39,6 @@ fun EntryHeader(
     modifier: Modifier = Modifier,
     includeAnimation: Boolean = true,
     highlightRegex: Regex = LocalHighlightRegex.current,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
@@ -49,7 +47,7 @@ fun EntryHeader(
             SelectionContainer {
                 Text(
                     text = buildAnnotatedString {
-                        appendHighlighted(displayIPA, mappedIpaHighlightRegex, latinBodyFontFamily)
+                        appendHighlighted(displayIPA, highlightRegex, latinBodyFontFamily)
 
                         displayBengali?.let {
                             append(" • ")

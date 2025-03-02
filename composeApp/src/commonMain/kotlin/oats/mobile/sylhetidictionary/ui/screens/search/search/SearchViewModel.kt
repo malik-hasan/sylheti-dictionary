@@ -8,14 +8,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
@@ -58,20 +56,16 @@ class SearchViewModel(
 
     val snackbarHostState = SnackbarHostState()
 
-    private val _settingsState = MutableStateFlow(SearchSettingsState())
     val settingsState = stateFlowOf(SearchSettingsState(),
         with(preferences) {
             combine(
-                _settingsState,
                 searchPosition,
                 searchScript,
                 searchLanguages,
-                combine(
-                    flow(PreferenceKey.SEARCH_DEFINITIONS, false),
-                    flow(PreferenceKey.SEARCH_EXAMPLES, false)
-                ) { searchDefinitions, searchExamples -> searchDefinitions to searchExamples }
-            ) { state, position, script, languages, (searchDefinitions, searchExamples) ->
-                state.copy(
+                flow(PreferenceKey.SEARCH_DEFINITIONS, false),
+                flow(PreferenceKey.SEARCH_EXAMPLES, false)
+            ) { position, script, languages, searchDefinitions, searchExamples ->
+                SearchSettingsState(
                     position = position,
                     script = script,
                     languages = languages.filterKeys { it in script.languages },
@@ -81,6 +75,15 @@ class SearchViewModel(
             }
         }
     )
+
+    init {
+        viewModelScope.launch {
+            // refresh search on settings change
+            settingsState.collectLatest {
+                getSearchResults()
+            }
+        }
+    }
 
     fun onSettingsEvent(event: SearchSettingsEvent) {
         when (event) {
@@ -125,81 +128,76 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
-    var resultsLoading by mutableStateOf(false)
-        private set
+    private var detectedSearchScript: SearchScript = SearchScript.AUTO
 
-    private val searchOutputsFlow = snapshotFlow { searchTerm }.combine(
-        settingsState
-    ) { searchTerm, settings ->
-        searchTerm to settings
-    }.transformLatest { (searchTerm, settings) ->
+    private var globSearchTerm: String? = null
+
+    private var highlightRegex: Regex = Regex("")
+
+    private val searchSuggestionsFlow = settingsState.combine(
+        snapshotFlow { searchTerm }
+    ) { settings, searchTerm ->
+        settings to searchTerm
+    }.transformLatest { (settings, searchTerm) ->
         coroutineScope {
-            resultsLoading = true
             val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
 
-            val globSearchTerm = mapChars(
-                term = mapChars(escapeGlobChars(searchTerm), UnicodeUtility.STOP_CHAR_MAP),
-                charMap = UnicodeUtility.CASE_MAP
-            )
-            val globMappedIpaTerm = mapChars(globSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, remapped = true)
-            val regexSearchTerm = mapChars(Regex.escape(searchTerm), UnicodeUtility.STOP_CHAR_MAP, forRegex = true)
-            val regexMappedIpaTerm = mapChars(regexSearchTerm, UnicodeUtility.LATIN_IPA_CHAR_MAP, forRegex = true)
-            val highlightRegex = Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
-            val mappedIpaHighlightRegex = Regex(regexMappedIpaTerm, RegexOption.IGNORE_CASE)
+            val globSearchTermJob = async {
+                searchTerm.takeIf { it.isNotBlank() }?.let {
+                    mapChars(
+                        term = mapChars(
+                            term = escapeGlobChars(it),
+                            charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.CASE_MAP
+                        ),
+                        charMap = UnicodeUtility.LATIN_IPA_CHAR_MAP,
+                        remapped = true
+                    )
+                }
+            }
 
-            Logger.d("SEARCH: GLOB: $globSearchTerm")
-            Logger.d("SEARCH: GLOB IPA: $globMappedIpaTerm")
-            Logger.d("SEARCH: REGEX: $regexSearchTerm")
-            Logger.d("SEARCH: REGEX IPA: $regexMappedIpaTerm")
-
-            val detectedSearchScript = detectSearchScriptJob.await()
-
-            val searchResultsJob = async {
-                getSearchResults(
-                    searchTerm = globSearchTerm,
-                    mappedIpaTerm = globMappedIpaTerm,
-                    detectedSearchScript = detectedSearchScript,
-                    searchPosition = settings.position,
-                    searchLanguages = settings.languages,
-                    searchDefinitions = settings.searchDefinitions,
-                    searchExamples = settings.searchExamples
+            val highlightRegexJob = async {
+                val regexSearchTerm = if (searchTerm.isBlank()) {
+                    ""
+                } else mapChars(
+                    term = Regex.escape(searchTerm.lowercase()),
+                    charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.LATIN_IPA_CHAR_MAP,
+                    forRegex = true
                 )
+
+                Logger.d("SEARCH: highlight regex: $regexSearchTerm")
+                Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
             }
 
-            val recentSearchesJob = async {
-                recentSearchesDataSource.getRecentSearches(settings.position.getPositionedQuery(globMappedIpaTerm), detectedSearchScript)
+
+            detectedSearchScript = detectSearchScriptJob.await()
+            globSearchTerm = globSearchTermJob.await()
+            highlightRegex = highlightRegexJob.await()
+
+            Logger.d("SEARCH: globbed search term: $globSearchTerm")
+
+            val suggestionQuery = globSearchTerm?.let(settings.position::getSuggestionQuery)
+
+            val recentSearchesJob = async { getRecentSearches(suggestionQuery) }
+            val suggestionsJob = suggestionQuery?.let {
+                async { getSuggestions(suggestionQuery) }
             }
 
-            val searchResults = searchResultsJob.await()
             val recentSearches = recentSearchesJob.await()
+            val suggestions = suggestionsJob?.await()?.filter { it !in recentSearches } ?: emptyList()
 
-            val suggestions = getSuggestions(
-                searchResults = searchResults,
-                recentSearches = recentSearches,
-                detectedSearchScript = detectedSearchScript,
-                highlightRegex = highlightRegex,
-                mappedIpaHighlightRegex = mappedIpaHighlightRegex,
-                searchLanguages = settings.languages
-            )
-
-            emit(SearchOutputs(
-                detectedSearchScript = detectedSearchScript,
-                searchResults = searchResults,
-                suggestions = suggestions,
-                recentSearches = recentSearches,
-                regexSearchTerm = regexSearchTerm,
-                regexMappedIpaTerm = regexMappedIpaTerm
-            ))
+            emit(recentSearches to suggestions)
         }
     }
 
-    private val searchEntryOutputsFlow = searchOutputsFlow.combine(
+    private val searchResultsState = MutableStateFlow<List<DictionaryEntry>?>(null)
+
+    private val cardEntriesFlow = searchResultsState.combine(
         bookmarksDataSource.bookmarksFlow
-    ) { searchOutputs, bookmarks ->
-        searchOutputs to bookmarks
-    }.transformLatest { (searchOutputs, bookmarks) ->
+    ) { searchResults, bookmarks ->
+        searchResults to bookmarks
+    }.transformLatest { (searchResults, bookmarks) ->
         coroutineScope {
-            val entries = (searchOutputs.searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
+            val entries = (searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
                 var variantEntries = emptyList<VariantEntry>()
                 if (it.definitionEN.isNullOrBlank()) {
                     variantEntries = dictionaryDataSource.getVariantEntries(it.entryId)
@@ -213,30 +211,21 @@ class SearchViewModel(
                 )
             }
 
-            launch {
-                preferences.set(PreferenceKey.HIGHLIGHT_REGEX, searchOutputs.regexSearchTerm)
-            }
-
-            launch {
-                preferences.set(PreferenceKey.MAPPED_IPA_HIGHLIGHT_REGEX, searchOutputs.regexMappedIpaTerm)
-            }
-
-            resultsLoading = false
-            emit(searchOutputs.toSearchEntryOutputs(entries))
+            emit(entries)
         }
     }
 
     private val _searchState = MutableStateFlow(SearchState())
     val searchState = stateFlowOf(SearchState(),
-        _searchState.combine(
-            searchEntryOutputsFlow.flowOn(Dispatchers.IO)
-        ) { state, (detectedSearchScript, searchResults, entries, suggestions, recentSearches) ->
+        combine(
+            _searchState,
+            searchSuggestionsFlow,
+            cardEntriesFlow
+        ) { state, (recentSearches, suggestions), entries ->
             state.copy(
-                searchResults = searchResults,
-                suggestions = suggestions,
-                entries = entries,
                 recents = recentSearches,
-                detectedSearchScript = detectedSearchScript
+                suggestions = suggestions,
+                entries = entries
             )
         }
     )
@@ -305,127 +294,85 @@ class SearchViewModel(
             charMap[char]?.let { altChars ->
                 var charSet = "$char${altChars.joinToString("")}"
                 if (!remapped) charSet = "[$charSet]"
-                if (forRegex) {
-                    "\\E$charSet\\Q" // escape the escaping
-                } else charSet
+                if (forRegex) charSet = "\\E$charSet\\Q" // escape the escaping
+                charSet
             } ?: char.toString()
         }.joinToString("")
 
-    private fun getQueries(term: String, searchPosition: SearchPosition) =
-        searchPosition.getPositionedQuery(term) to "*$term*"
-
     private suspend fun getResults(
         positionedQuery: String,
-        mappedIpaTerm: String,
-        detectedSearchScript: SearchScript,
-        searchPosition: SearchPosition,
-        searchLanguages: Map<SearchLanguage, Boolean>,
         simpleQuery: String = "",
         searchDefinitions: Boolean = false,
         searchExamples: Boolean = false
-    ) {
-        when (detectedSearchScript) {
-            SearchScript.AUTO -> dictionaryDataSource.searchAll(
+    ) = when (detectedSearchScript) {
+        // edge case: unable to detect search script
+        SearchScript.AUTO -> dictionaryDataSource.searchAll(
+            positionedQuery = positionedQuery,
+            simpleQuery = simpleQuery,
+            searchDefinitions = searchDefinitions,
+            searchExamples = searchExamples
+        )
+
+        SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(
+            positionedQuery = positionedQuery,
+            simpleQuery = simpleQuery,
+            searchDefinitions = searchDefinitions,
+            searchExamples = searchExamples
+        )
+
+        else -> detectedSearchScript.languages.filter { language ->
+            with(settingsState.value) {
+                script == SearchScript.AUTO || languages[language] == true
+            }
+        }.flatMap { language ->
+            language.search(
+                dictionaryDataSource = dictionaryDataSource,
                 positionedQuery = positionedQuery,
                 simpleQuery = simpleQuery,
                 searchDefinitions = searchDefinitions,
                 searchExamples = searchExamples
             )
+        }
+    }
 
-            SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(
+    private suspend fun getSearchResults() = globSearchTerm?.let {
+        _searchState.update { it.copy(resultsLoading = true) }
+        with(settingsState.value) {
+            val positionedQuery = position.getPositionedQuery(it)
+            Logger.d("SEARCH: getSearchResults() $positionedQuery")
+
+            getResults(
                 positionedQuery = positionedQuery,
-                simpleQuery = simpleQuery,
+                simpleQuery = SearchPosition.ANYWHERE.getPositionedQuery(it),
                 searchDefinitions = searchDefinitions,
                 searchExamples = searchExamples
-            )
-
-            else -> detectedSearchScript.languages.filter { language ->
-                settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
-            }.flatMap { language ->
-                if (language == SearchLanguage.Latin.SYLHETI) {
-                    val (mappedIpaPositionedQuery, mappedIpaSimpleQuery) = getQueries(mappedIpaTerm, searchPosition)
-                    language.search(dictionaryDataSource, mappedIpaPositionedQuery, mappedIpaSimpleQuery, searchDefinitions, searchExamples)
-                } else {
-                    language.search(dictionaryDataSource, positionedQuery, simpleQuery, searchDefinitions, searchExamples)
-                }
-            }
-        }.distinct()
-            .sortedWith(
-                compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
-                    it.displayIPA
-                }
-            )
+            ).distinct()
+                .sortedWith(
+                    compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
+                        it.displayIPA
+                    }
+                )
+        }.also {
+            _searchState.update { it.copy(resultsLoading = false) }
+        }
     }
 
-    private suspend fun getSearchResults(
-        searchTerm: String,
-        mappedIpaTerm: String,
-        detectedSearchScript: SearchScript,
-        searchPosition: SearchPosition,
-        searchLanguages:  Map<SearchLanguage, Boolean>,
-        searchDefinitions: Boolean,
-        searchExamples: Boolean
-    ) = searchTerm.takeIf { it.isNotBlank() }?.let {
-        val (query, positionedQuery) = getQueries(searchTerm, searchPosition)
-        Logger.d("SEARCH: getSearchResults() $positionedQuery")
-
-        when (detectedSearchScript) {
-            SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
-            SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
-
-            else -> detectedSearchScript.languages.filter { language ->
-                settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
-            }.flatMap { language ->
-                if (language == SearchLanguage.Latin.SYLHETI) {
-                    val (mappedIpaQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
-                    language.search(dictionaryDataSource, mappedIpaQuery, mappedIpaPositionedQuery, searchDefinitions, searchExamples)
-                } else {
-                    language.search(dictionaryDataSource, query, positionedQuery, searchDefinitions, searchExamples)
-                }
-            }
-        }.distinct()
-            .sortedWith(
-                compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
-                    it.displayIPA
-                }
+    private suspend fun getRecentSearches(suggestionQuery: String?) =
+        recentSearchesDataSource.getRecentSearches(
+            suggestionQuery = suggestionQuery,
+            script = detectedSearchScript
+        ).map { (term, script) ->
+            SDString(
+                text = term,
+                highlightRegex = highlightRegex,
+                script = script
             )
-    }
+        }
 
-    private suspend fun getSuggestions(
-        searchTerm: String,
-        searchPosition: SearchPosition,
-//        searchResults: List<DictionaryEntry>?,
-        recentSearches: List<String>,
-        detectedSearchScript: SearchScript,
-        highlightRegex: Regex,
-        mappedIpaHighlightRegex: Regex,
-        searchLanguages: Map<SearchLanguage, Boolean>
-    ) {
-        val positionedQuery = searchPosition.getSuggestionQuery(searchTerm)
-
-        when (detectedSearchScript) {
-            SearchScript.AUTO -> dictionaryDataSource.searchAll(query, positionedQuery, searchDefinitions, searchExamples)
-            SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(query, positionedQuery, searchDefinitions, searchExamples)
-
-            else -> detectedSearchScript.languages.filter { language ->
-                settingsState.value.script == SearchScript.AUTO || searchLanguages[language] == true
-            }.flatMap { language ->
-                if (language == SearchLanguage.Latin.SYLHETI) {
-                    val (mappedIpaQuery, mappedIpaPositionedQuery) = getQueries(mappedIpaTerm, searchPosition)
-                    language.search(dictionaryDataSource, mappedIpaQuery, mappedIpaPositionedQuery, searchDefinitions, searchExamples)
-                } else {
-                    language.search(dictionaryDataSource, query, positionedQuery, searchDefinitions, searchExamples)
-                }
-            }
-        }.distinct()
-            .sortedWith(
-                compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
-                    it.displayIPA
-                }
-            )
-
+    private suspend fun getSuggestions(suggestionQuery: String): Set<SDString> {
         val suggestions = mutableSetOf<SDString>()
-        results.forEach { entry ->
+
+        getResults(suggestionQuery).forEach { entry ->
             yield()
             with(entry) {
                 when {
@@ -436,14 +383,18 @@ class SearchViewModel(
                         suggestions += SDString(displayNagri!!, highlightRegex)
 
                     else -> {
-                        if (displayIPA.contains(mappedIpaHighlightRegex) && (
-                            searchLanguages.isEmpty() || searchLanguages[SearchLanguage.Latin.SYLHETI] == true
+                        val settings = settingsState.value
+                        val isAuto = settings.script == SearchScript.AUTO
+                        val searchLanguages = settings.languages
+
+                        if (displayIPA.contains(highlightRegex) && (
+                            isAuto || searchLanguages[SearchLanguage.Latin.SYLHETI] == true
                         )) {
-                            suggestions += SDString(displayIPA, mappedIpaHighlightRegex, SearchScript.LATIN)
+                            suggestions += SDString(displayIPA, highlightRegex, SearchScript.LATIN)
                         }
 
                         if (gloss?.contains(highlightRegex) == true && (
-                            searchLanguages.isEmpty() || searchLanguages[SearchLanguage.Latin.ENGLISH] == true
+                            isAuto || searchLanguages[SearchLanguage.Latin.ENGLISH] == true
                         )) {
                             suggestions += SDString(gloss, highlightRegex, SearchScript.LATIN)
                         }
@@ -451,7 +402,8 @@ class SearchViewModel(
                 }
             }
         }
-        suggestions.filter { it.text !in recentSearches }
+
+        return suggestions
     }
 
     private fun setSearchBarActive(value: Boolean) {
@@ -460,11 +412,15 @@ class SearchViewModel(
 
     private fun search() {
         setSearchBarActive(false)
-        with(searchState.value) {
+
+        viewModelScope.launch {
+            val searchResults = getSearchResults()
+            searchResultsState.update { searchResults }
+
+            preferences.set(PreferenceKey.HIGHLIGHT_REGEX, highlightRegex.pattern)
+
             if (searchResults?.isNotEmpty() == true) {
-                viewModelScope.launch {
-                    recentSearchesDataSource.cacheSearch(searchTerm, detectedSearchScript)
-                }
+                recentSearchesDataSource.cacheSearch(searchTerm, detectedSearchScript)
             }
         }
     }

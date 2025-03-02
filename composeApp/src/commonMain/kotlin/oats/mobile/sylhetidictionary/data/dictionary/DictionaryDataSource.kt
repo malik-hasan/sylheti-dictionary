@@ -23,9 +23,9 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
 
     suspend fun searchAll(
         positionedQuery: String,
-        simpleQuery: String,
-        searchDefinitions: Boolean,
-        searchExamples: Boolean
+        simpleQuery: String = "",
+        searchDefinitions: Boolean = false,
+        searchExamples: Boolean = false
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
@@ -46,9 +46,9 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
 
     suspend fun searchEnglish(
         positionedQuery: String,
-        simpleQuery: String,
-        searchDefinitions: Boolean,
-        searchExamples: Boolean
+        simpleQuery: String = "",
+        searchDefinitions: Boolean = false,
+        searchExamples: Boolean = false
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
@@ -67,9 +67,9 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
 
     suspend fun searchSylhetiLatin(
         positionedQuery: String,
-        simpleQuery: String,
-        searchDefinitions: Boolean,
-        searchExamples: Boolean
+        simpleQuery: String = "",
+        searchDefinitions: Boolean = false,
+        searchExamples: Boolean = false
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
@@ -88,8 +88,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
 
     suspend fun searchBengali(
         simpleQuery: String,
-        searchDefinitions: Boolean,
-        searchExamples: Boolean
+        searchDefinitions: Boolean = false,
+        searchExamples: Boolean = false
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
@@ -108,8 +108,8 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
 
     suspend fun searchSylhetiBengali(
         positionedQuery: String,
-        simpleQuery: String,
-        searchExamples: Boolean
+        simpleQuery: String = "",
+        searchExamples: Boolean = false
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
@@ -125,9 +125,9 @@ class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
 
     suspend fun searchNagri(
         positionedQuery: String,
-        simpleQuery: String,
-        searchDefinitions: Boolean,
-        searchExamples: Boolean
+        simpleQuery: String = "",
+        searchDefinitions: Boolean = false,
+        searchExamples: Boolean = false
     ): List<DictionaryEntry> = withContext(Dispatchers.IO) {
         yield()
         with(queries) {

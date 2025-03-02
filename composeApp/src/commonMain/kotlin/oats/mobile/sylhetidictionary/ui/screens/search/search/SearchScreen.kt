@@ -77,9 +77,7 @@ import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
-import oats.mobile.sylhetidictionary.ui.screens.search.LocalMappedIpaHighlightRegex
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
-import oats.mobile.sylhetidictionary.ui.utils.SDString
 import oats.mobile.sylhetidictionary.ui.utils.rememberIsScrollingUp
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
 import org.jetbrains.compose.resources.painterResource
@@ -106,7 +104,6 @@ fun SearchScreen(
 
     SearchScreen(
         assetLoaded = assetLoaded,
-        resultsLoading = resultsLoading,
         snackbarHostState = snackbarHostState,
         searchTerm = searchTerm,
         searchState = searchState,
@@ -120,14 +117,12 @@ fun SearchScreen(
 @Composable
 fun SearchScreen(
     assetLoaded: Boolean?,
-    resultsLoading: Boolean,
     snackbarHostState: SnackbarHostState,
     searchTerm: String,
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current
 ) {
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -165,7 +160,7 @@ fun SearchScreen(
             )
         } else {
             Column {
-                if (searchTerm.isNotEmpty() && resultsLoading) {
+                if (searchTerm.isNotBlank() && searchState.resultsLoading) {
                     LinearProgressIndicator(Modifier.fillMaxWidth())
                 } else Spacer(Modifier.height(4.dp))
 
@@ -210,7 +205,7 @@ fun SearchScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             with(searchState) {
-                                searchResults?.ifEmpty {
+                                if (searchState.entries.isEmpty() && searchTerm.isNotEmpty()) {
                                     item { Text(stringResource(Res.string.no_results)) }
                                     return@LazyColumn
                                 }
@@ -286,8 +281,8 @@ fun SearchScreen(
                                     with(searchState) {
                                         items(recents) { recent ->
                                             SearchSuggestion(
-                                                suggestion = SDString(recent, mappedIpaHighlightRegex, detectedSearchScript),
-                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent)) }
+                                                suggestion = recent,
+                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent.text)) }
                                             ) {
                                                 Icon(
                                                     painter = painterResource(Res.drawable.history),
@@ -296,17 +291,15 @@ fun SearchScreen(
                                             }
                                         }
 
-                                        suggestions?.let { suggestions ->
-                                            items(suggestions) { suggestion ->
-                                                SearchSuggestion(
-                                                    suggestion = suggestion,
-                                                    onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
-                                                ) {
-                                                    Icon(
-                                                        painter = painterResource(Res.drawable.suggestion),
-                                                        contentDescription = "Suggestion"
-                                                    )
-                                                }
+                                        items(suggestions) { suggestion ->
+                                            SearchSuggestion(
+                                                suggestion = suggestion,
+                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(Res.drawable.suggestion),
+                                                    contentDescription = "Suggestion"
+                                                )
                                             }
                                         }
                                     }

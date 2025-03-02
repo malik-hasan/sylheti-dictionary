@@ -17,7 +17,6 @@ object PreferenceKey {
     val SEARCH_EXAMPLES = booleanPreferencesKey("SEARCH_EXAMPLES")
 
     val HIGHLIGHT_REGEX = stringPreferencesKey("HIGHLIGHT_REGEX")
-    val MAPPED_IPA_HIGHLIGHT_REGEX = stringPreferencesKey("MAPPED_IPA_HIGHLIGHT_REGEX")
 
     val LANGUAGE = stringPreferencesKey("LANGUAGE")
     val THEME = intPreferencesKey("THEME")

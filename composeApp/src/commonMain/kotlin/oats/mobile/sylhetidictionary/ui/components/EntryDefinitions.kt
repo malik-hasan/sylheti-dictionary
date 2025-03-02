@@ -9,23 +9,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.models.FieldTag
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
-import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.models.settings.Language
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
-import oats.mobile.sylhetidictionary.ui.screens.search.LocalMappedIpaHighlightRegex
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
+import oats.mobile.sylhetidictionary.ui.utils.SDString
+import oats.mobile.sylhetidictionary.ui.utils.ifTrue
+import oats.mobile.sylhetidictionary.utility.validateStrings
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.bengali
 import sylhetidictionary.composeapp.generated.resources.english
 import sylhetidictionary.composeapp.generated.resources.sylheti
-import oats.mobile.sylhetidictionary.ui.utils.SDString
-import oats.mobile.sylhetidictionary.ui.utils.ifTrue
-import oats.mobile.sylhetidictionary.utility.validateStrings
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -35,7 +34,6 @@ fun EntryDefinitions(
     includeAnimation: Boolean = true,
     language: Language = LocalLanguage.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
-    mappedIpaHighlightRegex: Regex = LocalMappedIpaHighlightRegex.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
@@ -81,7 +79,7 @@ fun EntryDefinitions(
                                     SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                                 },
                                 definitions[FieldTag.BNIPA]?.let {
-                                    SDString(it, mappedIpaHighlightRegex, SearchScript.LATIN)
+                                    SDString(it, highlightRegex, SearchScript.LATIN)
                                 }
                             )
                         )
@@ -94,7 +92,7 @@ fun EntryDefinitions(
                         TaggedField(
                             tag = stringResource(Res.string.sylheti),
                             bodies = sylhetiTags.map {
-                                SDString(definitions[it]!!, mappedIpaHighlightRegex, SearchScript.LATIN)
+                                SDString(definitions[it]!!, highlightRegex, SearchScript.LATIN)
                             }
                         )
                     }

@@ -15,12 +15,13 @@ sealed interface SearchLanguage: SettingEnum {
     val settingsKey: Preferences.Key<Boolean>
     override val label: StringResource
 
-    val search: suspend DictionaryDataSource.(
-        simpleQuery: String,
+    suspend fun search(
+        dictionaryDataSource: DictionaryDataSource,
         positionedQuery: String,
+        simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) -> List<DictionaryEntry>
+    ): List<DictionaryEntry>
 
     companion object {
         val entries: List<SearchLanguage> =
@@ -29,43 +30,83 @@ sealed interface SearchLanguage: SettingEnum {
 
     enum class Latin(
         override val settingsKey: Preferences.Key<Boolean>,
-        override val label: StringResource,
-        override val search: suspend DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
+        override val label: StringResource
     ) : SearchLanguage {
 
         ENGLISH(
             settingsKey = PreferenceKey.ENGLISH_SEARCH_LANGUAGE,
-            label = Res.string.english,
-            search = DictionaryDataSource::searchEnglish
-        ),
+            label = Res.string.english
+        ) {
+            override suspend fun search(
+                dictionaryDataSource: DictionaryDataSource,
+                positionedQuery: String,
+                simpleQuery: String,
+                searchDefinitions: Boolean,
+                searchExamples: Boolean
+            ) = dictionaryDataSource.searchEnglish(
+                positionedQuery = positionedQuery,
+                simpleQuery = simpleQuery,
+                searchDefinitions = searchDefinitions,
+                searchExamples = searchExamples
+            )
+        },
 
         SYLHETI(
             settingsKey = PreferenceKey.LATIN_SCRIPT_SYLHETI_SEARCH_LANGUAGE,
             label = Res.string.sylheti,
-            search = DictionaryDataSource::searchSylhetiLatin
-        );
+        ) {
+            override suspend fun search(
+                dictionaryDataSource: DictionaryDataSource,
+                positionedQuery: String,
+                simpleQuery: String,
+                searchDefinitions: Boolean,
+                searchExamples: Boolean
+            ) = dictionaryDataSource.searchSylhetiLatin(
+                positionedQuery = positionedQuery,
+                simpleQuery = simpleQuery,
+                searchDefinitions = searchDefinitions,
+                searchExamples = searchExamples
+            )
+        }
     }
 
     enum class EasternNagri(
         override val settingsKey: Preferences.Key<Boolean>,
-        override val label: StringResource,
-        override val search: suspend DictionaryDataSource.(String, String, Boolean, Boolean) -> List<DictionaryEntry>
+        override val label: StringResource
     ) : SearchLanguage {
 
         BENGALI(
             settingsKey = PreferenceKey.BENGALI_SEARCH_LANGUAGE,
-            label = Res.string.bengali,
-            search = { query, _, searchDefinitions, searchExamples ->
-                searchBengali(query, searchDefinitions, searchExamples)
-            }
-        ),
+            label = Res.string.bengali
+        ) {
+            override suspend fun search(
+                dictionaryDataSource: DictionaryDataSource,
+                positionedQuery: String,
+                simpleQuery: String,
+                searchDefinitions: Boolean,
+                searchExamples: Boolean
+            ) = dictionaryDataSource.searchBengali(
+                simpleQuery = simpleQuery,
+                searchDefinitions = searchDefinitions,
+                searchExamples = searchExamples
+            )
+        },
 
         SYLHETI(
             settingsKey = PreferenceKey.EASTERN_NAGRI_SCRIPT_SYLHETI_SEARCH_LANGUAGE,
-            label = Res.string.sylheti,
-            search = { query, positionedQuery, _, searchExamples ->
-                searchSylhetiBengali(query, positionedQuery, searchExamples)
-            }
-        );
+            label = Res.string.sylheti
+        ) {
+            override suspend fun search(
+                dictionaryDataSource: DictionaryDataSource,
+                positionedQuery: String,
+                simpleQuery: String,
+                searchDefinitions: Boolean,
+                searchExamples: Boolean
+            ) = dictionaryDataSource.searchSylhetiBengali(
+                positionedQuery = positionedQuery,
+                simpleQuery = simpleQuery,
+                searchExamples = searchExamples
+            )
+        }
     }
 }
