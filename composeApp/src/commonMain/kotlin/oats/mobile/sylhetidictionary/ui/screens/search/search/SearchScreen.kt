@@ -205,7 +205,7 @@ fun SearchScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             with(searchState) {
-                                if (searchState.entries.isEmpty() && searchTerm.isNotEmpty()) {
+                                if (entries.isEmpty() && searchTerm.isNotEmpty() && !resultsLoading) {
                                     item { Text(stringResource(Res.string.no_results)) }
                                     return@LazyColumn
                                 }
@@ -255,7 +255,7 @@ fun SearchScreen(
                                         },
                                         trailingIcon = {
                                             if (searchTerm.isNotBlank()) {
-                                                IconButton({ onSearchEvent(SearchEvent.UpdateSearchTerm("")) }) {
+                                                IconButton({ onSearchEvent(SearchEvent.SelectSuggestion("")) }) {
                                                     Icon(Icons.Default.Clear, "Clear")
                                                 }
                                             }

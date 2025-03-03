@@ -134,13 +134,9 @@ class SearchViewModel(
 
     private var highlightRegex: Regex = Regex("")
 
-    private val searchSuggestionsFlow = settingsState.combine(
-        snapshotFlow { searchTerm }
-    ) { settings, searchTerm ->
-        settings to searchTerm
-    }.transformLatest { (settings, searchTerm) ->
+    private suspend fun processSearchQuery() {
         coroutineScope {
-            val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
+            val detectSearchScriptJob = async { detectSearchScript(searchTerm, settingsState.value.script) }
 
             val globSearchTermJob = async {
                 searchTerm.takeIf { it.isNotBlank() }?.let {
@@ -168,12 +164,20 @@ class SearchViewModel(
                 Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
             }
 
-
             detectedSearchScript = detectSearchScriptJob.await()
             globSearchTerm = globSearchTermJob.await()
-            highlightRegex = highlightRegexJob.await()
-
             Logger.d("SEARCH: globbed search term: $globSearchTerm")
+            highlightRegex = highlightRegexJob.await()
+        }
+    }
+
+    private val searchSuggestionsFlow = settingsState.combine(
+        snapshotFlow { searchTerm }
+    ) { settings, searchTerm ->
+        settings to searchTerm
+    }.transformLatest { (settings) ->
+        coroutineScope {
+            processSearchQuery()
 
             val suggestionQuery = globSearchTerm?.let(settings.position::getSuggestionQuery)
 
@@ -194,6 +198,7 @@ class SearchViewModel(
     private val cardEntriesFlow = searchResultsState.combine(
         bookmarksDataSource.bookmarksFlow
     ) { searchResults, bookmarks ->
+        Logger.d("SEARCH: cardEntries flow triggered")
         searchResults to bookmarks
     }.transformLatest { (searchResults, bookmarks) ->
         coroutineScope {
@@ -212,6 +217,7 @@ class SearchViewModel(
             }
 
             emit(entries)
+            _searchState.update { it.copy(resultsLoading = false) }
         }
     }
 
@@ -352,8 +358,6 @@ class SearchViewModel(
                         it.displayIPA
                     }
                 )
-        }.also {
-            _searchState.update { it.copy(resultsLoading = false) }
         }
     }
 
@@ -412,8 +416,11 @@ class SearchViewModel(
 
     private fun search() {
         setSearchBarActive(false)
+        Logger.d("SEARCH: searching...")
 
         viewModelScope.launch {
+            processSearchQuery()
+
             val searchResults = getSearchResults()
             searchResultsState.update { searchResults }
 
