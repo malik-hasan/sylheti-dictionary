@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import oats.mobile.sylhetidictionary.models.Bookmark
 
-class BookmarksDataSource(private val dao: BookmarksDao) {
+class BookmarksRepository(private val dao: BookmarksDao) {
 
     val bookmarksFlow: Flow<Set<String>>
         get() = dao.bookmarksFlow().map { bookmarks ->

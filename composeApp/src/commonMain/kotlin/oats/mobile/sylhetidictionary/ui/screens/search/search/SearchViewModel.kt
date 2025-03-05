@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.VariantEntry
-import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDataSource
+import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryDataSource
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDataSource
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
@@ -44,7 +44,7 @@ import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 class SearchViewModel(
     private val preferences: PreferencesDataSource,
     private val dictionaryDataSource: DictionaryDataSource,
-    private val bookmarksDataSource: BookmarksDataSource,
+    private val bookmarksRepository: BookmarksRepository,
     private val recentSearchesDataSource: RecentSearchesDataSource
 ) : ViewModel() {
 
@@ -196,7 +196,7 @@ class SearchViewModel(
     private val searchResultsState = MutableStateFlow<List<DictionaryEntry>?>(null)
 
     private val cardEntriesFlow = searchResultsState.combine(
-        bookmarksDataSource.bookmarksFlow
+        bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
         Logger.d("SEARCH: cardEntries flow triggered")
         searchResults to bookmarks
@@ -260,7 +260,7 @@ class SearchViewModel(
 
             is SearchEvent.Bookmark -> with(event) {
                 viewModelScope.launch {
-                    with(bookmarksDataSource) {
+                    with(bookmarksRepository) {
                         if (isBookmark) {
                             addBookmark(entryId)
                         } else removeBookmark(entryId)

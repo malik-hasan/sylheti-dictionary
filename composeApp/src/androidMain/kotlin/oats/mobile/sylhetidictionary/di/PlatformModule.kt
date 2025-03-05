@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import oats.mobile.sylhetidictionary.DictionaryDatabase
-import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDataSource
+import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDatabase
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
@@ -30,7 +30,7 @@ actual val platformModule = module {
     }.bind(SqlDriver::class)
 
     single {
-        BookmarksDataSource(
+        BookmarksRepository(
             roomDatabase<BookmarksDatabase>(get(), BookmarksDatabase.FILENAME).dao()
         )
     }

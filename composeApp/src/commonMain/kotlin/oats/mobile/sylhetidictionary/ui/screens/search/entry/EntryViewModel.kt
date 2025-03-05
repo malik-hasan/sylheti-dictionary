@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.VariantEntry
-import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDataSource
+import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryDataSource
 import oats.mobile.sylhetidictionary.models.CardEntry
 import oats.mobile.sylhetidictionary.models.toDictionaryEntry
@@ -17,7 +17,7 @@ import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 class EntryViewModel(
     private val entryId: String,
     private val dictionaryDataSource: DictionaryDataSource,
-    private val bookmarksDataSource: BookmarksDataSource
+    private val bookmarksRepository: BookmarksRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EntryState())
@@ -82,7 +82,7 @@ class EntryViewModel(
 
     val state = stateFlowOf(EntryState(),
         _state.combine(
-            bookmarksDataSource.bookmarksFlow
+            bookmarksRepository.bookmarksFlow
         ) { state, bookmarks ->
             state.copy(
                 isBookmark = entryId in bookmarks,
@@ -104,7 +104,7 @@ class EntryViewModel(
         when(event) {
             is EntryEvent.Bookmark -> with(event) {
                 viewModelScope.launch {
-                    with(bookmarksDataSource) {
+                    with(bookmarksRepository) {
                         if (isBookmark) {
                             addBookmark(entryId)
                         } else removeBookmark(entryId)
