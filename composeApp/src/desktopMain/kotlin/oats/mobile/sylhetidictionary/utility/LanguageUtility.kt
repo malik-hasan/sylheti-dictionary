@@ -3,11 +3,11 @@ package oats.mobile.sylhetidictionary.utility
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.delay
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesDataSource
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.models.settings.Language
 import java.util.Locale
 
-actual suspend fun PreferencesDataSource.refreshLanguage() {
+actual suspend fun PreferencesRepository.refreshLanguage() {
     val locale = Locale.getDefault()
     val languageCode = get(PreferenceKey.LANGUAGE)
     if (languageCode.isNullOrBlank()) {

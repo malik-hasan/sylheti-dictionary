@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesDataSource
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.setAppOSLanguage
 
-class SettingsViewModel(private val preferences: PreferencesDataSource): ViewModel() {
+class SettingsViewModel(private val preferences: PreferencesRepository): ViewModel() {
 
     val state = stateFlowOf(SettingsState(),
         combine(

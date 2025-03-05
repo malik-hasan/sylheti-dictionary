@@ -2,7 +2,6 @@ package oats.mobile.sylhetidictionary.data.bookmarks
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import oats.mobile.sylhetidictionary.models.Bookmark
 
 class BookmarksRepository(private val dao: BookmarksDao) {
 

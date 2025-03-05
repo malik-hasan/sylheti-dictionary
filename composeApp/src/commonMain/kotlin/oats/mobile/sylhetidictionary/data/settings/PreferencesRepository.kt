@@ -16,7 +16,7 @@ import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.models.settings.Language
 import oats.mobile.sylhetidictionary.models.settings.Theme
 
-class PreferencesDataSource(private val preferences: DataStore<Preferences>) {
+class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 
     private val safePreferencesFlow: Flow<Preferences>
         get() = preferences.data.catch { exception ->

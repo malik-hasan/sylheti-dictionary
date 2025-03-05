@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import oats.mobile.sylhetidictionary.models.RecentSearch
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 
 @Dao

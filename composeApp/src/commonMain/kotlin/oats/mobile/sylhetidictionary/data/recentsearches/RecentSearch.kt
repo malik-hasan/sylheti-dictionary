@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.models
+package oats.mobile.sylhetidictionary.data.recentsearches
 
 import androidx.room.Entity
 import kotlinx.datetime.Clock

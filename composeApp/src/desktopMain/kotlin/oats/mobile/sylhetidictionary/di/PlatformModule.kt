@@ -8,16 +8,16 @@ import oats.mobile.sylhetidictionary.DictionaryDatabase
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDatabase
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
-import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDataSource
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
-import oats.mobile.sylhetidictionary.data.settings.PreferencesDataSource
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import java.io.File
 
 actual val platformModule = module {
 
-    single { PreferencesDataSource(initDataStore { it }) }
+    single { PreferencesRepository(initDataStore { it }) }
 
     single {
         JdbcSqliteDriver("jdbc:sqlite:$DictionaryAsset").also(DictionaryDatabase.Schema::create)
@@ -30,7 +30,7 @@ actual val platformModule = module {
     }
 
     single {
-        RecentSearchesDataSource(
+        RecentSearchesRepository(
             roomDatabase<RecentSearchesDatabase>(RecentSearchesDatabase.FILENAME).dao()
         )
     }

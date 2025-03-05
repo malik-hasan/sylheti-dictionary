@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.VariantEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryDataSource
+import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
 import oats.mobile.sylhetidictionary.models.CardEntry
 import oats.mobile.sylhetidictionary.models.toDictionaryEntry
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 
 class EntryViewModel(
     private val entryId: String,
-    private val dictionaryDataSource: DictionaryDataSource,
+    private val dictionaryRepository: DictionaryRepository,
     private val bookmarksRepository: BookmarksRepository
 ) : ViewModel() {
 
@@ -24,7 +24,7 @@ class EntryViewModel(
 
     init {
         viewModelScope.launch {
-            with(dictionaryDataSource) {
+            with(dictionaryRepository) {
                 val entry = getEntry(entryId)
                 _state.update {
                     it.copy(entry = entry)

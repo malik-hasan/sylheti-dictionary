@@ -22,10 +22,10 @@ import kotlinx.coroutines.yield
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.VariantEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryDataSource
-import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDataSource
+import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesDataSource
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.models.CardEntry
 import oats.mobile.sylhetidictionary.models.displayBengali
 import oats.mobile.sylhetidictionary.models.displayIPA
@@ -42,10 +42,10 @@ import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchViewModel(
-    private val preferences: PreferencesDataSource,
-    private val dictionaryDataSource: DictionaryDataSource,
+    private val preferences: PreferencesRepository,
+    private val dictionaryRepository: DictionaryRepository,
     private val bookmarksRepository: BookmarksRepository,
-    private val recentSearchesDataSource: RecentSearchesDataSource
+    private val recentSearchesRepository: RecentSearchesRepository
 ) : ViewModel() {
 
     val assetLoaded = stateFlowOf(null,
@@ -202,10 +202,10 @@ class SearchViewModel(
         searchResults to bookmarks
     }.transformLatest { (searchResults, bookmarks) ->
         coroutineScope {
-            val entries = (searchResults ?: dictionaryDataSource.getEntries(bookmarks)).mapNotNull {
+            val entries = (searchResults ?: dictionaryRepository.getEntries(bookmarks)).mapNotNull {
                 var variantEntries = emptyList<VariantEntry>()
                 if (it.definitionEN.isNullOrBlank()) {
-                    variantEntries = dictionaryDataSource.getVariantEntries(it.entryId)
+                    variantEntries = dictionaryRepository.getVariantEntries(it.entryId)
                     if (variantEntries.isEmpty()) return@mapNotNull null
                 }
 
@@ -312,14 +312,14 @@ class SearchViewModel(
         searchExamples: Boolean = false
     ) = when (detectedSearchScript) {
         // edge case: unable to detect search script
-        SearchScript.AUTO -> dictionaryDataSource.searchAll(
+        SearchScript.AUTO -> dictionaryRepository.searchAll(
             positionedQuery = positionedQuery,
             simpleQuery = simpleQuery,
             searchDefinitions = searchDefinitions,
             searchExamples = searchExamples
         )
 
-        SearchScript.SYLHETI_NAGRI -> dictionaryDataSource.searchNagri(
+        SearchScript.SYLHETI_NAGRI -> dictionaryRepository.searchNagri(
             positionedQuery = positionedQuery,
             simpleQuery = simpleQuery,
             searchDefinitions = searchDefinitions,
@@ -332,7 +332,7 @@ class SearchViewModel(
             }
         }.flatMap { language ->
             language.search(
-                dictionaryDataSource = dictionaryDataSource,
+                dictionaryRepository = dictionaryRepository,
                 positionedQuery = positionedQuery,
                 simpleQuery = simpleQuery,
                 searchDefinitions = searchDefinitions,
@@ -362,7 +362,7 @@ class SearchViewModel(
     }
 
     private suspend fun getRecentSearches(suggestionQuery: String?) =
-        recentSearchesDataSource.getRecentSearches(
+        recentSearchesRepository.getRecentSearches(
             suggestionQuery = suggestionQuery,
             script = detectedSearchScript
         ).map { (term, script) ->
@@ -427,7 +427,7 @@ class SearchViewModel(
             preferences.set(PreferenceKey.HIGHLIGHT_REGEX, highlightRegex.pattern)
 
             if (searchResults?.isNotEmpty() == true) {
-                recentSearchesDataSource.cacheSearch(searchTerm, detectedSearchScript)
+                recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
             }
         }
     }

@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesDataSource
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.models.settings.Language
 import oats.mobile.sylhetidictionary.models.settings.Theme
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.refreshLanguage
 
-class AppViewModel(val preferences: PreferencesDataSource): ViewModel() {
+class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
 
     val language = stateFlowOf(Language.EN, preferences.language)
 

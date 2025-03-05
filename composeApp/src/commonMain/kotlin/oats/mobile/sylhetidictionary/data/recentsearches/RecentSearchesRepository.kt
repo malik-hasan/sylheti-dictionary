@@ -2,7 +2,7 @@ package oats.mobile.sylhetidictionary.data.recentsearches
 
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 
-class RecentSearchesDataSource(private val dao: RecentSearchesDao) {
+class RecentSearchesRepository(private val dao: RecentSearchesDao) {
 
     suspend fun getRecentSearches(suggestionQuery: String?, script: SearchScript) = with(dao) {
         if (suggestionQuery == null) {

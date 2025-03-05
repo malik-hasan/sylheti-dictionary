@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import oats.mobile.sylhetidictionary.models.Bookmark
 
 @Dao
 interface BookmarksDao {

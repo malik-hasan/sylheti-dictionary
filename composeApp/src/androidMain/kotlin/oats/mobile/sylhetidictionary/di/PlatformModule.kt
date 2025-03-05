@@ -10,7 +10,7 @@ import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDatabase
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
-import oats.mobile.sylhetidictionary.data.settings.PreferencesDataSource
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -18,7 +18,7 @@ import org.koin.dsl.module
 actual val platformModule = module {
 
     single {
-        PreferencesDataSource(
+        PreferencesRepository(
             initDataStore { fileName ->
                 androidContext().filesDir.resolve(fileName).absolutePath
             }
@@ -36,7 +36,7 @@ actual val platformModule = module {
     }
 
     single {
-        oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDataSource(
+        oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository(
             roomDatabase<RecentSearchesDatabase>(get(), RecentSearchesDatabase.FILENAME).dao()
         )
     }

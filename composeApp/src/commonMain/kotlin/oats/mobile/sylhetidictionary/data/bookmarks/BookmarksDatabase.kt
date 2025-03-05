@@ -4,7 +4,7 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
-import oats.mobile.sylhetidictionary.models.Bookmark
+import oats.mobile.sylhetidictionary.data.bookmarks.Bookmark
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect object BookmarksDatabaseConstructor : RoomDatabaseConstructor<BookmarksDatabase>

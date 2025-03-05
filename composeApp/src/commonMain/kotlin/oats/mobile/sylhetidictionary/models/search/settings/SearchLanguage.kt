@@ -2,7 +2,7 @@ package oats.mobile.sylhetidictionary.models.search.settings
 
 import androidx.datastore.preferences.core.Preferences
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryDataSource
+import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -16,7 +16,7 @@ sealed interface SearchLanguage: SettingEnum {
     override val label: StringResource
 
     suspend fun search(
-        dictionaryDataSource: DictionaryDataSource,
+        dictionaryRepository: DictionaryRepository,
         positionedQuery: String,
         simpleQuery: String,
         searchDefinitions: Boolean,
@@ -38,12 +38,12 @@ sealed interface SearchLanguage: SettingEnum {
             label = Res.string.english
         ) {
             override suspend fun search(
-                dictionaryDataSource: DictionaryDataSource,
+                dictionaryRepository: DictionaryRepository,
                 positionedQuery: String,
                 simpleQuery: String,
                 searchDefinitions: Boolean,
                 searchExamples: Boolean
-            ) = dictionaryDataSource.searchEnglish(
+            ) = dictionaryRepository.searchEnglish(
                 positionedQuery = positionedQuery,
                 simpleQuery = simpleQuery,
                 searchDefinitions = searchDefinitions,
@@ -56,12 +56,12 @@ sealed interface SearchLanguage: SettingEnum {
             label = Res.string.sylheti,
         ) {
             override suspend fun search(
-                dictionaryDataSource: DictionaryDataSource,
+                dictionaryRepository: DictionaryRepository,
                 positionedQuery: String,
                 simpleQuery: String,
                 searchDefinitions: Boolean,
                 searchExamples: Boolean
-            ) = dictionaryDataSource.searchSylhetiLatin(
+            ) = dictionaryRepository.searchSylhetiLatin(
                 positionedQuery = positionedQuery,
                 simpleQuery = simpleQuery,
                 searchDefinitions = searchDefinitions,
@@ -80,12 +80,12 @@ sealed interface SearchLanguage: SettingEnum {
             label = Res.string.bengali
         ) {
             override suspend fun search(
-                dictionaryDataSource: DictionaryDataSource,
+                dictionaryRepository: DictionaryRepository,
                 positionedQuery: String,
                 simpleQuery: String,
                 searchDefinitions: Boolean,
                 searchExamples: Boolean
-            ) = dictionaryDataSource.searchBengali(
+            ) = dictionaryRepository.searchBengali(
                 simpleQuery = simpleQuery,
                 searchDefinitions = searchDefinitions,
                 searchExamples = searchExamples
@@ -97,12 +97,12 @@ sealed interface SearchLanguage: SettingEnum {
             label = Res.string.sylheti
         ) {
             override suspend fun search(
-                dictionaryDataSource: DictionaryDataSource,
+                dictionaryRepository: DictionaryRepository,
                 positionedQuery: String,
                 simpleQuery: String,
                 searchDefinitions: Boolean,
                 searchExamples: Boolean
-            ) = dictionaryDataSource.searchSylhetiBengali(
+            ) = dictionaryRepository.searchSylhetiBengali(
                 positionedQuery = positionedQuery,
                 simpleQuery = simpleQuery,
                 searchExamples = searchExamples

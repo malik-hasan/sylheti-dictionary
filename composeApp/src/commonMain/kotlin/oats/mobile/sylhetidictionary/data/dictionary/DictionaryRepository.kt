@@ -11,7 +11,7 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.Variant
 import kotlin.random.Random
 
-class DictionaryDataSource(private val queries: DictionaryDatabaseQueries) {
+class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
     
     suspend fun getEntry(entryId: String) = withContext(Dispatchers.IO) {
         queries.getEntry(entryId).awaitAsOne()

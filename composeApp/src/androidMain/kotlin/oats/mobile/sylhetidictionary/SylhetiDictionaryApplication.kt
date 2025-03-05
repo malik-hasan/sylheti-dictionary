@@ -7,7 +7,7 @@ import kotlinx.coroutines.runBlocking
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesDataSource
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.initKoin
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.android.ext.android.inject
@@ -18,7 +18,7 @@ import java.io.IOException
 
 class SylhetiDictionaryApplication: Application() {
 
-    private val preferences: PreferencesDataSource by inject()
+    private val preferences: PreferencesRepository by inject()
 
     @OptIn(ExperimentalResourceApi::class)
     override fun onCreate() {

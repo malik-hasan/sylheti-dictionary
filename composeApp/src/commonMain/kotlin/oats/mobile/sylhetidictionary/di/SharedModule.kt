@@ -1,9 +1,9 @@
 package oats.mobile.sylhetidictionary.di
 
 import oats.mobile.sylhetidictionary.DictionaryDatabase
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryDataSource
-import oats.mobile.sylhetidictionary.ui.screens.search.entry.EntryViewModel
+import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
 import oats.mobile.sylhetidictionary.ui.app.AppViewModel
+import oats.mobile.sylhetidictionary.ui.screens.search.entry.EntryViewModel
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchViewModel
 import oats.mobile.sylhetidictionary.ui.screens.settings.SettingsViewModel
 import org.koin.core.module.dsl.viewModel
@@ -16,5 +16,5 @@ val sharedModule = module {
     viewModelOf(::SettingsViewModel)
     viewModel { parameters -> EntryViewModel(parameters.get(), get(), get()) }
 
-    single { DictionaryDataSource(DictionaryDatabase(get()).dictionaryDatabaseQueries) }
+    single { DictionaryRepository(DictionaryDatabase(get()).dictionaryDatabaseQueries) }
 }

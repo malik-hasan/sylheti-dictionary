@@ -4,7 +4,7 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
-import oats.mobile.sylhetidictionary.models.RecentSearch
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearch
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect object RecentSearchesDatabaseConstructor : RoomDatabaseConstructor<RecentSearchesDatabase>
