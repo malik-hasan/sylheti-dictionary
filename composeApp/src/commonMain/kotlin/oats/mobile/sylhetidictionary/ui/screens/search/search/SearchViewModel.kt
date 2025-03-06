@@ -12,7 +12,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
@@ -48,32 +47,6 @@ class SearchViewModel(
     private val recentSearchesRepository: RecentSearchesRepository
 ) : ViewModel() {
 
-    init {
-        viewModelScope.launch {
-            // refresh search on settings change
-            settingsState.collectLatest { settings ->
-                val (globSearchTerm, detectedSearchScript) = processSearchQuery(searchTerm, settings)
-                val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
-                searchResultsState.update { searchResults }
-            }
-        }
-
-        viewModelScope.launch {
-            // get suggestions on settings or search term change
-            settingsState.combine(
-                snapshotFlow { searchTerm }.debounce(300)
-            ) { settings, searchTerm ->
-                val (recents, suggestions) = getSearchSuggestions(searchTerm, settings)
-                _searchState.update {
-                    it.copy(
-                        recents = recents,
-                        suggestions = suggestions
-                    )
-                }
-            }.collect {}
-        }
-    }
-
     val assetLoaded = stateFlowOf(null,
         preferences.nullableFlow(PreferenceKey.CURRENT_DICTIONARY_VERSION).map { version ->
             version?.let { it >= 0 }
@@ -97,7 +70,7 @@ class SearchViewModel(
                     languages = languages.filterKeys { it in script.languages },
                     searchDefinitions = searchDefinitions,
                     searchExamples = searchExamples
-                )
+                ).also { refreshSearch(searchTerm, it) }
             }
         }
     )
@@ -145,9 +118,15 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
-    private val searchResultsState = MutableStateFlow<List<DictionaryEntry>?>(null)
+    private val searchSuggestionsFlow = settingsState.combine(
+        snapshotFlow { searchTerm }.debounce(300)
+    ) { settings, searchTerm ->
+        getSearchSuggestions(searchTerm, settings)
+    }
 
-    private val cardEntriesFlow = searchResultsState.combine(
+    private val searchResultsStateFlow = MutableStateFlow<List<DictionaryEntry>?>(null)
+
+    private val cardEntriesFlow = searchResultsStateFlow.combine(
         bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
         coroutineScope {
@@ -174,9 +153,12 @@ class SearchViewModel(
     val searchState = stateFlowOf(SearchState(),
         combine(
             _searchState,
+            searchSuggestionsFlow,
             cardEntriesFlow
-        ) { state, entries ->
+        ) { state, (recents, suggestions), entries ->
             state.copy(
+                recents = recents,
+                suggestions = suggestions,
                 entries = entries
             )
         }
@@ -225,16 +207,13 @@ class SearchViewModel(
         Logger.d("SEARCH: searching...")
 
         viewModelScope.launch {
-            val settings = settingsState.value
+            val searchTerm = searchTerm
 
-            val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
-
-            val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
-            searchResultsState.update { searchResults }
+            val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
 
             preferences.setHighlightRegex(highlightRegex)
 
-            if (searchResults?.isNotEmpty() == true) {
+            if (hasSearchResults) {
                 recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
             }
         }
@@ -373,6 +352,22 @@ class SearchViewModel(
                     }
                 )
         }
+    }
+
+    private suspend fun refreshSearch(
+        searchTerm: String,
+        settings: SearchSettingsState
+    ): Triple<Boolean, SearchScript, Regex> {
+        val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
+
+        val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
+        searchResultsStateFlow.update { searchResults }
+
+        return Triple(
+            !searchResults.isNullOrEmpty(),
+            detectedSearchScript,
+            highlightRegex
+        )
     }
 
     private suspend fun getSearchSuggestions(

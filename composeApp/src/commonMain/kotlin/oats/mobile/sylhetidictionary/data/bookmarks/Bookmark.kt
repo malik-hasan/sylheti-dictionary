@@ -10,10 +10,3 @@ data class Bookmark(
     @ColumnInfo("entry_id")
     val entryId: String
 )
-
-@Entity
-data class Bookmark(
-    @PrimaryKey
-    @ColumnInfo("entry_id")
-    val entryId: String
-)
