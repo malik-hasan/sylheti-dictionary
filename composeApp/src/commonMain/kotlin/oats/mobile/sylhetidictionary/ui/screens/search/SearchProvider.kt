@@ -38,7 +38,7 @@ fun SearchProvider(
         CompositionLocalProvider(
             LocalNavController provides rememberNavController(),
             LocalSharedTransitionScope provides this,
-            LocalHighlightRegex provides Regex(highlightRegex, RegexOption.IGNORE_CASE)
+            LocalHighlightRegex provides highlightRegex
         ) { content() }
     }
 }

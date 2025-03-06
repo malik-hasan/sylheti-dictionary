@@ -8,14 +8,14 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -40,13 +40,39 @@ import org.jetbrains.compose.resources.getString
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class)
 class SearchViewModel(
     private val preferences: PreferencesRepository,
     private val dictionaryRepository: DictionaryRepository,
     private val bookmarksRepository: BookmarksRepository,
     private val recentSearchesRepository: RecentSearchesRepository
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            // refresh search on settings change
+            settingsState.collectLatest { settings ->
+                val (globSearchTerm, detectedSearchScript) = processSearchQuery(searchTerm, settings)
+                val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
+                searchResultsState.update { searchResults }
+            }
+        }
+
+        viewModelScope.launch {
+            // get suggestions on settings or search term change
+            settingsState.combine(
+                snapshotFlow { searchTerm }.debounce(300)
+            ) { settings, searchTerm ->
+                val (recents, suggestions) = getSearchSuggestions(searchTerm, settings)
+                _searchState.update {
+                    it.copy(
+                        recents = recents,
+                        suggestions = suggestions
+                    )
+                }
+            }.collect {}
+        }
+    }
 
     val assetLoaded = stateFlowOf(null,
         preferences.nullableFlow(PreferenceKey.CURRENT_DICTIONARY_VERSION).map { version ->
@@ -75,15 +101,6 @@ class SearchViewModel(
             }
         }
     )
-
-    init {
-        viewModelScope.launch {
-            // refresh search on settings change
-            settingsState.collectLatest {
-                getSearchResults()
-            }
-        }
-    }
 
     fun onSettingsEvent(event: SearchSettingsEvent) {
         when (event) {
@@ -128,79 +145,11 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
-    private var detectedSearchScript: SearchScript = SearchScript.AUTO
-
-    private var globSearchTerm: String? = null
-
-    private var highlightRegex: Regex = Regex("")
-
-    private suspend fun processSearchQuery() {
-        coroutineScope {
-            val detectSearchScriptJob = async { detectSearchScript(searchTerm, settingsState.value.script) }
-
-            val globSearchTermJob = async {
-                searchTerm.takeIf { it.isNotBlank() }?.let {
-                    mapChars(
-                        term = mapChars(
-                            term = escapeGlobChars(it),
-                            charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.CASE_MAP
-                        ),
-                        charMap = UnicodeUtility.LATIN_IPA_CHAR_MAP,
-                        remapped = true
-                    )
-                }
-            }
-
-            val highlightRegexJob = async {
-                val regexSearchTerm = if (searchTerm.isBlank()) {
-                    ""
-                } else mapChars(
-                    term = Regex.escape(searchTerm.lowercase()),
-                    charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.LATIN_IPA_CHAR_MAP,
-                    forRegex = true
-                )
-
-                Logger.d("SEARCH: highlight regex: $regexSearchTerm")
-                Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
-            }
-
-            detectedSearchScript = detectSearchScriptJob.await()
-            globSearchTerm = globSearchTermJob.await()
-            Logger.d("SEARCH: globbed search term: $globSearchTerm")
-            highlightRegex = highlightRegexJob.await()
-        }
-    }
-
-    private val searchSuggestionsFlow = settingsState.combine(
-        snapshotFlow { searchTerm }
-    ) { settings, searchTerm ->
-        settings to searchTerm
-    }.transformLatest { (settings) ->
-        coroutineScope {
-            processSearchQuery()
-
-            val suggestionQuery = globSearchTerm?.let(settings.position::getSuggestionQuery)
-
-            val recentSearchesJob = async { getRecentSearches(suggestionQuery) }
-            val suggestionsJob = suggestionQuery?.let {
-                async { getSuggestions(suggestionQuery) }
-            }
-
-            val recentSearches = recentSearchesJob.await()
-            val suggestions = suggestionsJob?.await()?.filter { it !in recentSearches } ?: emptyList()
-
-            emit(recentSearches to suggestions)
-        }
-    }
-
     private val searchResultsState = MutableStateFlow<List<DictionaryEntry>?>(null)
 
     private val cardEntriesFlow = searchResultsState.combine(
         bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
-        Logger.d("SEARCH: cardEntries flow triggered")
-        searchResults to bookmarks
-    }.transformLatest { (searchResults, bookmarks) ->
         coroutineScope {
             val entries = (searchResults ?: dictionaryRepository.getEntries(bookmarks)).mapNotNull {
                 var variantEntries = emptyList<VariantEntry>()
@@ -216,8 +165,8 @@ class SearchViewModel(
                 )
             }
 
-            emit(entries)
             _searchState.update { it.copy(resultsLoading = false) }
+            entries
         }
     }
 
@@ -225,12 +174,9 @@ class SearchViewModel(
     val searchState = stateFlowOf(SearchState(),
         combine(
             _searchState,
-            searchSuggestionsFlow,
             cardEntriesFlow
-        ) { state, (recentSearches, suggestions), entries ->
+        ) { state, entries ->
             state.copy(
-                recents = recentSearches,
-                suggestions = suggestions,
                 entries = entries
             )
         }
@@ -270,6 +216,66 @@ class SearchViewModel(
         }
     }
 
+    private fun setSearchBarActive(value: Boolean) {
+        _searchState.update { it.copy(searchBarActive = value) }
+    }
+
+    private fun search() {
+        setSearchBarActive(false)
+        Logger.d("SEARCH: searching...")
+
+        viewModelScope.launch {
+            val settings = settingsState.value
+
+            val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
+
+            val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
+            searchResultsState.update { searchResults }
+
+            preferences.setHighlightRegex(highlightRegex)
+
+            if (searchResults?.isNotEmpty() == true) {
+                recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
+            }
+        }
+    }
+
+    private suspend fun processSearchQuery(searchTerm: String, settings: SearchSettingsState) = coroutineScope {
+        val globSearchTermJob = async {
+            searchTerm.takeIf { it.isNotBlank() }?.let {
+                mapChars(
+                    term = mapChars(
+                        term = escapeGlobChars(it),
+                        charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.CASE_MAP
+                    ),
+                    charMap = UnicodeUtility.LATIN_IPA_CHAR_MAP,
+                    remapped = true
+                )
+            }
+        }
+
+        val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
+
+        val highlightRegexJob = async {
+            val regexSearchTerm = if (searchTerm.isBlank()) {
+                ""
+            } else mapChars(
+                term = Regex.escape(searchTerm.lowercase()),
+                charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.LATIN_IPA_CHAR_MAP,
+                forRegex = true
+            )
+
+            Logger.d("SEARCH: highlight regex: $regexSearchTerm")
+            Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
+        }
+
+        Triple(
+            globSearchTermJob.await(),
+            detectSearchScriptJob.await(),
+            highlightRegexJob.await()
+        )
+    }
+
     private suspend fun detectSearchScript(term: String, searchScriptPreference: SearchScript): SearchScript {
         if (searchScriptPreference == SearchScript.AUTO) {
             term.forEach { char ->
@@ -305,8 +311,10 @@ class SearchViewModel(
             } ?: char.toString()
         }.joinToString("")
 
-    private suspend fun getResults(
+    private suspend fun getQueryResults(
         positionedQuery: String,
+        detectedSearchScript: SearchScript,
+        settings: SearchSettingsState,
         simpleQuery: String = "",
         searchDefinitions: Boolean = false,
         searchExamples: Boolean = false
@@ -327,7 +335,7 @@ class SearchViewModel(
         )
 
         else -> detectedSearchScript.languages.filter { language ->
-            with(settingsState.value) {
+            with(settings) {
                 script == SearchScript.AUTO || languages[language] == true
             }
         }.flatMap { language ->
@@ -341,17 +349,23 @@ class SearchViewModel(
         }
     }
 
-    private suspend fun getSearchResults() = globSearchTerm?.let {
+    private suspend fun getSearchResults(
+        globSearchTerm: String?,
+        detectedSearchScript: SearchScript,
+        settings: SearchSettingsState
+    ) = globSearchTerm?.let {
         _searchState.update { it.copy(resultsLoading = true) }
-        with(settingsState.value) {
+        with(settings) {
             val positionedQuery = position.getPositionedQuery(it)
             Logger.d("SEARCH: getSearchResults() $positionedQuery")
 
-            getResults(
+            getQueryResults(
                 positionedQuery = positionedQuery,
                 simpleQuery = SearchPosition.ANYWHERE.getPositionedQuery(it),
+                detectedSearchScript = detectedSearchScript,
                 searchDefinitions = searchDefinitions,
-                searchExamples = searchExamples
+                searchExamples = searchExamples,
+                settings = settings
             ).distinct()
                 .sortedWith(
                     compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
@@ -361,22 +375,52 @@ class SearchViewModel(
         }
     }
 
-    private suspend fun getRecentSearches(suggestionQuery: String?) =
-        recentSearchesRepository.getRecentSearches(
-            suggestionQuery = suggestionQuery,
-            script = detectedSearchScript
-        ).map { (term, script) ->
-            SDString(
-                text = term,
-                highlightRegex = highlightRegex,
-                script = script
-            )
+    private suspend fun getSearchSuggestions(
+        searchTerm: String,
+        settings: SearchSettingsState
+    ) = coroutineScope {
+        val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
+        val suggestionQuery = globSearchTerm?.let(settings.position::getSuggestionQuery)
+
+        val recentSearchesJob = async {
+            getRecentSearches(suggestionQuery, detectedSearchScript, highlightRegex)
+        }
+        val suggestionsJob = suggestionQuery?.let {
+            async { getSuggestions(suggestionQuery, detectedSearchScript, highlightRegex, settings) }
         }
 
-    private suspend fun getSuggestions(suggestionQuery: String): Set<SDString> {
+        val recentSearches = recentSearchesJob.await()
+        val suggestions = suggestionsJob?.await()?.filter {
+            it !in recentSearches
+        } ?: emptyList()
+
+        recentSearches to suggestions
+    }
+
+    private suspend fun getRecentSearches(
+        suggestionQuery: String?,
+        detectedSearchScript: SearchScript,
+        highlightRegex: Regex
+    ) = recentSearchesRepository.getRecentSearches(
+        suggestionQuery = suggestionQuery,
+        script = detectedSearchScript
+    ).map { (term, script) ->
+        SDString(
+            text = term,
+            highlightRegex = highlightRegex,
+            script = script
+        )
+    }
+
+    private suspend fun getSuggestions(
+        suggestionQuery: String,
+        detectedSearchScript: SearchScript,
+        highlightRegex: Regex,
+        settings: SearchSettingsState
+    ): Set<SDString> {
         val suggestions = mutableSetOf<SDString>()
 
-        getResults(suggestionQuery).forEach { entry ->
+        getQueryResults(suggestionQuery, detectedSearchScript, settings).forEach { entry ->
             yield()
             with(entry) {
                 when {
@@ -387,7 +431,6 @@ class SearchViewModel(
                         suggestions += SDString(displayNagri!!, highlightRegex)
 
                     else -> {
-                        val settings = settingsState.value
                         val isAuto = settings.script == SearchScript.AUTO
                         val searchLanguages = settings.languages
 
@@ -408,27 +451,5 @@ class SearchViewModel(
         }
 
         return suggestions
-    }
-
-    private fun setSearchBarActive(value: Boolean) {
-        _searchState.update { it.copy(searchBarActive = value) }
-    }
-
-    private fun search() {
-        setSearchBarActive(false)
-        Logger.d("SEARCH: searching...")
-
-        viewModelScope.launch {
-            processSearchQuery()
-
-            val searchResults = getSearchResults()
-            searchResultsState.update { searchResults }
-
-            preferences.set(PreferenceKey.HIGHLIGHT_REGEX, highlightRegex.pattern)
-
-            if (searchResults?.isNotEmpty() == true) {
-                recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
-            }
-        }
     }
 }

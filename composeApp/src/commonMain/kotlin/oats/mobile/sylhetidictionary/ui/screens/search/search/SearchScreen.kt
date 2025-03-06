@@ -278,29 +278,27 @@ fun SearchScreen(
                                 }
 
                                 LazyColumn(state = suggestionsState) {
-                                    with(searchState) {
-                                        items(recents) { recent ->
-                                            SearchSuggestion(
-                                                suggestion = recent,
-                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent.text)) }
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(Res.drawable.history),
-                                                    contentDescription = "Recent"
-                                                )
-                                            }
+                                    items(searchState.recents) { recent ->
+                                        SearchSuggestion(
+                                            suggestion = recent,
+                                            onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent.text)) }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.history),
+                                                contentDescription = "Recent"
+                                            )
                                         }
+                                    }
 
-                                        items(suggestions) { suggestion ->
-                                            SearchSuggestion(
-                                                suggestion = suggestion,
-                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(Res.drawable.suggestion),
-                                                    contentDescription = "Suggestion"
-                                                )
-                                            }
+                                    items(searchState.suggestions) { suggestion ->
+                                        SearchSuggestion(
+                                            suggestion = suggestion,
+                                            onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.suggestion),
+                                                contentDescription = "Suggestion"
+                                            )
                                         }
                                     }
                                 }
