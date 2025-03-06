@@ -70,7 +70,10 @@ class SearchViewModel(
                     languages = languages.filterKeys { it in script.languages },
                     searchDefinitions = searchDefinitions,
                     searchExamples = searchExamples
-                ).also { refreshSearch(searchTerm, it) }
+                ).also {
+                    Logger.d("SEARCH: refreshing search for settings change")
+                    refreshSearch(searchTerm, it)
+                }
             }
         }
     )
@@ -230,7 +233,7 @@ class SearchViewModel(
                     charMap = UnicodeUtility.LATIN_IPA_CHAR_MAP,
                     remapped = true
                 )
-            }
+            }.also { Logger.d("SEARCH: globSearchTerm: $it") }
         }
 
         val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
@@ -359,7 +362,6 @@ class SearchViewModel(
         settings: SearchSettingsState
     ): Triple<Boolean, SearchScript, Regex> {
         val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
-
         val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
         searchResultsStateFlow.update { searchResults }
 
@@ -376,6 +378,8 @@ class SearchViewModel(
     ) = coroutineScope {
         val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
         val suggestionQuery = globSearchTerm?.let(settings.position::getSuggestionQuery)
+
+        Logger.d("SEARCH: getSearchSuggestions() $suggestionQuery")
 
         val recentSearchesJob = async {
             getRecentSearches(suggestionQuery, detectedSearchScript, highlightRegex)
