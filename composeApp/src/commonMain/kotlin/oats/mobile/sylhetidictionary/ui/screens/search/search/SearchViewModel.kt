@@ -11,6 +11,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
@@ -130,9 +131,9 @@ class SearchViewModel(
         getSearchSuggestions(searchTerm, settings)
     }
 
-    private val searchResultsStateFlow = MutableStateFlow<List<DictionaryEntry>?>(null)
+    private val searchResultsSharedFlow = MutableSharedFlow<List<DictionaryEntry>?>()
 
-    private val cardEntriesFlow = searchResultsStateFlow.combine(
+    private val cardEntriesFlow = searchResultsSharedFlow.combine(
         bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
         coroutineScope {
@@ -366,7 +367,7 @@ class SearchViewModel(
     ): Triple<Boolean, SearchScript, Regex> {
         val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
         val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
-        searchResultsStateFlow.update { searchResults }
+        searchResultsSharedFlow.emit(searchResults)
 
         return Triple(
             !searchResults.isNullOrEmpty(),
