@@ -5,6 +5,5 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Bookmark(
-    @PrimaryKey
-    val entryId: String
+    @PrimaryKey val entryId: String
 )
