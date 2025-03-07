@@ -170,8 +170,7 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
             .groupBy {
                 yield()
                 it.variantIPA
-            }
-            .mapNotNull { grouping ->
+            }.mapNotNull { grouping ->
                 yield()
                 if (grouping.value.size > 1) {
                     val option1 = grouping.value.first()
