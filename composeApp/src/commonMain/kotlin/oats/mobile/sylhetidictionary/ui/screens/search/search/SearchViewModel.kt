@@ -14,7 +14,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -70,11 +72,12 @@ class SearchViewModel(
                     languages = languages.filterKeys { it in script.languages },
                     searchDefinitions = searchDefinitions,
                     searchExamples = searchExamples
-                ).also {
-                    Logger.d("SEARCH: refreshing search for settings change")
+                )
+            }.distinctUntilChanged()
+                .onEach {
+                    Logger.d("SEARCH: refreshing search for settings change $it")
                     refreshSearch(searchTerm, it)
                 }
-            }
         }
     )
 
