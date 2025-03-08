@@ -136,24 +136,21 @@ class SearchViewModel(
     private val cardEntriesFlow = searchResultsSharedFlow.combine(
         bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
-        coroutineScope {
-            val entries = (searchResults ?: dictionaryRepository.getEntries(bookmarks)).mapNotNull {
-                var variantEntries = emptyList<VariantEntry>()
-                if (it.definitionEN.isNullOrBlank()) {
-                    variantEntries = dictionaryRepository.getVariantEntries(it.entryId)
-                    if (variantEntries.isEmpty()) return@mapNotNull null
-                }
-
-                CardEntry(
-                    dictionaryEntry = it,
-                    isBookmark = it.entryId in bookmarks,
-                    variantEntries = variantEntries
-                )
+        (searchResults ?: dictionaryRepository.getEntries(bookmarks)).mapNotNull {
+            var variantEntries = emptyList<VariantEntry>()
+            if (it.definitionEN.isNullOrBlank()) {
+                variantEntries = dictionaryRepository.getVariantEntries(it.entryId)
+                if (variantEntries.isEmpty()) return@mapNotNull null
             }
 
-            _searchState.update { it.copy(resultsLoading = false) }
-            entries
+            CardEntry(
+                dictionaryEntry = it,
+                isBookmark = it.entryId in bookmarks,
+                variantEntries = variantEntries
+            )
         }
+    }.onEach {
+        _searchState.update { it.copy(resultsLoading = false) }
     }
 
     private val _searchState = MutableStateFlow(SearchState())

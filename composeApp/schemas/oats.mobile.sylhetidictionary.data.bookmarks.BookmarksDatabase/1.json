@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9ab1328e5fc603b4a50dc9011ffef7e1",
+    "identityHash": "ee56acfe813b3846bec2b36c208451e4",
     "entities": [
       {
         "tableName": "Bookmark",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`entry_id` TEXT NOT NULL, PRIMARY KEY(`entry_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`entryId` TEXT NOT NULL, PRIMARY KEY(`entryId`))",
         "fields": [
           {
             "fieldPath": "entryId",
-            "columnName": "entry_id",
+            "columnName": "entryId",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -18,14 +18,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "entry_id"
+            "entryId"
           ]
         }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9ab1328e5fc603b4a50dc9011ffef7e1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ee56acfe813b3846bec2b36c208451e4')"
     ]
   }
 }
