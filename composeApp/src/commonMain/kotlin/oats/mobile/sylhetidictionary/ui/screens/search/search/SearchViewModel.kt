@@ -273,6 +273,7 @@ class SearchViewModel(
                     }
                 }
             }
+            Logger.d("SEARCH: unable to detect search script from term: $term")
         }
         return searchScriptPreference
     }

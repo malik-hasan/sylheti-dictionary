@@ -21,8 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
 import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
+import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsEvent
+import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsState
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.also_search
@@ -31,8 +34,6 @@ import sylhetidictionary.composeapp.generated.resources.in_examples
 import sylhetidictionary.composeapp.generated.resources.search_languages
 import sylhetidictionary.composeapp.generated.resources.search_position
 import sylhetidictionary.composeapp.generated.resources.search_script
-import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsEvent
-import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsState
 
 @Composable
 fun SearchSettingsMenu(
@@ -111,13 +112,26 @@ fun SearchSettingsMenu(
             Column {
                 Text(stringResource(Res.string.also_search))
 
-                CheckboxSearchSetting(stringResource(Res.string.in_definitions), state.searchDefinitions) {
-                    onEvent(SearchSettingsEvent.ToggleSearchDefinitions(it))
+                val easternNagriEnabled = state.script == SearchScript.EASTERN_NAGRI
+                val bengaliEasternNagriEnabled = easternNagriEnabled
+                        && state.languages[SearchLanguage.EasternNagri.BENGALI] == true
+                        && state.languages[SearchLanguage.EasternNagri.SYLHETI] != true
+                val sylhetiEasternNagriEnabled = easternNagriEnabled
+                        && state.languages[SearchLanguage.EasternNagri.SYLHETI] == true
+                        && state.languages[SearchLanguage.EasternNagri.BENGALI] != true
+
+                AnimatedVisibility(!sylhetiEasternNagriEnabled) {
+                    CheckboxSearchSetting(
+                        label = stringResource(Res.string.in_definitions),
+                        checked = state.searchDefinitions || bengaliEasternNagriEnabled,
+                        enabled = !bengaliEasternNagriEnabled
+                    ) { onEvent(SearchSettingsEvent.ToggleSearchDefinitions(it)) }
                 }
 
-                CheckboxSearchSetting(stringResource(Res.string.in_examples), state.searchExamples) {
-                    onEvent(SearchSettingsEvent.ToggleSearchExamples(it))
-                }
+                CheckboxSearchSetting(
+                    label = stringResource(Res.string.in_examples),
+                    checked = state.searchExamples
+                ) { onEvent(SearchSettingsEvent.ToggleSearchExamples(it)) }
             }
         }
     }
