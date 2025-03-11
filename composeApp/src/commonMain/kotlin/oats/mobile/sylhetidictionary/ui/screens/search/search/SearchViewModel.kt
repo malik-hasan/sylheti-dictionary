@@ -306,7 +306,6 @@ class SearchViewModel(
         val search = when (detectedSearchScript) {
             SearchScript.AUTO -> ::searchAll // edge case: unable to detect search script
             SearchScript.SYLHETI_NAGRI -> ::searchSylhetiNagri
-
             SearchScript.EASTERN_NAGRI -> with(settings) {
                 when {
                     script == SearchScript.AUTO || SearchScript.EASTERN_NAGRI.languages.all { languages[it] == true } -> ::searchEasternNagri
