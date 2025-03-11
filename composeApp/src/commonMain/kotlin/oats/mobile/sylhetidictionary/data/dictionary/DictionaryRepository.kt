@@ -89,9 +89,9 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
     }
 
     suspend fun searchBengaliEasternNagri(
-        positionedQuery: String,
+        positionedQuery: String, // unused
         simpleQuery: String,
-        searchDefinitions: Boolean,
+        searchDefinitions: Boolean, // unused
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
         yield()
@@ -105,7 +105,7 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
     suspend fun searchSylhetiEasternNagri(
         positionedQuery: String,
         simpleQuery: String,
-        searchDefinitions: Boolean,
+        searchDefinitions: Boolean, // unused
         searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
         yield()

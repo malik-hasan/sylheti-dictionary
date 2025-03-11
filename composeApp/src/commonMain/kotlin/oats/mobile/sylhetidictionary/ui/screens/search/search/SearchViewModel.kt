@@ -307,16 +307,26 @@ class SearchViewModel(
             SearchScript.SYLHETI_NAGRI -> ::searchSylhetiNagri
 
             SearchScript.EASTERN_NAGRI -> with(settings) {
-                if (script == SearchScript.AUTO || languages[SearchLanguage.EasternNagri.BENGALI] == true) {
-                    ::searchEasternNagri
-                } else ::searchSylhetiEasternNagri
+                when {
+                    script == SearchScript.AUTO || SearchScript.EASTERN_NAGRI.languages.all { languages[it] == true } -> ::searchEasternNagri
+                    languages[SearchLanguage.EasternNagri.BENGALI] == true -> ::searchBengaliEasternNagri
+                    languages[SearchLanguage.EasternNagri.SYLHETI] == true -> ::searchSylhetiEasternNagri
+                    else -> { positionedQuery, simpleQuery, searchDefinitions, searchExamples ->
+                        Logger.e("SEARCH: searching Eastern Nagri with no languages enabled")
+                        searchEasternNagri(positionedQuery, simpleQuery, searchDefinitions, searchExamples)
+                    }
+                }
             }
 
             SearchScript.LATIN -> with(settings) {
                 when {
                     script == SearchScript.AUTO || SearchScript.LATIN.languages.all { languages[it] == true } -> ::searchLatin
+                    languages[SearchLanguage.Latin.ENGLISH] == true -> ::searchEnglish
                     languages[SearchLanguage.Latin.SYLHETI] == true -> ::searchSylhetiLatin
-                    else -> ::searchEnglish
+                    else -> { positionedQuery, simpleQuery, searchDefinitions, searchExamples ->
+                        Logger.e("SEARCH: searching Latin with no languages enabled")
+                        searchLatin(positionedQuery, simpleQuery, searchDefinitions, searchExamples)
+                    }
                 }
             }
         }
