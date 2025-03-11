@@ -7,7 +7,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
-import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.Variant
 import kotlin.random.Random
 
@@ -23,124 +22,131 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
 
     suspend fun searchAll(
         positionedQuery: String,
-        simpleQuery: String = "",
-        searchDefinitions: Boolean = false,
-        searchExamples: Boolean = false
+        simpleQuery: String,
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
-            transactionWithResult {
-                val result = searchAllEntries(positionedQuery).executeAsList().toMutableList()
-
-                if (searchDefinitions) {
-                    result += searchAllDefinitions(simpleQuery).executeAsList()
-                }
-                if (searchExamples) {
-                    result += searchAllExamples(simpleQuery).executeAsList()
-                }
-
-                result
-            }
+            when {
+                searchDefinitions && searchExamples -> searchAllEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+                searchDefinitions -> searchAllEntriesWithDefinitions(positionedQuery, simpleQuery)
+                searchExamples -> searchAllEntriesWithExamples(positionedQuery, simpleQuery)
+                else -> searchAllEntries(positionedQuery)
+            }.executeAsList()
         }
     }
 
     suspend fun searchEnglish(
         positionedQuery: String,
-        simpleQuery: String = "",
-        searchDefinitions: Boolean = false,
-        searchExamples: Boolean = false
+        simpleQuery: String,
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
-            transactionWithResult {
-                val result = searchEnglishEntries(positionedQuery).executeAsList().toMutableList()
-                if (searchDefinitions) {
-                    result += searchEnglishDefinitions(simpleQuery).executeAsList()
-                }
-                if (searchExamples) {
-                    result += searchEnglishExamples(simpleQuery).executeAsList()
-                }
-                result
-            }
+            when {
+                searchDefinitions && searchExamples -> searchEnglishEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+                searchDefinitions -> searchEnglishEntriesWithDefinitions(positionedQuery, simpleQuery)
+                searchExamples -> searchEnglishEntriesWithExamples(positionedQuery, simpleQuery)
+                else -> searchEnglishEntries(positionedQuery)
+            }.executeAsList()
         }
     }
 
     suspend fun searchSylhetiLatin(
         positionedQuery: String,
-        simpleQuery: String = "",
-        searchDefinitions: Boolean = false,
-        searchExamples: Boolean = false
-    ) = withContext(Dispatchers.IO) {
-        yield()
-        with(queries) {
-            transactionWithResult {
-                val result = searchSylhetiLatinEntries(positionedQuery).executeAsList().toMutableList()
-                if (searchDefinitions) {
-                    result += searchSylhetiLatinDefinitions(simpleQuery).executeAsList()
-                }
-                if (searchExamples) {
-                    result += searchSylhetiLatinExamples(simpleQuery).executeAsList()
-                }
-                result
-            }
-        }
-    }
-
-    suspend fun searchBengali(
         simpleQuery: String,
-        searchDefinitions: Boolean = false,
-        searchExamples: Boolean = false
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
-            transactionWithResult {
-                val result = mutableListOf<DictionaryEntry>()
-                if (searchDefinitions) {
-                    result += searchBengaliDefinitions(simpleQuery).executeAsList()
-                }
-                if (searchExamples) {
-                    result += searchBengaliExamples(simpleQuery).executeAsList()
-                }
-                result
-            }
+            when {
+                searchDefinitions && searchExamples -> searchSylhetiLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+                searchDefinitions -> searchSylhetiLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
+                searchExamples -> searchSylhetiLatinEntriesWithExamples(positionedQuery, simpleQuery)
+                else -> searchSylhetiLatinEntries(positionedQuery)
+            }.executeAsList()
         }
     }
 
-    suspend fun searchSylhetiBengali(
+    suspend fun searchLatin(
         positionedQuery: String,
-        simpleQuery: String = "",
-        searchExamples: Boolean = false
+        simpleQuery: String,
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
     ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
-            transactionWithResult {
-                val result = searchSylhetiBengaliEntries(positionedQuery).executeAsList().toMutableList()
-                if (searchExamples) {
-                    result += searchSylhetiBengaliExamples(simpleQuery).executeAsList()
-                }
-                result
-            }
+            when {
+                searchDefinitions && searchExamples -> searchLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+                searchDefinitions -> searchLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
+                searchExamples -> searchLatinEntriesWithExamples(positionedQuery, simpleQuery)
+                else -> searchLatinEntries(positionedQuery)
+            }.executeAsList()
         }
     }
 
-    suspend fun searchNagri(
+    suspend fun searchBengaliEasternNagri(
         positionedQuery: String,
-        simpleQuery: String = "",
-        searchDefinitions: Boolean = false,
-        searchExamples: Boolean = false
-    ): List<DictionaryEntry> = withContext(Dispatchers.IO) {
+        simpleQuery: String,
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
+    ) = withContext(Dispatchers.IO) {
         yield()
         with(queries) {
-            transactionWithResult {
-                val result = searchNagriEntries(positionedQuery).executeAsList().toMutableList()
-                if (searchDefinitions) {
-                    result += searchNagriDefinitions(simpleQuery).executeAsList()
-                }
-                if (searchExamples) {
-                    result += searchNagriExamples(simpleQuery).executeAsList()
-                }
-                result
-            }
+            if (searchExamples) {
+                searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
+            } else searchBengaliEasternNagriDefinitions(simpleQuery)
+        }.executeAsList()
+    }
+
+    suspend fun searchSylhetiEasternNagri(
+        positionedQuery: String,
+        simpleQuery: String,
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
+    ) = withContext(Dispatchers.IO) {
+        yield()
+        with(queries) {
+            if (searchExamples) {
+                searchSylhetiEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
+            } else searchSylhetiEasternNagriEntries(positionedQuery)
+        }.executeAsList()
+    }
+
+    suspend fun searchEasternNagri(
+        positionedQuery: String,
+        simpleQuery: String,
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
+    ) = withContext(Dispatchers.IO) {
+        yield()
+        with(queries) {
+            when {
+                searchDefinitions && searchExamples -> searchEasternNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+                searchDefinitions -> searchEasternNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
+                searchExamples -> searchEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
+                else -> searchSylhetiEasternNagriEntries(positionedQuery)
+            }.executeAsList()
+        }
+    }
+
+    suspend fun searchSylhetiNagri(
+        positionedQuery: String,
+        simpleQuery: String,
+        searchDefinitions: Boolean,
+        searchExamples: Boolean
+    ) = withContext(Dispatchers.IO) {
+        yield()
+        with(queries) {
+            when {
+                searchDefinitions && searchExamples -> searchSylhetiNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+                searchDefinitions -> searchSylhetiNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
+                searchExamples -> searchSylhetiNagriEntriesWithExamples(positionedQuery, simpleQuery)
+                else -> searchSylhetiNagriEntries(positionedQuery)
+            }.executeAsList()
         }
     }
 

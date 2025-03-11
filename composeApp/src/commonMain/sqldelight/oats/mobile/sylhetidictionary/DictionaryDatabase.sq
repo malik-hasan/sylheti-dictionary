@@ -80,17 +80,51 @@ WHERE gloss GLOB :positionedQuery
     OR lexemeNagri GLOB :positionedQuery
     OR citationNagri GLOB :positionedQuery;
 
-searchAllDefinitions:
+searchAllEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionEN GLOB :simpleQuery
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery
+    OR definitionEN GLOB :simpleQuery
     OR definitionIPA GLOB :simpleQuery
     OR definitionBN GLOB :simpleQuery
     OR definitionNagri GLOB :simpleQuery;
-    
-searchAllExamples:
+
+searchAllEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleIPA GLOB :simpleQuery
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery
+    OR exampleIPA GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery
+    OR exampleNagri GLOB :simpleQuery
+    OR exampleEN GLOB :simpleQuery
+    OR exampleBN GLOB :simpleQuery;
+
+searchAllEntriesWithDefinitionsAndExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery
+    OR definitionEN GLOB :simpleQuery
+    OR definitionIPA GLOB :simpleQuery
+    OR definitionBN GLOB :simpleQuery
+    OR definitionNagri GLOB :simpleQuery
+    OR exampleIPA GLOB :simpleQuery
     OR exampleBengali GLOB :simpleQuery
     OR exampleNagri GLOB :simpleQuery
     OR exampleEN GLOB :simpleQuery
@@ -100,61 +134,154 @@ searchEnglishEntries:
 SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery;
 
-searchEnglishDefinitions:
+searchEnglishEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionEN GLOB :simpleQuery;
+WHERE gloss GLOB :positionedQuery
+    OR definitionEN GLOB :simpleQuery;
 
-searchEnglishExamples:
+searchEnglishEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleEN GLOB :simpleQuery;
+WHERE gloss GLOB :positionedQuery
+    OR exampleEN GLOB :simpleQuery;
+
+searchEnglishEntriesWithDefinitionsAndExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE gloss GLOB :positionedQuery
+    OR definitionEN GLOB :simpleQuery
+    OR exampleEN GLOB :simpleQuery;
 
 searchSylhetiLatinEntries:
 SELECT * FROM DictionaryEntry
 WHERE lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery;
 
-searchSylhetiLatinDefinitions:
+searchSylhetiLatinEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionIPA GLOB :simpleQuery;
+WHERE lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR definitionIPA GLOB :simpleQuery;
 
-searchSylhetiLatinExamples:
+searchSylhetiLatinEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleIPA GLOB :simpleQuery;
+WHERE lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR exampleIPA GLOB :simpleQuery;
 
-searchBengaliDefinitions:
+searchSylhetiLatinEntriesWithDefinitionsAndExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR definitionIPA GLOB :simpleQuery
+    OR exampleIPA GLOB :simpleQuery;
+
+searchLatinEntries:
+SELECT * FROM DictionaryEntry
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery;
+
+searchLatinEntriesWithDefinitions:
+SELECT * FROM DictionaryEntry
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR definitionEN GLOB :simpleQuery
+    OR definitionIPA GLOB :simpleQuery;
+
+searchLatinEntriesWithExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR exampleEN GLOB :simpleQuery
+    OR exampleIPA GLOB :simpleQuery;
+
+searchLatinEntriesWithDefinitionsAndExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE gloss GLOB :positionedQuery
+    OR lexemeIPA GLOB :positionedQuery
+    OR citationIPA GLOB :positionedQuery
+    OR definitionEN GLOB :simpleQuery
+    OR definitionIPA GLOB :simpleQuery
+    OR exampleEN GLOB :simpleQuery
+    OR exampleIPA GLOB :simpleQuery;
+
+searchBengaliEasternNagriDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE definitionBN GLOB :simpleQuery;
 
-searchBengaliExamples:
+searchBengaliEasternNagriDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleBN GLOB :simpleQuery;
+WHERE definitionBN GLOB :simpleQuery
+    OR exampleBN GLOB :simpleQuery;
 
-searchSylhetiBengaliEntries:
+searchSylhetiEasternNagriEntries:
 SELECT * FROM DictionaryEntry
 WHERE lexemeBengali GLOB :positionedQuery
     OR citationBengali GLOB :positionedQuery;
-    
-searchSylhetiBengaliExamples:
+
+searchSylhetiEasternNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE exampleBengali GLOB :simpleQuery;
+WHERE lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR exampleBengali GLOB :simpleQuery;
 
-searchNagriEntries:
+searchEasternNagriEntriesWithDefinitions:
+SELECT * FROM DictionaryEntry
+WHERE lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR definitionBN GLOB :simpleQuery;
+
+searchEasternNagriEntriesWithExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR exampleBengali GLOB :simpleQuery
+    OR exampleBN GLOB :simpleQuery;
+
+searchEasternNagriEntriesWithDefinitionsAndExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE lexemeBengali GLOB :positionedQuery
+    OR citationBengali GLOB :positionedQuery
+    OR definitionBN GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery
+    OR exampleBN GLOB :simpleQuery;
+
+searchSylhetiNagriEntries:
 SELECT * FROM DictionaryEntry
 WHERE lexemeNagri GLOB :positionedQuery
     OR citationNagri GLOB :positionedQuery;
 
-searchNagriDefinitions:
+searchSylhetiNagriEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionNagri GLOB :simpleQuery;
+WHERE lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery
+    OR definitionNagri GLOB :simpleQuery;
 
-searchNagriExamples:
+searchSylhetiNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example X ON D.entryId = X.entryId
-WHERE X.exampleNagri GLOB :simpleQuery;
+WHERE lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery
+    OR exampleNagri GLOB :simpleQuery;
+
+searchSylhetiNagriEntriesWithDefinitionsAndExamples:
+SELECT D.* FROM DictionaryEntry D
+JOIN Example X ON D.entryId = X.entryId
+WHERE lexemeNagri GLOB :positionedQuery
+    OR citationNagri GLOB :positionedQuery
+    OR definitionNagri GLOB :simpleQuery
+    OR exampleNagri GLOB :simpleQuery;
 
 getExamples:
 SELECT * FROM Example

@@ -301,35 +301,27 @@ class SearchViewModel(
         simpleQuery: String = "",
         searchDefinitions: Boolean = false,
         searchExamples: Boolean = false
-    ) = when (detectedSearchScript) {
-        // edge case: unable to detect search script
-        SearchScript.AUTO -> dictionaryRepository.searchAll(
-            positionedQuery = positionedQuery,
-            simpleQuery = simpleQuery,
-            searchDefinitions = searchDefinitions,
-            searchExamples = searchExamples
-        )
+    ) = with(dictionaryRepository) {
+        val search = when (detectedSearchScript) {
+            SearchScript.AUTO -> ::searchAll // edge case: unable to detect search script
+            SearchScript.SYLHETI_NAGRI -> ::searchSylhetiNagri
 
-        SearchScript.SYLHETI_NAGRI -> dictionaryRepository.searchNagri(
-            positionedQuery = positionedQuery,
-            simpleQuery = simpleQuery,
-            searchDefinitions = searchDefinitions,
-            searchExamples = searchExamples
-        )
-
-        else -> detectedSearchScript.languages.filter { language ->
-            with(settings) {
-                script == SearchScript.AUTO || languages[language] == true
+            SearchScript.EASTERN_NAGRI -> with(settings) {
+                if (script == SearchScript.AUTO || languages[SearchLanguage.EasternNagri.BENGALI] == true) {
+                    ::searchEasternNagri
+                } else ::searchSylhetiEasternNagri
             }
-        }.flatMap { language ->
-            language.search(
-                dictionaryRepository = dictionaryRepository,
-                positionedQuery = positionedQuery,
-                simpleQuery = simpleQuery,
-                searchDefinitions = searchDefinitions,
-                searchExamples = searchExamples
-            )
+
+            SearchScript.LATIN -> with(settings) {
+                when {
+                    script == SearchScript.AUTO || SearchScript.LATIN.languages.all { languages[it] == true } -> ::searchLatin
+                    languages[SearchLanguage.Latin.SYLHETI] == true -> ::searchSylhetiLatin
+                    else -> ::searchEnglish
+                }
+            }
         }
+
+        search(positionedQuery, simpleQuery, searchDefinitions, searchExamples)
     }
 
     private suspend fun getSearchResults(
