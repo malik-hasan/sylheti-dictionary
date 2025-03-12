@@ -44,7 +44,7 @@ fun EntryExample(
                         FieldTag.IPA to exampleIPA,
                         FieldTag.EASTERN_NAGRI to exampleEN,
                         FieldTag.SYLHETI_NAGRI to exampleSN,
-                        FieldTag.ENGLISH to exampleEN,
+                        FieldTag.ENGLISH to exampleEnglish,
                         FieldTag.BENGALI to exampleBengali,
                         FieldTag.BENGALI_IPA to exampleBengaliIPA
                     ).validateStrings()
