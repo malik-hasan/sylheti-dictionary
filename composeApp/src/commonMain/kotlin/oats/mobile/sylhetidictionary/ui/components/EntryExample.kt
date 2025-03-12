@@ -39,7 +39,7 @@ fun EntryExample(
 
         Column {
             with(example) {
-                val examples = remember {
+                val examples = remember(example) {
                     mapOf(
                         FieldTag.IPA to exampleIPA,
                         FieldTag.EASTERN_NAGRI to exampleEN,

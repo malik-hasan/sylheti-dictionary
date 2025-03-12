@@ -39,7 +39,7 @@ fun EntryDefinitions(
 ) {
     with(sharedTransitionScope) {
         with(entry) {
-            val definitions = remember {
+            val definitions = remember(entry) {
                 mapOf(
                     FieldTag.ENGLISH to definitionEnglish,
                     FieldTag.BENGALI to definitionBengali,
