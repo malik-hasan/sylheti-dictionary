@@ -32,6 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import oats.mobile.sylhetidictionary.models.settings.Language
 import oats.mobile.sylhetidictionary.models.settings.Theme
+import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
+import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
+import oats.mobile.sylhetidictionary.ui.components.DynamicThemeSetting
+import oats.mobile.sylhetidictionary.ui.components.LanguageButton
+import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.SettingLabel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -40,12 +46,6 @@ import sylhetidictionary.composeapp.generated.resources.contrast
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.theme
-import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
-import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
-import oats.mobile.sylhetidictionary.ui.components.DynamicThemeSetting
-import oats.mobile.sylhetidictionary.ui.components.LanguageButton
-import oats.mobile.sylhetidictionary.ui.components.SDScreen
-import oats.mobile.sylhetidictionary.ui.components.SettingLabel
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
@@ -61,7 +61,6 @@ fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
     language: Language = LocalLanguage.current
 ) {
-
     SDScreen(
         topBar = {
             TopAppBar(
