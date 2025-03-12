@@ -6,17 +6,17 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 fun ComponentEntry.toDictionaryEntry() = DictionaryEntry(
     entryId = entryId,
     lexemeIPA = lexemeIPA,
-    lexemeBengali = lexemeBengali,
+    lexemeEN = lexemeEN,
     lexemeSN = lexemeSN,
     citationIPA = citationIPA,
-    citationBengali = citationBengali,
+    citationEN = citationEN,
     citationSN = citationSN,
     senseId = senseId,
     partOfSpeech = partOfSpeech,
     gloss = gloss,
-    definitionEN = definitionEN,
-    definitionBN = definitionBN,
-    definitionBNIPA = definitionBNIPA,
+    definitionEnglish = definitionEnglish,
+    definitionBengali = definitionBengali,
+    definitionBengaliIPA = definitionBengaliIPA,
     definitionIPA = definitionIPA,
     definitionSN = definitionSN
 )

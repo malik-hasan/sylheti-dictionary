@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,11 +30,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import oats.mobile.sylhetidictionary.models.displayEN
+import oats.mobile.sylhetidictionary.models.displayIPA
+import oats.mobile.sylhetidictionary.models.displaySN
+import oats.mobile.sylhetidictionary.models.toDictionaryEntry
 import oats.mobile.sylhetidictionary.ui.components.BookmarkIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.EntryDefinitions
@@ -69,7 +75,7 @@ fun EntryScreen(
     EntryScreen(state, ::onEvent)
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntryScreen(
     state: EntryState,
@@ -135,9 +141,9 @@ fun EntryScreen(
                                     .padding(horizontal = 16.dp)
                                     .padding(bottom = 16.dp),
                                 entryId = entryId,
-                                displayIPA = citationIPA ?: lexemeIPA,
-                                displayEN = citationBengali ?: lexemeBengali,
-                                displaySN = citationSN ?: lexemeSN,
+                                displayIPA = displayIPA,
+                                displayEN = displayEN,
+                                displaySN = displaySN,
                                 displayStyle = MaterialTheme.typography.headlineMedium,
                                 partOfSpeech = partOfSpeech,
                                 partOfSpeechStyle = MaterialTheme.typography.titleMedium,
@@ -155,6 +161,10 @@ fun EntryScreen(
                         }
                     }
                 ) {
+                    val componentEntryIds = remember(state.componentEntries) {
+                        state.componentEntries.map { it.entryId }
+                    }
+
                     LazyColumn(
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -167,9 +177,9 @@ fun EntryScreen(
                         }
 
                         val definitions = listOfNotNull(
-                            definitionEN,
-                            definitionBN,
-                            definitionBNIPA,
+                            definitionEnglish,
+                            definitionBengali,
+                            definitionBengaliIPA,
                             definitionSN,
                             definitionIPA
                         )
@@ -210,9 +220,9 @@ fun EntryScreen(
                         }
 
                         itemsIndexed(
-                            items = state.componentLexemes.toList(),
-                            key = { _, (componentEntry) -> componentEntry.entryId + "Component" }
-                        ) { i, (componentEntry, cardEntry) ->
+                            items = state.componentEntries,
+                            key = { _, componentEntry -> componentEntry.entryId + "Component" }
+                        ) { i, componentEntry ->
                             if (i == 0) {
                                 if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
@@ -249,21 +259,17 @@ fun EntryScreen(
                                 }
                             }
 
-                            with(cardEntry) {
-                                EntryCard(
-                                    entry = dictionaryEntry,
-                                    isBookmark = isBookmark,
-                                    variantEntries = variantEntries,
-                                ) { onEvent(EntryEvent.Bookmark(componentEntry.entryId, !isBookmark)) }
+                            EntryCard(componentEntry.toDictionaryEntry()) { value ->
+                                onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
                             }
                         }
 
                         itemsIndexed(
-                            items = state.relatedEntries.toList(),
-                            key = { _, (relatedEntry) -> relatedEntry.entryId + "Related" }
-                        ) { i, (relatedEntry, cardEntry) ->
+                            items = state.relatedEntries,
+                            key = { _, relatedEntry -> relatedEntry.entryId + "Related" }
+                        ) { i, relatedEntry ->
                             if (i == 0) {
-                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.componentLexemes.isNotEmpty()) {
+                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.componentEntries.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 
@@ -276,14 +282,10 @@ fun EntryScreen(
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
 
-                            with(cardEntry) {
-                                EntryCard(
-                                    entry = dictionaryEntry,
-                                    isBookmark = isBookmark,
-                                    variantEntries = variantEntries,
-                                    includeAnimation = relatedEntry.entryId !in state.componentLexemes.map { it.key.entryId }
-                                ) { onEvent(EntryEvent.Bookmark(relatedEntry.entryId, !isBookmark)) }
-                            }
+                            EntryCard(
+                                entry = relatedEntry.toDictionaryEntry(),
+                                includeAnimation = relatedEntry.entryId !in componentEntryIds
+                            ) { onEvent(EntryEvent.Bookmark(relatedEntry.entryId, it)) }
                         }
                     }
                 }

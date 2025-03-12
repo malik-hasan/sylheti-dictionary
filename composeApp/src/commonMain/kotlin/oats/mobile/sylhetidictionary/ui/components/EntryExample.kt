@@ -42,11 +42,11 @@ fun EntryExample(
                 val examples = remember {
                     mapOf(
                         FieldTag.IPA to exampleIPA,
-                        FieldTag.EASTERN_NAGRI to exampleBengali,
+                        FieldTag.EASTERN_NAGRI to exampleEN,
                         FieldTag.SYLHETI_NAGRI to exampleSN,
                         FieldTag.EN to exampleEN,
-                        FieldTag.BN to exampleBN,
-                        FieldTag.BNIPA to exampleBNIPA
+                        FieldTag.BN to exampleBengali,
+                        FieldTag.BNIPA to exampleBengaliIPA
                     ).validateStrings()
                 }
 
