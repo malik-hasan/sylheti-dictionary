@@ -57,7 +57,7 @@ fun SeeVariantButton(
                         (variantEntry.citationBengali ?: variantEntry.lexemeBengali)?.let {
                             SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                         },
-                        (variantEntry.citationNagri ?: variantEntry.lexemeNagri)?.let { SDString(it, highlightRegex) }
+                        (variantEntry.citationSN ?: variantEntry.lexemeSN)?.let { SDString(it, highlightRegex) }
                     ),
                     separator = " • "
                 )

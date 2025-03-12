@@ -1,6 +1,6 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
-import oats.mobile.sylhetidictionary.models.CardEntry
+import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.ui.utils.SDString
 
 data class SearchState(
@@ -9,5 +9,5 @@ data class SearchState(
     val resultsLoading: Boolean = false,
     val recents: List<SDString> = emptyList(),
     val suggestions: List<SDString> = emptyList(),
-    val entries: List<CardEntry> = emptyList()
+    val entries: List<DictionaryEntry> = emptyList()
 )

@@ -44,7 +44,7 @@ fun EntryDefinitions(
                     FieldTag.EN to definitionEN,
                     FieldTag.BN to definitionBN,
                     FieldTag.BNIPA to definitionBNIPA,
-                    FieldTag.SYLHETI_NAGRI to definitionNagri,
+                    FieldTag.SYLHETI_NAGRI to definitionSN,
                     FieldTag.IPA to definitionIPA
                 ).validateStrings()
             }

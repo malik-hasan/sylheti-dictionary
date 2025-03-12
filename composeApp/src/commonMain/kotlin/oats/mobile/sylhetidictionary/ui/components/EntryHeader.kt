@@ -29,8 +29,8 @@ import oats.mobile.sylhetidictionary.ui.utils.ifTrue
 fun EntryHeader(
     entryId: String,
     displayIPA: String,
-    displayBengali: String?,
-    displayNagri: String?,
+    displayEN: String?,
+    displaySN: String?,
     displayStyle: TextStyle,
     partOfSpeech: String?,
     partOfSpeechStyle: TextStyle,
@@ -49,12 +49,12 @@ fun EntryHeader(
                     text = buildAnnotatedString {
                         appendHighlighted(displayIPA, highlightRegex, latinBodyFontFamily)
 
-                        displayBengali?.let {
+                        displayEN?.let {
                             append(" • ")
                             appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                         }
 
-                        displayNagri?.let {
+                        displaySN?.let {
                             append(" • ")
                             appendHighlighted(it, highlightRegex)
                         }

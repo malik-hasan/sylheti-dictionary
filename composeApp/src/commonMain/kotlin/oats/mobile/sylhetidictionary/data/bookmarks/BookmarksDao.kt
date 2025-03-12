@@ -11,6 +11,9 @@ interface BookmarksDao {
     @Query("SELECT * FROM Bookmark")
     fun bookmarksFlow(): Flow<List<Bookmark>>
 
+    @Query("SELECT EXISTS(SELECT * FROM Bookmark WHERE entryId = :entryId)")
+    fun isBookmarkFlow(entryId: String): Flow<Boolean>
+
     @Upsert
     suspend fun addBookmark(entry: Bookmark)
 

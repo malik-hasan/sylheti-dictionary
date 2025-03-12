@@ -183,7 +183,7 @@ fun SearchScreen(
                                 val touchedItemIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: 0
 
                                 val itemIndex = searchState.entries.indexOfFirst {
-                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.dictionaryEntry.displayIPA.first()] ?: 0) >= touchedItemIndex
+                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.displayIPA.first()] ?: 0) >= touchedItemIndex
                                 }.takeUnless { it < 0 } ?: searchState.entries.lastIndex.takeUnless { it < 0 }
 
                                 itemIndex?.let {
@@ -212,10 +212,10 @@ fun SearchScreen(
 
                                 items(
                                     items = entries,
-                                    key = { (entry) -> entry.entryId }
-                                ) { (entry, isBookmark, variantEntries) ->
-                                    EntryCard(entry, isBookmark, variantEntries) {
-                                        onSearchEvent(SearchEvent.Bookmark(entry.entryId, !isBookmark))
+                                    key = { it.entryId }
+                                ) { entry ->
+                                    EntryCard(entry) { value ->
+                                        onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
                                     }
                                 }
                             }

@@ -10,6 +10,8 @@ class BookmarksRepository(private val dao: BookmarksDao) {
             bookmarks.mapTo(mutableSetOf()) { it.entryId }
         }
 
+    fun isBookmarkFlow(entryId: String) = dao.isBookmarkFlow(entryId)
+
     suspend fun addBookmark(entryId: String) = dao.addBookmark(Bookmark(entryId))
 
     suspend fun removeBookmark(entryId: String) = dao.removeBookmark(Bookmark(entryId))

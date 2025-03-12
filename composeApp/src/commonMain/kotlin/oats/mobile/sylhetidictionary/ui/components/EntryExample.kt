@@ -43,7 +43,7 @@ fun EntryExample(
                     mapOf(
                         FieldTag.IPA to exampleIPA,
                         FieldTag.EASTERN_NAGRI to exampleBengali,
-                        FieldTag.SYLHETI_NAGRI to exampleNagri,
+                        FieldTag.SYLHETI_NAGRI to exampleSN,
                         FieldTag.EN to exampleEN,
                         FieldTag.BN to exampleBN,
                         FieldTag.BNIPA to exampleBNIPA

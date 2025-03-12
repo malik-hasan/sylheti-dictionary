@@ -22,16 +22,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.VariantEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
 import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
-import oats.mobile.sylhetidictionary.models.CardEntry
-import oats.mobile.sylhetidictionary.models.displayBengali
+import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
-import oats.mobile.sylhetidictionary.models.displayNagri
+import oats.mobile.sylhetidictionary.models.displaySN
 import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
 import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
@@ -133,24 +131,10 @@ class SearchViewModel(
 
     private val searchResultsSharedFlow = MutableSharedFlow<List<DictionaryEntry>?>()
 
-    private val cardEntriesFlow = searchResultsSharedFlow.combine(
+    private val entriesFlow = searchResultsSharedFlow.combine(
         bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
-        (searchResults ?: dictionaryRepository.getEntries(bookmarks)).mapNotNull {
-            var variantEntries = emptyList<VariantEntry>()
-            if (it.definitionEN.isNullOrBlank()) {
-                variantEntries = dictionaryRepository.getVariantEntries(it.entryId)
-                if (variantEntries.isEmpty()) return@mapNotNull null
-            }
-
-            CardEntry(
-                dictionaryEntry = it,
-                isBookmark = it.entryId in bookmarks,
-                variantEntries = variantEntries
-            )
-        }
-    }.onEach {
-        _searchState.update { it.copy(resultsLoading = false) }
+        searchResults ?: dictionaryRepository.getEntries(bookmarks)
     }
 
     private val _searchState = MutableStateFlow(SearchState())
@@ -158,7 +142,7 @@ class SearchViewModel(
         combine(
             _searchState,
             searchSuggestionsFlow,
-            cardEntriesFlow
+            entriesFlow
         ) { state, (recents, suggestions), entries ->
             state.copy(
                 recents = recents,
@@ -339,7 +323,6 @@ class SearchViewModel(
         detectedSearchScript: SearchScript,
         settings: SearchSettingsState
     ) = globSearchTerm?.let {
-        _searchState.update { it.copy(resultsLoading = true) }
         with(settings) {
             val positionedQuery = position.getPositionedQuery(it)
             Logger.d("SEARCH: getSearchResults() $positionedQuery")
@@ -364,9 +347,11 @@ class SearchViewModel(
         searchTerm: String,
         settings: SearchSettingsState
     ): Triple<Boolean, SearchScript, Regex> {
+        _searchState.update { it.copy(resultsLoading = true) }
         val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
         val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
         searchResultsSharedFlow.emit(searchResults)
+        _searchState.update { it.copy(resultsLoading = false) }
 
         return Triple(
             !searchResults.isNullOrEmpty(),
@@ -426,11 +411,11 @@ class SearchViewModel(
             yield()
             with(entry) {
                 when {
-                    detectedSearchScript == SearchScript.EASTERN_NAGRI && displayBengali != null ->
-                        suggestions += SDString(displayBengali!!, highlightRegex, SearchScript.EASTERN_NAGRI)
+                    detectedSearchScript == SearchScript.EASTERN_NAGRI && displayEN != null ->
+                        suggestions += SDString(displayEN!!, highlightRegex, SearchScript.EASTERN_NAGRI)
 
-                    detectedSearchScript == SearchScript.SYLHETI_NAGRI && displayNagri != null ->
-                        suggestions += SDString(displayNagri!!, highlightRegex)
+                    detectedSearchScript == SearchScript.SYLHETI_NAGRI && displaySN != null ->
+                        suggestions += SDString(displaySN!!, highlightRegex)
 
                     else -> {
                         val isAuto = settings.script == SearchScript.AUTO
