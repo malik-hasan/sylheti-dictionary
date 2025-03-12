@@ -41,9 +41,9 @@ fun EntryDefinitions(
         with(entry) {
             val definitions = remember {
                 mapOf(
-                    FieldTag.EN to definitionEN,
-                    FieldTag.BN to definitionBN,
-                    FieldTag.BNIPA to definitionBNIPA,
+                    FieldTag.ENGLISH to definitionEnglish,
+                    FieldTag.BENGALI to definitionBengali,
+                    FieldTag.BENGALI_IPA to definitionBengaliIPA,
                     FieldTag.SYLHETI_NAGRI to definitionSN,
                     FieldTag.IPA to definitionIPA
                 ).validateStrings()
@@ -51,7 +51,7 @@ fun EntryDefinitions(
 
             @Composable
             fun EnglishDefinition() {
-                definitions[FieldTag.EN]?.let { definition ->
+                definitions[FieldTag.ENGLISH]?.let { definition ->
                     TaggedField(
                         tag = stringResource(Res.string.english),
                         body = SDString(definition, highlightRegex, SearchScript.LATIN)
@@ -75,10 +75,10 @@ fun EntryDefinitions(
                         TaggedField(
                             tag = stringResource(Res.string.bengali),
                             bodies = listOfNotNull(
-                                definitions[FieldTag.BN]?.let {
+                                definitions[FieldTag.BENGALI]?.let {
                                     SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                                 },
-                                definitions[FieldTag.BNIPA]?.let {
+                                definitions[FieldTag.BENGALI_IPA]?.let {
                                     SDString(it, highlightRegex, SearchScript.LATIN)
                                 }
                             )

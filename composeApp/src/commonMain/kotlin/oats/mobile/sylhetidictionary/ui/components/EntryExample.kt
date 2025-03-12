@@ -44,15 +44,15 @@ fun EntryExample(
                         FieldTag.IPA to exampleIPA,
                         FieldTag.EASTERN_NAGRI to exampleEN,
                         FieldTag.SYLHETI_NAGRI to exampleSN,
-                        FieldTag.EN to exampleEN,
-                        FieldTag.BN to exampleBengali,
-                        FieldTag.BNIPA to exampleBengaliIPA
+                        FieldTag.ENGLISH to exampleEN,
+                        FieldTag.BENGALI to exampleBengali,
+                        FieldTag.BENGALI_IPA to exampleBengaliIPA
                     ).validateStrings()
                 }
 
                 @Composable
                 fun EnglishExample() {
-                    examples[FieldTag.EN]?.let { example ->
+                    examples[FieldTag.ENGLISH]?.let { example ->
                         TaggedField(
                             tag = stringResource(Res.string.english),
                             body = SDString(example, highlightRegex, SearchScript.LATIN)
@@ -83,10 +83,10 @@ fun EntryExample(
                     TaggedField(
                         tag = stringResource(Res.string.bengali),
                         bodies = listOfNotNull(
-                            examples[FieldTag.BN]?.let {
+                            examples[FieldTag.BENGALI]?.let {
                                 SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                             },
-                            examples[FieldTag.BNIPA]?.let {
+                            examples[FieldTag.BENGALI_IPA]?.let {
                                 SDString(it, highlightRegex, SearchScript.LATIN)
                             }
                         )
