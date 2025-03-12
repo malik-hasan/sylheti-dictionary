@@ -12,8 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import oats.mobile.sylhetidictionary.VariantEntry
+import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.models.Route
+import oats.mobile.sylhetidictionary.models.displayEN
+import oats.mobile.sylhetidictionary.models.displayIPA
+import oats.mobile.sylhetidictionary.models.displaySN
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.ui.app.LocalNavController
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
@@ -27,8 +30,8 @@ import sylhetidictionary.composeapp.generated.resources.see
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SeeVariantButton(
-    variantEntry: VariantEntry,
+fun ReferenceButton(
+    referenceEntry: DictionaryEntry,
     entryId: String,
     includeAnimation: Boolean = true,
     navController: NavController = LocalNavController.current,
@@ -43,21 +46,21 @@ fun SeeVariantButton(
                     .padding(horizontal = 16.dp)
                     .ifTrue(includeAnimation) {
                         sharedBounds(
-                            sharedContentState = rememberSharedContentState("see-variant-$entryId-${variantEntry.entryId}"),
+                            sharedContentState = rememberSharedContentState("see-variant-$entryId-${referenceEntry.entryId}"),
                             animatedVisibilityScope = animatedContentScope
                         )
                     },
-                onClick = { navController.navigate(Route.Entry(variantEntry.entryId)) }
+                onClick = { navController.navigate(Route.Entry(referenceEntry.entryId)) }
             ) {
                 TaggedField(
                     enableSelection = false,
                     tag = stringResource(Res.string.see),
                     bodies = listOfNotNull(
-                        SDString(variantEntry.citationIPA ?: variantEntry.lexemeIPA, highlightRegex, SearchScript.LATIN),
-                        (variantEntry.citationBengali ?: variantEntry.lexemeBengali)?.let {
+                        SDString(referenceEntry.displayIPA, highlightRegex, SearchScript.LATIN),
+                        referenceEntry.displayEN?.let {
                             SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                         },
-                        (variantEntry.citationSN ?: variantEntry.lexemeSN)?.let { SDString(it, highlightRegex) }
+                        referenceEntry.displaySN?.let { SDString(it, highlightRegex) }
                     ),
                     separator = " • "
                 )

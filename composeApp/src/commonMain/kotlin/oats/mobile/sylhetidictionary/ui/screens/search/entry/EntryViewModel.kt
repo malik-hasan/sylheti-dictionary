@@ -25,7 +25,7 @@ class EntryViewModel(
                 val entry = getEntry(entryId)
                 _state.update { it.copy(entry = entry) }
 
-                val variantEntries = async { getVariantEntries(entryId) }
+                val referenceEntries = async { getReferenceEntries(entryId) }
                 val variants = async { getVariants(entryId) }
                 val examples = async { getExamples(entryId) }
                 val componentLexemes = async { getComponentLexemes(entryId) }
@@ -35,7 +35,7 @@ class EntryViewModel(
 
                 _state.update {
                     it.copy(
-                        variantEntries = variantEntries.await(),
+                        referenceEntries = referenceEntries.await(),
                         variants = variants.await(),
                         examples = examples.await(),
                         componentEntries = componentLexemes.await(),

@@ -297,7 +297,7 @@ JOIN ComponentEntry USING(entryId)
 WHERE componentId = :entryId
     AND variantType IS NOT NULL;
 
-variantEntry:
+getReferenceEntries:
 SELECT D.* FROM DictionaryEntry D
 JOIN ComponentEntry CE ON D.entryId = CE.componentId
 WHERE CE.entryId = :entryId

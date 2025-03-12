@@ -11,7 +11,7 @@ data class EntryState(
     val isBookmark: Boolean = false,
     val examples: List<Example> = emptyList(),
     val variants: List<Variant> = emptyList(),
-    val variantEntries: List<DictionaryEntry> = emptyList(),
+    val referenceEntries: List<DictionaryEntry> = emptyList(),
     val componentEntries: List<ComponentEntry> = emptyList(),
     val relatedEntries: List<RelatedEntry> = emptyList()
 )

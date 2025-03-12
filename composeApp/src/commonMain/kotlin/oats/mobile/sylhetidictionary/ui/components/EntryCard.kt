@@ -54,9 +54,9 @@ fun EntryCard(
 ) {
     val isBookmark by bookmarksRepository.isBookmarkFlow(entry.entryId).collectAsStateWithLifecycle(false)
 
-    var variantEntries by remember { mutableStateOf(emptyList<DictionaryEntry>()) }
+    var referenceEntries by remember { mutableStateOf(emptyList<DictionaryEntry>()) }
     LaunchedEffect(entry) {
-        variantEntries = dictionaryRepository.getVariantEntries(entry.entryId)
+        referenceEntries = dictionaryRepository.getReferenceEntries(entry.entryId)
     }
 
     with(sharedTransitionScope) {
@@ -136,9 +136,9 @@ fun EntryCard(
                         includeAnimation = includeAnimation
                     )
 
-                    variantEntries.forEach {
-                        SeeVariantButton(
-                            variantEntry = it,
+                    referenceEntries.forEach {
+                        ReferenceButton(
+                            referenceEntry = it,
                             entryId = entryId,
                             includeAnimation = includeAnimation
                         )

@@ -49,9 +49,9 @@ import oats.mobile.sylhetidictionary.ui.components.EntryHeader
 import oats.mobile.sylhetidictionary.ui.components.EntrySubHeader
 import oats.mobile.sylhetidictionary.ui.components.EntryVariant
 import oats.mobile.sylhetidictionary.ui.components.FieldTag
+import oats.mobile.sylhetidictionary.ui.components.ReferenceButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SearchIconButton
-import oats.mobile.sylhetidictionary.ui.components.SeeVariantButton
 import oats.mobile.sylhetidictionary.ui.components.UpIconButton
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
@@ -169,9 +169,9 @@ fun EntryScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(state.variantEntries) { variantEntry ->
-                            SeeVariantButton(
-                                variantEntry = variantEntry,
+                        items(state.referenceEntries) {
+                            ReferenceButton(
+                                referenceEntry = it,
                                 entryId = entryId
                             )
                         }

@@ -193,8 +193,8 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
             }
     }
 
-    suspend fun getVariantEntries(entryId: String) = withContext(Dispatchers.IO) {
-        queries.variantEntry(entryId).awaitAsList()
+    suspend fun getReferenceEntries(entryId: String) = withContext(Dispatchers.IO) {
+        queries.getReferenceEntries(entryId).awaitAsList()
     }
 
     suspend fun getComponentLexemes(entryId: String) = withContext(Dispatchers.IO) {
