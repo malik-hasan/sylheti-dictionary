@@ -159,13 +159,13 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         val allVariants = with(queries) {
             transactionWithResult {
                 getVariants(entryId).executeAsList() +
-                getAdditionalVariants(entryId) { returnedEntryId, citationIPA, lexemeIPA, citationBengali, lexemeBengali, citationNagri, lexemeNagri, variantType ->
+                getAdditionalVariants(entryId) { returnedEntryId, citationIPA, lexemeIPA, citationEN, lexemeEN, citationSN, lexemeSN, variantType ->
                     Variant(
                         id = Random.nextLong(),
                         entryId = returnedEntryId,
                         variantIPA = citationIPA ?: lexemeIPA,
-                        variantBengali = citationBengali ?: lexemeBengali,
-                        variantNagri = citationNagri ?: lexemeNagri,
+                        variantEN = citationEN ?: lexemeEN,
+                        variantSN = citationSN ?: lexemeSN,
                         environment = variantType
                     )
                 }.executeAsList()
@@ -185,8 +185,8 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
                         id = option1.id,
                         entryId = option1.entryId,
                         variantIPA = option1.variantIPA,
-                        variantBengali = option1.variantBengali ?: option2.variantBengali,
-                        variantNagri = option1.variantNagri ?: option2.variantNagri,
+                        variantEN = option1.variantEN ?: option2.variantEN,
+                        variantSN = option1.variantSN ?: option2.variantSN,
                         environment = option1.environment?.takeIf { it != "Unspecified Variant" } ?: option2.environment
                     )
                 } else grouping.value.firstOrNull()
