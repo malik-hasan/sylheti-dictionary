@@ -58,8 +58,7 @@ class PreferencesRepository(private val preferences: DataStore<Preferences>) {
         Regex(it, RegexOption.IGNORE_CASE)
     }
 
-    suspend fun setHighlightRegex(highlightRegex: Regex) =
-        set(PreferenceKey.HIGHLIGHT_REGEX, highlightRegex.pattern)
+    suspend fun setHighlightRegex(highlightRegex: Regex) = set(PreferenceKey.HIGHLIGHT_REGEX, highlightRegex.pattern)
 
     val language = flow(PreferenceKey.LANGUAGE, Language.EN.code).map(Language::fromCode)
 

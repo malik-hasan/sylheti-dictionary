@@ -1,24 +1,22 @@
-IMPORT kotlin.Boolean;
-
 CREATE TABLE IF NOT EXISTS DictionaryEntry (
     entryId TEXT PRIMARY KEY NOT NULL,
     lexemeIPA TEXT NOT NULL,
-    lexemeBengali TEXT,
-    lexemeNagri TEXT,
+    lexemeEN TEXT,
+    lexemeSN TEXT,
     citationIPA TEXT,
-    citationBengali TEXT,
-    citationNagri TEXT,
+    citationEN TEXT,
+    citationSN TEXT,
     senseId TEXT UNIQUE,
     partOfSpeech TEXT,
     gloss TEXT,
-    definitionEN TEXT,
-    definitionBN TEXT,
-    definitionBNIPA TEXT,
+    definitionEnglish TEXT,
+    definitionBengali TEXT,
+    definitionBengaliIPA TEXT,
     definitionIPA TEXT,
-    definitionNagri TEXT
+    definitionSN TEXT
 );
 
-CREATE TABLE IF NOT EXISTS EntryCrossRef (
+CREATE TABLE IF NOT EXISTS RelatedEntryCrossRef (
     senseId1 TEXT NOT NULL,
     senseId2 TEXT NOT NULL,
     relationType1 TEXT NOT NULL,
@@ -33,11 +31,11 @@ CREATE TABLE IF NOT EXISTS Example (
     id INTEGER PRIMARY KEY,
     entryId TEXT NOT NULL,
     exampleIPA TEXT,
-    exampleBengali TEXT,
-    exampleNagri TEXT,
     exampleEN TEXT,
-    exampleBN TEXT,
-    exampleBNIPA TEXT,
+    exampleSN TEXT,
+    exampleEnglish TEXT,
+    exampleBengali TEXT,
+    exampleBengaliIPA TEXT,
     FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId)
 );
 
@@ -47,24 +45,21 @@ CREATE TABLE IF NOT EXISTS Variant (
     id INTEGER PRIMARY KEY,
     entryId TEXT NOT NULL,
     variantIPA TEXT NOT NULL,
-    variantBengali TEXT,
-    variantNagri TEXT,
+    variantEN TEXT,
+    variantSN TEXT,
     environment TEXT,
     FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId)
 );
 
-CREATE TABLE IF NOT EXISTS ComponentLexeme (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS ComponentEntry (
     entryId TEXT NOT NULL,
     componentId TEXT NOT NULL,
-    isPrimary INTEGER AS Boolean NOT NULL,
     complexFormType TEXT,
     variantType TEXT,
     FOREIGN KEY (entryId) REFERENCES DictionaryEntry(entryId),
-    FOREIGN KEY (componentId) REFERENCES DictionaryEntry(entryId)
+    FOREIGN KEY (componentId) REFERENCES DictionaryEntry(entryId),
+    PRIMARY KEY (entryId, componentId, complexFormType, variantType)
 );
-
-CREATE INDEX IF NOT EXISTS idx_ComponentLexeme_entryId ON ComponentLexeme(entryId, componentId);
 
 getEntry:
 SELECT * FROM DictionaryEntry
@@ -79,24 +74,24 @@ SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
-    OR lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery;
+    OR lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery;
 
 searchAllEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
-    OR lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery
-    OR definitionEN GLOB :simpleQuery
+    OR lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery
+    OR definitionEnglish GLOB :simpleQuery
     OR definitionIPA GLOB :simpleQuery
-    OR definitionBN GLOB :simpleQuery
-    OR definitionNagri GLOB :simpleQuery;
+    OR definitionBengali GLOB :simpleQuery
+    OR definitionSN GLOB :simpleQuery;
 
 searchAllEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
@@ -104,15 +99,15 @@ JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
-    OR lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery
+    OR lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery
     OR exampleIPA GLOB :simpleQuery
-    OR exampleBengali GLOB :simpleQuery
-    OR exampleNagri GLOB :simpleQuery
     OR exampleEN GLOB :simpleQuery
-    OR exampleBN GLOB :simpleQuery;
+    OR exampleSN GLOB :simpleQuery
+    OR exampleEnglish GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery;
 
 searchAllEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
@@ -120,19 +115,19 @@ JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
-    OR lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery
-    OR definitionEN GLOB :simpleQuery
+    OR lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery
+    OR definitionEnglish GLOB :simpleQuery
     OR definitionIPA GLOB :simpleQuery
-    OR definitionBN GLOB :simpleQuery
-    OR definitionNagri GLOB :simpleQuery
+    OR definitionBengali GLOB :simpleQuery
+    OR definitionSN GLOB :simpleQuery
     OR exampleIPA GLOB :simpleQuery
-    OR exampleBengali GLOB :simpleQuery
-    OR exampleNagri GLOB :simpleQuery
     OR exampleEN GLOB :simpleQuery
-    OR exampleBN GLOB :simpleQuery;
+    OR exampleSN GLOB :simpleQuery
+    OR exampleEnglish GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery;
 
 searchEnglishEntries:
 SELECT * FROM DictionaryEntry
@@ -141,20 +136,20 @@ WHERE gloss GLOB :positionedQuery;
 searchEnglishEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery
-    OR definitionEN GLOB :simpleQuery;
+    OR definitionEnglish GLOB :simpleQuery;
 
 searchEnglishEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
-    OR exampleEN GLOB :simpleQuery;
+    OR exampleEnglish GLOB :simpleQuery;
 
 searchEnglishEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
-    OR definitionEN GLOB :simpleQuery
-    OR exampleEN GLOB :simpleQuery;
+    OR definitionEnglish GLOB :simpleQuery
+    OR exampleEnglish GLOB :simpleQuery;
 
 searchSylhetiLatinEntries:
 SELECT * FROM DictionaryEntry
@@ -193,7 +188,7 @@ SELECT * FROM DictionaryEntry
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
-    OR definitionEN GLOB :simpleQuery
+    OR definitionEnglish GLOB :simpleQuery
     OR definitionIPA GLOB :simpleQuery;
 
 searchLatinEntriesWithExamples:
@@ -202,7 +197,7 @@ JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
-    OR exampleEN GLOB :simpleQuery
+    OR exampleEnglish GLOB :simpleQuery
     OR exampleIPA GLOB :simpleQuery;
 
 searchLatinEntriesWithDefinitionsAndExamples:
@@ -211,81 +206,81 @@ JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
-    OR definitionEN GLOB :simpleQuery
+    OR definitionEnglish GLOB :simpleQuery
     OR definitionIPA GLOB :simpleQuery
-    OR exampleEN GLOB :simpleQuery
+    OR exampleEnglish GLOB :simpleQuery
     OR exampleIPA GLOB :simpleQuery;
 
 searchBengaliEasternNagriDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE definitionBN GLOB :simpleQuery;
+WHERE definitionBengali GLOB :simpleQuery;
 
 searchBengaliEasternNagriDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
-WHERE definitionBN GLOB :simpleQuery
-    OR exampleBN GLOB :simpleQuery;
+WHERE definitionBengali GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery;
 
 searchSylhetiEasternNagriEntries:
 SELECT * FROM DictionaryEntry
-WHERE lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery;
+WHERE lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery;
 
 searchSylhetiEasternNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
-WHERE lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR exampleBengali GLOB :simpleQuery;
+WHERE lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR exampleEN GLOB :simpleQuery;
 
 searchEasternNagriEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR definitionBN GLOB :simpleQuery;
+WHERE lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR definitionBengali GLOB :simpleQuery;
 
 searchEasternNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
-WHERE lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR exampleBengali GLOB :simpleQuery
-    OR exampleBN GLOB :simpleQuery;
+WHERE lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR exampleEN GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery;
 
 searchEasternNagriEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
-WHERE lexemeBengali GLOB :positionedQuery
-    OR citationBengali GLOB :positionedQuery
-    OR definitionBN GLOB :simpleQuery
-    OR exampleBengali GLOB :simpleQuery
-    OR exampleBN GLOB :simpleQuery;
+WHERE lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR definitionBengali GLOB :simpleQuery
+    OR exampleEN GLOB :simpleQuery
+    OR exampleBengali GLOB :simpleQuery;
 
 searchSylhetiNagriEntries:
 SELECT * FROM DictionaryEntry
-WHERE lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery;
+WHERE lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery;
 
 searchSylhetiNagriEntriesWithDefinitions:
 SELECT * FROM DictionaryEntry
-WHERE lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery
-    OR definitionNagri GLOB :simpleQuery;
+WHERE lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery
+    OR definitionSN GLOB :simpleQuery;
 
 searchSylhetiNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
-WHERE lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery
-    OR exampleNagri GLOB :simpleQuery;
+WHERE lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery
+    OR exampleSN GLOB :simpleQuery;
 
 searchSylhetiNagriEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
 JOIN Example USING(entryId)
-WHERE lexemeNagri GLOB :positionedQuery
-    OR citationNagri GLOB :positionedQuery
-    OR definitionNagri GLOB :simpleQuery
-    OR exampleNagri GLOB :simpleQuery;
+WHERE lexemeSN GLOB :positionedQuery
+    OR citationSN GLOB :positionedQuery
+    OR definitionSN GLOB :simpleQuery
+    OR exampleSN GLOB :simpleQuery;
 
 getExamples:
 SELECT * FROM Example
@@ -296,32 +291,32 @@ SELECT * FROM Variant
 WHERE entryId = :entryId;
 
 getAdditionalVariants:
-SELECT D.entryId, citationIPA, lexemeIPA, citationBengali, lexemeBengali, citationNagri, lexemeNagri, variantType
+SELECT D.entryId, citationIPA, lexemeIPA, citationEN, lexemeEN, citationSN, lexemeSN, variantType
 FROM DictionaryEntry D
-JOIN ComponentLexeme CL USING(entryId)
-WHERE CL.componentId = :entryId
+JOIN ComponentEntry USING(entryId)
+WHERE componentId = :entryId
     AND variantType IS NOT NULL;
 
 variantEntry:
-SELECT D.*, variantType FROM DictionaryEntry D
-JOIN ComponentLexeme CL ON D.entryId = CL.componentId
-WHERE CL.entryId = :entryId
+SELECT D.* FROM DictionaryEntry D
+JOIN ComponentEntry CE ON D.entryId = CE.componentId
+WHERE CE.entryId = :entryId
     AND variantType IS NOT NULL;
 
 componentEntry:
 SELECT D.*, complexFormType FROM DictionaryEntry D
-JOIN ComponentLexeme CL ON D.entryId = CL.componentId
-WHERE CL.entryId = :entryId
+JOIN ComponentEntry CE ON D.entryId = CE.componentId
+WHERE CE.entryId = :entryId
     AND complexFormType IS NOT NULL;
 
 relatedEntry:
 SELECT D.*,
     CASE
-        WHEN EE.senseId1 = :senseId THEN EE.relationType1
-        ELSE EE.relationType2
+        WHEN senseId1 = :senseId THEN relationType1
+        ELSE relationType2
     END AS relationType
 FROM DictionaryEntry D
-JOIN EntryCrossRef EE ON D.senseId = EE.senseId1
-    OR D.senseId = EE.senseId2
-WHERE (EE.senseId1 = :senseId OR EE.senseId2 = :senseId)
-    AND D.senseId != :senseId;
+JOIN RelatedEntryCrossRef ON senseId = senseId1
+    OR senseId = senseId2
+WHERE (senseId1 = :senseId OR senseId2 = :senseId)
+    AND senseId != :senseId;
