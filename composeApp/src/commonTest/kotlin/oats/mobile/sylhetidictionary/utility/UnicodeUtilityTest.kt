@@ -15,7 +15,7 @@ class UnicodeUtilityTest {
     }
 
     @Test
-    fun shouldSortSylhetiIpaIgnoringOtherChars() {
+    fun shouldSortSylhetiIpaWords() {
         val sampleWords = listOf(
             " haʃ faʃ xɔɾ",
             "-a",
