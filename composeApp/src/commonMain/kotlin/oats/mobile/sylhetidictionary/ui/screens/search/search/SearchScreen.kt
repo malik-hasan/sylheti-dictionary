@@ -335,7 +335,7 @@ fun SearchScreen(
                                     }?.key
                                 },
                                 onDragStopped = {
-                                    delay(700)
+                                    delay(500)
                                     backgroundColor = Color.Unspecified
                                     dragPosition = null
                                     touchedItem = null
@@ -351,12 +351,6 @@ fun SearchScreen(
                             .forEach { char ->
                                 var readyToDraw by remember { mutableStateOf(false) }
                                 var textStyle by remember { mutableStateOf(labelLarge) }
-    //                            val interactionSource = remember { MutableInteractionSource() }
-    //                            val isHovered by interactionSource.collectIsHoveredAsState()
-    //
-    //                            LaunchedEffect(isHovered) {
-    //                                touchedItem = if (isHovered) char else null
-    //                            }
 
                                 Text(
                                     text = char.toString(),
@@ -371,7 +365,7 @@ fun SearchScreen(
                                             if (readyToDraw) drawContent()
                                         }.onGloballyPositioned { coordinates ->
                                             itemCoordinates[char] = coordinates
-                                        },//.hoverable(interactionSource),
+                                        },
                                     onTextLayout = { textLayoutResult ->
                                         if (textLayoutResult.didOverflowHeight) {
                                             textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
@@ -380,29 +374,29 @@ fun SearchScreen(
                                 )
                             }
 
-                            itemCoordinates[touchedItem]?.let { coordinates ->
-                                val indicatorOffset by animateIntOffsetAsState(
-                                    targetValue = IntOffset(0, coordinates.boundsInParent().top.toInt()),
-                                    animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
-                                )
+                        itemCoordinates[touchedItem]?.let { coordinates ->
+                            val indicatorOffset by animateIntOffsetAsState(
+                                targetValue = IntOffset(0, coordinates.boundsInParent().top.toInt()),
+                                animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
+                            )
 
-                                Popup(offset = indicatorOffset) {
-                                    Box(
-                                        modifier = Modifier
-                                            .offset(12.dp)
-                                            .size(48.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.tertiary),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = touchedItem.toString(),
-                                            color = MaterialTheme.colorScheme.onTertiary,
-                                            fontFamily = latinDisplayFontFamily
-                                        )
-                                    }
+                            Popup(offset = indicatorOffset) {
+                                Box(
+                                    modifier = Modifier
+                                        .offset(12.dp)
+                                        .size(48.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.tertiary),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = touchedItem.toString(),
+                                        color = MaterialTheme.colorScheme.onTertiary,
+                                        fontFamily = latinDisplayFontFamily
+                                    )
                                 }
                             }
+                        }
                     }
                 }
             }
