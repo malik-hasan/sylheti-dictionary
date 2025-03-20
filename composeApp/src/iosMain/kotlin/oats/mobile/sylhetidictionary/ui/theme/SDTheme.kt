@@ -2,7 +2,6 @@ package oats.mobile.sylhetidictionary.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import models.settings.Language
 import oats.mobile.sylhetidictionary.models.settings.Language
 
 @Composable
