@@ -51,6 +51,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -78,7 +79,6 @@ import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
-import oats.mobile.sylhetidictionary.ui.utils.rememberIsScrollingUp
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -165,11 +165,37 @@ fun SearchScreen(
                 } else Spacer(Modifier.height(4.dp))
 
                 Row {
-                    var touchedItem by remember { mutableStateOf<Char?>(null) }
+                    var touchedChar by remember { mutableStateOf<Char?>(null) }
 
                     Box(Modifier.weight(1f)) {
                         val resultsState = rememberLazyListState()
-                        val isScrollingUp by resultsState.rememberIsScrollingUp()
+
+                        var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
+                        var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
+                        var isProgrammaticScroll by remember { mutableStateOf(false) }
+                        var previouslyShowingSearchBar by remember { mutableStateOf(true) }
+
+                        val showSearchBar by remember {
+                            derivedStateOf {
+                                with(resultsState) {
+                                    val showSearchBar =
+                                        (firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0)
+                                            || (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
+                                            || firstVisibleItemIndex < previousFirstVisibleItemIndex
+
+                                    previousFirstVisibleItemIndex = firstVisibleItemIndex
+                                    previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
+
+                                    if (isProgrammaticScroll) {
+                                        isProgrammaticScroll = false
+                                        previouslyShowingSearchBar // ignore a programmatic scroll
+                                    } else {
+                                        previouslyShowingSearchBar = showSearchBar
+                                        showSearchBar
+                                    }
+                                }
+                            }
+                        }
 
                         SideEffect {
                             resultsState.requestScrollToItem(
@@ -178,15 +204,16 @@ fun SearchScreen(
                             )
                         }
 
-                        LaunchedEffect(touchedItem) {
-                            touchedItem?.let { char ->
-                                val touchedItemIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: 0
+                        LaunchedEffect(touchedChar) {
+                            touchedChar?.let { char ->
+                                val touchedCharIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: 0
 
                                 val itemIndex = searchState.entries.indexOfFirst {
-                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.displayIPA.first()] ?: 0) >= touchedItemIndex
+                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.displayIPA.first()] ?: 0) >= touchedCharIndex
                                 }.takeUnless { it < 0 } ?: searchState.entries.lastIndex.takeUnless { it < 0 }
 
                                 itemIndex?.let {
+                                    isProgrammaticScroll = true
                                     resultsState.scrollToItem(it)
                                 }
                             }
@@ -222,7 +249,7 @@ fun SearchScreen(
                         }
 
                         this@Column.AnimatedVisibility(
-                            visible = isScrollingUp,
+                            visible = showSearchBar,
                             enter = expandVertically(),
                             exit = shrinkVertically()
                         ) {
@@ -320,7 +347,7 @@ fun SearchScreen(
                                 state = rememberDraggableState { delta ->
                                     dragPosition?.let {
                                         dragPosition = it.copy(y = it.y + delta)
-                                        touchedItem = itemCoordinates.entries.find { (_, coordinates) ->
+                                        touchedChar = itemCoordinates.entries.find { (_, coordinates) ->
                                             coordinates.isAttached && coordinates.boundsInParent().contains(dragPosition!!)
                                         }?.key
                                     }
@@ -330,7 +357,7 @@ fun SearchScreen(
                                 onDragStarted = { startedPosition ->
                                     backgroundColor = surfaceContainerColor
                                     dragPosition = startedPosition
-                                    touchedItem = itemCoordinates.entries.find { (_, coordinates) ->
+                                    touchedChar = itemCoordinates.entries.find { (_, coordinates) ->
                                         coordinates.isAttached && coordinates.boundsInParent().contains(startedPosition)
                                     }?.key
                                 },
@@ -338,7 +365,7 @@ fun SearchScreen(
                                     delay(500)
                                     backgroundColor = Color.Unspecified
                                     dragPosition = null
-                                    touchedItem = null
+                                    touchedChar = null
                                 }
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -374,7 +401,7 @@ fun SearchScreen(
                                 )
                             }
 
-                        itemCoordinates[touchedItem]?.let { coordinates ->
+                        itemCoordinates[touchedChar]?.let { coordinates ->
                             val indicatorOffset by animateIntOffsetAsState(
                                 targetValue = IntOffset(0, coordinates.boundsInParent().top.toInt()),
                                 animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
@@ -390,7 +417,7 @@ fun SearchScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = touchedItem.toString(),
+                                        text = touchedChar.toString(),
                                         color = MaterialTheme.colorScheme.onTertiary,
                                         fontFamily = latinDisplayFontFamily
                                     )
