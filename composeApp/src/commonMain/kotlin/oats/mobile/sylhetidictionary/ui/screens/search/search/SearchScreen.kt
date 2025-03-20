@@ -71,6 +71,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
@@ -344,37 +345,37 @@ fun SearchScreen(
                     }
 
                     val charCoordinates = remember { mutableStateMapOf<Char, LayoutCoordinates>() }
-                    var backgroundColor by remember { mutableStateOf(Color.Unspecified) }
+                    var scrollBarBackgroundColor by remember { mutableStateOf(Color.Unspecified) }
                     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                    var dragPosition by remember { mutableStateOf<Offset?>(null) }
+                    var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
 
                     Column(
                         modifier = Modifier
                             .width(IntrinsicSize.Max)
                             .widthIn(24.dp)
-                            .background(backgroundColor)
+                            .background(scrollBarBackgroundColor)
                             .draggable(
                                 state = rememberDraggableState { delta ->
-                                    dragPosition?.let {
-                                        dragPosition = it.copy(y = it.y + delta)
+                                    scrollBarDragPosition?.let { offset ->
+                                        scrollBarDragPosition = offset.copy(y = offset.y + delta)
                                         touchedChar = charCoordinates.entries.find { (_, coordinates) ->
-                                            coordinates.isAttached && coordinates.boundsInParent().contains(dragPosition!!)
+                                            coordinates.isAttached && coordinates.boundsInParent().contains(offset)
                                         }?.key
                                     }
                                 },
                                 startDragImmediately = true,
                                 orientation = Orientation.Vertical,
-                                onDragStarted = { startedPosition ->
-                                    backgroundColor = surfaceContainerColor
-                                    dragPosition = startedPosition
+                                onDragStarted = { offset ->
+                                    scrollBarBackgroundColor = surfaceContainerColor
+                                    scrollBarDragPosition = offset
                                     touchedChar = charCoordinates.entries.find { (_, coordinates) ->
-                                        coordinates.isAttached && coordinates.boundsInParent().contains(startedPosition)
+                                        coordinates.isAttached && coordinates.boundsInParent().contains(offset)
                                     }?.key
                                 },
                                 onDragStopped = {
                                     delay(500)
-                                    backgroundColor = Color.Unspecified
-                                    dragPosition = null
+                                    scrollBarBackgroundColor = Color.Unspecified
+                                    scrollBarDragPosition = null
                                     touchedChar = null
                                 }
                             ),
@@ -404,7 +405,7 @@ fun SearchScreen(
                                             charCoordinates[char] = coordinates
                                         },
                                     onTextLayout = { textLayoutResult ->
-                                        if (textLayoutResult.didOverflowHeight) {
+                                        if (textLayoutResult.didOverflowHeight && textStyle.fontSize > 1.sp) {
                                             textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
                                         } else readyToDraw = true
                                     }
