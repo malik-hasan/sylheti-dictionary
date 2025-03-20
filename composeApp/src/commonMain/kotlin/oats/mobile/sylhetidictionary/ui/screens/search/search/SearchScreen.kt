@@ -66,7 +66,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -123,6 +125,7 @@ fun SearchScreen(
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
+    density: Density = LocalDensity.current
 ) {
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -340,7 +343,7 @@ fun SearchScreen(
                         }
                     }
 
-                    val itemCoordinates = remember { mutableStateMapOf<Char, LayoutCoordinates>() }
+                    val charCoordinates = remember { mutableStateMapOf<Char, LayoutCoordinates>() }
                     var backgroundColor by remember { mutableStateOf(Color.Unspecified) }
                     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
                     var dragPosition by remember { mutableStateOf<Offset?>(null) }
@@ -354,7 +357,7 @@ fun SearchScreen(
                                 state = rememberDraggableState { delta ->
                                     dragPosition?.let {
                                         dragPosition = it.copy(y = it.y + delta)
-                                        touchedChar = itemCoordinates.entries.find { (_, coordinates) ->
+                                        touchedChar = charCoordinates.entries.find { (_, coordinates) ->
                                             coordinates.isAttached && coordinates.boundsInParent().contains(dragPosition!!)
                                         }?.key
                                     }
@@ -364,7 +367,7 @@ fun SearchScreen(
                                 onDragStarted = { startedPosition ->
                                     backgroundColor = surfaceContainerColor
                                     dragPosition = startedPosition
-                                    touchedChar = itemCoordinates.entries.find { (_, coordinates) ->
+                                    touchedChar = charCoordinates.entries.find { (_, coordinates) ->
                                         coordinates.isAttached && coordinates.boundsInParent().contains(startedPosition)
                                     }?.key
                                 },
@@ -398,7 +401,7 @@ fun SearchScreen(
                                         .drawWithContent {
                                             if (readyToDraw) drawContent()
                                         }.onGloballyPositioned { coordinates ->
-                                            itemCoordinates[char] = coordinates
+                                            charCoordinates[char] = coordinates
                                         },
                                     onTextLayout = { textLayoutResult ->
                                         if (textLayoutResult.didOverflowHeight) {
@@ -408,16 +411,19 @@ fun SearchScreen(
                                 )
                             }
 
-                        itemCoordinates[touchedChar]?.let { coordinates ->
+                        charCoordinates[touchedChar]?.let { coordinates ->
                             val indicatorOffset by animateIntOffsetAsState(
-                                targetValue = IntOffset(0, coordinates.boundsInParent().top.toInt()),
+                                targetValue = IntOffset(
+                                    x = 0,
+                                    y = (coordinates.boundsInParent().top - with(density) { 16.dp.toPx() }).toInt()
+                                ),
                                 animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
                             )
 
                             Popup(offset = indicatorOffset) {
                                 Box(
                                     modifier = Modifier
-                                        .offset(12.dp)
+                                        .offset(x = 12.dp)
                                         .size(48.dp)
                                         .clip(CircleShape)
                                         .background(MaterialTheme.colorScheme.tertiary),
