@@ -172,8 +172,8 @@ fun SearchScreen(
 
                         var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
                         var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
-                        var isProgrammaticScroll by remember { mutableStateOf(false) }
                         var previouslyShowingSearchBar by remember { mutableStateOf(true) }
+                        var isScrollFromScrollBar by remember { mutableStateOf(false) }
 
                         val showSearchBar by remember {
                             derivedStateOf {
@@ -190,8 +190,8 @@ fun SearchScreen(
                                             true
                                         }
 
-                                        isProgrammaticScroll -> { // ignore a programmatic scroll
-                                            isProgrammaticScroll = false
+                                        isScrollFromScrollBar -> { // ignore change from scrollbar
+                                            isScrollFromScrollBar = false
                                             previouslyShowingSearchBar
                                         }
 
@@ -220,7 +220,7 @@ fun SearchScreen(
                                 }.takeUnless { it < 0 } ?: searchState.entries.lastIndex.takeUnless { it < 0 }
 
                                 itemIndex?.let {
-                                    isProgrammaticScroll = true
+                                    isScrollFromScrollBar = true
                                     resultsState.scrollToItem(it)
                                 }
                             }
