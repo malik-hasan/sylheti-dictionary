@@ -178,20 +178,27 @@ fun SearchScreen(
                         val showSearchBar by remember {
                             derivedStateOf {
                                 with(resultsState) {
-                                    val showSearchBar =
-                                        (firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0)
-                                            || (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
-                                            || firstVisibleItemIndex < previousFirstVisibleItemIndex
+                                    val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
+                                        (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
 
                                     previousFirstVisibleItemIndex = firstVisibleItemIndex
                                     previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
 
-                                    if (isProgrammaticScroll) {
-                                        isProgrammaticScroll = false
-                                        previouslyShowingSearchBar // ignore a programmatic scroll
-                                    } else {
-                                        previouslyShowingSearchBar = showSearchBar
-                                        showSearchBar
+                                    when {
+                                        firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> { // always show if at top
+                                            previouslyShowingSearchBar = true
+                                            true
+                                        }
+
+                                        isProgrammaticScroll -> { // ignore a programmatic scroll
+                                            isProgrammaticScroll = false
+                                            previouslyShowingSearchBar
+                                        }
+
+                                        else -> { // else show/hide based on isScrollingUp
+                                            previouslyShowingSearchBar = isScrollingUp
+                                            isScrollingUp
+                                        }
                                     }
                                 }
                             }
