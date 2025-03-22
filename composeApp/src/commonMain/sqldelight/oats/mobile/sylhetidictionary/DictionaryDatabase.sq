@@ -95,7 +95,7 @@ WHERE gloss GLOB :positionedQuery
 
 searchAllEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
@@ -111,7 +111,7 @@ WHERE gloss GLOB :positionedQuery
 
 searchAllEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
@@ -140,13 +140,13 @@ WHERE gloss GLOB :positionedQuery
 
 searchEnglishEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR exampleEnglish GLOB :simpleQuery;
 
 searchEnglishEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR definitionEnglish GLOB :simpleQuery
     OR exampleEnglish GLOB :simpleQuery;
@@ -164,14 +164,14 @@ WHERE lexemeIPA GLOB :positionedQuery
 
 searchSylhetiLatinEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
     OR exampleIPA GLOB :simpleQuery;
 
 searchSylhetiLatinEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
     OR definitionIPA GLOB :simpleQuery
@@ -193,7 +193,7 @@ WHERE gloss GLOB :positionedQuery
 
 searchLatinEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
@@ -202,7 +202,7 @@ WHERE gloss GLOB :positionedQuery
 
 searchLatinEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE gloss GLOB :positionedQuery
     OR lexemeIPA GLOB :positionedQuery
     OR citationIPA GLOB :positionedQuery
@@ -217,7 +217,7 @@ WHERE definitionBengali GLOB :simpleQuery;
 
 searchBengaliEasternNagriDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE definitionBengali GLOB :simpleQuery
     OR exampleBengali GLOB :simpleQuery;
 
@@ -228,7 +228,7 @@ WHERE lexemeEN GLOB :positionedQuery
 
 searchSylhetiEasternNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE lexemeEN GLOB :positionedQuery
     OR citationEN GLOB :positionedQuery
     OR exampleEN GLOB :simpleQuery;
@@ -241,7 +241,7 @@ WHERE lexemeEN GLOB :positionedQuery
 
 searchEasternNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE lexemeEN GLOB :positionedQuery
     OR citationEN GLOB :positionedQuery
     OR exampleEN GLOB :simpleQuery
@@ -249,7 +249,7 @@ WHERE lexemeEN GLOB :positionedQuery
 
 searchEasternNagriEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE lexemeEN GLOB :positionedQuery
     OR citationEN GLOB :positionedQuery
     OR definitionBengali GLOB :simpleQuery
@@ -269,14 +269,14 @@ WHERE lexemeSN GLOB :positionedQuery
 
 searchSylhetiNagriEntriesWithExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE lexemeSN GLOB :positionedQuery
     OR citationSN GLOB :positionedQuery
     OR exampleSN GLOB :simpleQuery;
 
 searchSylhetiNagriEntriesWithDefinitionsAndExamples:
 SELECT D.* FROM DictionaryEntry D
-JOIN Example USING(entryId)
+LEFT JOIN Example USING(entryId)
 WHERE lexemeSN GLOB :positionedQuery
     OR citationSN GLOB :positionedQuery
     OR definitionSN GLOB :simpleQuery
