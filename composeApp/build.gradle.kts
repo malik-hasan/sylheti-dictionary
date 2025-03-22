@@ -13,6 +13,8 @@ plugins {
     alias(libs.plugins.room)
 }
 
+val sylhetiDictionaryPackage = "oats.mobile.sylhetidictionary"
+
 kotlin {
     targets.all {
         compilations.all {
@@ -38,6 +40,8 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             linkerOpts.add("-lsqlite3")
+
+            binaryOption("bundleId", sylhetiDictionaryPackage)
         }
     }
 
@@ -110,8 +114,6 @@ dependencies {
 }
 
 room.schemaDirectory("$projectDir/schemas")
-
-val sylhetiDictionaryPackage = "oats.mobile.sylhetidictionary"
 
 android {
     namespace = sylhetiDictionaryPackage
