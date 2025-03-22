@@ -17,18 +17,24 @@ enum class SearchScript(
 
     LATIN(
         label = Res.string.latin_ipa,
-        regexCharSet = Regex("\\p{IsLatin}"),
+        regexCharSet = Regex("[A-Za-z\u00c0-\u02b8\u1d00-\u1dbf]"),
+//        regexCharSet = Regex("\\p{IsLatin}"),
         languages = SearchLanguage.Latin.entries
     ),
 
     EASTERN_NAGRI(
         label = Res.string.eastern_nagri,
-        regexCharSet = Regex("\\p{IsBengali}"),
+        regexCharSet = Regex("[\u0980-\u09FF]"),
+//        regexCharSet = Regex("\\p{IsBengali}"),
         languages = SearchLanguage.EasternNagri.entries
     ),
 
     SYLHETI_NAGRI(
         label = Res.string.sylheti_nagri,
-        regexCharSet = Regex("\\p{IsSyloti_Nagri}")
+        regexCharSet = Regex("[\ua800-\ua82f]")
+//        regexCharSet = Regex("\\p{IsSyloti_Nagri}")
     );
 }
+
+// unicode char classes not compatible with iOS
+// https://youtrack.jetbrains.com/issue/KT-51858/Kotlin-Native-Regex-does-not-support-UNICODECHARACTERCLASS
