@@ -27,14 +27,17 @@ import sylhetidictionary.composeapp.generated.resources.noto_sans_bengali
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla_italic
 
-val textLinkStyle
+val textLinkStyle: TextLinkStyles
     @Composable
-    get() = TextLinkStyles(
-        style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline),
-        focusedStyle = SpanStyle(color = MaterialTheme.colorScheme.inversePrimary),
-        hoveredStyle = SpanStyle(color = MaterialTheme.colorScheme.inversePrimary),
-        pressedStyle = SpanStyle(color = MaterialTheme.colorScheme.inversePrimary)
-    )
+    get() {
+        val focusedStyle = SpanStyle(color = MaterialTheme.colorScheme.inversePrimary)
+        return TextLinkStyles(
+            style = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline),
+            focusedStyle = focusedStyle,
+            hoveredStyle = focusedStyle,
+            pressedStyle = focusedStyle
+        )
+    }
 
 @Composable
 fun getBodyFontFamily(language: Language = LocalLanguage.current) =
