@@ -21,9 +21,9 @@ import sylhetidictionary.composeapp.generated.resources.merriweather_italic
 import sylhetidictionary.composeapp.generated.resources.merriweather_light
 import sylhetidictionary.composeapp.generated.resources.merriweather_light_italic
 import sylhetidictionary.composeapp.generated.resources.merriweather_regular
-import sylhetidictionary.composeapp.generated.resources.montserrat
-import sylhetidictionary.composeapp.generated.resources.montserrat_italic
-import sylhetidictionary.composeapp.generated.resources.noto_sans_bengali
+import sylhetidictionary.composeapp.generated.resources.montserrat_var_wght
+import sylhetidictionary.composeapp.generated.resources.montserrat_var_wght_italic
+import sylhetidictionary.composeapp.generated.resources.noto_sans_bengali_var_wght_wdth
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla
 import sylhetidictionary.composeapp.generated.resources.tiro_bangla_italic
 
@@ -57,14 +57,22 @@ val latinBodyFontFamily
         Font(Res.font.merriweather_bold, weight = FontWeight.Bold),
         Font(Res.font.merriweather_bold_italic, weight = FontWeight.Bold, style = FontStyle.Italic),
         Font(Res.font.merriweather_black, weight = FontWeight.Black),
-        Font(Res.font.merriweather_black_italic, weight = FontWeight.Black, style = FontStyle.Italic),
+        Font(Res.font.merriweather_black_italic, weight = FontWeight.Black, style = FontStyle.Italic)
     )
 
 val latinDisplayFontFamily
     @Composable
     get() = FontFamily(
-        Font(Res.font.montserrat),
-        Font(Res.font.montserrat_italic, style = FontStyle.Italic)
+        Font(Res.font.montserrat_var_wght),
+        Font(Res.font.montserrat_var_wght_italic, style = FontStyle.Italic),
+        Font(Res.font.montserrat_var_wght, weight = FontWeight.Light),
+        Font(Res.font.montserrat_var_wght_italic, weight = FontWeight.Light, style = FontStyle.Italic),
+        Font(Res.font.montserrat_var_wght, weight = FontWeight.SemiBold),
+        Font(Res.font.montserrat_var_wght_italic, weight = FontWeight.SemiBold, style = FontStyle.Italic),
+        Font(Res.font.montserrat_var_wght, weight = FontWeight.Bold),
+        Font(Res.font.montserrat_var_wght_italic, weight = FontWeight.Bold, style = FontStyle.Italic),
+        Font(Res.font.montserrat_var_wght, weight = FontWeight.Black),
+        Font(Res.font.montserrat_var_wght_italic, weight = FontWeight.Black, style = FontStyle.Italic)
     )
 
 val bengaliBodyFontFamily
@@ -76,7 +84,13 @@ val bengaliBodyFontFamily
 
 val bengaliDisplayFontFamily
     @Composable
-    get() = FontFamily(Font(Res.font.noto_sans_bengali))
+    get() = FontFamily(
+        Font(Res.font.noto_sans_bengali_var_wght_wdth),
+        Font(Res.font.noto_sans_bengali_var_wght_wdth, weight = FontWeight.Light),
+        Font(Res.font.noto_sans_bengali_var_wght_wdth, weight = FontWeight.SemiBold),
+        Font(Res.font.noto_sans_bengali_var_wght_wdth, weight = FontWeight.Bold),
+        Font(Res.font.noto_sans_bengali_var_wght_wdth, weight = FontWeight.Black)
+    )
 
 @Composable
 fun getTypography(language: Language): Typography {

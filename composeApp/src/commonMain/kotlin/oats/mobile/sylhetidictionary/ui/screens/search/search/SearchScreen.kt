@@ -67,6 +67,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
@@ -396,6 +397,7 @@ fun SearchScreen(
                                     style = textStyle,
                                     softWrap = false,
                                     fontFamily = latinDisplayFontFamily,
+                                    fontWeight = FontWeight.SemiBold,
                                     modifier = Modifier
                                         .weight(1f)
                                         .fillMaxWidth()
@@ -433,7 +435,8 @@ fun SearchScreen(
                                     Text(
                                         text = touchedChar.toString(),
                                         color = MaterialTheme.colorScheme.onTertiary,
-                                        fontFamily = latinDisplayFontFamily
+                                        fontFamily = latinDisplayFontFamily,
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                 }
                             }
