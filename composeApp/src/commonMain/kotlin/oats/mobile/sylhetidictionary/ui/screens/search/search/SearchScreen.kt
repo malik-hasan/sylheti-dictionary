@@ -418,7 +418,7 @@ fun SearchScreen(
                             val indicatorOffset by animateIntOffsetAsState(
                                 targetValue = IntOffset(
                                     x = 0,
-                                    y = (coordinates.boundsInParent().top - with(density) { 16.dp.toPx() }).toInt()
+                                    y = (coordinates.boundsInParent().top - with(density) { 14.dp.toPx() }).toInt()
                                 ),
                                 animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
                             )
