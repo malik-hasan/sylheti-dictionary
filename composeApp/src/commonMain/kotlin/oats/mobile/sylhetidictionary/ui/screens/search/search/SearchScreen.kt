@@ -2,6 +2,7 @@ package oats.mobile.sylhetidictionary.ui.screens.search.search
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateDpAsState
@@ -9,6 +10,8 @@ import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -172,7 +175,10 @@ fun SearchScreen(
                 Row {
                     var touchedChar by remember { mutableStateOf<Char?>(null) }
 
-                    Box(Modifier.weight(1f)) {
+                    Box(Modifier
+                        .animateContentSize()
+                        .weight(1f)
+                    ) {
                         val resultsState = rememberLazyListState()
 
                         var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
@@ -184,7 +190,7 @@ fun SearchScreen(
                             derivedStateOf {
                                 with(resultsState) {
                                     val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
-                                        (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
+                                            (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
 
                                     previousFirstVisibleItemIndex = firstVisibleItemIndex
                                     previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
@@ -350,94 +356,101 @@ fun SearchScreen(
                     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
                     var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
 
-                    Column(
-                        modifier = Modifier
-                            .width(IntrinsicSize.Max)
-                            .widthIn(24.dp)
-                            .background(scrollBarBackgroundColor)
-                            .draggable(
-                                state = rememberDraggableState { delta ->
-                                    scrollBarDragPosition?.let { offset ->
-                                        scrollBarDragPosition = offset.copy(y = offset.y + delta)
+                    AnimatedVisibility(
+                        visible = !searchState.searchBarActive,
+                        enter = slideInHorizontally { it },
+                        exit = slideOutHorizontally { it }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .width(IntrinsicSize.Max)
+                                .widthIn(24.dp)
+                                .background(scrollBarBackgroundColor)
+                                .draggable(
+                                    state = rememberDraggableState { delta ->
+                                        scrollBarDragPosition?.let { offset ->
+                                            scrollBarDragPosition = offset.copy(y = offset.y + delta)
+                                            touchedChar = charCoordinates.entries.find { (_, coordinates) ->
+                                                coordinates.isAttached && coordinates.boundsInParent().contains(offset)
+                                            }?.key
+                                        }
+                                    },
+                                    startDragImmediately = true,
+                                    orientation = Orientation.Vertical,
+                                    onDragStarted = { offset ->
+                                        scrollBarBackgroundColor = surfaceContainerColor
+                                        scrollBarDragPosition = offset
                                         touchedChar = charCoordinates.entries.find { (_, coordinates) ->
                                             coordinates.isAttached && coordinates.boundsInParent().contains(offset)
                                         }?.key
+                                    },
+                                    onDragStopped = {
+                                        delay(500)
+                                        scrollBarBackgroundColor = Color.Unspecified
+                                        scrollBarDragPosition = null
+                                        touchedChar = null
                                     }
-                                },
-                                startDragImmediately = true,
-                                orientation = Orientation.Vertical,
-                                onDragStarted = { offset ->
-                                    scrollBarBackgroundColor = surfaceContainerColor
-                                    scrollBarDragPosition = offset
-                                    touchedChar = charCoordinates.entries.find { (_, coordinates) ->
-                                        coordinates.isAttached && coordinates.boundsInParent().contains(offset)
-                                    }?.key
-                                },
-                                onDragStopped = {
-                                    delay(500)
-                                    scrollBarBackgroundColor = Color.Unspecified
-                                    scrollBarDragPosition = null
-                                    touchedChar = null
-                                }
-                            ),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        val labelLarge = MaterialTheme.typography.labelLarge
-
-                        UnicodeUtility.SYLHETI_IPA_CHARS.keys.toMutableList()
-                            .apply { add(0, '-') }
-                            .filter { it !in UnicodeUtility.NON_INITIAL_CHARS }
-                            .forEach { char ->
-                                var readyToDraw by remember { mutableStateOf(false) }
-                                var textStyle by remember { mutableStateOf(labelLarge) }
-
-                                Text(
-                                    text = char.toString(),
-                                    textAlign = TextAlign.Center,
-                                    style = textStyle,
-                                    softWrap = false,
-                                    fontFamily = latinDisplayFontFamily,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxWidth()
-                                        .drawWithContent {
-                                            if (readyToDraw) drawContent()
-                                        }.onGloballyPositioned { coordinates ->
-                                            charCoordinates[char] = coordinates
-                                        },
-                                    onTextLayout = { textLayoutResult ->
-                                        if (textLayoutResult.didOverflowHeight && textStyle.fontSize > 1.sp) {
-                                            textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
-                                        } else readyToDraw = true
-                                    }
-                                )
-                            }
-
-                        charCoordinates[touchedChar]?.let { coordinates ->
-                            val indicatorOffset by animateIntOffsetAsState(
-                                targetValue = IntOffset(
-                                    x = 0,
-                                    y = (coordinates.boundsInParent().top - with(density) { 14.dp.toPx() }).toInt()
                                 ),
-                                animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
-                            )
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            val labelLarge = MaterialTheme.typography.labelLarge
 
-                            Popup(offset = indicatorOffset) {
-                                Box(
-                                    modifier = Modifier
-                                        .offset(x = 12.dp)
-                                        .size(48.dp)
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.tertiary),
-                                    contentAlignment = Alignment.Center
-                                ) {
+                            UnicodeUtility.SYLHETI_IPA_CHARS.keys.toMutableList()
+                                .apply { add(0, '-') }
+                                .filter { it !in UnicodeUtility.NON_INITIAL_CHARS }
+                                .forEach { char ->
+                                    var readyToDraw by remember { mutableStateOf(false) }
+                                    var textStyle by remember { mutableStateOf(labelLarge) }
+
                                     Text(
-                                        text = touchedChar.toString(),
-                                        color = MaterialTheme.colorScheme.onTertiary,
+                                        text = char.toString(),
+                                        textAlign = TextAlign.Center,
+                                        style = textStyle,
+                                        softWrap = false,
                                         fontFamily = latinDisplayFontFamily,
-                                        fontWeight = FontWeight.SemiBold
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxWidth()
+                                            .drawWithContent {
+                                                if (readyToDraw) drawContent()
+                                            }.onGloballyPositioned { coordinates ->
+                                                charCoordinates[char] = coordinates
+                                            },
+                                        onTextLayout = { textLayoutResult ->
+                                            if (textLayoutResult.didOverflowHeight && textStyle.fontSize > 1.sp) {
+                                                textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
+                                            } else readyToDraw = true
+                                        }
                                     )
+                                }
+
+                            val popupOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
+                            charCoordinates[touchedChar]?.let { coordinates ->
+                                val indicatorOffset by animateIntOffsetAsState(
+                                    targetValue = IntOffset(
+                                        x = 0,
+                                        y = (coordinates.boundsInParent().top - popupOffsetAdjustment).toInt()
+                                    ),
+                                    animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
+                                )
+
+                                Popup(offset = indicatorOffset) {
+                                    Box(
+                                        modifier = Modifier
+                                            .offset(x = 12.dp)
+                                            .size(48.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.tertiary),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = touchedChar.toString(),
+                                            color = MaterialTheme.colorScheme.onTertiary,
+                                            fontFamily = latinDisplayFontFamily,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
                                 }
                             }
                         }
