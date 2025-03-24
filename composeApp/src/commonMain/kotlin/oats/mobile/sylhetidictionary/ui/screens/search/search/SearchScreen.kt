@@ -396,7 +396,7 @@ fun SearchScreen(
                                         }?.key
                                     },
                                     onDragStopped = {
-                                        delay(500)
+                                        delay(400)
                                         scrollBarBackgroundColor = Color.Unspecified
                                         scrollBarDragPosition = null
                                         touchedChar = null
