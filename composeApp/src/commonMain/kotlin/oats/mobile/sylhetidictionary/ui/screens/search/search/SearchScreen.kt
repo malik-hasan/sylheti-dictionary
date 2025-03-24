@@ -354,16 +354,16 @@ fun SearchScreen(
                         }
                     }
 
-                    val charCoordinates = remember { mutableStateMapOf<Char, LayoutCoordinates>() }
-                    var scrollBarBackgroundColor by remember { mutableStateOf(Color.Unspecified) }
-                    val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                    var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
-
                     AnimatedVisibility(
                         visible = !searchState.searchBarActive,
                         enter = slideInHorizontally { it },
                         exit = slideOutHorizontally { it }
                     ) {
+                        val charCoordinates = remember { mutableStateMapOf<Char, LayoutCoordinates>() }
+                        var scrollBarBackgroundColor by remember { mutableStateOf(Color.Unspecified) }
+                        val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
+
                         var scrollBarContainerHeight by remember { mutableIntStateOf(0) }
                         val labelLarge = MaterialTheme.typography.labelLarge
                         var scrollCharStyle by remember(scrollBarContainerHeight) { mutableStateOf(labelLarge) }
