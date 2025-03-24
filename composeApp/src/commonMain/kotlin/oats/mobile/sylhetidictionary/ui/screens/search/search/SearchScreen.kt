@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -373,7 +372,6 @@ fun SearchScreen(
                             modifier = Modifier
                                 .width(IntrinsicSize.Max)
                                 .widthIn(24.dp)
-                                .fillMaxHeight()
                                 .background(scrollBarBackgroundColor)
                                 .onSizeChanged {
                                     scrollBarContainerHeight = it.height
@@ -402,8 +400,7 @@ fun SearchScreen(
                                         touchedChar = null
                                     }
                                 ),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             canDrawScrollChars?.let { canDraw ->
                                 UnicodeUtility.SYLHETI_IPA_CHARS.keys.toMutableList()
