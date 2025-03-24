@@ -437,29 +437,34 @@ fun SearchScreen(
 
                                 val popupOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
                                 charCoordinates[touchedChar]?.let { coordinates ->
-                                    val indicatorOffset by animateIntOffsetAsState(
-                                        targetValue = IntOffset(
-                                            x = 0,
-                                            y = (coordinates.boundsInParent().top - popupOffsetAdjustment).toInt()
-                                        ),
-                                        animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
-                                    )
-
-                                    Popup(offset = indicatorOffset) {
-                                        Box(
-                                            modifier = Modifier
-                                                .offset(x = 12.dp)
-                                                .size(48.dp)
-                                                .clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.tertiary),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = touchedChar.toString(),
-                                                color = MaterialTheme.colorScheme.onTertiary,
-                                                fontFamily = latinDisplayFontFamily,
-                                                fontWeight = FontWeight.SemiBold
+                                    if (coordinates.isAttached) {
+                                        val indicatorOffset by animateIntOffsetAsState(
+                                            targetValue = IntOffset(
+                                                x = 0,
+                                                y = (coordinates.boundsInParent().top - popupOffsetAdjustment).toInt()
+                                            ),
+                                            animationSpec = spring(
+                                                stiffness = Spring.StiffnessHigh,
+                                                visibilityThreshold = IntOffset.VisibilityThreshold
                                             )
+                                        )
+
+                                        Popup(offset = indicatorOffset) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .offset(x = 12.dp)
+                                                    .size(48.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.tertiary),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = touchedChar.toString(),
+                                                    color = MaterialTheme.colorScheme.onTertiary,
+                                                    fontFamily = latinDisplayFontFamily,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                            }
                                         }
                                     }
                                 }
