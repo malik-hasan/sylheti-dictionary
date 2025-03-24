@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -56,6 +57,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +71,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -361,12 +364,20 @@ fun SearchScreen(
                         enter = slideInHorizontally { it },
                         exit = slideOutHorizontally { it }
                     ) {
+                        var scrollBarContainerHeight by remember { mutableIntStateOf(0) }
+                        val labelLarge = MaterialTheme.typography.labelLarge
+                        var scrollCharStyle by remember(scrollBarContainerHeight) { mutableStateOf(labelLarge) }
+                        var canDrawScrollChars by remember(scrollBarContainerHeight) { mutableStateOf<Boolean?>(false) } // null means not using char scroll
+
                         Column(
                             modifier = Modifier
                                 .width(IntrinsicSize.Max)
                                 .widthIn(24.dp)
+                                .fillMaxHeight()
                                 .background(scrollBarBackgroundColor)
-                                .draggable(
+                                .onSizeChanged {
+                                    scrollBarContainerHeight = it.height
+                                }.draggable(
                                     state = rememberDraggableState { delta ->
                                         scrollBarDragPosition?.let { offset ->
                                             scrollBarDragPosition = offset.copy(y = offset.y + delta)
@@ -391,65 +402,66 @@ fun SearchScreen(
                                         touchedChar = null
                                     }
                                 ),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            val labelLarge = MaterialTheme.typography.labelLarge
-
-                            UnicodeUtility.SYLHETI_IPA_CHARS.keys.toMutableList()
-                                .apply { add(0, '-') }
-                                .filter { it !in UnicodeUtility.NON_INITIAL_CHARS }
-                                .forEach { char ->
-                                    var readyToDraw by remember { mutableStateOf(false) }
-                                    var textStyle by remember { mutableStateOf(labelLarge) }
-
-                                    Text(
-                                        text = char.toString(),
-                                        textAlign = TextAlign.Center,
-                                        style = textStyle,
-                                        softWrap = false,
-                                        fontFamily = latinDisplayFontFamily,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .fillMaxWidth()
-                                            .drawWithContent {
-                                                if (readyToDraw) drawContent()
-                                            }.onGloballyPositioned { coordinates ->
-                                                charCoordinates[char] = coordinates
-                                            },
-                                        onTextLayout = { textLayoutResult ->
-                                            if (textLayoutResult.didOverflowHeight && textStyle.fontSize > 1.sp) {
-                                                textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.95f)
-                                            } else readyToDraw = true
-                                        }
-                                    )
-                                }
-
-                            val popupOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
-                            charCoordinates[touchedChar]?.let { coordinates ->
-                                val indicatorOffset by animateIntOffsetAsState(
-                                    targetValue = IntOffset(
-                                        x = 0,
-                                        y = (coordinates.boundsInParent().top - popupOffsetAdjustment).toInt()
-                                    ),
-                                    animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
-                                )
-
-                                Popup(offset = indicatorOffset) {
-                                    Box(
-                                        modifier = Modifier
-                                            .offset(x = 12.dp)
-                                            .size(48.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.tertiary),
-                                        contentAlignment = Alignment.Center
-                                    ) {
+                            canDrawScrollChars?.let { canDraw ->
+                                UnicodeUtility.SYLHETI_IPA_CHARS.keys.toMutableList()
+                                    .apply { add(0, '-') }
+                                    .filter { it !in UnicodeUtility.NON_INITIAL_CHARS }
+                                    .forEach { char ->
                                         Text(
-                                            text = touchedChar.toString(),
-                                            color = MaterialTheme.colorScheme.onTertiary,
+                                            text = char.toString(),
+                                            textAlign = TextAlign.Center,
+                                            style = scrollCharStyle,
+                                            softWrap = false,
                                             fontFamily = latinDisplayFontFamily,
-                                            fontWeight = FontWeight.SemiBold
+                                            fontWeight = FontWeight.SemiBold,
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .fillMaxWidth()
+                                                .drawWithContent {
+                                                    if (canDraw) drawContent()
+                                                }.onGloballyPositioned { coordinates ->
+                                                    charCoordinates[char] = coordinates
+                                                },
+                                            onTextLayout = { textLayoutResult ->
+                                                canDrawScrollChars = if (textLayoutResult.didOverflowHeight) {
+                                                    if (scrollCharStyle.fontSize > 8.sp) {
+                                                        scrollCharStyle = scrollCharStyle.copy(fontSize = scrollCharStyle.fontSize * 0.95f)
+                                                        false
+                                                    } else null // TODO: switch to traditional scroll
+                                                } else true
+                                            }
                                         )
+                                    }
+
+                                val popupOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
+                                charCoordinates[touchedChar]?.let { coordinates ->
+                                    val indicatorOffset by animateIntOffsetAsState(
+                                        targetValue = IntOffset(
+                                            x = 0,
+                                            y = (coordinates.boundsInParent().top - popupOffsetAdjustment).toInt()
+                                        ),
+                                        animationSpec = spring(stiffness = Spring.StiffnessHigh, visibilityThreshold = IntOffset.VisibilityThreshold)
+                                    )
+
+                                    Popup(offset = indicatorOffset) {
+                                        Box(
+                                            modifier = Modifier
+                                                .offset(x = 12.dp)
+                                                .size(48.dp)
+                                                .clip(CircleShape)
+                                                .background(MaterialTheme.colorScheme.tertiary),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = touchedChar.toString(),
+                                                color = MaterialTheme.colorScheme.onTertiary,
+                                                fontFamily = latinDisplayFontFamily,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
                                     }
                                 }
                             }
