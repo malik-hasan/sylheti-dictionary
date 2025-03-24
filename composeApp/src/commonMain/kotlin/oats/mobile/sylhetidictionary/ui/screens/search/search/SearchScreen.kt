@@ -426,12 +426,14 @@ fun SearchScreen(
                                                     charCoordinates[char] = coordinates
                                                 },
                                             onTextLayout = { textLayoutResult ->
-                                                canDrawScrollChars = if (textLayoutResult.didOverflowHeight) {
-                                                    if (scrollCharStyle.fontSize > 8.sp) {
-                                                        scrollCharStyle = scrollCharStyle.copy(fontSize = scrollCharStyle.fontSize * 0.95f)
-                                                        false
-                                                    } else null // TODO: switch to traditional scroll
-                                                } else true
+                                                if (!canDraw) {
+                                                    canDrawScrollChars = if (textLayoutResult.didOverflowHeight) {
+                                                        if (scrollCharStyle.fontSize > 8.sp) {
+                                                            scrollCharStyle = scrollCharStyle.copy(fontSize = scrollCharStyle.fontSize * 0.95f)
+                                                            false
+                                                        } else null // TODO: switch to traditional scroll
+                                                    } else true
+                                                }
                                             }
                                         )
                                     }
