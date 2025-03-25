@@ -175,13 +175,12 @@ fun SearchScreen(
 
                 Row {
                     var touchedChar by remember { mutableStateOf<Char?>(null) }
+                    val resultsState = rememberLazyListState()
 
                     Box(Modifier
                         .animateContentSize()
                         .weight(1f)
                     ) {
-                        val resultsState = rememberLazyListState()
-
                         var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
                         var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
                         var previouslyShowingSearchBar by remember { mutableStateOf(true) }
@@ -344,8 +343,16 @@ fun SearchScreen(
                         }
                     }
 
+                    val showScrollBar by remember(searchState) {
+                        derivedStateOf {
+                            (resultsState.canScrollForward || resultsState.canScrollBackward)
+                                && !searchState.searchBarActive
+                                && searchState.scrollCharIndexes.size > 4
+                        }
+                    }
+
                     AnimatedVisibility(
-                        visible = !searchState.searchBarActive,
+                        visible = showScrollBar,
                         enter = slideInHorizontally { it },
                         exit = slideOutHorizontally { it },
                         modifier = Modifier.align(Alignment.CenterVertically)
