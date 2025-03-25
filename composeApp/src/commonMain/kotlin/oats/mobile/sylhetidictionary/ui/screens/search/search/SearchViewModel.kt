@@ -134,7 +134,18 @@ class SearchViewModel(
     private val entriesFlow = searchResultsSharedFlow.combine(
         bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
-        searchResults ?: dictionaryRepository.getEntries(bookmarks)
+        val entries = searchResults ?: dictionaryRepository.getEntries(bookmarks)
+
+        val scrollCharIndexes: Map<Char, Int> = entries.asSequence()
+            .mapIndexedNotNull { i, entry ->
+                entry.displayIPA.firstOrNull()?.let { firstChar ->
+                    val scrollChar = firstChar.takeIf { it in UnicodeUtility.SYLHETI_IPA_CHARS } ?: '-'
+                    scrollChar to i
+                }
+            }.distinctBy { it.first }
+            .associate { it }
+
+        entries to scrollCharIndexes
     }
 
     private val _searchState = MutableStateFlow(SearchState())
@@ -143,11 +154,12 @@ class SearchViewModel(
             _searchState,
             searchSuggestionsFlow,
             entriesFlow
-        ) { state, (recents, suggestions), entries ->
+        ) { state, (recents, suggestions), (entries, scrollCharIndexes) ->
             state.copy(
                 recents = recents,
                 suggestions = suggestions,
-                entries = entries
+                entries = entries,
+                scrollCharIndexes = scrollCharIndexes
             )
         }
     )

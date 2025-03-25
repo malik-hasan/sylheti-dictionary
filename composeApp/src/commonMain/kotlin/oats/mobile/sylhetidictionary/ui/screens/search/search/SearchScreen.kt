@@ -82,14 +82,12 @@ import androidx.compose.ui.window.Popup
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.delay
-import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
-import oats.mobile.sylhetidictionary.utility.UnicodeUtility
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -187,7 +185,7 @@ fun SearchScreen(
                         var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
                         var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
                         var previouslyShowingSearchBar by remember { mutableStateOf(true) }
-                        var isScrollFromScrollBar by remember { mutableStateOf(false) }
+                        var scrollFromScrollBar by remember { mutableStateOf(false) }
 
                         val showSearchBar by remember {
                             derivedStateOf {
@@ -204,8 +202,8 @@ fun SearchScreen(
                                             true
                                         }
 
-                                        isScrollFromScrollBar -> { // ignore change from scrollbar
-                                            isScrollFromScrollBar = false
+                                        scrollFromScrollBar -> { // ignore change from scrollbar
+                                            scrollFromScrollBar = false
                                             previouslyShowingSearchBar
                                         }
 
@@ -226,17 +224,9 @@ fun SearchScreen(
                         }
 
                         LaunchedEffect(touchedChar) {
-                            touchedChar?.let { char ->
-                                val touchedCharIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: -1
-
-                                val itemIndex = searchState.entries.indexOfFirst {
-                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.displayIPA.first()] ?: -1) >= touchedCharIndex
-                                }.takeUnless { it < 0 } ?: searchState.entries.lastIndex.takeUnless { it < 0 }
-
-                                itemIndex?.let {
-                                    isScrollFromScrollBar = true
-                                    resultsState.scrollToItem(it)
-                                }
+                            searchState.scrollCharIndexes[touchedChar]?.let { itemIndex ->
+                                scrollFromScrollBar = true
+                                resultsState.scrollToItem(itemIndex)
                             }
                         }
 
@@ -357,7 +347,8 @@ fun SearchScreen(
                     AnimatedVisibility(
                         visible = !searchState.searchBarActive,
                         enter = slideInHorizontally { it },
-                        exit = slideOutHorizontally { it }
+                        exit = slideOutHorizontally { it },
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
                         val charCoordinates = remember { mutableStateMapOf<Char, LayoutCoordinates>() }
                         var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
@@ -405,52 +396,50 @@ fun SearchScreen(
                                         touchedChar = null
                                     }
                                 ),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            UnicodeUtility.SYLHETI_IPA_CHARS.keys.toMutableList()
-                                .apply { add(0, '-') }
-                                .filter { it !in UnicodeUtility.NON_INITIAL_CHARS }
-                                .forEach { char ->
-                                    Text(
-                                        text = char.toString(),
-                                        textAlign = TextAlign.Center,
-                                        style = scrollCharStyle,
-                                        softWrap = false,
-                                        fontFamily = latinDisplayFontFamily,
-                                        fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .fillMaxWidth()
-                                            .drawWithContent {
-                                                if (scrollBarMeasured) drawContent()
-                                            }.onGloballyPositioned { coordinates ->
-                                                charCoordinates[char] = coordinates
-                                            },
-                                        onTextLayout = { textLayoutResult ->
-                                            if (!scrollBarMeasured) {
-                                                scrollBarMeasured = if (textLayoutResult.didOverflowHeight && scrollCharsLegible) {
-                                                    val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf {
-                                                        it >= 8.sp
-                                                    } ?: run {
-                                                        scrollBarBackgroundColor = surfaceContainerColor
-                                                        1.sp
-                                                    }
-                                                    Logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
-                                                    scrollCharStyle = scrollCharStyle.copy(fontSize = scaledDownFontSize)
-                                                    false
-                                                } else true
-                                            }
+                            searchState.scrollCharIndexes.forEach { (char) ->
+                                Text(
+                                    text = char.toString(),
+                                    textAlign = TextAlign.Center,
+                                    style = scrollCharStyle,
+                                    softWrap = false,
+                                    fontFamily = latinDisplayFontFamily,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier
+                                        .weight(1f, false)
+                                        .fillMaxWidth()
+                                        .drawWithContent {
+                                            if (scrollBarMeasured) drawContent()
+                                        }.onGloballyPositioned { coordinates ->
+                                            charCoordinates[char] = coordinates
+                                        },
+                                    onTextLayout = { textLayoutResult ->
+                                        if (!scrollBarMeasured) {
+                                            scrollBarMeasured = if (textLayoutResult.didOverflowHeight && scrollCharsLegible) {
+                                                val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf {
+                                                    it >= 8.sp
+                                                } ?: run {
+                                                    scrollBarBackgroundColor = surfaceContainerColor
+                                                    1.sp
+                                                }
+                                                Logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
+                                                scrollCharStyle = scrollCharStyle.copy(fontSize = scaledDownFontSize)
+                                                false
+                                            } else true
                                         }
-                                    )
-                                }
+                                    }
+                                )
+                            }
 
-                            val popupOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
+                            val indicatorOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
                             charCoordinates[touchedChar]?.let { coordinates ->
                                 if (coordinates.isAttached) {
                                     val indicatorOffset by animateIntOffsetAsState(
                                         targetValue = IntOffset(
                                             x = 0,
-                                            y = (coordinates.boundsInParent().top - popupOffsetAdjustment).toInt()
+                                            y = (coordinates.boundsInParent().top - indicatorOffsetAdjustment).toInt()
                                         ),
                                         animationSpec = spring(
                                             stiffness = Spring.StiffnessHigh,
