@@ -357,7 +357,7 @@ fun SearchScreen(
                         exit = slideOutHorizontally { it },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
-                        val charCoordinates = remember { mutableStateMapOf<Char, LayoutCoordinates>() }
+                        val charCoordinates = remember(searchState.scrollCharIndexes.keys) { mutableStateMapOf<Char, LayoutCoordinates>() }
                         var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
 
                         val labelLarge = MaterialTheme.typography.labelLarge
