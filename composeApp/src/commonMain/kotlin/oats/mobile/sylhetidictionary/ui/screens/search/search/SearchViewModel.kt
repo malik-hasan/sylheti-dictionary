@@ -134,9 +134,11 @@ class SearchViewModel(
     private val entriesFlow = searchResultsSharedFlow.combine(
         bookmarksRepository.bookmarksFlow
     ) { searchResults, bookmarks ->
-        val entries = searchResults ?: dictionaryRepository.getEntries(bookmarks)
+        val entries = (searchResults ?: dictionaryRepository.getEntries(bookmarks)).sortedWith(
+            compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) { it.displayIPA }
+        )
 
-        val scrollCharIndexes: Map<Char, Int> = entries.asSequence()
+        val scrollCharIndexes = entries.asSequence()
             .mapIndexedNotNull { i, entry ->
                 entry.displayIPA.firstOrNull()?.let { firstChar ->
                     val scrollChar = firstChar.takeIf { it in UnicodeUtility.SYLHETI_IPA_CHARS } ?: '-'
@@ -347,11 +349,6 @@ class SearchViewModel(
                 searchExamples = searchExamples,
                 settings = settings
             ).distinct()
-                .sortedWith(
-                    compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) {
-                        it.displayIPA
-                    }
-                )
         }
     }
 

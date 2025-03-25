@@ -367,6 +367,7 @@ fun SearchScreen(
                                 .width(IntrinsicSize.Max)
                                 .widthIn(24.dp)
                                 .background(scrollBarBackgroundColor)
+                                .padding(vertical = 4.dp)
                                 .onSizeChanged {
                                     scrollBarContainerHeight = it.height
                                 }.draggable(
