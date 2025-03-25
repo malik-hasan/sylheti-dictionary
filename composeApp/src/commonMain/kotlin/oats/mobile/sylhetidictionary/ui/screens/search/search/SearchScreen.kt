@@ -227,10 +227,10 @@ fun SearchScreen(
 
                         LaunchedEffect(touchedChar) {
                             touchedChar?.let { char ->
-                                val touchedCharIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: 0
+                                val touchedCharIndex = UnicodeUtility.SYLHETI_IPA_CHARS[char] ?: -1
 
                                 val itemIndex = searchState.entries.indexOfFirst {
-                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.displayIPA.first()] ?: 0) >= touchedCharIndex
+                                    (UnicodeUtility.SYLHETI_IPA_CHARS[it.displayIPA.first()] ?: -1) >= touchedCharIndex
                                 }.takeUnless { it < 0 } ?: searchState.entries.lastIndex.takeUnless { it < 0 }
 
                                 itemIndex?.let {
