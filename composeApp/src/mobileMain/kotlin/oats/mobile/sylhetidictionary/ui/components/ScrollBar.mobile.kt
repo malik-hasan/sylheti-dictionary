@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -59,6 +60,9 @@ actual fun ScrollBar(
     density: Density,
     scrollingFromScrollBar: () -> Unit
 ) {
+    val charCoordinates = remember(scrollCharIndexes.keys) { mutableStateMapOf<Char, LayoutCoordinates>() }
+    var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
+
     var touchedChar by remember { mutableStateOf<Char?>(null) }
 
     LaunchedEffect(touchedChar) {
@@ -68,16 +72,20 @@ actual fun ScrollBar(
         }
     }
 
-    val charCoordinates = remember(scrollCharIndexes.keys) { mutableStateMapOf<Char, LayoutCoordinates>() }
-    var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
-
-    val labelLarge = MaterialTheme.typography.labelLarge
-    val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
-
     var scrollBarContainerHeight by remember { mutableIntStateOf(0) }
     var scrollBarMeasured by remember(scrollBarContainerHeight) { mutableStateOf(false) }
-    var scrollBarBackgroundColor by remember(scrollBarContainerHeight) { mutableStateOf(Color.Unspecified) }
+
+    val labelLarge = MaterialTheme.typography.labelLarge
     var scrollCharStyle by remember(scrollBarContainerHeight) { mutableStateOf(labelLarge) }
+
+    val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
+    val scrollBarBackgroundColor by remember(scrollBarContainerHeight) {
+        derivedStateOf {
+            if (scrollBarDragPosition != null || !scrollCharStyle.fontSize.isLegible) {
+                surfaceContainerColor
+            } else Color.Unspecified
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -99,7 +107,6 @@ actual fun ScrollBar(
                 startDragImmediately = true,
                 orientation = Orientation.Vertical,
                 onDragStarted = { offset ->
-                    scrollBarBackgroundColor = surfaceContainerColor
                     scrollBarDragPosition = offset
                     touchedChar = charCoordinates.entries.find { (_, coordinates) ->
                         coordinates.isAttached && coordinates.boundsInParent().contains(offset)
@@ -107,9 +114,6 @@ actual fun ScrollBar(
                 },
                 onDragStopped = {
                     delay(400)
-                    if (scrollCharStyle.fontSize.isLegible) {
-                        scrollBarBackgroundColor = Color.Unspecified
-                    }
                     scrollBarDragPosition = null
                     touchedChar = null
                 }
@@ -136,12 +140,7 @@ actual fun ScrollBar(
                 onTextLayout = { textLayoutResult ->
                     if (!scrollBarMeasured) {
                         scrollBarMeasured = if (textLayoutResult.didOverflowHeight && scrollCharStyle.fontSize.isLegible) {
-                            val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf {
-                                it.isLegible
-                            } ?: run {
-                                scrollBarBackgroundColor = surfaceContainerColor
-                                1.sp
-                            }
+                            val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf { it.isLegible } ?: 1.sp
                             Logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
                             scrollCharStyle = scrollCharStyle.copy(fontSize = scaledDownFontSize)
                             false
