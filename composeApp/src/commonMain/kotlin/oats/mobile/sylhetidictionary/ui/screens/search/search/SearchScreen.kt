@@ -151,7 +151,6 @@ fun SearchScreen(
                     ) {
                         var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
                         var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
-                        var previouslyShowingSearchBar by remember { mutableStateOf(true) }
 
                         val showSearchBar by remember {
                             derivedStateOf {
@@ -163,20 +162,17 @@ fun SearchScreen(
                                     previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
 
                                     when {
-                                        firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> { // always show if at top
-                                            previouslyShowingSearchBar = true
-                                            true
-                                        }
+                                        // always show if at top
+                                        firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
 
-                                        scrollingFromScrollBar -> { // ignore change from scrollbar
+                                        // always hide if scrolling from scrollbar
+                                        scrollingFromScrollBar -> {
                                             scrollingFromScrollBar = false
-                                            previouslyShowingSearchBar
+                                            false
                                         }
 
-                                        else -> { // else show/hide based on isScrollingUp
-                                            previouslyShowingSearchBar = isScrollingUp
-                                            isScrollingUp
-                                        }
+                                        // else show/hide based on isScrollingUp
+                                        else -> isScrollingUp
                                     }
                                 }
                             }
