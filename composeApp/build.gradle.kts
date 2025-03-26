@@ -46,6 +46,8 @@ kotlin {
 
     jvm("desktop")
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         commonMain {
             kotlin.srcDir("build/generated/ksp/metadata")
@@ -74,18 +76,31 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
             }
         }
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.activity.compose)
-            implementation(libs.appcompat)
-            implementation(libs.lifecycle.runtime.compose)
-            implementation(libs.koin.android)
-            implementation(libs.sqldelight.android.driver)
-            implementation(libs.room.runtime.android)
+
+        val mobileMain by creating {
+            dependsOn(commonMain.get())
         }
-        iosMain.dependencies {
-            implementation(libs.sqldelight.native.driver)
+
+        androidMain {
+            dependsOn(mobileMain)
+            dependencies {
+                implementation(compose.preview)
+                implementation(libs.activity.compose)
+                implementation(libs.appcompat)
+                implementation(libs.lifecycle.runtime.compose)
+                implementation(libs.koin.android)
+                implementation(libs.sqldelight.android.driver)
+                implementation(libs.room.runtime.android)
+            }
         }
+
+        iosMain {
+            dependsOn(mobileMain)
+            dependencies {
+                implementation(libs.sqldelight.native.driver)
+            }
+        }
+
         val desktopMain by getting
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
