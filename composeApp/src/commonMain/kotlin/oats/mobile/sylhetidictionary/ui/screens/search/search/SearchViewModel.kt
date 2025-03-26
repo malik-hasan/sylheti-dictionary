@@ -30,6 +30,7 @@ import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.models.displaySN
+import oats.mobile.sylhetidictionary.models.scrollCharIndexes
 import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
 import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
@@ -138,16 +139,7 @@ class SearchViewModel(
             compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) { it.displayIPA }
         )
 
-        val scrollCharIndexes = entries.asSequence()
-            .mapIndexedNotNull { i, entry ->
-                entry.displayIPA.firstOrNull()?.let { firstChar ->
-                    val scrollChar = firstChar.takeIf { it in UnicodeUtility.SYLHETI_IPA_CHARS } ?: '-'
-                    scrollChar to i
-                }
-            }.distinctBy { it.first }
-            .associate { it }
-
-        entries to scrollCharIndexes
+        entries to entries.scrollCharIndexes
     }
 
     private val _searchState = MutableStateFlow(SearchState())
