@@ -88,6 +88,7 @@ import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
+import oats.mobile.sylhetidictionary.ui.utils.isLegible
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -367,7 +368,6 @@ fun SearchScreen(
                         var scrollBarMeasured by remember(scrollBarContainerHeight) { mutableStateOf(false) }
                         var scrollBarBackgroundColor by remember(scrollBarContainerHeight) { mutableStateOf(Color.Unspecified) }
                         var scrollCharStyle by remember(scrollBarContainerHeight) { mutableStateOf(labelLarge) }
-                        val scrollCharsLegible by remember(scrollBarContainerHeight) { derivedStateOf { scrollCharStyle.fontSize >= 8.sp } }
 
                         Column(
                             modifier = Modifier
@@ -397,7 +397,7 @@ fun SearchScreen(
                                     },
                                     onDragStopped = {
                                         delay(400)
-                                        if (scrollCharsLegible) {
+                                        if (scrollCharStyle.fontSize.isLegible) {
                                             scrollBarBackgroundColor = Color.Unspecified
                                         }
                                         scrollBarDragPosition = null
@@ -425,9 +425,9 @@ fun SearchScreen(
                                         },
                                     onTextLayout = { textLayoutResult ->
                                         if (!scrollBarMeasured) {
-                                            scrollBarMeasured = if (textLayoutResult.didOverflowHeight && scrollCharsLegible) {
+                                            scrollBarMeasured = if (textLayoutResult.didOverflowHeight && scrollCharStyle.fontSize.isLegible) {
                                                 val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf {
-                                                    it >= 8.sp
+                                                    it.isLegible
                                                 } ?: run {
                                                     scrollBarBackgroundColor = surfaceContainerColor
                                                     1.sp
