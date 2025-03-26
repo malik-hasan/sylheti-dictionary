@@ -3,23 +3,14 @@ package oats.mobile.sylhetidictionary.ui.screens.search.search
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateIntOffsetAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,15 +18,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -52,43 +38,25 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.touchlab.kermit.Logger
-import kotlinx.coroutines.delay
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.ScrollBar
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
-import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
-import oats.mobile.sylhetidictionary.ui.utils.isLegible
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -101,7 +69,6 @@ import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.suggestion
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
-import kotlin.collections.set
 
 @Composable
 fun SearchScreen(
@@ -175,8 +142,8 @@ fun SearchScreen(
                 } else Spacer(Modifier.height(4.dp))
 
                 Row {
-                    var touchedChar by remember { mutableStateOf<Char?>(null) }
                     val resultsState = rememberLazyListState()
+                    var scrollingFromScrollBar by remember { mutableStateOf(false) }
 
                     Box(Modifier
                         .animateContentSize()
@@ -185,7 +152,6 @@ fun SearchScreen(
                         var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
                         var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
                         var previouslyShowingSearchBar by remember { mutableStateOf(true) }
-                        var scrollFromScrollBar by remember { mutableStateOf(false) }
 
                         val showSearchBar by remember {
                             derivedStateOf {
@@ -202,8 +168,8 @@ fun SearchScreen(
                                             true
                                         }
 
-                                        scrollFromScrollBar -> { // ignore change from scrollbar
-                                            scrollFromScrollBar = false
+                                        scrollingFromScrollBar -> { // ignore change from scrollbar
+                                            scrollingFromScrollBar = false
                                             previouslyShowingSearchBar
                                         }
 
@@ -221,13 +187,6 @@ fun SearchScreen(
                                 index = resultsState.firstVisibleItemIndex,
                                 scrollOffset = resultsState.firstVisibleItemScrollOffset
                             )
-                        }
-
-                        LaunchedEffect(touchedChar) {
-                            searchState.scrollCharIndexes[touchedChar]?.let { itemIndex ->
-                                scrollFromScrollBar = true
-                                resultsState.scrollToItem(itemIndex)
-                            }
                         }
 
                         LazyColumn(
@@ -358,123 +317,11 @@ fun SearchScreen(
                         exit = slideOutHorizontally { it },
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
-                        val charCoordinates = remember(searchState.scrollCharIndexes.keys) { mutableStateMapOf<Char, LayoutCoordinates>() }
-                        var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
-
-                        val labelLarge = MaterialTheme.typography.labelLarge
-                        val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
-
-                        var scrollBarContainerHeight by remember { mutableIntStateOf(0) }
-                        var scrollBarMeasured by remember(scrollBarContainerHeight) { mutableStateOf(false) }
-                        var scrollBarBackgroundColor by remember(scrollBarContainerHeight) { mutableStateOf(Color.Unspecified) }
-                        var scrollCharStyle by remember(scrollBarContainerHeight) { mutableStateOf(labelLarge) }
-
-                        Column(
-                            modifier = Modifier
-                                .width(IntrinsicSize.Max)
-                                .widthIn(24.dp)
-                                .background(scrollBarBackgroundColor)
-                                .padding(vertical = 4.dp)
-                                .onSizeChanged {
-                                    scrollBarContainerHeight = it.height
-                                }.draggable(
-                                    state = rememberDraggableState { delta ->
-                                        scrollBarDragPosition?.let { offset ->
-                                            scrollBarDragPosition = offset.copy(y = offset.y + delta)
-                                            touchedChar = charCoordinates.entries.find { (_, coordinates) ->
-                                                coordinates.isAttached && coordinates.boundsInParent().contains(offset)
-                                            }?.key
-                                        }
-                                    },
-                                    startDragImmediately = true,
-                                    orientation = Orientation.Vertical,
-                                    onDragStarted = { offset ->
-                                        scrollBarBackgroundColor = surfaceContainerColor
-                                        scrollBarDragPosition = offset
-                                        touchedChar = charCoordinates.entries.find { (_, coordinates) ->
-                                            coordinates.isAttached && coordinates.boundsInParent().contains(offset)
-                                        }?.key
-                                    },
-                                    onDragStopped = {
-                                        delay(400)
-                                        if (scrollCharStyle.fontSize.isLegible) {
-                                            scrollBarBackgroundColor = Color.Unspecified
-                                        }
-                                        scrollBarDragPosition = null
-                                        touchedChar = null
-                                    }
-                                ),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            searchState.scrollCharIndexes.forEach { (char) ->
-                                Text(
-                                    text = char.toString(),
-                                    textAlign = TextAlign.Center,
-                                    style = scrollCharStyle,
-                                    softWrap = false,
-                                    fontFamily = latinDisplayFontFamily,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier
-                                        .weight(1f, false)
-                                        .fillMaxWidth()
-                                        .drawWithContent {
-                                            if (scrollBarMeasured) drawContent()
-                                        }.onGloballyPositioned { coordinates ->
-                                            charCoordinates[char] = coordinates
-                                        },
-                                    onTextLayout = { textLayoutResult ->
-                                        if (!scrollBarMeasured) {
-                                            scrollBarMeasured = if (textLayoutResult.didOverflowHeight && scrollCharStyle.fontSize.isLegible) {
-                                                val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf {
-                                                    it.isLegible
-                                                } ?: run {
-                                                    scrollBarBackgroundColor = surfaceContainerColor
-                                                    1.sp
-                                                }
-                                                Logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
-                                                scrollCharStyle = scrollCharStyle.copy(fontSize = scaledDownFontSize)
-                                                false
-                                            } else true
-                                        }
-                                    }
-                                )
-                            }
-
-                            val indicatorOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
-                            charCoordinates[touchedChar]?.let { coordinates ->
-                                if (coordinates.isAttached) {
-                                    val indicatorOffset by animateIntOffsetAsState(
-                                        targetValue = IntOffset(
-                                            x = 0,
-                                            y = (coordinates.boundsInParent().top - indicatorOffsetAdjustment).toInt()
-                                        ),
-                                        animationSpec = spring(
-                                            stiffness = Spring.StiffnessHigh,
-                                            visibilityThreshold = IntOffset.VisibilityThreshold
-                                        )
-                                    )
-
-                                    Popup(offset = indicatorOffset) {
-                                        Box(
-                                            modifier = Modifier
-                                                .offset(x = 12.dp)
-                                                .size(48.dp)
-                                                .clip(CircleShape)
-                                                .background(MaterialTheme.colorScheme.tertiary),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = touchedChar.toString(),
-                                                color = MaterialTheme.colorScheme.onTertiary,
-                                                fontFamily = latinDisplayFontFamily,
-                                                fontWeight = FontWeight.SemiBold
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        ScrollBar(
+                            lazyListState = resultsState,
+                            scrollCharIndexes = searchState.scrollCharIndexes,
+                            scrollingFromScrollBar = { scrollingFromScrollBar = true }
+                        )
                     }
                 }
             }
