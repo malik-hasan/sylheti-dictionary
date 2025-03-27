@@ -55,14 +55,18 @@ actual fun ScrollBar(
 ) {
     val scrollChars = remember(scrollCharIndexes) { scrollCharIndexes.keys.toList() }
 
+    var scrollBarDragOffset by remember { mutableStateOf<Float?>(null) }
+
     var scrollBarHeight by remember { mutableIntStateOf(0) }
 
-    var scrollBarDragOffset by remember { mutableStateOf<Offset?>(null) }
+    val scrollCharHeight by remember {
+        derivedStateOf { scrollBarHeight / scrollChars.size }
+    }
 
-    val touchedChar by remember(scrollChars) {
+    val touchedChar by remember {
         derivedStateOf {
-            scrollBarDragOffset?.takeIf { 0 <= it.y && it.y < scrollBarHeight }?.let { offset ->
-                val charIndex = floor(offset.y / (scrollBarHeight / scrollCharIndexes.size)).toInt()
+            scrollBarDragOffset?.takeIf { 0 <= it && it < scrollBarHeight }?.let {
+                val charIndex = floor(it / scrollCharHeight).toInt()
                 scrollChars[charIndex]
             }
         }
@@ -99,11 +103,11 @@ actual fun ScrollBar(
                 scrollBarHeight = it.height
             }.draggable(
                 state = rememberDraggableState { delta ->
-                    scrollBarDragOffset = scrollBarDragOffset?.plus(Offset(0f, delta))
+                    scrollBarDragOffset = scrollBarDragOffset?.plus(delta)
                 },
                 startDragImmediately = true,
                 orientation = Orientation.Vertical,
-                onDragStarted = { scrollBarDragOffset = it },
+                onDragStarted = { scrollBarDragOffset = it.y },
                 onDragStopped = {
                     delay(400)
                     scrollBarDragOffset = null
@@ -112,7 +116,7 @@ actual fun ScrollBar(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        scrollCharIndexes.forEach { (char) ->
+        scrollChars.forEach { char ->
             Text(
                 text = char.toString(),
                 textAlign = TextAlign.Center,
@@ -142,7 +146,7 @@ actual fun ScrollBar(
         val indicatorOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
         scrollBarDragOffset?.let { dragOffset ->
             touchedChar?.let { char ->
-                Popup(offset = (dragOffset - Offset(0f, indicatorOffsetAdjustment)).round()) {
+                Popup(offset = Offset(0f, dragOffset - indicatorOffsetAdjustment).round()) {
                     Box(
                         modifier = Modifier
                             .offset(x = 12.dp)
