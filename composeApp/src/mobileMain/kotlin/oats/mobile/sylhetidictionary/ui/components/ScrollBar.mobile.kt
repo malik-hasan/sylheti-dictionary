@@ -1,9 +1,5 @@
 package oats.mobile.sylhetidictionary.ui.components
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.animateIntOffsetAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -27,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,21 +32,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.delay
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
 import oats.mobile.sylhetidictionary.ui.utils.isLegible
+import kotlin.math.floor
 
 @Composable
 actual fun ScrollBar(
@@ -60,10 +53,20 @@ actual fun ScrollBar(
     density: Density,
     scrollingFromScrollBar: () -> Unit
 ) {
-    val charCoordinates = remember(scrollCharIndexes.keys) { mutableStateMapOf<Char, LayoutCoordinates>() }
-    var scrollBarDragPosition by remember { mutableStateOf<Offset?>(null) }
+    val scrollChars = remember(scrollCharIndexes) { scrollCharIndexes.keys.toList() }
 
-    var touchedChar by remember { mutableStateOf<Char?>(null) }
+    var scrollBarHeight by remember { mutableIntStateOf(0) }
+
+    var scrollBarDragOffset by remember { mutableStateOf<Offset?>(null) }
+
+    val touchedChar by remember(scrollChars) {
+        derivedStateOf {
+            scrollBarDragOffset?.takeIf { 0 <= it.y && it.y < scrollBarHeight }?.let { offset ->
+                val charIndex = floor(offset.y / (scrollBarHeight / scrollCharIndexes.size)).toInt()
+                scrollChars[charIndex]
+            }
+        }
+    }
 
     LaunchedEffect(touchedChar) {
         scrollCharIndexes[touchedChar]?.let { itemIndex ->
@@ -72,16 +75,15 @@ actual fun ScrollBar(
         }
     }
 
-    var scrollBarContainerHeight by remember { mutableIntStateOf(0) }
-    var scrollBarMeasured by remember(scrollBarContainerHeight) { mutableStateOf(false) }
+    var scrollCharsMeasured by remember(scrollBarHeight) { mutableStateOf(false) }
 
     val labelLarge = MaterialTheme.typography.labelLarge
-    var scrollCharStyle by remember(scrollBarContainerHeight) { mutableStateOf(labelLarge) }
+    var scrollCharStyle by remember(scrollBarHeight) { mutableStateOf(labelLarge) }
 
     val surfaceContainerColor = MaterialTheme.colorScheme.surfaceContainer
-    val scrollBarBackgroundColor by remember(scrollBarContainerHeight) {
+    val scrollBarBackgroundColor by remember(scrollBarHeight) {
         derivedStateOf {
-            if (scrollBarDragPosition != null || !scrollCharStyle.fontSize.isLegible) {
+            if (scrollBarDragOffset != null || !scrollCharStyle.fontSize.isLegible) {
                 surfaceContainerColor
             } else Color.Unspecified
         }
@@ -94,28 +96,17 @@ actual fun ScrollBar(
             .background(scrollBarBackgroundColor)
             .padding(vertical = 4.dp)
             .onSizeChanged {
-                scrollBarContainerHeight = it.height
+                scrollBarHeight = it.height
             }.draggable(
                 state = rememberDraggableState { delta ->
-                    scrollBarDragPosition?.let { offset ->
-                        scrollBarDragPosition = offset.copy(y = offset.y + delta)
-                        touchedChar = charCoordinates.entries.find { (_, coordinates) ->
-                            coordinates.isAttached && coordinates.boundsInParent().contains(offset)
-                        }?.key
-                    }
+                    scrollBarDragOffset = scrollBarDragOffset?.plus(Offset(0f, delta))
                 },
                 startDragImmediately = true,
                 orientation = Orientation.Vertical,
-                onDragStarted = { offset ->
-                    scrollBarDragPosition = offset
-                    touchedChar = charCoordinates.entries.find { (_, coordinates) ->
-                        coordinates.isAttached && coordinates.boundsInParent().contains(offset)
-                    }?.key
-                },
+                onDragStarted = { scrollBarDragOffset = it },
                 onDragStopped = {
                     delay(400)
-                    scrollBarDragPosition = null
-                    touchedChar = null
+                    scrollBarDragOffset = null
                 }
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,13 +124,11 @@ actual fun ScrollBar(
                     .weight(1f, false)
                     .fillMaxWidth()
                     .drawWithContent {
-                        if (scrollBarMeasured) drawContent()
-                    }.onGloballyPositioned { coordinates ->
-                        charCoordinates[char] = coordinates
+                        if (scrollCharsMeasured) drawContent()
                     },
                 onTextLayout = { textLayoutResult ->
-                    if (!scrollBarMeasured) {
-                        scrollBarMeasured = if (textLayoutResult.didOverflowHeight && scrollCharStyle.fontSize.isLegible) {
+                    if (!scrollCharsMeasured) {
+                        scrollCharsMeasured = if (textLayoutResult.didOverflowHeight && scrollCharStyle.fontSize.isLegible) {
                             val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf { it.isLegible } ?: 1.sp
                             Logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
                             scrollCharStyle = scrollCharStyle.copy(fontSize = scaledDownFontSize)
@@ -151,20 +140,9 @@ actual fun ScrollBar(
         }
 
         val indicatorOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
-        charCoordinates[touchedChar]?.let { coordinates ->
-            if (coordinates.isAttached) {
-                val indicatorOffset by animateIntOffsetAsState(
-                    targetValue = IntOffset(
-                        x = 0,
-                        y = (coordinates.boundsInParent().top - indicatorOffsetAdjustment).toInt()
-                    ),
-                    animationSpec = spring(
-                        stiffness = Spring.StiffnessHigh,
-                        visibilityThreshold = IntOffset.VisibilityThreshold
-                    )
-                )
-
-                Popup(offset = indicatorOffset) {
+        scrollBarDragOffset?.let { dragOffset ->
+            touchedChar?.let { char ->
+                Popup(offset = (dragOffset - Offset(0f, indicatorOffsetAdjustment)).round()) {
                     Box(
                         modifier = Modifier
                             .offset(x = 12.dp)
@@ -174,7 +152,7 @@ actual fun ScrollBar(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = touchedChar.toString(),
+                            text = char.toString(),
                             color = MaterialTheme.colorScheme.onTertiary,
                             fontFamily = latinDisplayFontFamily,
                             fontWeight = FontWeight.SemiBold
