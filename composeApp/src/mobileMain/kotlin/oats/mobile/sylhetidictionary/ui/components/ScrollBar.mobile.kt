@@ -59,11 +59,11 @@ actual fun ScrollBar(
 
     var scrollBarHeight by remember { mutableIntStateOf(0) }
 
-    val scrollCharHeight by remember {
+    val scrollCharHeight by remember(scrollChars) {
         derivedStateOf { scrollBarHeight / scrollChars.size }
     }
 
-    val touchedChar by remember {
+    val touchedChar by remember(scrollChars) {
         derivedStateOf {
             scrollBarDragOffset?.takeIf { 0 <= it && it < scrollBarHeight }?.let {
                 val charIndex = floor(it / scrollCharHeight).toInt()
