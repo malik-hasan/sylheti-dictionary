@@ -143,14 +143,15 @@ actual fun ScrollBar(
             )
         }
 
-        val indicatorOffsetAdjustment = remember(density) { with(density) { 14.dp.toPx() } }
+        val indicatorSize = 48.dp
+        val indicatorOffsetAdjustment = remember(density) { with(density) { (indicatorSize / 2).toPx() } }
         scrollBarDragOffset?.let { dragOffset ->
             touchedChar?.let { char ->
                 Popup(offset = Offset(0f, dragOffset - indicatorOffsetAdjustment).round()) {
                     Box(
                         modifier = Modifier
                             .offset(x = 12.dp)
-                            .size(48.dp)
+                            .size(indicatorSize)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.tertiary),
                         contentAlignment = Alignment.Center
