@@ -1,7 +1,7 @@
-package oats.mobile.sylhetidictionary.models
+package oats.mobile.sylhetidictionary.utility
 
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.utility.UnicodeUtility
+import oats.mobile.sylhetidictionary.models.displayIPA
 
 actual val List<DictionaryEntry>.scrollCharIndexes
     get() = asSequence()

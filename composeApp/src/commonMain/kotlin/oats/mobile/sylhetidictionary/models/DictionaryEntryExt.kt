@@ -10,6 +10,3 @@ val DictionaryEntry.displayEN: String?
 
 val DictionaryEntry.displaySN: String?
     get() = citationSN ?: lexemeSN
-
-expect val List<DictionaryEntry>.scrollCharIndexes: Map<Char, Int>
-

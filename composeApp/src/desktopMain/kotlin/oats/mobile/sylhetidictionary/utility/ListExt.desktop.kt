@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.models
+package oats.mobile.sylhetidictionary.utility
 
 import oats.mobile.sylhetidictionary.DictionaryEntry
 
