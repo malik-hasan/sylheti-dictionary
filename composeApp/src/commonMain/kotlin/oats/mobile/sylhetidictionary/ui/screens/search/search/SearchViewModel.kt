@@ -30,7 +30,7 @@ import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.models.displaySN
-import oats.mobile.sylhetidictionary.models.scrollCharIndexes
+import oats.mobile.sylhetidictionary.utility.scrollCharIndexes
 import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
 import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
