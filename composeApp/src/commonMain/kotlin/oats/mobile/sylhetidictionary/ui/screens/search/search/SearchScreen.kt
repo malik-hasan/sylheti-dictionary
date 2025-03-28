@@ -165,7 +165,7 @@ fun SearchScreen(
                                         // always show if at top
                                         firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
 
-                                        // always hide if scrolling from scrollbar
+                                        // always hide if scrolling from scrollbar (mobile only)
                                         scrollingFromScrollBar -> {
                                             scrollingFromScrollBar = false
                                             false
