@@ -30,19 +30,20 @@ import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.models.displaySN
-import oats.mobile.sylhetidictionary.utility.scrollCharIndexes
 import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
 import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.ui.utils.SDString
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
+import oats.mobile.sylhetidictionary.utility.scrollCharIndexes
 import org.jetbrains.compose.resources.getString
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
+    searchBarActive: Boolean,
     private val preferences: PreferencesRepository,
     private val dictionaryRepository: DictionaryRepository,
     private val bookmarksRepository: BookmarksRepository,
@@ -142,8 +143,9 @@ class SearchViewModel(
         entries to entries.scrollCharIndexes
     }
 
-    private val _searchState = MutableStateFlow(SearchState())
-    val searchState = stateFlowOf(SearchState(),
+    private val initialSearchState = SearchState(searchBarActive = searchBarActive)
+    private val _searchState = MutableStateFlow(initialSearchState)
+    val searchState = stateFlowOf(initialSearchState,
         combine(
             _searchState,
             searchSuggestionsFlow,

@@ -46,9 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
@@ -59,7 +57,6 @@ import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.asset_load_error
 import sylhetidictionary.composeapp.generated.resources.history
@@ -71,9 +68,7 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
 
 @Composable
-fun SearchScreen(
-    vm: SearchViewModel = koinViewModel()
-) = with(vm) {
+fun SearchScreen(vm: SearchViewModel) = with(vm) {
     val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
     val searchState by searchState.collectAsStateWithLifecycle()
     val settingsState by settingsState.collectAsStateWithLifecycle()
@@ -98,8 +93,7 @@ fun SearchScreen(
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
-    onSettingsEvent: (SearchSettingsEvent) -> Unit,
-    density: Density = LocalDensity.current
+    onSettingsEvent: (SearchSettingsEvent) -> Unit
 ) {
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },

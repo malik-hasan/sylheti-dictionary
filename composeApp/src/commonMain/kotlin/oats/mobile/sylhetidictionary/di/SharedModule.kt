@@ -12,9 +12,13 @@ import org.koin.dsl.module
 
 val sharedModule = module {
     viewModelOf(::AppViewModel)
-    viewModelOf(::SearchViewModel)
+    viewModel { (searchBarActive: Boolean) ->
+        SearchViewModel(searchBarActive, get(), get(), get(), get())
+    }
     viewModelOf(::SettingsViewModel)
-    viewModel { parameters -> EntryViewModel(parameters.get(), get(), get()) }
+    viewModel { (entryId: String) ->
+        EntryViewModel(entryId, get(), get())
+    }
 
     single { DictionaryRepository(DictionaryDatabase(get()).dictionaryDatabaseQueries) }
 }

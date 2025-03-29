@@ -57,8 +57,6 @@ import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
 import sylhetidictionary.composeapp.generated.resources.examples
@@ -66,10 +64,7 @@ import sylhetidictionary.composeapp.generated.resources.related_words
 import sylhetidictionary.composeapp.generated.resources.variants
 
 @Composable
-fun EntryScreen(
-    entryId: String,
-    vm: EntryViewModel = koinViewModel { parametersOf(entryId) }
-) = with(vm) {
+fun EntryScreen(vm: EntryViewModel) = with(vm) {
     val state by state.collectAsStateWithLifecycle()
 
     EntryScreen(state, ::onEvent)

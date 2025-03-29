@@ -17,6 +17,6 @@ fun SearchIconButton(
 ) {
     IconButton(
         modifier = modifier,
-        onClick = { navController.popBackStack(Route.Search, false) }
+        onClick = { navController.popBackStack(Route.Search(true), false) }
     ) { Icon(Icons.Default.Search, "search") }
 }

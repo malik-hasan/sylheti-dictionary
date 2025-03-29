@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.models.Route
+import oats.mobile.sylhetidictionary.ui.app.LocalDrawerState
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.about
@@ -28,7 +29,6 @@ import sylhetidictionary.composeapp.generated.resources.ipa_help
 import sylhetidictionary.composeapp.generated.resources.search
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
-import oats.mobile.sylhetidictionary.ui.app.LocalDrawerState
 
 @Composable
 fun SDNavigationDrawer(
@@ -62,7 +62,7 @@ fun SDNavigationDrawer(
                         textAlign = TextAlign.Center
                     )
 
-                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search)
+                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search())
 
                     SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings)
 
