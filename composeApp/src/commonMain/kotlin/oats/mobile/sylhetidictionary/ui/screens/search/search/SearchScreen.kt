@@ -47,6 +47,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -75,19 +77,13 @@ fun SearchScreen(
     vm: SearchViewModel = koinViewModel(),
     clearActivateSearchBar: () -> Unit
 ) = with(vm) {
-
-    LaunchedEffect(activateSearchBar) {
-        if (activateSearchBar) {
-            vm.onSearchEvent(SearchEvent.SetSearchBarActive(true))
-            clearActivateSearchBar()
-        }
-    }
-
     val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
     val searchState by searchState.collectAsStateWithLifecycle()
     val settingsState by settingsState.collectAsStateWithLifecycle()
 
     SearchScreen(
+        activateSearchBar = activateSearchBar,
+        clearActivateSearchBar = clearActivateSearchBar,
         assetLoaded = assetLoaded,
         snackbarHostState = snackbarHostState,
         searchTerm = searchTerm,
@@ -101,6 +97,8 @@ fun SearchScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SearchScreen(
+    activateSearchBar: Boolean,
+    clearActivateSearchBar: () -> Unit,
     assetLoaded: Boolean?,
     snackbarHostState: SnackbarHostState,
     searchTerm: String,
@@ -109,6 +107,15 @@ fun SearchScreen(
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit
 ) {
+    val searchFocusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(activateSearchBar) {
+        if (activateSearchBar) {
+            searchFocusRequester.requestFocus()
+            clearActivateSearchBar()
+        }
+    }
+
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
@@ -234,6 +241,7 @@ fun SearchScreen(
                                     .fillMaxWidth(),
                                 inputField = {
                                     SearchBarDefaults.InputField(
+                                        modifier = Modifier.focusRequester(searchFocusRequester),
                                         query = searchTerm,
                                         onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
                                         onSearch = { onSearchEvent(SearchEvent.Search) },
