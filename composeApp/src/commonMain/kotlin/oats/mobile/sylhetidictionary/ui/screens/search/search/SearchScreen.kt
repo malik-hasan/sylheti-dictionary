@@ -74,8 +74,7 @@ import sylhetidictionary.composeapp.generated.resources.tune
 @Composable
 fun SearchScreen(
     activateSearchBar: Boolean,
-    vm: SearchViewModel = koinViewModel(),
-    clearActivateSearchBar: () -> Unit
+    vm: SearchViewModel = koinViewModel()
 ) = with(vm) {
     val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
     val searchState by searchState.collectAsStateWithLifecycle()
@@ -83,7 +82,6 @@ fun SearchScreen(
 
     SearchScreen(
         activateSearchBar = activateSearchBar,
-        clearActivateSearchBar = clearActivateSearchBar,
         assetLoaded = assetLoaded,
         snackbarHostState = snackbarHostState,
         searchTerm = searchTerm,
@@ -98,7 +96,6 @@ fun SearchScreen(
 @Composable
 fun SearchScreen(
     activateSearchBar: Boolean,
-    clearActivateSearchBar: () -> Unit,
     assetLoaded: Boolean?,
     snackbarHostState: SnackbarHostState,
     searchTerm: String,
@@ -109,11 +106,8 @@ fun SearchScreen(
 ) {
     val searchFocusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(activateSearchBar) {
-        if (activateSearchBar) {
-            searchFocusRequester.requestFocus()
-            clearActivateSearchBar()
-        }
+    LaunchedEffect(Unit) {
+        if (activateSearchBar) searchFocusRequester.requestFocus()
     }
 
     SDScreen(
