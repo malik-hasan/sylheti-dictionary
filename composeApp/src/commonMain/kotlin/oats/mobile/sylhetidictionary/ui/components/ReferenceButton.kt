@@ -11,14 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.models.Route
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.models.displaySN
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
-import oats.mobile.sylhetidictionary.ui.app.LocalNavController
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
@@ -33,8 +30,8 @@ import sylhetidictionary.composeapp.generated.resources.see
 fun ReferenceButton(
     referenceEntry: DictionaryEntry,
     entryId: String,
+    navigateToEntry: (entryId: String) -> Unit,
     includeAnimation: Boolean = true,
-    navController: NavController = LocalNavController.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
@@ -50,7 +47,7 @@ fun ReferenceButton(
                             animatedVisibilityScope = animatedContentScope
                         )
                     },
-                onClick = { navController.navigate(Route.Entry(referenceEntry.entryId)) }
+                onClick = { navigateToEntry(referenceEntry.entryId) }
             ) {
                 TaggedField(
                     enableSelection = false,

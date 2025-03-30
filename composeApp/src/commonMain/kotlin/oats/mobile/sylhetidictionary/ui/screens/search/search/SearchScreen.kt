@@ -51,7 +51,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
@@ -60,7 +59,6 @@ import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.asset_load_error
 import sylhetidictionary.composeapp.generated.resources.history
@@ -71,31 +69,11 @@ import sylhetidictionary.composeapp.generated.resources.suggestion
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
 
-@Composable
-fun SearchScreen(
-    activateSearchBar: Boolean,
-    vm: SearchViewModel = koinViewModel()
-) = with(vm) {
-    val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
-    val searchState by searchState.collectAsStateWithLifecycle()
-    val settingsState by settingsState.collectAsStateWithLifecycle()
-
-    SearchScreen(
-        activateSearchBar = activateSearchBar,
-        assetLoaded = assetLoaded,
-        snackbarHostState = snackbarHostState,
-        searchTerm = searchTerm,
-        searchState = searchState,
-        onSearchEvent = ::onSearchEvent,
-        settingsState = settingsState,
-        onSettingsEvent = ::onSettingsEvent
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SearchScreen(
     activateSearchBar: Boolean,
+    navigateToEntry: (entryId: String) -> Unit,
     assetLoaded: Boolean?,
     snackbarHostState: SnackbarHostState,
     searchTerm: String,
@@ -216,9 +194,13 @@ fun SearchScreen(
                                     items = entries,
                                     key = { it.entryId }
                                 ) { entry ->
-                                    EntryCard(entry) { value ->
-                                        onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
-                                    }
+                                    EntryCard(
+                                        entry = entry,
+                                        navigateToEntry = navigateToEntry,
+                                        setBookmark = { value ->
+                                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
+                                        }
+                                    )
                                 }
                             }
                         }

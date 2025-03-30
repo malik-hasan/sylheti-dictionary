@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 package oats.mobile.sylhetidictionary.ui.screens.search.entry
 
 import androidx.compose.animation.AnimatedContentScope
@@ -35,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.models.displaySN
@@ -63,18 +60,14 @@ import sylhetidictionary.composeapp.generated.resources.examples
 import sylhetidictionary.composeapp.generated.resources.related_words
 import sylhetidictionary.composeapp.generated.resources.variants
 
-@Composable
-fun EntryScreen(vm: EntryViewModel) = with(vm) {
-    val state by state.collectAsStateWithLifecycle()
-
-    EntryScreen(state, ::onEvent)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun EntryScreen(
     state: EntryState,
     onEvent: (EntryEvent) -> Unit,
+    navigateUp: () -> Unit,
+    popToSearchBar: () -> Unit,
+    navigateToEntry: (entryId: String) -> Unit,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
@@ -104,8 +97,9 @@ fun EntryScreen(
                                 TopAppBar(
                                     colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
                                     navigationIcon = {
-                                        UpIconButton(Modifier
-                                            .animateEnterExit(
+                                        UpIconButton(
+                                            navigateUp = navigateUp,
+                                            modifier = Modifier.animateEnterExit(
                                                 enter = fadeIn(tween(delayMillis = 300)),
                                                 exit = fadeOut(tween(10))
                                             )
@@ -113,11 +107,13 @@ fun EntryScreen(
                                     },
                                     title = {},
                                     actions = {
-                                        SearchIconButton(Modifier
-                                            .animateEnterExit(
-                                                enter = fadeIn(tween(delayMillis = 300)),
-                                                exit = fadeOut(tween(10))
-                                            )
+                                        SearchIconButton(
+                                            popToSearchBar = popToSearchBar,
+                                            modifier = Modifier
+                                                .animateEnterExit(
+                                                    enter = fadeIn(tween(delayMillis = 300)),
+                                                    exit = fadeOut(tween(10))
+                                                )
                                         )
 
                                         BookmarkIconButton(
@@ -167,7 +163,8 @@ fun EntryScreen(
                         items(state.referenceEntries) {
                             ReferenceButton(
                                 referenceEntry = it,
-                                entryId = entryId
+                                entryId = entryId,
+                                navigateToEntry = navigateToEntry
                             )
                         }
 
@@ -254,9 +251,13 @@ fun EntryScreen(
                                 }
                             }
 
-                            EntryCard(componentEntry.toDictionaryEntry()) { value ->
-                                onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
-                            }
+                            EntryCard(
+                                entry = componentEntry.toDictionaryEntry(),
+                                navigateToEntry = navigateToEntry,
+                                setBookmark = { value ->
+                                    onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
+                                }
+                            )
                         }
 
                         itemsIndexed(
@@ -279,8 +280,12 @@ fun EntryScreen(
 
                             EntryCard(
                                 entry = relatedEntry.toDictionaryEntry(),
-                                includeAnimation = relatedEntry.entryId !in componentEntryIds
-                            ) { onEvent(EntryEvent.Bookmark(relatedEntry.entryId, it)) }
+                                includeAnimation = relatedEntry.entryId !in componentEntryIds,
+                                navigateToEntry = navigateToEntry,
+                                setBookmark = { value ->
+                                    onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
+                                }
+                            )
                         }
                     }
                 }

@@ -10,12 +10,9 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import oats.mobile.sylhetidictionary.models.settings.Language
 import org.koin.compose.viewmodel.koinViewModel
 
-val LocalNavController = staticCompositionLocalOf<NavHostController> { error("No NavController provided") }
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
 val LocalLanguage = staticCompositionLocalOf { Language.EN } // static forces redraw of entire app so all string resources are refreshed
 
@@ -31,7 +28,6 @@ fun SDProvider(
     }
 
     CompositionLocalProvider(
-        LocalNavController provides rememberNavController(),
         LocalDrawerState provides DrawerState(DrawerValue.Closed),
         LocalLanguage provides language
     ) { content() }

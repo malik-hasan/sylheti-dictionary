@@ -47,13 +47,6 @@ import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.theme
 
-@Composable
-fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
-    val state by vm.state.collectAsStateWithLifecycle()
-
-    SettingsScreen(state, vm::onEvent)
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(

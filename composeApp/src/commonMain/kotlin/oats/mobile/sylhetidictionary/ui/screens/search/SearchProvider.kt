@@ -12,9 +12,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
 import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
-import oats.mobile.sylhetidictionary.ui.app.LocalNavController
 import org.koin.compose.koinInject
 
 val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> {
@@ -36,7 +34,6 @@ fun SearchProvider(
 
     SharedTransitionLayout {
         CompositionLocalProvider(
-            LocalNavController provides rememberNavController(),
             LocalSharedTransitionScope provides this,
             LocalHighlightRegex provides highlightRegex
         ) { content() }

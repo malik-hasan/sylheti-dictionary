@@ -25,15 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
-import oats.mobile.sylhetidictionary.models.Route
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.models.displaySN
-import oats.mobile.sylhetidictionary.ui.app.LocalNavController
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.utils.ifTrue
@@ -43,14 +40,13 @@ import org.koin.compose.koinInject
 @Composable
 fun EntryCard(
     entry: DictionaryEntry,
-    modifier: Modifier = Modifier,
+    navigateToEntry: (entryId: String) -> Unit,
+    setBookmark: (Boolean) -> Unit,
     includeAnimation: Boolean = true,
     dictionaryRepository: DictionaryRepository = koinInject(),
     bookmarksRepository: BookmarksRepository = koinInject(),
-    navController: NavController = LocalNavController.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current,
-    setBookmark: (Boolean) -> Unit
 ) {
     val isBookmark by bookmarksRepository.isBookmarkFlow(entry.entryId).collectAsStateWithLifecycle(false)
 
@@ -75,11 +71,11 @@ fun EntryCard(
                 }
 
             val cardShape = RoundedCornerShape(containerCornerRounding)
-            Card(modifier
+            Card(Modifier
                 .clip(cardShape)
                 .clickable {
                     isNavigatingToThisEntry = true
-                    navController.navigate(Route.Entry(entry.entryId))
+                    navigateToEntry(entryId)
                 }.ifTrue(includeAnimation) {
                     sharedBounds(
                         sharedContentState = rememberSharedContentState("container-$entryId"),
@@ -140,6 +136,7 @@ fun EntryCard(
                         ReferenceButton(
                             referenceEntry = it,
                             entryId = entryId,
+                            navigateToEntry = navigateToEntry,
                             includeAnimation = includeAnimation
                         )
                     }

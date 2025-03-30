@@ -14,6 +14,7 @@ enum class Theme(override val label: StringResource): SettingEnum {
     Light(Res.string.light),
     Dark(Res.string.dark);
 
-    @Composable
-    fun isDarkTheme() = if (this == Auto) isSystemInDarkTheme() else this == Dark
+    val isDarkTheme
+        @Composable get() = this == Dark
+                || (this == Auto && isSystemInDarkTheme())
 }

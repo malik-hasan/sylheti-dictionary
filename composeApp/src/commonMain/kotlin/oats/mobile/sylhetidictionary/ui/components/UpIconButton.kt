@@ -6,16 +6,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import oats.mobile.sylhetidictionary.ui.app.LocalNavController
 
 @Composable
 fun UpIconButton(
-    modifier: Modifier = Modifier,
-    navController: NavController = LocalNavController.current
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     IconButton(
         modifier = modifier,
-        onClick = { navController.navigateUp() }
+        onClick = navigateUp
     ) { Icon(Icons.AutoMirrored.Default.ArrowBack, "back") }
 }
