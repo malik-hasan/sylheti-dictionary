@@ -38,6 +38,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -57,6 +58,7 @@ import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.asset_load_error
 import sylhetidictionary.composeapp.generated.resources.history
@@ -68,7 +70,19 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
 
 @Composable
-fun SearchScreen(vm: SearchViewModel) = with(vm) {
+fun SearchScreen(
+    activateSearchBar: Boolean,
+    vm: SearchViewModel = koinViewModel(),
+    clearActivateSearchBar: () -> Unit
+) = with(vm) {
+
+    LaunchedEffect(activateSearchBar) {
+        if (activateSearchBar) {
+            vm.onSearchEvent(SearchEvent.SetSearchBarActive(true))
+            clearActivateSearchBar()
+        }
+    }
+
     val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
     val searchState by searchState.collectAsStateWithLifecycle()
     val settingsState by settingsState.collectAsStateWithLifecycle()

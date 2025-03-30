@@ -43,7 +43,6 @@ import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
-    searchBarActive: Boolean,
     private val preferences: PreferencesRepository,
     private val dictionaryRepository: DictionaryRepository,
     private val bookmarksRepository: BookmarksRepository,
@@ -143,9 +142,8 @@ class SearchViewModel(
         entries to entries.scrollCharIndexes
     }
 
-    private val initialSearchState = SearchState(searchBarActive = searchBarActive)
-    private val _searchState = MutableStateFlow(initialSearchState)
-    val searchState = stateFlowOf(initialSearchState,
+    private val _searchState = MutableStateFlow(SearchState())
+    val searchState = stateFlowOf(SearchState(),
         combine(
             _searchState,
             searchSuggestionsFlow,

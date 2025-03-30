@@ -13,7 +13,7 @@ import oats.mobile.sylhetidictionary.ui.screens.settings.SettingsScreen
 
 @Composable
 fun SDNavHost(navController: NavHostController = LocalNavController.current) {
-    NavHost(navController, Route.Search()) {
+    NavHost(navController, Route.Search) {
         composable<Route.Search> {
             SearchProvider {
                 SearchNavHost()

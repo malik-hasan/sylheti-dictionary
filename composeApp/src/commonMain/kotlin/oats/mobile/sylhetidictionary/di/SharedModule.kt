@@ -12,9 +12,7 @@ import org.koin.dsl.module
 
 val sharedModule = module {
     viewModelOf(::AppViewModel)
-    viewModel { (searchBarActive: Boolean) ->
-        SearchViewModel(searchBarActive, get(), get(), get(), get())
-    }
+    viewModelOf(::SearchViewModel)
     viewModelOf(::SettingsViewModel)
     viewModel { (entryId: String) ->
         EntryViewModel(entryId, get(), get())
