@@ -13,9 +13,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import oats.mobile.sylhetidictionary.ui.app.AppViewModel
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.app.LocalNavController
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
 
 val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> {
     error("No shared transition scope provided")
@@ -29,10 +29,10 @@ val LocalHighlightRegex = compositionLocalOf { Regex("") }
 
 @Composable
 fun SearchProvider(
-    vm: AppViewModel = koinViewModel(),
+    preferences: PreferencesRepository = koinInject(),
     content: @Composable () -> Unit
 ) {
-    val highlightRegex by vm.highlightRegex.collectAsStateWithLifecycle()
+    val highlightRegex by preferences.highlightRegex.collectAsStateWithLifecycle(Regex(""))
 
     SharedTransitionLayout {
         CompositionLocalProvider(
