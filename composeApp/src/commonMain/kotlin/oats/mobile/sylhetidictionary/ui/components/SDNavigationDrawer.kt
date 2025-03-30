@@ -19,9 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.models.Route
 import oats.mobile.sylhetidictionary.ui.app.LocalDrawerState
+import oats.mobile.sylhetidictionary.ui.app.LocalNavController
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.about
@@ -33,9 +36,12 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 @Composable
 fun SDNavigationDrawer(
     drawerState: DrawerState = LocalDrawerState.current,
+    navController: NavHostController = LocalNavController.current,
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+
+    val selectedRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -62,13 +68,13 @@ fun SDNavigationDrawer(
                         textAlign = TextAlign.Center
                     )
 
-                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search)
+                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search, selectedRoute)
 
-                    SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings)
+                    SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings, selectedRoute)
 
-                    SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp)
+                    SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp, selectedRoute)
 
-                    SDNavigationDrawerItem(stringResource(Res.string.about), Route.About)
+                    SDNavigationDrawerItem(stringResource(Res.string.about), Route.About, selectedRoute)
 
                     Spacer(Modifier.weight(1f))
 
