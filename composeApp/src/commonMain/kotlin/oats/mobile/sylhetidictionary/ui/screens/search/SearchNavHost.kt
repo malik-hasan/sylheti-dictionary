@@ -28,7 +28,7 @@ fun SearchNavHost() {
 
     NavHost(navController, Route.Search) {
         composable<Route.Search> {
-            val activateSearchBar = it.savedStateHandle.remove(Route.Search.ACTIVATE_SEARCH_BAR_KEY) ?: false
+            val activateSearchBar = it.savedStateHandle.remove<Unit>(Route.Search.ACTIVATE_SEARCH_BAR_KEY) != null
 
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 with(koinViewModel<SearchViewModel>()) {
@@ -64,7 +64,7 @@ fun SearchNavHost() {
                         navigateUp = navController::navigateUp,
                         popToSearchBar = {
                             with(navController) {
-                                getBackStackEntry(Route.Search).savedStateHandle[Route.Search.ACTIVATE_SEARCH_BAR_KEY] = true
+                                getBackStackEntry(Route.Search).savedStateHandle[Route.Search.ACTIVATE_SEARCH_BAR_KEY] = Unit
                                 popBackStack(Route.Search, false)
                             }
                         },
