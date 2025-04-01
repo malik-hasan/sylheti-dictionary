@@ -127,11 +127,6 @@ fun EntryCard(
                         }
                     )
 
-                    EntryDefinitions(
-                        entry = entry,
-                        includeAnimation = includeAnimation
-                    )
-
                     referenceEntries.forEach {
                         ReferenceButton(
                             referenceEntry = it,
@@ -140,6 +135,11 @@ fun EntryCard(
                             includeAnimation = includeAnimation
                         )
                     }
+
+                    EntryDefinitions(
+                        entry = entry,
+                        includeAnimation = includeAnimation
+                    )
                 }
             }
         }
