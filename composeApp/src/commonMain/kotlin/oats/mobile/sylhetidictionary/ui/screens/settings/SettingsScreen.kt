@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import oats.mobile.sylhetidictionary.models.settings.Language
 import oats.mobile.sylhetidictionary.models.settings.Theme
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
@@ -40,7 +39,6 @@ import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SettingLabel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.contrast
 import sylhetidictionary.composeapp.generated.resources.language
@@ -58,7 +56,8 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 navigationIcon = { DrawerIconButton() },
-                title = { Text(stringResource(Res.string.settings)) }
+                title = { Text(stringResource(Res.string.settings)) },
+                scrollBehavior = it
             )
         }
     ) {

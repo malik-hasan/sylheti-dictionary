@@ -92,6 +92,7 @@ fun SearchScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
+                scrollBehavior = it,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.sylheti_dictionary)) },
                 actions = {

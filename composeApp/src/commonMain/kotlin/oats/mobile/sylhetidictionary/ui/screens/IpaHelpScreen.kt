@@ -41,6 +41,7 @@ fun IpaHelpScreen() {
     SDScreen(
         topBar = {
             TopAppBar(
+                scrollBehavior = it,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.ipa_help)) }
             )
