@@ -1,13 +1,6 @@
 package oats.mobile.sylhetidictionary.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,7 +14,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 fun SDScreen(
     topBar: @Composable (TopAppBarScrollBehavior) -> Unit,
     snackbarHost: @Composable () -> Unit = {},
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable (PaddingValues) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -29,13 +22,6 @@ fun SDScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { topBar(scrollBehavior) },
         snackbarHost = snackbarHost,
-        content = { scaffoldPadding ->
-            Box(Modifier
-                .padding(scaffoldPadding)
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-                )
-            ) { content() }
-        }
+        content = content
     )
 }
