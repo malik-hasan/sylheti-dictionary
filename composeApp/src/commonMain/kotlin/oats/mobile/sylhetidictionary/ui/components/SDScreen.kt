@@ -27,11 +27,7 @@ fun SDScreen(
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            Box(Modifier.windowInsetsPadding(
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-            )) { topBar(scrollBehavior) }
-        },
+        topBar = { topBar(scrollBehavior) },
         snackbarHost = snackbarHost,
         content = { scaffoldPadding ->
             Box(Modifier
