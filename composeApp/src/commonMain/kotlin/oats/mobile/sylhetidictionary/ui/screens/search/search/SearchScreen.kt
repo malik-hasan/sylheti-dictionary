@@ -136,88 +136,88 @@ fun SearchScreen(
                 textAlign = TextAlign.Center
             )
         } else {
-            Column(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
-                Box {
-                    Row {
-                        val resultsState = rememberLazyListState()
-                        var scrollingFromScrollBar by remember { mutableStateOf(false) }
+            Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
+                Row {
+                    val resultsState = rememberLazyListState()
+                    var scrollingFromScrollBar by remember { mutableStateOf(false) }
 
-                        Box(
-                            Modifier
-                                .animateContentSize()
-                                .weight(1f)
-                        ) {
-                            var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
-                            var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
+                    Box(
+                        Modifier
+                            .animateContentSize()
+                            .weight(1f)
+                    ) {
+                        var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
+                        var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
 
-                            val showSearchBar by remember {
-                                derivedStateOf {
-                                    with(resultsState) {
-                                        val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
-                                                (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
+                        val showSearchBar by remember {
+                            derivedStateOf {
+                                with(resultsState) {
+                                    val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
+                                            (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
 
-                                        previousFirstVisibleItemIndex = firstVisibleItemIndex
-                                        previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
+                                    previousFirstVisibleItemIndex = firstVisibleItemIndex
+                                    previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
 
-                                        when {
-                                            // always show if at top
-                                            firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
+                                    when {
+                                        // always show if at top
+                                        firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
 
-                                            // always hide if scrolling from scrollbar (mobile only)
-                                            scrollingFromScrollBar -> {
-                                                scrollingFromScrollBar = false
-                                                false
-                                            }
-
-                                            // else show/hide based on isScrollingUp
-                                            else -> isScrollingUp
+                                        // always hide if scrolling from scrollbar (mobile only)
+                                        scrollingFromScrollBar -> {
+                                            scrollingFromScrollBar = false
+                                            false
                                         }
+
+                                        // else show/hide based on isScrollingUp
+                                        else -> isScrollingUp
                                     }
                                 }
                             }
+                        }
 
-                            SideEffect {
-                                resultsState.requestScrollToItem(
-                                    index = resultsState.firstVisibleItemIndex,
-                                    scrollOffset = resultsState.firstVisibleItemScrollOffset
-                                )
-                            }
+                        SideEffect {
+                            resultsState.requestScrollToItem(
+                                index = resultsState.firstVisibleItemIndex,
+                                scrollOffset = resultsState.firstVisibleItemScrollOffset
+                            )
+                        }
 
-                            val searchResultsInsetsPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom).asPaddingValues()
-                            LazyColumn(
-                                state = resultsState,
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp + searchResultsInsetsPadding.calculateStartPadding(layoutDirection),
-                                    top = 72.dp,
-                                    end = 16.dp + searchResultsInsetsPadding.calculateEndPadding(layoutDirection),
-                                    bottom = 8.dp + searchResultsInsetsPadding.calculateBottomPadding()
-                                ),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                with(searchState) {
-                                    if (entries.isEmpty() && searchTerm.isNotEmpty() && !resultsLoading) {
-                                        item { Text(stringResource(Res.string.no_results)) }
-                                        return@LazyColumn
-                                    }
+                        val searchResultsInsetsPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom).asPaddingValues()
+                        LazyColumn(
+                            state = resultsState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(
+                                start = 16.dp + searchResultsInsetsPadding.calculateStartPadding(layoutDirection),
+                                top = 72.dp,
+                                end = 16.dp + searchResultsInsetsPadding.calculateEndPadding(layoutDirection),
+                                bottom = 8.dp + searchResultsInsetsPadding.calculateBottomPadding()
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            with(searchState) {
+                                if (entries.isEmpty() && searchTerm.isNotEmpty() && !resultsLoading) {
+                                    item { Text(stringResource(Res.string.no_results)) }
+                                    return@LazyColumn
+                                }
 
-                                    items(
-                                        items = entries,
-                                        key = { it.entryId }
-                                    ) { entry ->
-                                        EntryCard(
-                                            entry = entry,
-                                            navigateToEntry = navigateToEntry,
-                                            setBookmark = { value ->
-                                                onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
-                                            }
-                                        )
-                                    }
+                                items(
+                                    items = entries,
+                                    key = { it.entryId }
+                                ) { entry ->
+                                    EntryCard(
+                                        entry = entry,
+                                        navigateToEntry = navigateToEntry,
+                                        setBookmark = { value ->
+                                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
+                                        }
+                                    )
                                 }
                             }
+                        }
 
-                            this@Column.AnimatedVisibility(
+                        Column {
+                            AnimatedVisibility(
                                 visible = showSearchBar,
                                 enter = expandVertically(),
                                 exit = shrinkVertically()
@@ -309,34 +309,34 @@ fun SearchScreen(
                                 }
                             }
                         }
+                    }
 
-                        val showScrollBar by remember(searchState) {
-                            derivedStateOf {
-                                (resultsState.canScrollForward || resultsState.canScrollBackward)
-                                        && !searchState.searchBarActive
-                                        && searchState.scrollCharIndexes.size > 4
-                            }
-                        }
-
-                        AnimatedVisibility(
-                            visible = showScrollBar,
-                            enter = slideInHorizontally { it },
-                            exit = slideOutHorizontally { it },
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.End))
-                        ) {
-                            ScrollBar(
-                                lazyListState = resultsState,
-                                scrollCharIndexes = searchState.scrollCharIndexes,
-                                scrollingFromScrollBar = { scrollingFromScrollBar = true }
-                            )
+                    val showScrollBar by remember(searchState) {
+                        derivedStateOf {
+                            (resultsState.canScrollForward || resultsState.canScrollBackward)
+                                    && !searchState.searchBarActive
+                                    && searchState.scrollCharIndexes.size > 4
                         }
                     }
 
-                    if (searchTerm.isNotBlank() && searchState.resultsLoading) {
-                        LinearProgressIndicator(Modifier.fillMaxWidth())
+                    AnimatedVisibility(
+                        visible = showScrollBar,
+                        enter = slideInHorizontally { it },
+                        exit = slideOutHorizontally { it },
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.End))
+                    ) {
+                        ScrollBar(
+                            lazyListState = resultsState,
+                            scrollCharIndexes = searchState.scrollCharIndexes,
+                            scrollingFromScrollBar = { scrollingFromScrollBar = true }
+                        )
                     }
+                }
+
+                if (searchTerm.isNotBlank() && searchState.resultsLoading) {
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
                 }
             }
         }
