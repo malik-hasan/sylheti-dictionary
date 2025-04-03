@@ -227,6 +227,7 @@ fun SearchScreen(
                                     modifier = Modifier
                                         .ifTrue(!searchState.searchBarActive) {
                                             windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                                            .padding(bottom = 10.dp) // keeps elevation visible during animation
                                         }.padding(horizontal = searchBarPadding)
                                         .fillMaxWidth(),
                                     inputField = {
