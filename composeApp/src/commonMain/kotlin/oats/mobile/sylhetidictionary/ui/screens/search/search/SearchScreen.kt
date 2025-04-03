@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
@@ -52,7 +54,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
@@ -84,7 +88,8 @@ fun SearchScreen(
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
-    onSettingsEvent: (SearchSettingsEvent) -> Unit
+    onSettingsEvent: (SearchSettingsEvent) -> Unit,
+    layoutDirection: LayoutDirection = LocalLayoutDirection.current
 ) {
     val searchFocusRequester = remember { FocusRequester() }
 
@@ -96,6 +101,7 @@ fun SearchScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
+                windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
                 scrollBehavior = it,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.sylheti_dictionary)) },
@@ -177,14 +183,15 @@ fun SearchScreen(
                                 )
                             }
 
+                            val searchResultsInsetsPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom).asPaddingValues()
                             LazyColumn(
                                 state = resultsState,
                                 modifier = Modifier.fillMaxSize(),
                                 contentPadding = PaddingValues(
-                                    start = 16.dp,
+                                    start = 16.dp + searchResultsInsetsPadding.calculateStartPadding(layoutDirection),
                                     top = 72.dp,
-                                    end = 16.dp,
-                                    bottom = 8.dp + WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues().calculateBottomPadding()
+                                    end = 16.dp + searchResultsInsetsPadding.calculateEndPadding(layoutDirection),
+                                    bottom = 8.dp + searchResultsInsetsPadding.calculateBottomPadding()
                                 ),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
