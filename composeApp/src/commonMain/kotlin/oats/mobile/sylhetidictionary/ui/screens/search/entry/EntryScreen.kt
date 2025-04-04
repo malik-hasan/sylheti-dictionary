@@ -49,7 +49,7 @@ import oats.mobile.sylhetidictionary.ui.components.FieldTag
 import oats.mobile.sylhetidictionary.ui.components.ReferenceButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
-import oats.mobile.sylhetidictionary.ui.components.SDTopAppBarDefaults
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBarWindowInsets
 import oats.mobile.sylhetidictionary.ui.components.SearchIconButton
 import oats.mobile.sylhetidictionary.ui.components.UpIconButton
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
@@ -94,7 +94,7 @@ fun EntryScreen(
                                 resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                                 clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(containerCornerRounding))
                             ).background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .windowInsetsPadding(SDTopAppBarDefaults.windowInsets)
+                            .windowInsetsPadding(SDTopAppBarWindowInsets)
                         ) {
                             with(animatedContentScope) {
                                 SDTopAppBar(

@@ -13,10 +13,8 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-object SDTopAppBarDefaults {
-    val windowInsets
-        @Composable get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
-}
+val SDTopAppBarWindowInsets
+    @Composable get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,5 +32,5 @@ fun SDTopAppBar(
     actions = actions,
     colors = colors,
     scrollBehavior = scrollBehavior,
-    windowInsets = SDTopAppBarDefaults.windowInsets
+    windowInsets = SDTopAppBarWindowInsets
 )

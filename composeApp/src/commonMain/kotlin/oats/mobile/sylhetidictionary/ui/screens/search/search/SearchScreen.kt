@@ -223,8 +223,9 @@ fun SearchScreen(
                                     inputField = {
                                         SearchBarDefaults.InputField(
                                             modifier = Modifier
-                                                .padding(scaffoldPadding.horizontal())
-                                                .focusRequester(searchFocusRequester),
+                                                .ifTrue(searchState.searchBarActive) {
+                                                    padding(scaffoldPadding.horizontal())
+                                                }.focusRequester(searchFocusRequester),
                                             query = searchTerm,
                                             onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
                                             onSearch = { onSearchEvent(SearchEvent.Search) },
@@ -317,7 +318,7 @@ fun SearchScreen(
                         enter = slideInHorizontally { it },
                         exit = slideOutHorizontally { it },
                         modifier = Modifier
-                            .padding(scaffoldPadding.calculateBottomPadding())
+                            .padding(bottom = scaffoldPadding.calculateBottomPadding())
                             .align(Alignment.CenterVertically)
                     ) {
                         ScrollBar(
