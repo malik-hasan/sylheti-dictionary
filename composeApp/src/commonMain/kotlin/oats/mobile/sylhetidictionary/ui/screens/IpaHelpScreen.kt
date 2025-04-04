@@ -10,7 +10,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.LinkAnnotation
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
 import oats.mobile.sylhetidictionary.ui.theme.textLinkStyle
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
@@ -40,18 +40,19 @@ import sylhetidictionary.composeapp.generated.resources.what_is_ipa
 fun IpaHelpScreen() {
     SDScreen(
         topBar = {
-            TopAppBar(
+            SDTopAppBar(
                 scrollBehavior = it,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.ipa_help)) }
             )
         }
-    ) {
+    ) { scaffoldPadding ->
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
+                .padding(scaffoldPadding)
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
+                .padding(bottom = 16.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(

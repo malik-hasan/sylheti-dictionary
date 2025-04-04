@@ -22,7 +22,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -36,6 +35,7 @@ import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.DynamicThemeSetting
 import oats.mobile.sylhetidictionary.ui.components.LanguageButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.SettingLabel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -54,14 +54,17 @@ fun SettingsScreen(
 ) {
     SDScreen(
         topBar = {
-            TopAppBar(
+            SDTopAppBar(
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.settings)) },
                 scrollBehavior = it
             )
         }
-    ) {
-        Column(Modifier.verticalScroll(rememberScrollState())) {
+    ) { scaffoldPadding ->
+        Column(Modifier
+            .padding(scaffoldPadding)
+            .verticalScroll(rememberScrollState())
+        ) {
             SettingLabel(
                 iconPainter = painterResource(Res.drawable.language),
                 label = stringResource(Res.string.language)

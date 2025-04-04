@@ -1,11 +1,13 @@
 package oats.mobile.sylhetidictionary.ui.screens
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.about
@@ -15,12 +17,15 @@ import sylhetidictionary.composeapp.generated.resources.about
 fun AboutScreen() {
     SDScreen(
         topBar = {
-            TopAppBar(
+            SDTopAppBar(
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.about)) }
             )
         }
-    ) {
-        Text("TODO: ask Sylheti Project for description of dictionary and organization")
+    ) { scaffoldPadding ->
+        Text(
+            text = "TODO: ask Sylheti Project for description of dictionary and organization",
+            modifier = Modifier.padding(scaffoldPadding)
+        )
     }
 }

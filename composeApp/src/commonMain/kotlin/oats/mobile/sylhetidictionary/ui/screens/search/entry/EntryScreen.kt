@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -24,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,6 +48,8 @@ import oats.mobile.sylhetidictionary.ui.components.EntryVariant
 import oats.mobile.sylhetidictionary.ui.components.FieldTag
 import oats.mobile.sylhetidictionary.ui.components.ReferenceButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBarDefaults
 import oats.mobile.sylhetidictionary.ui.components.SearchIconButton
 import oats.mobile.sylhetidictionary.ui.components.UpIconButton
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
@@ -92,9 +94,10 @@ fun EntryScreen(
                                 resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                                 clipInOverlayDuringTransition = OverlayClip(RoundedCornerShape(containerCornerRounding))
                             ).background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .windowInsetsPadding(SDTopAppBarDefaults.windowInsets)
                         ) {
                             with(animatedContentScope) {
-                                TopAppBar(
+                                SDTopAppBar(
                                     colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
                                     navigationIcon = {
                                         UpIconButton(
@@ -105,7 +108,6 @@ fun EntryScreen(
                                             )
                                         )
                                     },
-                                    title = {},
                                     actions = {
                                         SearchIconButton(
                                             popToSearchBar = popToSearchBar,
@@ -151,13 +153,14 @@ fun EntryScreen(
                             )
                         }
                     }
-                ) {
+                ) { scaffoldPadding ->
                     val componentEntryIds = remember(state.componentEntries) {
                         state.componentEntries.map { it.entryId }
                     }
 
                     LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                        modifier = Modifier.padding(scaffoldPadding),
+                        contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(state.referenceEntries) {

@@ -3,14 +3,9 @@ package oats.mobile.sylhetidictionary.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,11 +16,16 @@ import oats.mobile.sylhetidictionary.ui.utils.SDString
 import oats.mobile.sylhetidictionary.ui.utils.appendHighlighted
 
 @Composable
-fun SearchSuggestion(suggestion: SDString, onClick: () -> Unit, icon: @Composable () -> Unit) {
+fun SearchSuggestion(
+    suggestion: SDString,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit
+) {
     Row(
         modifier = Modifier
             .clickable(onClick = onClick)
-            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            .then(modifier)
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .height(32.dp),

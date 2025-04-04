@@ -14,15 +14,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,7 +34,6 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -53,16 +46,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.ScrollBar
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
+import oats.mobile.sylhetidictionary.ui.utils.horizontal
 import oats.mobile.sylhetidictionary.ui.utils.ifTrue
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -87,8 +80,7 @@ fun SearchScreen(
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
-    onSettingsEvent: (SearchSettingsEvent) -> Unit,
-    layoutDirection: LayoutDirection = LocalLayoutDirection.current
+    onSettingsEvent: (SearchSettingsEvent) -> Unit
 ) {
     val searchFocusRequester = remember { FocusRequester() }
 
@@ -99,8 +91,7 @@ fun SearchScreen(
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            TopAppBar(
-                windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+            SDTopAppBar(
                 scrollBehavior = it,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.sylheti_dictionary)) },
@@ -137,7 +128,7 @@ fun SearchScreen(
         } else {
             Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
                 Row(Modifier.ifTrue(!searchState.searchBarActive) {
-                    windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                    padding(scaffoldPadding.horizontal())
                 }) {
                     val resultsState = rememberLazyListState()
                     var scrollingFromScrollBar by remember { mutableStateOf(false) }
@@ -190,7 +181,7 @@ fun SearchScreen(
                                 start = 16.dp,
                                 top = 72.dp,
                                 end = 16.dp,
-                                bottom = 8.dp + WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues().calculateBottomPadding()
+                                bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
                             ),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -232,7 +223,7 @@ fun SearchScreen(
                                     inputField = {
                                         SearchBarDefaults.InputField(
                                             modifier = Modifier
-                                                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                                                .padding(scaffoldPadding.horizontal())
                                                 .focusRequester(searchFocusRequester),
                                             query = searchTerm,
                                             onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
@@ -280,12 +271,13 @@ fun SearchScreen(
 
                                     LazyColumn(
                                         state = suggestionsState,
-                                        contentPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues(),
+                                        contentPadding = PaddingValues(bottom = scaffoldPadding.calculateBottomPadding()),
                                     ) {
                                         items(searchState.recents) { recent ->
                                             SearchSuggestion(
                                                 suggestion = recent,
-                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent.text)) }
+                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent.text)) },
+                                                modifier = Modifier.padding(scaffoldPadding.horizontal())
                                             ) {
                                                 Icon(
                                                     painter = painterResource(Res.drawable.history),
@@ -297,7 +289,8 @@ fun SearchScreen(
                                         items(searchState.suggestions) { suggestion ->
                                             SearchSuggestion(
                                                 suggestion = suggestion,
-                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) }
+                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) },
+                                                modifier = Modifier.padding(scaffoldPadding.horizontal())
                                             ) {
                                                 Icon(
                                                     painter = painterResource(Res.drawable.suggestion),
@@ -324,8 +317,8 @@ fun SearchScreen(
                         enter = slideInHorizontally { it },
                         exit = slideOutHorizontally { it },
                         modifier = Modifier
+                            .padding(scaffoldPadding.calculateBottomPadding())
                             .align(Alignment.CenterVertically)
-                            .navigationBarsPadding()
                     ) {
                         ScrollBar(
                             lazyListState = resultsState,
