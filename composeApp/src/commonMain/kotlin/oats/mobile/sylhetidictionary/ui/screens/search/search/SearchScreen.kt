@@ -34,6 +34,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -46,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
@@ -88,11 +90,13 @@ fun SearchScreen(
         if (activateSearchBar) searchFocusRequester.requestFocus()
     }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             SDTopAppBar(
-                scrollBehavior = it,
+                scrollBehavior = scrollBehavior,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.sylheti_dictionary)) },
                 actions = {
@@ -176,7 +180,9 @@ fun SearchScreen(
 
                         LazyColumn(
                             state = resultsState,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .nestedScroll(scrollBehavior.nestedScrollConnection),
                             contentPadding = PaddingValues(
                                 start = 16.dp,
                                 top = 72.dp,

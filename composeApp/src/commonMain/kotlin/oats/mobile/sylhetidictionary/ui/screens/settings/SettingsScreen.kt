@@ -22,11 +22,13 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.models.settings.Language
 import oats.mobile.sylhetidictionary.models.settings.Theme
@@ -52,12 +54,15 @@ fun SettingsScreen(
     onEvent: (SettingsEvent) -> Unit,
     language: Language = LocalLanguage.current
 ) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     SDScreen(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SDTopAppBar(
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.settings)) },
-                scrollBehavior = it
+                scrollBehavior = scrollBehavior
             )
         }
     ) { scaffoldPadding ->

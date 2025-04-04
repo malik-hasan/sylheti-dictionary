@@ -5,24 +5,19 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SDScreen(
-    topBar: @Composable (TopAppBarScrollBehavior) -> Unit,
+    topBar: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
     snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { topBar(scrollBehavior) },
+        modifier = modifier,
+        topBar = topBar,
         snackbarHost = snackbarHost,
         content = content,
         contentWindowInsets = WindowInsets.safeDrawing

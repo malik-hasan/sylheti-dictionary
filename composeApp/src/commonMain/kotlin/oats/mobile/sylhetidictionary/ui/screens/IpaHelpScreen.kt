@@ -10,8 +10,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -38,10 +40,13 @@ import sylhetidictionary.composeapp.generated.resources.what_is_ipa
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IpaHelpScreen() {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     SDScreen(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SDTopAppBar(
-                scrollBehavior = it,
+                scrollBehavior = scrollBehavior,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.ipa_help)) }
             )
