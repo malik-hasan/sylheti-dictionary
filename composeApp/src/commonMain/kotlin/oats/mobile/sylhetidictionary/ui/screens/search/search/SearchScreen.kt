@@ -16,10 +16,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -137,7 +136,9 @@ fun SearchScreen(
             )
         } else {
             Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
-                Row {
+                Row(Modifier.ifTrue(!searchState.searchBarActive) {
+                    windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                }) {
                     val resultsState = rememberLazyListState()
                     var scrollingFromScrollBar by remember { mutableStateOf(false) }
 
@@ -182,15 +183,14 @@ fun SearchScreen(
                             )
                         }
 
-                        val searchResultsInsetsPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom).asPaddingValues()
                         LazyColumn(
                             state = resultsState,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(
-                                start = 16.dp + searchResultsInsetsPadding.calculateStartPadding(layoutDirection),
+                                start = 16.dp,
                                 top = 72.dp,
-                                end = 16.dp + searchResultsInsetsPadding.calculateEndPadding(layoutDirection),
-                                bottom = 8.dp + searchResultsInsetsPadding.calculateBottomPadding()
+                                end = 16.dp,
+                                bottom = 8.dp + WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues().calculateBottomPadding()
                             ),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -226,8 +226,7 @@ fun SearchScreen(
                                 SearchBar(
                                     modifier = Modifier
                                         .ifTrue(!searchState.searchBarActive) {
-                                            windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
-                                            .padding(bottom = 10.dp) // keeps elevation visible during animation
+                                            padding(bottom = 10.dp) // keeps elevation visible during animation
                                         }.padding(horizontal = searchBarPadding)
                                         .fillMaxWidth(),
                                     inputField = {
@@ -326,7 +325,7 @@ fun SearchScreen(
                         exit = slideOutHorizontally { it },
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.End))
+                            .navigationBarsPadding()
                     ) {
                         ScrollBar(
                             lazyListState = resultsState,
