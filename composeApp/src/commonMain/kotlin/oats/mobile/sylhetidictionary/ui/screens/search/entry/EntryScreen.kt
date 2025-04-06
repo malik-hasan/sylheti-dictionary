@@ -55,6 +55,7 @@ import oats.mobile.sylhetidictionary.ui.components.UpIconButton
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
+import oats.mobile.sylhetidictionary.ui.utils.copy
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
@@ -159,8 +160,15 @@ fun EntryScreen(
                     }
 
                     LazyColumn(
-                        modifier = Modifier.padding(scaffoldPadding),
-                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.padding(
+                            scaffoldPadding.copy(bottom = 0.dp)
+                        ),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            top = 16.dp,
+                            end = 16.dp,
+                            bottom = 16.dp + scaffoldPadding.calculateBottomPadding()
+                        ),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(state.referenceEntries) {
