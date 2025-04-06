@@ -67,8 +67,8 @@ fun SettingsScreen(
         }
     ) { scaffoldPadding ->
         Column(Modifier
-            .padding(scaffoldPadding)
             .verticalScroll(rememberScrollState())
+            .padding(scaffoldPadding)
         ) {
             SettingLabel(
                 iconPainter = painterResource(Res.drawable.language),

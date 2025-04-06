@@ -54,10 +54,10 @@ fun IpaHelpScreen() {
     ) { scaffoldPadding ->
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .padding(scaffoldPadding)
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp)
-                .verticalScroll(rememberScrollState()),
+                .padding(bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
