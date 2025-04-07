@@ -316,9 +316,8 @@ fun SearchScreen(
                     val showScrollBar by remember(searchState) {
                         derivedStateOf {
                             (resultsState.canScrollForward || resultsState.canScrollBackward)
+                                    && (searchState.scrollCharIndexes.isEmpty() || searchState.scrollCharIndexes.size > 4)
                                     && !searchState.searchBarActive
-                                    && (searchState.scrollCharIndexes.isEmpty()
-                                    || searchState.scrollCharIndexes.size > 4)
                         }
                     }
 
