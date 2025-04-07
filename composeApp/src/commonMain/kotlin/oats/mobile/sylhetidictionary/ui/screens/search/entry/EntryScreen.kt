@@ -80,14 +80,13 @@ fun EntryScreen(
             with(entry) {
                 SDScreen(
                     topBar = {
-                        val containerCornerRounding by animatedContentScope.transition
-                            .animateDp(label = "containerCornerAnimation") { state ->
-                                when (state) {
-                                    EnterExitState.PreEnter -> 24.dp
-                                    EnterExitState.Visible -> 0.dp
-                                    EnterExitState.PostExit -> 24.dp
-                                }
+                        val containerCornerRounding by animatedContentScope.transition.animateDp { state ->
+                            when (state) {
+                                EnterExitState.PreEnter -> 24.dp
+                                EnterExitState.Visible -> 0.dp
+                                EnterExitState.PostExit -> 24.dp
                             }
+                        }
 
                         Column(Modifier
                             .sharedBounds(

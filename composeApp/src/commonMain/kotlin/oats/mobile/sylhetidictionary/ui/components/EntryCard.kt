@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,18 +60,18 @@ fun EntryCard(
         with(entry) {
             var isNavigatingToThisEntry by remember { mutableStateOf(false) }
 
-            val containerCornerRounding by animatedContentScope.transition
-                .animateDp(label = "containerCornerAnimation") { state ->
-                    if (isNavigatingToThisEntry) {
-                        when (state) {
-                            EnterExitState.PreEnter -> 0.dp
-                            EnterExitState.Visible -> 24.dp
-                            EnterExitState.PostExit -> 0.dp
-                        }
-                    } else 24.dp
-                }
+            val containerCornerRounding by animatedContentScope.transition.animateDp { state ->
+                if (isNavigatingToThisEntry) {
+                    when (state) {
+                        EnterExitState.PreEnter -> 0.dp
+                        EnterExitState.Visible -> 24.dp
+                        EnterExitState.PostExit -> 24.dp
+                    }
+                } else 24.dp
+            }
 
-            val cardShape = RoundedCornerShape(containerCornerRounding)
+            val cardShape by derivedStateOf { RoundedCornerShape(containerCornerRounding) }
+
             Card(Modifier
                 .clip(cardShape)
                 .clickable {
