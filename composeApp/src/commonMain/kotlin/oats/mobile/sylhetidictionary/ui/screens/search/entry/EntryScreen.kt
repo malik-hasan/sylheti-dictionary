@@ -10,10 +10,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,14 +22,16 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
@@ -56,6 +56,7 @@ import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
 import oats.mobile.sylhetidictionary.ui.utils.copy
+import oats.mobile.sylhetidictionary.ui.utils.space
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
@@ -196,7 +197,7 @@ fun EntryScreen(
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 
-                                EntrySubHeader(stringResource(Res.string.variants))
+                                EntrySubHeader(AnnotatedString(stringResource(Res.string.variants)))
                             }
 
                             EntryVariant(
@@ -212,7 +213,7 @@ fun EntryScreen(
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 
-                                EntrySubHeader(stringResource(Res.string.examples))
+                                EntrySubHeader(AnnotatedString(stringResource(Res.string.examples)))
                             }
 
                             EntryExample(
@@ -231,20 +232,9 @@ fun EntryScreen(
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 8.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.Bottom
-                                    ) {
-                                        Text(
-                                            text = stringResource(Res.string.component_lexemes),
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
+                                EntrySubHeader(
+                                    text = buildAnnotatedString {
+                                        append(stringResource(Res.string.component_lexemes))
 
                                         componentEntry.complexFormType
                                             .takeIf { it != "Unspecified Complex Form" }
@@ -252,14 +242,13 @@ fun EntryScreen(
                                             ?.joinToString(" ") {
                                                 it.replaceFirstChar(Char::titlecase)
                                             }?.let { complexFormType ->
-                                                Text(
-                                                    text = "($complexFormType)",
-                                                    style = MaterialTheme.typography.titleMedium,
-                                                    fontFamily = latinDisplayFontFamily
-                                                )
+                                                space()
+                                                withStyle(SpanStyle(fontFamily = latinDisplayFontFamily)) {
+                                                    append("($complexFormType)")
+                                                }
                                             }
                                     }
-                                }
+                                )
                             }
 
                             EntryCard(
@@ -280,7 +269,7 @@ fun EntryScreen(
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 
-                                EntrySubHeader(stringResource(Res.string.related_words))
+                                EntrySubHeader(AnnotatedString(stringResource(Res.string.related_words)))
                             }
 
                             FieldTag(

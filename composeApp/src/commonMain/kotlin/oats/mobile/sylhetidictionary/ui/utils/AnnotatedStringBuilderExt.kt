@@ -78,3 +78,5 @@ private fun AnnotatedString.Builder.appendHighlightedConjuncts(text: String, cur
         else -> currentIndex
     }
 }
+
+fun AnnotatedString.Builder.space() = append(' ')
