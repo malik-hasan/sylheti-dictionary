@@ -317,7 +317,8 @@ fun SearchScreen(
                         derivedStateOf {
                             (resultsState.canScrollForward || resultsState.canScrollBackward)
                                     && !searchState.searchBarActive
-                                    && searchState.scrollCharIndexes.size > 4
+                                    && (searchState.scrollCharIndexes.isEmpty()
+                                    || searchState.scrollCharIndexes.size > 4)
                         }
                     }
 

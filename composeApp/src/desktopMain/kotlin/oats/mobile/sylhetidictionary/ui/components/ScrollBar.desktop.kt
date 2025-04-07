@@ -1,5 +1,6 @@
 package oats.mobile.sylhetidictionary.ui.components
 
+import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,6 +36,10 @@ actual fun ScrollBar(
             .ifTrue(isHovered || isDragged) {
                 background(MaterialTheme.colorScheme.surfaceContainer)
             }.padding(4.dp),
-        interactionSource = interactionSource
+        interactionSource = interactionSource,
+        style = LocalScrollbarStyle.current.copy(
+            unhoverColor = MaterialTheme.colorScheme.tertiary,
+            hoverColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
