@@ -52,6 +52,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.job
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
@@ -88,8 +89,12 @@ fun SearchScreen(
 ) {
     val searchFocusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        if (activateSearchBar) searchFocusRequester.requestFocus()
+    LaunchedEffect(activateSearchBar) {
+        if (activateSearchBar) {
+            coroutineContext.job.invokeOnCompletion {
+                searchFocusRequester.requestFocus()
+            }
+        }
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
