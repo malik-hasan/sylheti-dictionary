@@ -1,7 +1,9 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
@@ -60,6 +62,8 @@ import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.ScrollBar
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
+import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
+import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.utils.horizontal
 import oats.mobile.sylhetidictionary.ui.utils.ifTrue
 import org.jetbrains.compose.resources.painterResource
@@ -85,7 +89,9 @@ fun SearchScreen(
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
-    onSettingsEvent: (SearchSettingsEvent) -> Unit
+    onSettingsEvent: (SearchSettingsEvent) -> Unit,
+    sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
+    animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
     val searchFocusRequester = remember { FocusRequester() }
 
@@ -103,6 +109,13 @@ fun SearchScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             SDTopAppBar(
+                modifier = with(sharedTransitionScope) {
+                    with(animatedContentScope) {
+                        Modifier
+                            .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
+                            .animateEnterExit()
+                    }
+                },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = { DrawerIconButton() },
                 title = { Text(stringResource(Res.string.sylheti_dictionary)) },
