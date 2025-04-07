@@ -6,8 +6,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -323,15 +321,11 @@ fun SearchScreen(
                         }
                     }
 
-                    AnimatedVisibility(
-                        visible = showScrollBar,
-                        enter = slideInHorizontally { it },
-                        exit = slideOutHorizontally { it },
-                        modifier = Modifier
-                            .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-                            .align(Alignment.CenterVertically)
-                    ) {
+                    if (showScrollBar) {
                         ScrollBar(
+                            modifier = Modifier
+                                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                                .align(Alignment.CenterVertically),
                             lazyListState = resultsState,
                             scrollCharIndexes = searchState.scrollCharIndexes,
                             scrollingFromScrollBar = { scrollingFromScrollBar = true }

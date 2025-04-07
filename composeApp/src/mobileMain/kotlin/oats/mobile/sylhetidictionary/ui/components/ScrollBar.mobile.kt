@@ -50,6 +50,7 @@ import kotlin.math.floor
 actual fun ScrollBar(
     lazyListState: LazyListState,
     scrollCharIndexes: Map<Char, Int>,
+    modifier: Modifier,
     density: Density,
     scrollingFromScrollBar: () -> Unit
 ) {
@@ -94,7 +95,7 @@ actual fun ScrollBar(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .width(IntrinsicSize.Max)
             .widthIn(24.dp)
             .background(scrollBarBackgroundColor)

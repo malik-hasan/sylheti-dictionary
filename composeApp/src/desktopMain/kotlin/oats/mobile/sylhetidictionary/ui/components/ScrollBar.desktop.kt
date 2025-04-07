@@ -21,6 +21,7 @@ import oats.mobile.sylhetidictionary.ui.utils.ifTrue
 actual fun ScrollBar(
     lazyListState: LazyListState,
     scrollCharIndexes: Map<Char, Int>,
+    modifier: Modifier,
     density: Density,
     scrollingFromScrollBar: () -> Unit
 ) {
@@ -30,7 +31,7 @@ actual fun ScrollBar(
 
     VerticalScrollbar(
         adapter = rememberScrollbarAdapter(lazyListState),
-        modifier = Modifier
+        modifier = modifier
             .ifTrue(isHovered || isDragged) {
                 background(MaterialTheme.colorScheme.surfaceContainer)
             }.padding(4.dp),
