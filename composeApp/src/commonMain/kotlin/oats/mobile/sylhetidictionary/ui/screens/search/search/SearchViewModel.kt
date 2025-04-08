@@ -1,5 +1,6 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -124,6 +125,8 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
+    val resultsListState = LazyListState()
+
     private val searchSuggestionsFlow = settingsState.combine(
         snapshotFlow { searchTerm }.debounce(300)
     ) { settings, searchTerm ->
@@ -140,6 +143,8 @@ class SearchViewModel(
         )
 
         entries to entries.scrollCharIndexes
+    }.onEach {
+        resultsListState.requestScrollToItem(0)
     }
 
     private val _searchState = MutableStateFlow(SearchState())
@@ -198,11 +203,10 @@ class SearchViewModel(
 
     private fun search() {
         setSearchBarActive(false)
-        Logger.d("SEARCH: searching...")
+        Logger.d("SEARCH: searching for $searchTerm")
 
+        val searchTerm = searchTerm
         viewModelScope.launch {
-            val searchTerm = searchTerm
-
             val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
 
             preferences.setHighlightRegex(highlightRegex)

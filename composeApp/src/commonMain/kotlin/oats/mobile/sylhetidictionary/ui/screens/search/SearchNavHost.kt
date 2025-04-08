@@ -42,6 +42,7 @@ fun SearchNavHost() {
                         assetLoaded = assetLoaded,
                         snackbarHostState = snackbarHostState,
                         searchTerm = searchTerm,
+                        resultsListState = resultsListState,
                         searchState = searchState,
                         onSearchEvent = ::onSearchEvent,
                         settingsState = settingsState,

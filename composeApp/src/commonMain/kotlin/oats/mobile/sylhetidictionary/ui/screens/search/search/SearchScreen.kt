@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -85,6 +86,7 @@ fun SearchScreen(
     assetLoaded: Boolean?,
     snackbarHostState: SnackbarHostState,
     searchTerm: String,
+    resultsListState: LazyListState,
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
@@ -143,7 +145,6 @@ fun SearchScreen(
                 Row(Modifier.ifTrue(!searchState.searchBarActive) {
                     padding(scaffoldPadding.horizontal())
                 }) {
-                    val resultsState = rememberLazyListState()
                     var scrollingFromScrollBar by remember { mutableStateOf(false) }
 
                     Box(Modifier
@@ -151,18 +152,11 @@ fun SearchScreen(
                         .weight(1f)
                     ) {
                         LaunchedEffect(activateSearchBar) {
-                            if (activateSearchBar) resultsState.scrollToItem(0)
-                        }
-
-                        SideEffect {
-                            resultsState.requestScrollToItem(
-                                index = resultsState.firstVisibleItemIndex,
-                                scrollOffset = resultsState.firstVisibleItemScrollOffset
-                            )
+                            if (activateSearchBar) resultsListState.scrollToItem(0)
                         }
 
                         LazyColumn(
-                            state = resultsState,
+                            state = resultsListState,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -201,7 +195,7 @@ fun SearchScreen(
                             var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
                             val showSearchBar by remember {
                                 derivedStateOf {
-                                    with(resultsState) {
+                                    with(resultsListState) {
                                         val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
                                                 (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
 
@@ -330,7 +324,7 @@ fun SearchScreen(
 
                     val showScrollBar by remember(searchState) {
                         derivedStateOf {
-                            (resultsState.canScrollForward || resultsState.canScrollBackward)
+                            with (resultsListState) { canScrollForward || canScrollBackward }
                                     && with(searchState.scrollCharIndexes) { isEmpty() || size > 4 }
                                     && !searchState.searchBarActive
                         }
@@ -341,7 +335,7 @@ fun SearchScreen(
                             modifier = Modifier
                                 .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
                                 .align(Alignment.CenterVertically),
-                            lazyListState = resultsState,
+                            lazyListState = resultsListState,
                             scrollCharIndexes = searchState.scrollCharIndexes,
                             scrollingFromScrollBar = { scrollingFromScrollBar = true }
                         )
