@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -42,7 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -86,6 +84,7 @@ fun SearchScreen(
     assetLoaded: Boolean?,
     snackbarHostState: SnackbarHostState,
     searchTerm: String,
+    suggestionsListState: LazyListState,
     resultsListState: LazyListState,
     searchState: SearchState,
     onSearchEvent: (SearchEvent) -> Unit,
@@ -278,17 +277,8 @@ fun SearchScreen(
                                     shadowElevation = 6.dp,
                                     windowInsets = WindowInsets(0)
                                 ) {
-                                    val suggestionsState = rememberLazyListState()
-
-                                    SideEffect {
-                                        suggestionsState.requestScrollToItem(
-                                            index = suggestionsState.firstVisibleItemIndex,
-                                            scrollOffset = suggestionsState.firstVisibleItemScrollOffset
-                                        )
-                                    }
-
                                     LazyColumn(
-                                        state = suggestionsState,
+                                        state = suggestionsListState,
                                         contentPadding = PaddingValues(bottom = scaffoldPadding.calculateBottomPadding()),
                                     ) {
                                         items(searchState.recents) { recent ->

@@ -125,13 +125,17 @@ class SearchViewModel(
     var searchTerm by mutableStateOf("")
         private set
 
-    val resultsListState = LazyListState()
+    val suggestionsListState = LazyListState()
 
     private val searchSuggestionsFlow = settingsState.combine(
         snapshotFlow { searchTerm }.debounce(300)
     ) { settings, searchTerm ->
         getSearchSuggestions(searchTerm, settings)
+    }.onEach {
+        suggestionsListState.requestScrollToItem(0)
     }
+
+    val resultsListState = LazyListState()
 
     private val searchResultsSharedFlow = MutableSharedFlow<List<DictionaryEntry>?>()
 
