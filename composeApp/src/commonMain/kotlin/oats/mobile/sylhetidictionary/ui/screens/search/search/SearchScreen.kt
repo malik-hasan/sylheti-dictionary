@@ -150,35 +150,6 @@ fun SearchScreen(
                         .animateContentSize()
                         .weight(1f)
                     ) {
-                        var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
-                        var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
-
-                        val showSearchBar by remember {
-                            derivedStateOf {
-                                with(resultsState) {
-                                    val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
-                                            (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
-
-                                    previousFirstVisibleItemIndex = firstVisibleItemIndex
-                                    previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
-
-                                    when {
-                                        // always show if at top
-                                        firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
-
-                                        // always hide if scrolling from scrollbar (mobile only)
-                                        scrollingFromScrollBar -> {
-                                            scrollingFromScrollBar = false
-                                            false
-                                        }
-
-                                        // else show/hide based on isScrollingUp
-                                        else -> isScrollingUp
-                                    }
-                                }
-                            }
-                        }
-
                         SideEffect {
                             resultsState.requestScrollToItem(
                                 index = resultsState.firstVisibleItemIndex,
@@ -221,9 +192,36 @@ fun SearchScreen(
                             }
                         }
 
-                        Column {
-                            val searchFocusRequester = remember { FocusRequester() }
+                        Column { // provides ColumnScope for AnimatedVisibility
                             var activateSearchBarFlagHandled by remember { mutableStateOf(false) }
+
+                            var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
+                            var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
+                            val showSearchBar by remember {
+                                derivedStateOf {
+                                    with(resultsState) {
+                                        val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
+                                                (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
+
+                                        previousFirstVisibleItemIndex = firstVisibleItemIndex
+                                        previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
+
+                                        when {
+                                            // always show if at top
+                                            firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
+
+                                            // always hide if scrolling from scrollbar (mobile only)
+                                            scrollingFromScrollBar -> {
+                                                scrollingFromScrollBar = false
+                                                false
+                                            }
+
+                                            // else show/hide based on isScrollingUp
+                                            else -> isScrollingUp
+                                        }
+                                    }
+                                }
+                            }
 
                             AnimatedVisibility(
                                 visible = showSearchBar,
@@ -238,6 +236,8 @@ fun SearchScreen(
                                         }.padding(horizontal = searchBarPadding)
                                         .fillMaxWidth(),
                                     inputField = {
+                                        val searchFocusRequester = remember { FocusRequester() }
+
                                         SearchBarDefaults.InputField(
                                             modifier = Modifier
                                                 .ifTrue(searchState.searchBarActive) {
@@ -331,7 +331,7 @@ fun SearchScreen(
                     val showScrollBar by remember(searchState) {
                         derivedStateOf {
                             (resultsState.canScrollForward || resultsState.canScrollBackward)
-                                    && (searchState.scrollCharIndexes.isEmpty() || searchState.scrollCharIndexes.size > 4)
+                                    && with(searchState.scrollCharIndexes) { isEmpty() || size > 4 }
                                     && !searchState.searchBarActive
                         }
                     }
