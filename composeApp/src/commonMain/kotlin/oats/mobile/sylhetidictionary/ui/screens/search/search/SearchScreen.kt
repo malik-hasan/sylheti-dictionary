@@ -40,7 +40,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -52,9 +51,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.job
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
@@ -93,16 +92,6 @@ fun SearchScreen(
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
-    val searchFocusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(activateSearchBar) {
-        if (activateSearchBar) {
-            coroutineContext.job.invokeOnCompletion {
-                searchFocusRequester.requestFocus()
-            }
-        }
-    }
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     SDScreen(
@@ -157,10 +146,9 @@ fun SearchScreen(
                     val resultsState = rememberLazyListState()
                     var scrollingFromScrollBar by remember { mutableStateOf(false) }
 
-                    Box(
-                        Modifier
-                            .animateContentSize()
-                            .weight(1f)
+                    Box(Modifier
+                        .animateContentSize()
+                        .weight(1f)
                     ) {
                         var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
                         var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
@@ -234,6 +222,9 @@ fun SearchScreen(
                         }
 
                         Column {
+                            val searchFocusRequester = remember { FocusRequester() }
+                            var activateSearchBarFlagHandled by remember { mutableStateOf(false) }
+
                             AnimatedVisibility(
                                 visible = showSearchBar,
                                 enter = expandVertically(),
@@ -251,7 +242,13 @@ fun SearchScreen(
                                             modifier = Modifier
                                                 .ifTrue(searchState.searchBarActive) {
                                                     padding(scaffoldPadding.horizontal())
-                                                }.focusRequester(searchFocusRequester),
+                                                }.focusRequester(searchFocusRequester)
+                                                .onGloballyPositioned {
+                                                    if (activateSearchBar && !activateSearchBarFlagHandled) {
+                                                        searchFocusRequester.requestFocus()
+                                                        activateSearchBarFlagHandled = true // stop cyclic recompositions
+                                                    }
+                                                },
                                             query = searchTerm,
                                             onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
                                             onSearch = { onSearchEvent(SearchEvent.Search) },
