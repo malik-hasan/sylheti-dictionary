@@ -40,6 +40,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -51,7 +52,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
@@ -150,6 +150,10 @@ fun SearchScreen(
                         .animateContentSize()
                         .weight(1f)
                     ) {
+                        LaunchedEffect(activateSearchBar) {
+                            if (activateSearchBar) resultsState.scrollToItem(0)
+                        }
+
                         SideEffect {
                             resultsState.requestScrollToItem(
                                 index = resultsState.firstVisibleItemIndex,
@@ -193,8 +197,6 @@ fun SearchScreen(
                         }
 
                         Column { // provides ColumnScope for AnimatedVisibility
-                            var activateSearchBarFlagHandled by remember { mutableStateOf(false) }
-
                             var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
                             var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
                             val showSearchBar by remember {
@@ -238,17 +240,15 @@ fun SearchScreen(
                                     inputField = {
                                         val searchFocusRequester = remember { FocusRequester() }
 
+                                        LaunchedEffect(activateSearchBar) {
+                                            if (activateSearchBar) searchFocusRequester.requestFocus()
+                                        }
+
                                         SearchBarDefaults.InputField(
                                             modifier = Modifier
                                                 .ifTrue(searchState.searchBarActive) {
                                                     padding(scaffoldPadding.horizontal())
-                                                }.focusRequester(searchFocusRequester)
-                                                .onGloballyPositioned {
-                                                    if (activateSearchBar && !activateSearchBarFlagHandled) {
-                                                        searchFocusRequester.requestFocus()
-                                                        activateSearchBarFlagHandled = true // stop cyclic recompositions
-                                                    }
-                                                },
+                                                }.focusRequester(searchFocusRequester),
                                             query = searchTerm,
                                             onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
                                             onSearch = { onSearchEvent(SearchEvent.Search) },
