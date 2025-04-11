@@ -9,28 +9,34 @@ android-compileSdk = "35"
 
 activity-compose = "1.10.1"
 appcompat = "1.7.0"
+coroutines = "1.10.1"
+datastore = "1.1.4"
+datetime = "0.6.2"
+kermit = "2.0.5"
+koin = "4.0.2"
 lifecycle = "2.8.7"
 navigation = "2.9.0-alpha15"
-koin = "4.0.2"
-sqldelight = "2.0.2"
 room = "2.7.0"
-sqlite = "2.5.0"
-datastore = "1.1.4"
-kermit = "2.0.5"
-coroutines = "1.10.1"
 serialization = "1.8.0"
-datetime = "0.6.2"
 splashscreen = "1.0.1"
+sqldelight = "2.0.2"
+sqlite = "2.5.0"
 
 [libraries]
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 
-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 
-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core" }
@@ -38,39 +44,33 @@ koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-android = { module = "io.insert-koin:koin-android" }
 
+lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
+
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
+
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+
+core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
+
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-async-extensions = { module = "app.cash.sqldelight:async-extensions", version.ref = "sqldelight" }
 
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-room-runtime-android = { module = "androidx.room:room-runtime-android", version.ref = "room" }
-
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
-
-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-
-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
-
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
-
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
-
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
-
-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
-
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 android-application = { id = "com.android.application", version.ref = "agp" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 room = { id = "androidx.room", version.ref = "room" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

@@ -52,28 +52,27 @@ kotlin {
         commonMain {
             kotlin.srcDir("build/generated/ksp/metadata")
             dependencies {
-                implementation(compose.runtime)
                 implementation(compose.foundation)
+                implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(compose.material3)
                 implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
 
-                implementation(libs.lifecycle.viewmodel)
-                implementation(libs.navigation.compose)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.datastore.preferences)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.kermit)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 api(libs.koin.core)
-                implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose)
+                implementation(libs.lifecycle.viewmodel)
+                implementation(libs.navigation.compose)
+                implementation(libs.room.runtime)
+                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.sqldelight.coroutines.extensions)
                 implementation(libs.sqldelight.async.extensions)
-                implementation(libs.room.runtime)
                 implementation(libs.sqlite.bundled)
-                implementation(libs.datastore.preferences)
-                implementation(libs.kermit)
-                implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.kotlinx.datetime)
             }
         }
 
@@ -87,11 +86,11 @@ kotlin {
                 implementation(compose.preview)
                 implementation(libs.activity.compose)
                 implementation(libs.appcompat)
-                implementation(libs.lifecycle.runtime.compose)
                 implementation(libs.koin.android)
-                implementation(libs.sqldelight.android.driver)
+                implementation(libs.lifecycle.runtime.compose)
                 implementation(libs.room.runtime.android)
                 implementation(libs.core.splashscreen)
+                implementation(libs.sqldelight.android.driver)
             }
         }
 
@@ -105,9 +104,9 @@ kotlin {
         val desktopMain by getting
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.lifecycle.runtime.compose)
             implementation(libs.sqldelight.sqlite.driver)
-            implementation(libs.kotlinx.coroutines.swing)
         }
 
         commonTest.dependencies {
