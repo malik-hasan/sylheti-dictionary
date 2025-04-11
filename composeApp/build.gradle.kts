@@ -91,6 +91,7 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.sqldelight.android.driver)
                 implementation(libs.room.runtime.android)
+                implementation(libs.core.splashscreen)
             }
         }
 
