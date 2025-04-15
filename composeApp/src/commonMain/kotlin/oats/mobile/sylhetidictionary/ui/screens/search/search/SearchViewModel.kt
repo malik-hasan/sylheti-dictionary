@@ -135,8 +135,6 @@ class SearchViewModel(
         suggestionsListState.requestScrollToItem(0)
     }
 
-    val resultsListState = LazyListState()
-
     private val searchResultsSharedFlow = MutableSharedFlow<List<DictionaryEntry>?>()
 
     private val entriesFlow = searchResultsSharedFlow.combine(
@@ -147,8 +145,6 @@ class SearchViewModel(
         )
 
         entries to entries.scrollCharIndexes
-    }.onEach {
-        resultsListState.requestScrollToItem(0)
     }
 
     private val _searchState = MutableStateFlow(SearchState())
@@ -352,6 +348,8 @@ class SearchViewModel(
         }
     }
 
+    val resultsListState = LazyListState()
+
     private suspend fun refreshSearch(
         searchTerm: String,
         settings: SearchSettingsState
@@ -361,6 +359,7 @@ class SearchViewModel(
         val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
         searchResultsSharedFlow.emit(searchResults)
         _searchState.update { it.copy(resultsLoading = false) }
+        resultsListState.requestScrollToItem(0)
 
         return Triple(
             !searchResults.isNullOrEmpty(),
