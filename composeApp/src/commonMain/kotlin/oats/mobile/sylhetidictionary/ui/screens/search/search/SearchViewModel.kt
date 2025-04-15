@@ -174,7 +174,9 @@ class SearchViewModel(
             is SearchEvent.SetSearchBarActive -> with(event) {
                 if (value) {
                     previousSearchTerm = searchTerm
-                } else searchTerm = previousSearchTerm
+                } else {
+                    searchTerm = previousSearchTerm
+                }
                 setSearchBarActive(value)
             }
 
@@ -206,13 +208,15 @@ class SearchViewModel(
         Logger.d("SEARCH: searching for $searchTerm")
 
         val searchTerm = searchTerm
-        viewModelScope.launch {
-            val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
+        if (searchTerm != previousSearchTerm) {
+            viewModelScope.launch {
+                val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
 
-            preferences.setHighlightRegex(highlightRegex)
+                preferences.setHighlightRegex(highlightRegex)
 
-            if (hasSearchResults) {
-                recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
+                if (hasSearchResults) {
+                    recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
+                }
             }
         }
     }
