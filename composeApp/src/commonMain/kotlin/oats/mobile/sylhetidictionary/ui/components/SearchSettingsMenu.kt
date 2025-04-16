@@ -26,11 +26,14 @@ import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
 import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsEvent
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsState
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.also_search
+import sylhetidictionary.composeapp.generated.resources.deep_search
 import sylhetidictionary.composeapp.generated.resources.in_definitions
 import sylhetidictionary.composeapp.generated.resources.in_examples
+import sylhetidictionary.composeapp.generated.resources.search_language
 import sylhetidictionary.composeapp.generated.resources.search_languages
 import sylhetidictionary.composeapp.generated.resources.search_position
 import sylhetidictionary.composeapp.generated.resources.search_script
@@ -51,7 +54,7 @@ fun SearchSettingsMenu(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(Res.string.search_position), Modifier.padding(start = 8.dp))
+                SettingLabel(painterResource(Res.drawable.search_position), stringResource(Res.string.search_position))
                 SingleChoiceSegmentedButtonRow {
                     with(SearchPosition.entries) {
                         forEachIndexed { i, entry ->
@@ -68,7 +71,8 @@ fun SearchSettingsMenu(
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(Res.string.search_script), Modifier.padding(start = 8.dp))
+                SettingLabel(painterResource(Res.drawable.search_script), stringResource(Res.string.search_script))
+
                 SingleChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Max)) {
                     with(SearchScript.entries) {
                         forEachIndexed { i, entry ->
@@ -93,7 +97,8 @@ fun SearchSettingsMenu(
                     exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(stringResource(Res.string.search_languages), Modifier.padding(start = 8.dp))
+                        SettingLabel(painterResource(Res.drawable.search_language), stringResource(Res.string.search_languages))
+
                         MultiChoiceSegmentedButtonRow {
                             forEachIndexed { i, (language, checked) ->
                                 SegmentedButton(
@@ -110,7 +115,7 @@ fun SearchSettingsMenu(
             }
 
             Column {
-                Text(stringResource(Res.string.also_search))
+                SettingLabel(painterResource(Res.drawable.deep_search), stringResource(Res.string.also_search))
 
                 val easternNagriEnabled = state.script == SearchScript.EASTERN_NAGRI
                 val bengaliEasternNagriEnabled = easternNagriEnabled
@@ -132,6 +137,10 @@ fun SearchSettingsMenu(
                     label = stringResource(Res.string.in_examples),
                     checked = state.searchExamples
                 ) { onEvent(SearchSettingsEvent.ToggleSearchExamples(it)) }
+            }
+
+            Column {
+//                Icon()
             }
         }
     }
