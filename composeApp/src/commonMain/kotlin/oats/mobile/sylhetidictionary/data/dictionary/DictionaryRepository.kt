@@ -204,4 +204,8 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
     suspend fun getRelatedEntries(senseId: String) = withContext(Dispatchers.IO) {
         queries.relatedEntry(senseId).awaitAsList()
     }
+
+    suspend fun getPartsOfSpeech(query: String) = withContext(Dispatchers.IO) {
+        queries.getPartsOfSpeech(query) { it!! }.awaitAsList().toSet()
+    }
 }

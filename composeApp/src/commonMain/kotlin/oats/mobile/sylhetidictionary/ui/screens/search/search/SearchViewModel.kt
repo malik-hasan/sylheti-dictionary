@@ -168,29 +168,49 @@ class SearchViewModel(
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.ToggleSettingsMenu -> _searchState.update {
-                it.copy(menuExpanded = event.expanded)
+                it.copy(settingsMenuExpanded = event.expand)
+            }
+
+            is SearchEvent.GetPartOfSpeechSuggestions -> with(event) {
+                viewModelScope.launch {
+                    _searchState.update {
+                        it.copy(partOfSpeechSuggestions = dictionaryRepository.getPartsOfSpeech(query))
+                    }
+                }
+            }
+
+            is SearchEvent.ApplyPartOfSpeechFilter -> with(event) {
+                _searchState.update {
+                    it.copy(
+                        partOfSpeechFilters = if (apply) {
+                            it.partOfSpeechFilters + partOfSpeech
+                        } else {
+                            it.partOfSpeechFilters - partOfSpeech
+                        }
+                    )
+                }
             }
 
             is SearchEvent.SetSearchBarActive -> with(event) {
-                if (value) {
+                if (active) {
                     previousSearchTerm = searchTerm
                 } else {
                     searchTerm = previousSearchTerm
                 }
-                setSearchBarActive(value)
+                setSearchBarActive(active)
             }
 
-            is SearchEvent.UpdateSearchTerm -> searchTerm = event.value
+            is SearchEvent.UpdateSearchTerm -> searchTerm = event.term
             SearchEvent.Search -> search()
             is SearchEvent.SelectSuggestion -> {
-                searchTerm = event.value
+                searchTerm = event.term
                 search()
             }
 
-            is SearchEvent.Bookmark -> with(event) {
+            is SearchEvent.ToggleBookmark -> with(event) {
                 viewModelScope.launch {
                     with(bookmarksRepository) {
-                        if (isBookmark) {
+                        if (bookmark) {
                             addBookmark(entryId)
                         } else removeBookmark(entryId)
                     }

@@ -17,16 +17,14 @@ fun Chip(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.labelMedium
-) {
-    Text(
-        text = text,
-        modifier = modifier
-            .clip(MaterialTheme.shapes.extraSmall)
-            .background(MaterialTheme.colorScheme.secondary)
-            .padding(horizontal = 3.dp),
-        style = style,
-        color = MaterialTheme.colorScheme.onSecondary,
-        fontWeight = FontWeight.SemiBold,
-        fontFamily = latinDisplayFontFamily
-    )
-}
+) = Text(
+    text = text,
+    modifier = modifier
+        .clip(MaterialTheme.shapes.extraSmall)
+        .background(MaterialTheme.colorScheme.secondary)
+        .padding(horizontal = 3.dp),
+    style = style,
+    color = MaterialTheme.colorScheme.onSecondary,
+    fontWeight = FontWeight.SemiBold,
+    fontFamily = latinDisplayFontFamily
+)

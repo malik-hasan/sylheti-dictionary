@@ -121,10 +121,10 @@ fun SearchScreen(
                         }
 
                         SearchSettingsMenu(
-                            expanded = searchState.menuExpanded,
-                            onDismiss = { onSearchEvent(SearchEvent.ToggleSettingsMenu(false)) },
-                            state = settingsState,
-                            onEvent = onSettingsEvent
+                            searchState = searchState,
+                            onSearchEvent = onSearchEvent,
+                            settingsState = settingsState,
+                            onSettingsEvent = onSettingsEvent
                         )
                     }
                 }
@@ -182,7 +182,7 @@ fun SearchScreen(
                                         entry = entry,
                                         navigateToEntry = navigateToEntry,
                                         setBookmark = { value ->
-                                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
+                                            onSearchEvent(SearchEvent.ToggleBookmark(entry.entryId, value))
                                         }
                                     )
                                 }

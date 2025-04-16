@@ -320,3 +320,8 @@ JOIN RelatedEntryCrossRef ON senseId = senseId1
     OR senseId = senseId2
 WHERE (senseId1 = :senseId OR senseId2 = :senseId)
     AND senseId != :senseId;
+
+getPartsOfSpeech:
+SELECT DISTINCT LOWER(partOfSpeech) FROM DictionaryEntry
+WHERE partOfSpeech LIKE '%' || :query || '%'
+ORDER BY LOWER(partOfSpeech);
