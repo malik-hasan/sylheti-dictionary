@@ -31,6 +31,8 @@ import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.also_search
 import sylhetidictionary.composeapp.generated.resources.deep_search
+import sylhetidictionary.composeapp.generated.resources.filter
+import sylhetidictionary.composeapp.generated.resources.filter_part_of_speech
 import sylhetidictionary.composeapp.generated.resources.in_definitions
 import sylhetidictionary.composeapp.generated.resources.in_examples
 import sylhetidictionary.composeapp.generated.resources.search_language
@@ -157,7 +159,11 @@ fun SearchSettingsMenu(
             }
 
             Column {
-//                Icon()
+                SettingLabel(
+                    iconPainter = painterResource(Res.drawable.filter),
+                    label = stringResource(Res.string.filter_part_of_speech),
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
             }
         }
     }
