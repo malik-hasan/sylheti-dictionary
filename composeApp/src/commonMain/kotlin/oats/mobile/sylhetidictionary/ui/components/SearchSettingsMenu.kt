@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -213,7 +212,6 @@ fun SearchSettingsMenu(
                 ) {
                     searchState.partOfSpeechFilters.forEach { partOfSpeech ->
                         InputChip(
-                            modifier = Modifier.wrapContentSize(),
                             selected = true,
                             onClick = { onSearchEvent(SearchEvent.ApplyPartOfSpeechFilter(partOfSpeech, false)) },
                             label = {
@@ -277,9 +275,8 @@ fun SearchSettingsMenu(
                                             if (isFocused) secondary else outline
                                         },
                                         shape = MaterialTheme.shapes.small
-                                    )
-                                    .padding(horizontal = 8.dp),
-                                contentAlignment = Alignment.Center
+                                    ).padding(horizontal = 12.dp),
+                                contentAlignment = Alignment.CenterStart
                             ) { innerTextField() }
                         }
 
