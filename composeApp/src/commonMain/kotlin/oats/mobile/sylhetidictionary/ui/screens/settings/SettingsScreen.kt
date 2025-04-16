@@ -3,6 +3,7 @@ package oats.mobile.sylhetidictionary.ui.screens.settings
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -66,9 +67,12 @@ fun SettingsScreen(
             )
         }
     ) { scaffoldPadding ->
-        Column(Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(scaffoldPadding)
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(scaffoldPadding)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             SettingLabel(
                 iconPainter = painterResource(Res.drawable.language),
@@ -76,7 +80,6 @@ fun SettingsScreen(
             )
 
             BoxWithConstraints(Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .clip(MaterialTheme.shapes.extraLarge)
                 .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 .height(150.dp)
@@ -112,7 +115,6 @@ fun SettingsScreen(
             )
 
             SingleChoiceSegmentedButtonRow(Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .widthIn(max = 1000.dp)
                 .fillMaxWidth()
             ) {
@@ -130,7 +132,7 @@ fun SettingsScreen(
             }
 
             DynamicThemeSetting(state.dynamicThemeEnabled) {
-                onEvent(SettingsEvent.ToggleDynamicTheme)
+                onEvent(SettingsEvent.ToggleDynamicTheme(it))
             }
         }
     }

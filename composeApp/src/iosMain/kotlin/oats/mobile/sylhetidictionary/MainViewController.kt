@@ -2,11 +2,6 @@ package oats.mobile.sylhetidictionary
 
 import androidx.compose.ui.window.ComposeUIViewController
 import co.touchlab.kermit.Logger
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
-import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
-import oats.mobile.sylhetidictionary.di.initKoin
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
@@ -17,7 +12,13 @@ import kotlinx.cinterop.ptr
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
+import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
+import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
+import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.di.initKoin
+import oats.mobile.sylhetidictionary.ui.app.App
+import oats.mobile.sylhetidictionary.utility.path
 import org.koin.mp.KoinPlatform.getKoin
 import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSData
@@ -27,9 +28,9 @@ import platform.Foundation.create
 import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.writeToFile
 import sylhetidictionary.composeapp.generated.resources.Res
-import oats.mobile.sylhetidictionary.ui.app.App
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@Suppress("Unused", "FunctionName")
 fun MainViewController() = ComposeUIViewController(
     configure = {
         initKoin()

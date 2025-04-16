@@ -54,7 +54,12 @@ fun SearchSettingsMenu(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                SettingLabel(painterResource(Res.drawable.search_position), stringResource(Res.string.search_position))
+                SettingLabel(
+                    iconPainter = painterResource(Res.drawable.search_position),
+                    label = stringResource(Res.string.search_position),
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
                 SingleChoiceSegmentedButtonRow {
                     with(SearchPosition.entries) {
                         forEachIndexed { i, entry ->
@@ -71,7 +76,11 @@ fun SearchSettingsMenu(
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                SettingLabel(painterResource(Res.drawable.search_script), stringResource(Res.string.search_script))
+                SettingLabel(
+                    iconPainter = painterResource(Res.drawable.search_script),
+                    label = stringResource(Res.string.search_script),
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
 
                 SingleChoiceSegmentedButtonRow(Modifier.height(IntrinsicSize.Max)) {
                     with(SearchScript.entries) {
@@ -97,7 +106,11 @@ fun SearchSettingsMenu(
                     exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        SettingLabel(painterResource(Res.drawable.search_language), stringResource(Res.string.search_languages))
+                        SettingLabel(
+                            iconPainter = painterResource(Res.drawable.search_language),
+                            label = stringResource(Res.string.search_languages),
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
 
                         MultiChoiceSegmentedButtonRow {
                             forEachIndexed { i, (language, checked) ->
@@ -115,7 +128,11 @@ fun SearchSettingsMenu(
             }
 
             Column {
-                SettingLabel(painterResource(Res.drawable.deep_search), stringResource(Res.string.also_search))
+                SettingLabel(
+                    iconPainter = painterResource(Res.drawable.deep_search),
+                    label = stringResource(Res.string.also_search),
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
 
                 val easternNagriEnabled = state.script == SearchScript.EASTERN_NAGRI
                 val bengaliEasternNagriEnabled = easternNagriEnabled

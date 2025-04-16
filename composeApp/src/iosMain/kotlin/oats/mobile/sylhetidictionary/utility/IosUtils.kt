@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary
+package oats.mobile.sylhetidictionary.utility
 
 import platform.Foundation.NSSearchPathDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains

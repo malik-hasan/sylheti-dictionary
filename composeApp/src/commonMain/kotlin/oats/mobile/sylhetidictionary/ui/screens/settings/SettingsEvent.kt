@@ -6,5 +6,5 @@ import oats.mobile.sylhetidictionary.models.settings.Theme
 sealed interface SettingsEvent {
     data class SetLanguage(val language: Language) : SettingsEvent
     data class SelectTheme(val theme: Theme) : SettingsEvent
-    data object ToggleDynamicTheme : SettingsEvent
+    data class ToggleDynamicTheme(val value: Boolean) : SettingsEvent
 }

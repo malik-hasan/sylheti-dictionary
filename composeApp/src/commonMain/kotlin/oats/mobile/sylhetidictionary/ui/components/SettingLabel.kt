@@ -2,7 +2,6 @@ package oats.mobile.sylhetidictionary.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,10 +14,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SettingLabel(
     iconPainter: Painter,
-    label: String
+    label: String,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

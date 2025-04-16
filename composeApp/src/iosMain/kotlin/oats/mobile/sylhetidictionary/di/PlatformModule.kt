@@ -12,7 +12,7 @@ import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import oats.mobile.sylhetidictionary.path
+import oats.mobile.sylhetidictionary.utility.path
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.stringByAppendingPathComponent
 
