@@ -24,8 +24,6 @@
     <string name="in_definitions">সংজ্ঞায়</string>
     <string name="in_examples">উদাহরণে</string>
 
-    <string name="filter_part_of_speech">পদ ফিল্টার করুন</string>
-
     <string name="search">সার্চ</string>
     <string name="search_dictionary">অভিধানে খুঁজুন</string>
     <string name="asset_load_error">অভিধানের ডেটা লোড করার সময় একটি ত্রুটি ঘটেছে। অ্যাপটি পুনরায় চালু করার চেষ্টা করুন, অথবা সমস্যাটি থেকে গেলে একটি বাগ রিপোর্ট করুন।</string>

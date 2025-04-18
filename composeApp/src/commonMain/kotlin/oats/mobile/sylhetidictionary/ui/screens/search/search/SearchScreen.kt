@@ -112,7 +112,7 @@ fun SearchScreen(
                 actions = {
                     Box {
                         IconButton({
-                            onSearchEvent(SearchEvent.ToggleSettingsMenu(true))
+                            onSearchEvent(SearchEvent.OpenSettingsMenu(true))
                         }) {
                             Icon(
                                 painter = painterResource(Res.drawable.tune),

@@ -4,9 +4,7 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.ui.utils.SDString
 
 data class SearchState(
-    val settingsMenuExpanded: Boolean = false,
-    val partOfSpeechFilters: Set<String> = emptySet(),
-    val partOfSpeechSuggestions: Set<String> = emptySet(),
+    val settingsMenuOpen: Boolean = false,
     val searchBarActive: Boolean = false,
     val resultsLoading: Boolean = false,
     val recents: List<SDString> = emptyList(),

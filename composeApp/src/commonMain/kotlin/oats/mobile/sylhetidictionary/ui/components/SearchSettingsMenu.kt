@@ -48,8 +48,8 @@ fun SearchSettingsMenu(
     onSettingsEvent: (SearchSettingsEvent) -> Unit
 ) {
     DropdownMenu(
-        expanded = searchState.settingsMenuExpanded,
-        onDismissRequest = { onSearchEvent(SearchEvent.ToggleSettingsMenu(false)) }
+        expanded = searchState.settingsMenuOpen,
+        onDismissRequest = { onSearchEvent(SearchEvent.OpenSettingsMenu(false)) }
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

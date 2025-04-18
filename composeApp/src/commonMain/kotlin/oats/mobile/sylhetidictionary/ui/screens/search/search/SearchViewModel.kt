@@ -167,28 +167,8 @@ class SearchViewModel(
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
-            is SearchEvent.ToggleSettingsMenu -> _searchState.update {
-                it.copy(settingsMenuExpanded = event.expand)
-            }
-
-            is SearchEvent.GetPartOfSpeechSuggestions -> with(event) {
-                viewModelScope.launch {
-                    _searchState.update {
-                        it.copy(partOfSpeechSuggestions = dictionaryRepository.getPartsOfSpeech(query))
-                    }
-                }
-            }
-
-            is SearchEvent.ApplyPartOfSpeechFilter -> with(event) {
-                _searchState.update {
-                    it.copy(
-                        partOfSpeechFilters = if (apply) {
-                            it.partOfSpeechFilters + partOfSpeech
-                        } else {
-                            it.partOfSpeechFilters - partOfSpeech
-                        }
-                    )
-                }
+            is SearchEvent.OpenSettingsMenu -> _searchState.update {
+                it.copy(settingsMenuOpen = event.open)
             }
 
             is SearchEvent.SetSearchBarActive -> with(event) {
