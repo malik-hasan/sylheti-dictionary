@@ -36,8 +36,8 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
                 preferences.set(PreferenceKey.THEME, event.theme.ordinal)
             }
 
-            is SettingsEvent.ToggleDynamicTheme -> viewModelScope.launch {
-                preferences.set(PreferenceKey.DYNAMIC_THEME, event.value)
+            is SettingsEvent.EnableDynamicTheme -> viewModelScope.launch {
+                preferences.set(PreferenceKey.DYNAMIC_THEME, event.enable)
             }
         }
     }

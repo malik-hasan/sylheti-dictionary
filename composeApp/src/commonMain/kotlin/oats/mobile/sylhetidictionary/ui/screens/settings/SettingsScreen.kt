@@ -132,7 +132,7 @@ fun SettingsScreen(
             }
 
             DynamicThemeSetting(state.dynamicThemeEnabled) {
-                onEvent(SettingsEvent.ToggleDynamicTheme(it))
+                onEvent(SettingsEvent.EnableDynamicTheme(it))
             }
         }
     }

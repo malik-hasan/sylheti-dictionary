@@ -112,12 +112,12 @@ class SearchViewModel(
                 }
             }
 
-            is SearchSettingsEvent.ToggleSearchDefinitions -> viewModelScope.launch {
-                preferences.set(PreferenceKey.SEARCH_DEFINITIONS, event.checked)
+            is SearchSettingsEvent.EnableSearchDefinitions -> viewModelScope.launch {
+                preferences.set(PreferenceKey.SEARCH_DEFINITIONS, event.enable)
             }
 
-            is SearchSettingsEvent.ToggleSearchExamples -> viewModelScope.launch {
-                preferences.set(PreferenceKey.SEARCH_EXAMPLES, event.checked)
+            is SearchSettingsEvent.EnableSearchExamples -> viewModelScope.launch {
+                preferences.set(PreferenceKey.SEARCH_EXAMPLES, event.enable)
             }
         }
     }
@@ -171,13 +171,13 @@ class SearchViewModel(
                 it.copy(settingsMenuOpen = event.open)
             }
 
-            is SearchEvent.SetSearchBarActive -> with(event) {
-                if (active) {
+            is SearchEvent.ActivateSearchBar -> with(event) {
+                if (activate) {
                     previousSearchTerm = searchTerm
                 } else {
                     searchTerm = previousSearchTerm
                 }
-                setSearchBarActive(active)
+                setSearchBarActive(activate)
             }
 
             is SearchEvent.UpdateSearchTerm -> searchTerm = event.term
@@ -187,7 +187,7 @@ class SearchViewModel(
                 search()
             }
 
-            is SearchEvent.ToggleBookmark -> with(event) {
+            is SearchEvent.Bookmark -> with(event) {
                 viewModelScope.launch {
                     with(bookmarksRepository) {
                         if (bookmark) {

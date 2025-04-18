@@ -182,7 +182,7 @@ fun SearchScreen(
                                         entry = entry,
                                         navigateToEntry = navigateToEntry,
                                         setBookmark = { value ->
-                                            onSearchEvent(SearchEvent.ToggleBookmark(entry.entryId, value))
+                                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
                                         }
                                     )
                                 }
@@ -246,7 +246,7 @@ fun SearchScreen(
                                             onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
                                             onSearch = { onSearchEvent(SearchEvent.Search) },
                                             expanded = searchState.searchBarActive,
-                                            onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
+                                            onExpandedChange = { onSearchEvent(SearchEvent.ActivateSearchBar(it)) },
                                             placeholder = {
                                                 Text(
                                                     text = stringResource(Res.string.search_dictionary),
@@ -256,7 +256,7 @@ fun SearchScreen(
                                             leadingIcon = {
                                                 if (searchState.searchBarActive) {
                                                     IconButton(
-                                                        onClick = { onSearchEvent(SearchEvent.SetSearchBarActive(false)) }
+                                                        onClick = { onSearchEvent(SearchEvent.ActivateSearchBar(false)) }
                                                     ) {
                                                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
                                                     }
@@ -272,7 +272,7 @@ fun SearchScreen(
                                         )
                                     },
                                     expanded = searchState.searchBarActive,
-                                    onExpandedChange = { onSearchEvent(SearchEvent.SetSearchBarActive(it)) },
+                                    onExpandedChange = { onSearchEvent(SearchEvent.ActivateSearchBar(it)) },
                                     tonalElevation = 50000.dp,
                                     shadowElevation = 6.dp,
                                     windowInsets = WindowInsets(0)

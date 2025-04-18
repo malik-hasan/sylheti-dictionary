@@ -149,13 +149,13 @@ fun SearchSettingsMenu(
                         label = stringResource(Res.string.in_definitions),
                         checked = settingsState.searchDefinitions || bengaliEasternNagriEnabled,
                         enabled = !bengaliEasternNagriEnabled
-                    ) { onSettingsEvent(SearchSettingsEvent.ToggleSearchDefinitions(it)) }
+                    ) { onSettingsEvent(SearchSettingsEvent.EnableSearchDefinitions(it)) }
                 }
 
                 CheckboxSearchSetting(
                     label = stringResource(Res.string.in_examples),
                     checked = settingsState.searchExamples
-                ) { onSettingsEvent(SearchSettingsEvent.ToggleSearchExamples(it)) }
+                ) { onSettingsEvent(SearchSettingsEvent.EnableSearchExamples(it)) }
             }
         }
     }

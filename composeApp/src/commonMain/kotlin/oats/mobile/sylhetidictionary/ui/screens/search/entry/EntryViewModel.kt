@@ -59,7 +59,7 @@ class EntryViewModel(
             is EntryEvent.Bookmark -> with(event) {
                 viewModelScope.launch {
                     with(bookmarksRepository) {
-                        if (value) {
+                        if (bookmark) {
                             addBookmark(entryId)
                         } else removeBookmark(entryId)
                     }
