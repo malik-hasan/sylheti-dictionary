@@ -177,7 +177,7 @@ class SearchViewModel(
                 } else {
                     searchTerm = previousSearchTerm
                 }
-                setSearchBarActive(activate)
+                activateSearchBar(activate)
             }
 
             is SearchEvent.UpdateSearchTerm -> searchTerm = event.term
@@ -185,6 +185,15 @@ class SearchViewModel(
             is SearchEvent.SelectSuggestion -> {
                 searchTerm = event.term
                 search()
+            }
+
+            SearchEvent.ClearSearch -> viewModelScope.launch {
+                searchTerm = ""
+                if (!searchState.value.searchBarActive) {
+                    Logger.d("SEARCH: clearing results and highlight regex")
+                    searchResultsSharedFlow.emit(null)
+                    preferences.setHighlightRegex(Regex(""))
+                }
             }
 
             is SearchEvent.Bookmark -> with(event) {
@@ -199,12 +208,12 @@ class SearchViewModel(
         }
     }
 
-    private fun setSearchBarActive(value: Boolean) {
+    private fun activateSearchBar(value: Boolean) {
         _searchState.update { it.copy(searchBarActive = value) }
     }
 
     private fun search() {
-        setSearchBarActive(false)
+        activateSearchBar(false)
         Logger.d("SEARCH: searching for $searchTerm")
 
         val searchTerm = searchTerm
@@ -359,8 +368,11 @@ class SearchViewModel(
         settings: SearchSettingsState
     ): Triple<Boolean, SearchScript, Regex> {
         _searchState.update { it.copy(resultsLoading = true) }
+
         val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
         val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
+        Logger.d("SEARCH: found ${searchResults?.size ?: "no"} results")
+
         searchResultsSharedFlow.emit(searchResults)
         _searchState.update { it.copy(resultsLoading = false) }
         resultsListState.requestScrollToItem(0)

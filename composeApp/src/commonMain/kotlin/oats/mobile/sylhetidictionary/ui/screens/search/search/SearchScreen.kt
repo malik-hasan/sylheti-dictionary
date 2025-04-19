@@ -264,7 +264,7 @@ fun SearchScreen(
                                             },
                                             trailingIcon = {
                                                 if (searchTerm.isNotBlank()) {
-                                                    IconButton({ onSearchEvent(SearchEvent.SelectSuggestion("")) }) {
+                                                    IconButton({ onSearchEvent(SearchEvent.ClearSearch) }) {
                                                         Icon(Icons.Default.Clear, "Clear")
                                                     }
                                                 }

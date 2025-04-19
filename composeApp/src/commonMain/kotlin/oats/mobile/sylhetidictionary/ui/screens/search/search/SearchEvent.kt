@@ -6,5 +6,6 @@ sealed interface SearchEvent {
     data class UpdateSearchTerm(val term: String): SearchEvent
     data object Search: SearchEvent
     data class SelectSuggestion(val term: String): SearchEvent
+    data object ClearSearch: SearchEvent
     data class Bookmark(val entryId: String, val bookmark: Boolean): SearchEvent
 }
