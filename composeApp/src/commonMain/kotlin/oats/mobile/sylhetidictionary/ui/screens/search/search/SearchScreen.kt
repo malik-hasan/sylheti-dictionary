@@ -95,245 +95,248 @@ fun SearchScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    SDScreen(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        topBar = {
-            SDTopAppBar(
-                modifier = with(sharedTransitionScope) {
-                    with(animatedContentScope) {
-                        Modifier
-                            .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
-                            .animateEnterExit()
-                    }
-                },
-                scrollBehavior = scrollBehavior,
-                navigationIcon = { DrawerIconButton() },
-                title = { Text(stringResource(Res.string.sylheti_dictionary)) },
-                actions = {
-                    Box {
-                        IconButton({
-                            onSearchEvent(SearchEvent.OpenSettingsMenu(true))
-                        }) {
-                            Icon(
-                                painter = painterResource(Res.drawable.tune),
-                                contentDescription = stringResource(Res.string.settings)
-                            )
-                        }
-
-                        SearchSettingsMenu(
-                            searchState = searchState,
-                            onSearchEvent = onSearchEvent,
-                            settingsState = settingsState,
-                            onSettingsEvent = onSettingsEvent
-                        )
-                    }
-                }
-            )
-        }
-    ) { scaffoldPadding ->
-        if (assetLoaded == false) {
-            Text(
-                text = stringResource(Res.string.asset_load_error),
-                modifier = Modifier
-                    .padding(scaffoldPadding)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-        } else {
-            Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
-                Row(Modifier.ifTrue(!searchState.searchBarActive) {
-                    padding(scaffoldPadding.horizontal())
-                }) {
-                    var scrollingFromScrollBar by remember { mutableStateOf(false) }
-
-                    Box(Modifier
-                        .animateContentSize()
-                        .weight(1f)
-                    ) {
-                        LaunchedEffect(activateSearchBar) {
-                            if (activateSearchBar) resultsListState.scrollToItem(0)
-                        }
-
-                        LazyColumn(
-                            state = resultsListState,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(scrollBehavior.nestedScrollConnection),
-                            contentPadding = PaddingValues(
-                                start = 16.dp,
-                                top = 72.dp,
-                                end = 16.dp,
-                                bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            with(searchState) {
-                                if (entries.isEmpty() && searchTerm.isNotEmpty() && !resultsLoading) {
-                                    item { Text(stringResource(Res.string.no_results)) }
-                                    return@LazyColumn
-                                }
-
-                                items(
-                                    items = entries,
-                                    key = { it.entryId }
-                                ) { entry ->
-                                    EntryCard(
-                                        entry = entry,
-                                        navigateToEntry = navigateToEntry,
-                                        setBookmark = { value ->
-                                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
-                                        }
+    with(sharedTransitionScope) {
+        with(animatedContentScope) {
+            SDScreen(
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+                topBar = {
+                    SDTopAppBar(
+                        modifier = Modifier
+                            .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 2f)
+                            .animateEnterExit(),
+                        scrollBehavior = scrollBehavior,
+                        navigationIcon = { DrawerIconButton() },
+                        title = { Text(stringResource(Res.string.sylheti_dictionary)) },
+                        actions = {
+                            Box {
+                                IconButton({
+                                    onSearchEvent(SearchEvent.OpenSettingsMenu(true))
+                                }) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.tune),
+                                        contentDescription = stringResource(Res.string.settings)
                                     )
                                 }
+
+                                SearchSettingsMenu(
+                                    searchState = searchState,
+                                    onSearchEvent = onSearchEvent,
+                                    settingsState = settingsState,
+                                    onSettingsEvent = onSettingsEvent
+                                )
                             }
                         }
+                    )
+                }
+            ) { scaffoldPadding ->
+                if (assetLoaded == false) {
+                    Text(
+                        text = stringResource(Res.string.asset_load_error),
+                        modifier = Modifier
+                            .padding(scaffoldPadding)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
+                        Row(Modifier.ifTrue(!searchState.searchBarActive) {
+                            padding(scaffoldPadding.horizontal())
+                        }) {
+                            var scrollingFromScrollBar by remember { mutableStateOf(false) }
 
-                        Column { // provides ColumnScope for AnimatedVisibility
-                            var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
-                            var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
-                            val showSearchBar by remember {
-                                derivedStateOf {
-                                    with(resultsListState) {
-                                        val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
-                                                (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
+                            Box(Modifier
+                                .animateContentSize()
+                                .weight(1f)
+                            ) {
+                                LaunchedEffect(activateSearchBar) {
+                                    if (activateSearchBar) resultsListState.scrollToItem(0)
+                                }
 
-                                        previousFirstVisibleItemIndex = firstVisibleItemIndex
-                                        previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
+                                LazyColumn(
+                                    state = resultsListState,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .nestedScroll(scrollBehavior.nestedScrollConnection),
+                                    contentPadding = PaddingValues(
+                                        start = 16.dp,
+                                        top = 72.dp,
+                                        end = 16.dp,
+                                        bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
+                                    ),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    with(searchState) {
+                                        if (entries.isEmpty() && searchTerm.isNotEmpty() && !resultsLoading) {
+                                            item { Text(stringResource(Res.string.no_results)) }
+                                            return@LazyColumn
+                                        }
 
-                                        when {
-                                            // always show if at top
-                                            firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
-
-                                            // always hide if scrolling from scrollbar (mobile only)
-                                            scrollingFromScrollBar -> {
-                                                scrollingFromScrollBar = false
-                                                false
-                                            }
-
-                                            // else show/hide based on isScrollingUp
-                                            else -> isScrollingUp
+                                        items(
+                                            items = entries,
+                                            key = { it.entryId }
+                                        ) { entry ->
+                                            EntryCard(
+                                                entry = entry,
+                                                navigateToEntry = navigateToEntry,
+                                                setBookmark = { value ->
+                                                    onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
+                                                }
+                                            )
                                         }
                                     }
                                 }
-                            }
 
-                            AnimatedVisibility(
-                                visible = showSearchBar,
-                                enter = expandVertically(),
-                                exit = shrinkVertically()
-                            ) {
-                                val searchBarPadding by animateDpAsState(if (searchState.searchBarActive) 0.dp else 16.dp)
-                                SearchBar(
-                                    modifier = Modifier
-                                        .ifTrue(!searchState.searchBarActive) {
-                                            padding(bottom = 10.dp) // keeps elevation visible during animation
-                                        }.padding(horizontal = searchBarPadding)
-                                        .fillMaxWidth(),
-                                    inputField = {
-                                        val searchFocusRequester = remember { FocusRequester() }
+                                Column { // provides ColumnScope for AnimatedVisibility
+                                    var previousFirstVisibleItemIndex by remember { mutableStateOf(0) }
+                                    var previousFirstVisibleItemScrollOffset by remember { mutableStateOf(Int.MAX_VALUE) }
+                                    val showSearchBar by remember {
+                                        derivedStateOf {
+                                            with(resultsListState) {
+                                                val isScrollingUp = firstVisibleItemIndex < previousFirstVisibleItemIndex ||
+                                                        (firstVisibleItemIndex == previousFirstVisibleItemIndex && firstVisibleItemScrollOffset < previousFirstVisibleItemScrollOffset)
 
-                                        LaunchedEffect(activateSearchBar) {
-                                            if (activateSearchBar) searchFocusRequester.requestFocus()
+                                                previousFirstVisibleItemIndex = firstVisibleItemIndex
+                                                previousFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
+
+                                                when {
+                                                    // always show if at top
+                                                    firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0 -> true
+
+                                                    // always hide if scrolling from scrollbar (mobile only)
+                                                    scrollingFromScrollBar -> {
+                                                        scrollingFromScrollBar = false
+                                                        false
+                                                    }
+
+                                                    // else show/hide based on isScrollingUp
+                                                    else -> isScrollingUp
+                                                }
+                                            }
                                         }
+                                    }
 
-                                        SearchBarDefaults.InputField(
+                                    AnimatedVisibility(
+                                        modifier = Modifier
+                                            .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
+                                            .animateEnterExit(),
+                                        visible = showSearchBar,
+                                        enter = expandVertically(),
+                                        exit = shrinkVertically()
+                                    ) {
+                                        val searchBarPadding by animateDpAsState(if (searchState.searchBarActive) 0.dp else 16.dp)
+                                        SearchBar(
                                             modifier = Modifier
-                                                .ifTrue(searchState.searchBarActive) {
-                                                    padding(scaffoldPadding.horizontal())
-                                                }.focusRequester(searchFocusRequester),
-                                            query = searchTerm,
-                                            onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
-                                            onSearch = { onSearchEvent(SearchEvent.Search) },
-                                            expanded = searchState.searchBarActive,
-                                            onExpandedChange = { onSearchEvent(SearchEvent.ActivateSearchBar(it)) },
-                                            placeholder = {
-                                                Text(
-                                                    text = stringResource(Res.string.search_dictionary),
-                                                    color = MaterialTheme.colorScheme.tertiary
+                                                .ifTrue(!searchState.searchBarActive) {
+                                                    padding(bottom = 10.dp) // keeps elevation visible during animation
+                                                }.padding(horizontal = searchBarPadding)
+                                                .fillMaxWidth(),
+                                            inputField = {
+                                                val searchFocusRequester = remember { FocusRequester() }
+
+                                                LaunchedEffect(activateSearchBar) {
+                                                    if (activateSearchBar) searchFocusRequester.requestFocus()
+                                                }
+
+                                                SearchBarDefaults.InputField(
+                                                    modifier = Modifier
+                                                        .ifTrue(searchState.searchBarActive) {
+                                                            padding(scaffoldPadding.horizontal())
+                                                        }.focusRequester(searchFocusRequester),
+                                                    query = searchTerm,
+                                                    onQueryChange = { onSearchEvent(SearchEvent.UpdateSearchTerm(it)) },
+                                                    onSearch = { onSearchEvent(SearchEvent.Search) },
+                                                    expanded = searchState.searchBarActive,
+                                                    onExpandedChange = { onSearchEvent(SearchEvent.ActivateSearchBar(it)) },
+                                                    placeholder = {
+                                                        Text(
+                                                            text = stringResource(Res.string.search_dictionary),
+                                                            color = MaterialTheme.colorScheme.tertiary
+                                                        )
+                                                    },
+                                                    leadingIcon = {
+                                                        if (searchState.searchBarActive) {
+                                                            IconButton(
+                                                                onClick = { onSearchEvent(SearchEvent.ActivateSearchBar(false)) }
+                                                            ) {
+                                                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
+                                                            }
+                                                        } else Icon(Icons.Default.Search, "Search")
+                                                    },
+                                                    trailingIcon = {
+                                                        if (searchTerm.isNotBlank()) {
+                                                            IconButton({ onSearchEvent(SearchEvent.ClearSearch) }) {
+                                                                Icon(Icons.Default.Clear, "Clear")
+                                                            }
+                                                        }
+                                                    }
                                                 )
                                             },
-                                            leadingIcon = {
-                                                if (searchState.searchBarActive) {
-                                                    IconButton(
-                                                        onClick = { onSearchEvent(SearchEvent.ActivateSearchBar(false)) }
+                                            expanded = searchState.searchBarActive,
+                                            onExpandedChange = { onSearchEvent(SearchEvent.ActivateSearchBar(it)) },
+                                            tonalElevation = 50000.dp,
+                                            shadowElevation = 6.dp,
+                                            windowInsets = WindowInsets(0)
+                                        ) {
+                                            LazyColumn(
+                                                state = suggestionsListState,
+                                                contentPadding = PaddingValues(bottom = scaffoldPadding.calculateBottomPadding()),
+                                            ) {
+                                                items(searchState.recents) { recent ->
+                                                    SearchSuggestion(
+                                                        suggestion = recent,
+                                                        onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent.text)) },
+                                                        modifier = Modifier.padding(scaffoldPadding.horizontal())
                                                     ) {
-                                                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
+                                                        Icon(
+                                                            painter = painterResource(Res.drawable.history),
+                                                            contentDescription = "Recent"
+                                                        )
                                                     }
-                                                } else Icon(Icons.Default.Search, "Search")
-                                            },
-                                            trailingIcon = {
-                                                if (searchTerm.isNotBlank()) {
-                                                    IconButton({ onSearchEvent(SearchEvent.ClearSearch) }) {
-                                                        Icon(Icons.Default.Clear, "Clear")
+                                                }
+
+                                                items(searchState.suggestions) { suggestion ->
+                                                    SearchSuggestion(
+                                                        suggestion = suggestion,
+                                                        onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) },
+                                                        modifier = Modifier.padding(scaffoldPadding.horizontal())
+                                                    ) {
+                                                        Icon(
+                                                            painter = painterResource(Res.drawable.suggestion),
+                                                            contentDescription = "Suggestion"
+                                                        )
                                                     }
                                                 }
                                             }
-                                        )
-                                    },
-                                    expanded = searchState.searchBarActive,
-                                    onExpandedChange = { onSearchEvent(SearchEvent.ActivateSearchBar(it)) },
-                                    tonalElevation = 50000.dp,
-                                    shadowElevation = 6.dp,
-                                    windowInsets = WindowInsets(0)
-                                ) {
-                                    LazyColumn(
-                                        state = suggestionsListState,
-                                        contentPadding = PaddingValues(bottom = scaffoldPadding.calculateBottomPadding()),
-                                    ) {
-                                        items(searchState.recents) { recent ->
-                                            SearchSuggestion(
-                                                suggestion = recent,
-                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(recent.text)) },
-                                                modifier = Modifier.padding(scaffoldPadding.horizontal())
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(Res.drawable.history),
-                                                    contentDescription = "Recent"
-                                                )
-                                            }
-                                        }
-
-                                        items(searchState.suggestions) { suggestion ->
-                                            SearchSuggestion(
-                                                suggestion = suggestion,
-                                                onClick = { onSearchEvent(SearchEvent.SelectSuggestion(suggestion.text)) },
-                                                modifier = Modifier.padding(scaffoldPadding.horizontal())
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(Res.drawable.suggestion),
-                                                    contentDescription = "Suggestion"
-                                                )
-                                            }
                                         }
                                     }
                                 }
                             }
+
+                            val showScrollBar by remember(searchState) {
+                                derivedStateOf {
+                                    with (resultsListState) { canScrollForward || canScrollBackward }
+                                            && with(searchState.scrollCharIndexes) { isEmpty() || size > 4 }
+                                            && !searchState.searchBarActive
+                                }
+                            }
+
+                            if (showScrollBar) {
+                                ScrollBar(
+                                    modifier = Modifier
+                                        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                                        .align(Alignment.CenterVertically),
+                                    lazyListState = resultsListState,
+                                    scrollCharIndexes = searchState.scrollCharIndexes,
+                                    scrollingFromScrollBar = { scrollingFromScrollBar = true }
+                                )
+                            }
+                        }
+
+                        if (searchTerm.isNotBlank() && searchState.resultsLoading) {
+                            LinearProgressIndicator(Modifier.fillMaxWidth())
                         }
                     }
-
-                    val showScrollBar by remember(searchState) {
-                        derivedStateOf {
-                            with (resultsListState) { canScrollForward || canScrollBackward }
-                                    && with(searchState.scrollCharIndexes) { isEmpty() || size > 4 }
-                                    && !searchState.searchBarActive
-                        }
-                    }
-
-                    if (showScrollBar) {
-                        ScrollBar(
-                            modifier = Modifier
-                                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-                                .align(Alignment.CenterVertically),
-                            lazyListState = resultsListState,
-                            scrollCharIndexes = searchState.scrollCharIndexes,
-                            scrollingFromScrollBar = { scrollingFromScrollBar = true }
-                        )
-                    }
-                }
-
-                if (searchTerm.isNotBlank() && searchState.resultsLoading) {
-                    LinearProgressIndicator(Modifier.fillMaxWidth())
                 }
             }
         }
