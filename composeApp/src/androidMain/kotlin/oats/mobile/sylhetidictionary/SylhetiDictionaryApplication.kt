@@ -11,6 +11,7 @@ import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.initKoin
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.parameter.parametersOf
 import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
 import java.io.IOException
@@ -18,7 +19,7 @@ import java.io.IOException
 class SylhetiDictionaryApplication: Application() {
 
     private val preferences: PreferencesRepository by inject()
-    private val logger: Logger by inject()
+    private val logger: Logger by inject { parametersOf(this::class.simpleName) }
 
     override fun onCreate() {
         super.onCreate()

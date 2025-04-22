@@ -178,13 +178,14 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
                 if (grouping.value.size > 1) {
                     val option1 = grouping.value.first()
                     val option2 = grouping.value.last()
+                    fun String.filterUnspecified() = takeIf { it != "Unspecified Variant" }
                     Variant(
                         id = option1.id,
                         entryId = option1.entryId,
                         variantIPA = option1.variantIPA,
                         variantEN = option1.variantEN ?: option2.variantEN,
                         variantSN = option1.variantSN ?: option2.variantSN,
-                        environment = option1.environment?.takeIf { it != "Unspecified Variant" } ?: option2.environment
+                        environment = option1.environment?.filterUnspecified() ?: option2.environment?.filterUnspecified()
                     )
                 } else grouping.value.firstOrNull()
             }

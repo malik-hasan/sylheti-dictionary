@@ -17,6 +17,7 @@ import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
 import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.initKoin
+import oats.mobile.sylhetidictionary.di.injectLogger
 import oats.mobile.sylhetidictionary.ui.app.App
 import oats.mobile.sylhetidictionary.utility.path
 import org.koin.mp.KoinPlatform.getKoin
@@ -37,7 +38,7 @@ fun MainViewController() = ComposeUIViewController(
 
         val koin = getKoin()
         val preferences: PreferencesRepository by koin.inject()
-        val logger: Logger by koin.inject()
+        val logger: Logger by koin.injectLogger()
 
         runBlocking(Dispatchers.IO) {
             val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1

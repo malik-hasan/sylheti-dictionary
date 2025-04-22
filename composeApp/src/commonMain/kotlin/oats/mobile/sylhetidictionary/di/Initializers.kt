@@ -7,6 +7,7 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
 import co.touchlab.kermit.koin.kermitLoggerModule
 import okio.Path.Companion.toPath
+import org.koin.core.Koin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.context.startKoin
@@ -34,3 +35,6 @@ fun <T : RoomDatabase> RoomDatabase.Builder<T>.init() =
 
 inline fun KoinComponent.injectLogger() =
     inject<Logger> { parametersOf(this::class.simpleName) }
+
+inline fun Koin.injectLogger() =
+    inject<Logger> { parametersOf(null) }

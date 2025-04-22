@@ -272,7 +272,7 @@ fun EntryScreen(
                             }
 
                             FieldTag(
-                                tag = relatedEntry.relationType.takeIf { it != "Synonyms" } ?: "Synonym",
+                                tag = relatedEntry.relationType,
                                 tagFontFamily = latinDisplayFontFamily,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
