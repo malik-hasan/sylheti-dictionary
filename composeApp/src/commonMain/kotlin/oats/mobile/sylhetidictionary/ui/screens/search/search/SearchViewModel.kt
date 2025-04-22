@@ -9,9 +9,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -21,7 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.withContext
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
@@ -267,23 +269,23 @@ class SearchViewModel(
         )
     }
 
-    private suspend fun detectSearchScript(term: String, searchScriptPreference: SearchScript): SearchScript {
+    private suspend fun detectSearchScript(term: String, searchScriptPreference: SearchScript) = withContext(Dispatchers.Default) {
         if (searchScriptPreference == SearchScript.AUTO) {
             term.forEach { char ->
-                yield()
+                ensureActive()
                 SearchScript.entries.forEach { script ->
-                    yield()
+                    ensureActive()
                     script.regexCharSet?.let { regex ->
                         if (char.toString().matches(regex)) {
                             Logger.d("SEARCH: detected script: $script from term: $term")
-                            return script
+                            return@withContext script
                         }
                     }
                 }
             }
             Logger.d("SEARCH: unable to detect search script from term: $term")
         }
-        return searchScriptPreference
+        searchScriptPreference
     }
 
     private fun escapeGlobChars(term: String) =
@@ -429,11 +431,11 @@ class SearchViewModel(
         detectedSearchScript: SearchScript,
         highlightRegex: Regex,
         settings: SearchSettingsState
-    ): Set<SDString> {
+    ) = withContext(Dispatchers.Default) {
         val suggestions = mutableSetOf<SDString>()
 
         getQueryResults(suggestionQuery, detectedSearchScript, settings).forEach { entry ->
-            yield()
+            ensureActive()
             with(entry) {
                 when {
                     detectedSearchScript == SearchScript.EASTERN_NAGRI && displayEN != null ->
@@ -446,15 +448,15 @@ class SearchViewModel(
                         val isAuto = settings.script == SearchScript.AUTO
                         val searchLanguages = settings.languages
 
-                        if (displayIPA.contains(highlightRegex) && (
-                            isAuto || searchLanguages[SearchLanguage.Latin.SYLHETI] == true
-                        )) {
+                        if (displayIPA.contains(highlightRegex)
+                            && (isAuto || searchLanguages[SearchLanguage.Latin.SYLHETI] == true)
+                        ) {
                             suggestions += SDString(displayIPA, highlightRegex, SearchScript.LATIN)
                         }
 
-                        if (gloss?.contains(highlightRegex) == true && (
-                            isAuto || searchLanguages[SearchLanguage.Latin.ENGLISH] == true
-                        )) {
+                        if (gloss?.contains(highlightRegex) == true
+                            && (isAuto || searchLanguages[SearchLanguage.Latin.ENGLISH] == true)
+                        ) {
                             suggestions += SDString(gloss, highlightRegex, SearchScript.LATIN)
                         }
                     }
@@ -462,6 +464,6 @@ class SearchViewModel(
             }
         }
 
-        return suggestions
+        suggestions
     }
 }
