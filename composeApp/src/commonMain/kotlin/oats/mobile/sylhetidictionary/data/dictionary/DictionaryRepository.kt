@@ -2,21 +2,27 @@ package oats.mobile.sylhetidictionary.data.dictionary
 
 import app.cash.sqldelight.async.coroutines.awaitAsList
 import app.cash.sqldelight.async.coroutines.awaitAsOne
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
 import oats.mobile.sylhetidictionary.Variant
 import kotlin.random.Random
 
 class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
     
-    suspend fun getEntry(entryId: String) = withContext(Dispatchers.IO) {
+    private suspend fun <T> execute(block: suspend CoroutineScope.() -> T) = withContext(Dispatchers.IO) {
+        ensureActive()
+        block()
+    }
+    
+    suspend fun getEntry(entryId: String) = execute {
         queries.getEntry(entryId).awaitAsOne()
     }
 
-    suspend fun getEntries(entryIds: Collection<String>) = withContext(Dispatchers.IO) {
+    suspend fun getEntries(entryIds: Collection<String>) = execute {
         queries.getEntries(entryIds).awaitAsList()
     }
 
@@ -25,15 +31,14 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             when {
                 searchDefinitions && searchExamples -> searchAllEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
                 searchDefinitions -> searchAllEntriesWithDefinitions(positionedQuery, simpleQuery)
                 searchExamples -> searchAllEntriesWithExamples(positionedQuery, simpleQuery)
                 else -> searchAllEntries(positionedQuery)
-            }.executeAsList()
+            }.awaitAsList()
         }
     }
 
@@ -42,15 +47,14 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             when {
                 searchDefinitions && searchExamples -> searchEnglishEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
                 searchDefinitions -> searchEnglishEntriesWithDefinitions(positionedQuery, simpleQuery)
                 searchExamples -> searchEnglishEntriesWithExamples(positionedQuery, simpleQuery)
                 else -> searchEnglishEntries(positionedQuery)
-            }.executeAsList()
+            }.awaitAsList()
         }
     }
 
@@ -59,15 +63,14 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             when {
                 searchDefinitions && searchExamples -> searchSylhetiLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
                 searchDefinitions -> searchSylhetiLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
                 searchExamples -> searchSylhetiLatinEntriesWithExamples(positionedQuery, simpleQuery)
                 else -> searchSylhetiLatinEntries(positionedQuery)
-            }.executeAsList()
+            }.awaitAsList()
         }
     }
 
@@ -76,15 +79,14 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             when {
                 searchDefinitions && searchExamples -> searchLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
                 searchDefinitions -> searchLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
                 searchExamples -> searchLatinEntriesWithExamples(positionedQuery, simpleQuery)
                 else -> searchLatinEntries(positionedQuery)
-            }.executeAsList()
+            }.awaitAsList()
         }
     }
 
@@ -93,13 +95,12 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean, // unused
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             if (searchExamples) {
                 searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
             } else searchBengaliEasternNagriDefinitions(simpleQuery)
-        }.executeAsList()
+        }.awaitAsList()
     }
 
     suspend fun searchSylhetiEasternNagri(
@@ -107,13 +108,12 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean, // unused
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             if (searchExamples) {
                 searchSylhetiEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
             } else searchSylhetiEasternNagriEntries(positionedQuery)
-        }.executeAsList()
+        }.awaitAsList()
     }
 
     suspend fun searchEasternNagri(
@@ -121,15 +121,14 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             when {
                 searchDefinitions && searchExamples -> searchEasternNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
                 searchDefinitions -> searchEasternNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
                 searchExamples -> searchEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
                 else -> searchSylhetiEasternNagriEntries(positionedQuery)
-            }.executeAsList()
+            }.awaitAsList()
         }
     }
 
@@ -138,24 +137,22 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = withContext(Dispatchers.IO) {
-        yield()
+    ) = execute {
         with(queries) {
             when {
                 searchDefinitions && searchExamples -> searchSylhetiNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
                 searchDefinitions -> searchSylhetiNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
                 searchExamples -> searchSylhetiNagriEntriesWithExamples(positionedQuery, simpleQuery)
                 else -> searchSylhetiNagriEntries(positionedQuery)
-            }.executeAsList()
+            }.awaitAsList()
         }
     }
 
-    suspend fun getExamples(entryId: String) = withContext(Dispatchers.IO) {
+    suspend fun getExamples(entryId: String) = execute {
         queries.getExamples(entryId).awaitAsList()
     }
 
-    suspend fun getVariants(entryId: String) = withContext(Dispatchers.IO) {
-        yield()
+    suspend fun getVariants(entryId: String) = execute {
         val allVariants = with(queries) {
             transactionWithResult {
                 getVariants(entryId).executeAsList() +
@@ -174,10 +171,10 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
 
         allVariants
             .groupBy {
-                yield()
+                ensureActive()
                 it.variantIPA
             }.mapNotNull { grouping ->
-                yield()
+                ensureActive()
                 if (grouping.value.size > 1) {
                     val option1 = grouping.value.first()
                     val option2 = grouping.value.last()
@@ -193,15 +190,15 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
             }
     }
 
-    suspend fun getReferenceEntries(entryId: String) = withContext(Dispatchers.IO) {
+    suspend fun getReferenceEntries(entryId: String) = execute {
         queries.getReferenceEntries(entryId).awaitAsList()
     }
 
-    suspend fun getComponentLexemes(entryId: String) = withContext(Dispatchers.IO) {
+    suspend fun getComponentLexemes(entryId: String) = execute {
         queries.componentEntry(entryId).awaitAsList()
     }
 
-    suspend fun getRelatedEntries(senseId: String) = withContext(Dispatchers.IO) {
+    suspend fun getRelatedEntries(senseId: String) = execute {
         queries.relatedEntry(senseId).awaitAsList()
     }
 }
