@@ -169,7 +169,7 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
             }
         }
 
-        fun String.filterUnspecified() = takeIf { it.lowercase() != "Unspecified Variant" }
+        fun String.filterUnspecified() = takeIf { it != "Unspecified Variant" }
         allVariants
             .groupBy {
                 ensureActive()
