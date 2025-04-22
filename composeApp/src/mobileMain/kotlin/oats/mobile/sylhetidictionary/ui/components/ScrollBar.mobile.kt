@@ -71,7 +71,7 @@ actual fun ScrollBar(
     val touchedChar by remember(scrollChars) {
         derivedStateOf {
             scrollBarDragOffset?.takeIf { 0 <= it && it < scrollBarHeight }?.let {
-                val charIndex = floor(it / scrollCharHeight).toInt()
+                val charIndex = floor(it / scrollCharHeight).toInt().coerceAtMost(scrollChars.lastIndex)
                 scrollChars[charIndex]
             }
         }

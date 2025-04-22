@@ -32,4 +32,5 @@ fun initDataStore(getPath: (fileName: String) -> String) = PreferenceDataStoreFa
 fun <T : RoomDatabase> RoomDatabase.Builder<T>.init() =
     setDriver(BundledSQLiteDriver()).build()
 
-inline fun KoinComponent.injectLogger() = inject<Logger> { parametersOf(this::class.simpleName) }
+inline fun KoinComponent.injectLogger() =
+    inject<Logger> { parametersOf(this::class.simpleName) }
