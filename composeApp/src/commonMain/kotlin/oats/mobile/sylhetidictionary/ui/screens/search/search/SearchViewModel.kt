@@ -40,7 +40,7 @@ import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
 import oats.mobile.sylhetidictionary.ui.utils.SDString
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
-import oats.mobile.sylhetidictionary.utility.scrollCharIndexes
+import oats.mobile.sylhetidictionary.utility.getScrollCharIndexes
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -150,7 +150,7 @@ class SearchViewModel(
             compareBy(UnicodeUtility.SYLHETI_IPA_SORTER) { it.displayIPA }
         )
 
-        entries to entries.scrollCharIndexes
+        entries to entries.getScrollCharIndexes()
     }
 
     private val _searchState = MutableStateFlow(SearchState())

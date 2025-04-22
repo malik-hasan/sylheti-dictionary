@@ -2,5 +2,4 @@ package oats.mobile.sylhetidictionary.utility
 
 import oats.mobile.sylhetidictionary.DictionaryEntry
 
-actual val List<DictionaryEntry>.scrollCharIndexes
-    get() = emptyMap<Char, Int>()
+actual suspend fun List<DictionaryEntry>.getScrollCharIndexes() = emptyMap<Char, Int>()
