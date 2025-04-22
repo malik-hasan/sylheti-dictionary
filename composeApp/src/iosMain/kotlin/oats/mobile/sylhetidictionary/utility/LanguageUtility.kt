@@ -9,7 +9,7 @@ import platform.Foundation.languageCode
 
 private const val NSUserDefaultsLocalizationKey = "AppleLanguages"
 
-actual suspend fun PreferencesRepository.refreshLanguage() {
+actual suspend fun PreferencesRepository.refreshLanguage(logger: Logger) {
     val locales = NSUserDefaults.standardUserDefaults.arrayForKey(NSUserDefaultsLocalizationKey)
     logger.d("LOCALE: refreshing language preference from: $locales")
     if (!locales.isNullOrEmpty()) {

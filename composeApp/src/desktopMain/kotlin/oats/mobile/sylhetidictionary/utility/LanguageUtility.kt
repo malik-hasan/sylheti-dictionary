@@ -7,7 +7,7 @@ import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.models.settings.Language
 import java.util.Locale
 
-actual suspend fun PreferencesRepository.refreshLanguage() {
+actual suspend fun PreferencesRepository.refreshLanguage(logger: Logger) {
     val locale = Locale.getDefault()
     val languageCode = get(PreferenceKey.LANGUAGE)
     if (languageCode.isNullOrBlank()) {
