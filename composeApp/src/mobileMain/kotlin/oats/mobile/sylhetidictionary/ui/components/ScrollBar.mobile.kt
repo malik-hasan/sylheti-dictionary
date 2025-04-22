@@ -44,6 +44,8 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.delay
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
 import oats.mobile.sylhetidictionary.ui.utils.isLegible
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import kotlin.math.floor
 
 @Composable
@@ -54,6 +56,8 @@ actual fun ScrollBar(
     density: Density,
     scrollingFromScrollBar: () -> Unit
 ) {
+    val logger: Logger = koinInject { parametersOf("Scrollbar") }
+
     val scrollChars = remember(scrollCharIndexes) { scrollCharIndexes.keys.toList() }
 
     var scrollBarDragOffset by remember { mutableStateOf<Float?>(null) }
@@ -135,7 +139,7 @@ actual fun ScrollBar(
                     if (!scrollCharsMeasured) {
                         scrollCharsMeasured = if (textLayoutResult.didOverflowHeight && scrollCharStyle.fontSize.isLegible) {
                             val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf { it.isLegible } ?: 1.sp
-                            Logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
+                            logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
                             scrollCharStyle = scrollCharStyle.copy(fontSize = scaledDownFontSize)
                             false
                         } else true

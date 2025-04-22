@@ -11,13 +11,13 @@ actual suspend fun PreferencesRepository.refreshLanguage() {
     val locale = Locale.getDefault()
     val languageCode = get(PreferenceKey.LANGUAGE)
     if (languageCode.isNullOrBlank()) {
-        Logger.d("LOCALE: initializing language preference from: $locale")
+        logger.d("LOCALE: initializing language preference from: $locale")
         setLanguage(Language.fromCode(locale.language))
     } else if (languageCode != locale.language) {
         val language = Language.fromCode(languageCode)
         setLanguage(Language.fromCode(locale.language))
         delay(10)
-        Logger.d("LOCALE: refreshing locale from preference: $language")
+        logger.d("LOCALE: refreshing locale from preference: $language")
         setAppOSLanguage(language)
         setLanguage(language)
     }

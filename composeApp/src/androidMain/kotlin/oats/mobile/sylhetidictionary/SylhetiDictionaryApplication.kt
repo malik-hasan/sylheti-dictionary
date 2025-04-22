@@ -9,7 +9,6 @@ import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
 import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.initKoin
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -19,8 +18,8 @@ import java.io.IOException
 class SylhetiDictionaryApplication: Application() {
 
     private val preferences: PreferencesRepository by inject()
+    private val logger: Logger by inject()
 
-    @OptIn(ExperimentalResourceApi::class)
     override fun onCreate() {
         super.onCreate()
 
@@ -32,7 +31,7 @@ class SylhetiDictionaryApplication: Application() {
             val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
             if (DictionaryAssetVersion > currentDictionaryVersion) {
 
-                Logger.d("INIT: copying dictionary asset to SQLite")
+                logger.d("INIT: copying dictionary asset to SQLite")
 
                 var dictionaryVersion = DictionaryAssetVersion
 
@@ -45,7 +44,7 @@ class SylhetiDictionaryApplication: Application() {
                             input.copyTo(it)
                         }
                     }
-                    Logger.d("INIT: dictionary asset copied")
+                    logger.d("INIT: dictionary asset copied")
                 } catch(e: IOException) {
                     dictionaryVersion = -1 // failure
                 }

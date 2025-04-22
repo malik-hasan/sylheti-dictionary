@@ -62,6 +62,7 @@ kotlin {
                 implementation(libs.datastore.preferences)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kermit)
+                implementation(libs.kermit.koin)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 api(libs.koin.core)
                 implementation(libs.koin.compose.viewmodel)

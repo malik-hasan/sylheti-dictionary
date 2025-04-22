@@ -35,7 +35,10 @@ fun MainViewController() = ComposeUIViewController(
     configure = {
         initKoin()
 
-        val preferences: PreferencesRepository = getKoin().get()
+        val koin = getKoin()
+        val preferences: PreferencesRepository by koin.inject()
+        val logger: Logger by koin.inject()
+
         runBlocking(Dispatchers.IO) {
             val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
             if (DictionaryAssetVersion > currentDictionaryVersion) {
@@ -43,7 +46,7 @@ fun MainViewController() = ComposeUIViewController(
                 val sourceBytes = Res.readBytes("files/$DictionaryAsset")
                 val destinationDirectory = NSApplicationSupportDirectory.path.stringByAppendingPathComponent("databases")
 
-                Logger.d("INIT: copying dictionary asset to SQLite")
+                logger.d("INIT: copying dictionary asset to SQLite")
 
                 memScoped {
                     val error: ObjCObjectVar<NSError?> = alloc()
@@ -54,13 +57,13 @@ fun MainViewController() = ComposeUIViewController(
                         attributes = null,
                         error = error.ptr
                     )
-                    Logger.d("INIT: database directory created: $createDirectorySuccess")
+                    logger.d("INIT: database directory created: $createDirectorySuccess")
 
                     val copyAssetSuccess = NSData.create(
                         bytes = allocArrayOf(sourceBytes),
                         length = sourceBytes.size.toULong()
                     ).writeToFile("$destinationDirectory/$DictionaryAsset", true)
-                    Logger.d("INIT: dictionary asset copied: $copyAssetSuccess")
+                    logger.d("INIT: dictionary asset copied: $copyAssetSuccess")
 
                     val dictionaryVersion = if (copyAssetSuccess) {
                         DictionaryAssetVersion

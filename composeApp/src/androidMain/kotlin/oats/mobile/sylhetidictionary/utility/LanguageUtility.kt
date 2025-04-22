@@ -9,7 +9,7 @@ import java.util.Locale
 
 actual suspend fun PreferencesRepository.refreshLanguage() {
     val locale = AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.getDefault()
-    Logger.d("LOCALE: refreshing language preference from: $locale")
+    Logger.withTag("refreshLanguage").d("LOCALE: refreshing language preference from: $locale")
     setLanguage(Language.fromCode(locale.language))
 }
 

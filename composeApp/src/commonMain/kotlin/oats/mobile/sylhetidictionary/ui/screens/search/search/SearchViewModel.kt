@@ -30,6 +30,7 @@ import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
 import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.di.injectLogger
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.models.displaySN
@@ -41,6 +42,7 @@ import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
 import oats.mobile.sylhetidictionary.utility.scrollCharIndexes
 import org.jetbrains.compose.resources.getString
+import org.koin.core.component.KoinComponent
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 
@@ -49,8 +51,10 @@ class SearchViewModel(
     private val preferences: PreferencesRepository,
     private val dictionaryRepository: DictionaryRepository,
     private val bookmarksRepository: BookmarksRepository,
-    private val recentSearchesRepository: RecentSearchesRepository
-) : ViewModel() {
+    private val recentSearchesRepository: RecentSearchesRepository,
+) : ViewModel(), KoinComponent {
+
+    private val logger: Logger by injectLogger()
 
     val assetLoaded = stateFlowOf(null,
         preferences.nullableFlow(PreferenceKey.CURRENT_DICTIONARY_VERSION).map { version ->
@@ -78,7 +82,7 @@ class SearchViewModel(
                 )
             }.distinctUntilChanged()
                 .onEach {
-                    Logger.d("SEARCH: refreshing search for settings change $it")
+                    logger.d("SEARCH: refreshing search for settings change $it")
                     refreshSearch(searchTerm, it)
                 }
         }
@@ -192,7 +196,7 @@ class SearchViewModel(
             SearchEvent.ClearSearch -> viewModelScope.launch {
                 searchTerm = ""
                 if (!searchState.value.searchBarActive) {
-                    Logger.d("SEARCH: clearing results and highlight regex")
+                    logger.d("SEARCH: clearing results and highlight regex")
                     searchResultsSharedFlow.emit(null)
                     preferences.setHighlightRegex(Regex(""))
                 }
@@ -220,7 +224,7 @@ class SearchViewModel(
 
             searchTerm.let { searchTerm ->
                 if (searchTerm != previousSearchTerm) {
-                    Logger.d("SEARCH: searching for $searchTerm")
+                    logger.d("SEARCH: searching for $searchTerm")
                     val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
 
                     preferences.setHighlightRegex(highlightRegex)
@@ -244,7 +248,7 @@ class SearchViewModel(
                     charMap = UnicodeUtility.LATIN_IPA_CHAR_MAP,
                     remapped = true
                 )
-            }.also { Logger.d("SEARCH: globSearchTerm: $it") }
+            }.also { logger.d("SEARCH: globSearchTerm: $it") }
         }
 
         val detectSearchScriptJob = async { detectSearchScript(searchTerm, settings.script) }
@@ -258,7 +262,7 @@ class SearchViewModel(
                 forRegex = true
             )
 
-            Logger.d("SEARCH: highlight regex: $regexSearchTerm")
+            logger.d("SEARCH: highlight regex: $regexSearchTerm")
             Regex(regexSearchTerm, RegexOption.IGNORE_CASE)
         }
 
@@ -277,13 +281,13 @@ class SearchViewModel(
                     ensureActive()
                     script.regexCharSet?.let { regex ->
                         if (char.toString().matches(regex)) {
-                            Logger.d("SEARCH: detected script: $script from term: $term")
+                            logger.d("SEARCH: detected script: $script from term: $term")
                             return@withContext script
                         }
                     }
                 }
             }
-            Logger.d("SEARCH: unable to detect search script from term: $term")
+            logger.d("SEARCH: unable to detect search script from term: $term")
         }
         searchScriptPreference
     }
@@ -360,7 +364,7 @@ class SearchViewModel(
     ) = globSearchTerm?.let {
         with(settings) {
             val positionedQuery = position.getPositionedQuery(it)
-            Logger.d("SEARCH: getSearchResults() $positionedQuery")
+            logger.d("SEARCH: getSearchResults() $positionedQuery")
 
             getQueryResults(
                 positionedQuery = positionedQuery,
@@ -383,7 +387,7 @@ class SearchViewModel(
 
         val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
         val searchResults = getSearchResults(globSearchTerm, detectedSearchScript, settings)
-        Logger.d("SEARCH: found ${searchResults?.size ?: "no"} results")
+        logger.d("SEARCH: found ${searchResults?.size ?: "no"} results")
 
         searchResultsSharedFlow.emit(searchResults)
         _searchState.update { it.copy(resultsLoading = false) }
@@ -403,7 +407,7 @@ class SearchViewModel(
         val (globSearchTerm, detectedSearchScript, highlightRegex) = processSearchQuery(searchTerm, settings)
         val suggestionQuery = globSearchTerm?.let(settings.position::getSuggestionQuery)
 
-        Logger.d("SEARCH: getSearchSuggestions() $suggestionQuery")
+        logger.d("SEARCH: getSearchSuggestions() $suggestionQuery")
 
         val recentSearchesJob = async { getRecentSearches(suggestionQuery, detectedSearchScript, highlightRegex) }
         val suggestionsJob = suggestionQuery?.let {

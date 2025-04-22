@@ -1,31 +1,32 @@
+
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
 import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.initKoin
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import oats.mobile.sylhetidictionary.ui.app.App
 import org.koin.mp.KoinPlatform.getKoin
 import sylhetidictionary.composeapp.generated.resources.Res
-import oats.mobile.sylhetidictionary.ui.app.App
 import java.io.FileOutputStream
 import java.io.IOException
 
-@OptIn(ExperimentalResourceApi::class)
 fun main() {
     initKoin()
 
-    val preferences: PreferencesRepository = getKoin().get()
-    runBlocking(Dispatchers.IO) {
+    val koin = getKoin()
+    val preferences: PreferencesRepository by koin.inject()
+    val logger: Logger by koin.inject()
 
+    runBlocking(Dispatchers.IO) {
         val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
         if (DictionaryAssetVersion > currentDictionaryVersion) {
 
-            Logger.d("INIT: copying dictionary asset to SQLite")
+            logger.d("INIT: copying dictionary asset to SQLite")
 
             var dictionaryVersion = DictionaryAssetVersion
 
@@ -38,7 +39,7 @@ fun main() {
                         input.copyTo(it)
                     }
                 }
-                Logger.d("INIT: dictionary asset copied")
+                logger.d("INIT: dictionary asset copied")
             } catch(e: IOException) {
                 dictionaryVersion = -1 // failure
             }
