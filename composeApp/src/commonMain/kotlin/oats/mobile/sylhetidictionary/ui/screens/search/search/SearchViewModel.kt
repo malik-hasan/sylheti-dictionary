@@ -236,8 +236,8 @@ class SearchViewModel(
     private suspend fun processSearchQuery(searchTerm: String, settings: SearchSettingsState) = coroutineScope {
         val globSearchTermJob = async {
             searchTerm.takeIf { it.isNotBlank() }?.let {
-                mapChars(
-                    term = mapChars(
+                mapAltChars(
+                    term = mapAltChars(
                         term = escapeGlobChars(it),
                         charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.CASE_MAP
                     ),
@@ -252,7 +252,7 @@ class SearchViewModel(
         val highlightRegexJob = async {
             val regexSearchTerm = if (searchTerm.isBlank()) {
                 ""
-            } else mapChars(
+            } else mapAltChars(
                 term = Regex.escape(searchTerm.lowercase()),
                 charMap = UnicodeUtility.STOP_CHAR_MAP + UnicodeUtility.LATIN_IPA_CHAR_MAP,
                 forRegex = true
@@ -288,15 +288,23 @@ class SearchViewModel(
         searchScriptPreference
     }
 
-    private fun escapeGlobChars(term: String) =
+    private suspend fun escapeGlobChars(term: String) = withContext(Dispatchers.Default) {
         term.map { char ->
+            ensureActive()
             if (char in UnicodeUtility.GLOB_SPECIAL_CHARS) {
                 "[$char]"
             } else char.toString()
         }.joinToString("")
+    }
 
-    private fun mapChars(term: String, charMap: Map<Char, Set<Char>>, forRegex: Boolean = false, remapped: Boolean = false) =
+    private suspend fun mapAltChars(
+        term: String,
+        charMap: Map<Char, Set<Char>>,
+        forRegex: Boolean = false,
+        remapped: Boolean = false
+    ) = withContext(Dispatchers.Default) {
         term.map { char ->
+            ensureActive()
             charMap[char]?.let { altChars ->
                 var charSet = "$char${altChars.joinToString("")}"
                 if (!remapped) charSet = "[$charSet]"
@@ -304,6 +312,7 @@ class SearchViewModel(
                 charSet
             } ?: char.toString()
         }.joinToString("")
+    }
 
     private suspend fun getQueryResults(
         positionedQuery: String,
@@ -360,7 +369,7 @@ class SearchViewModel(
                 searchDefinitions = searchDefinitions,
                 searchExamples = searchExamples,
                 settings = settings
-            ).distinct()
+            )
         }
     }
 
@@ -396,9 +405,7 @@ class SearchViewModel(
 
         Logger.d("SEARCH: getSearchSuggestions() $suggestionQuery")
 
-        val recentSearchesJob = async {
-            getRecentSearches(suggestionQuery, detectedSearchScript, highlightRegex)
-        }
+        val recentSearchesJob = async { getRecentSearches(suggestionQuery, detectedSearchScript, highlightRegex) }
         val suggestionsJob = suggestionQuery?.let {
             async { getSuggestions(suggestionQuery, detectedSearchScript, highlightRegex, settings) }
         }
