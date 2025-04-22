@@ -138,7 +138,7 @@ actual fun ScrollBar(
                 onTextLayout = { textLayoutResult ->
                     if (!scrollCharsMeasured) {
                         scrollCharsMeasured = if (textLayoutResult.didOverflowHeight && scrollCharStyle.fontSize.isLegible) {
-                            val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf { it.isLegible } ?: 1.sp
+                            val scaledDownFontSize = (scrollCharStyle.fontSize * 0.9f).takeIf { it.isLegible } ?: 0.01.sp
                             logger.d("SEARCH: scroll char scaledDownFontSize: $scaledDownFontSize")
                             scrollCharStyle = scrollCharStyle.copy(fontSize = scaledDownFontSize)
                             false
