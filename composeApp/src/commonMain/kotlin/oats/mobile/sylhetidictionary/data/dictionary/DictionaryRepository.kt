@@ -169,6 +169,7 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
             }
         }
 
+        fun String.filterUnspecified() = takeIf { it.lowercase() != "Unspecified Variant" }
         allVariants
             .groupBy {
                 ensureActive()
@@ -178,7 +179,6 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
                 if (grouping.value.size > 1) {
                     val option1 = grouping.value.first()
                     val option2 = grouping.value.last()
-                    fun String.filterUnspecified() = takeIf { it != "Unspecified Variant" }
                     Variant(
                         id = option1.id,
                         entryId = option1.entryId,
@@ -187,7 +187,11 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
                         variantSN = option1.variantSN ?: option2.variantSN,
                         environment = option1.environment?.filterUnspecified() ?: option2.environment?.filterUnspecified()
                     )
-                } else grouping.value.firstOrNull()
+                } else {
+                    grouping.value.firstOrNull()?.run {
+                        copy(environment = environment?.filterUnspecified())
+                    }
+                }
             }
     }
 
