@@ -163,7 +163,7 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
                         variantIPA = citationIPA ?: lexemeIPA,
                         variantEN = citationEN ?: lexemeEN,
                         variantSN = citationSN ?: lexemeSN,
-                        environment = variantType
+                        environment = variantType.takeIf { it.isNotBlank() && it != "Unspecified Variant" }
                     )
                 }.executeAsList()
             }
