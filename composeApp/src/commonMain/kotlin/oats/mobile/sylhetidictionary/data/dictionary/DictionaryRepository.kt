@@ -169,7 +169,6 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
             }
         }
 
-        fun String.filterUnspecified() = takeIf { it != "Unspecified Variant" }
         allVariants
             .groupBy {
                 ensureActive()
@@ -185,14 +184,10 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
                         variantIPA = option1.variantIPA,
                         variantEN = option1.variantEN ?: option2.variantEN,
                         variantSN = option1.variantSN ?: option2.variantSN,
-                        environment = option1.environment?.filterUnspecified() ?: option2.environment?.filterUnspecified()
+                        environment = option1.environment ?: option2.environment
                     )
-                } else {
-                    grouping.value.firstOrNull()?.run {
-                        copy(environment = environment?.filterUnspecified())
-                    }
-                }
-            }
+                } else grouping.value.firstOrNull()
+            }.sortedWith(compareBy(nullsFirst()) { it.environment })
     }
 
     suspend fun getReferenceEntries(entryId: String) = execute {

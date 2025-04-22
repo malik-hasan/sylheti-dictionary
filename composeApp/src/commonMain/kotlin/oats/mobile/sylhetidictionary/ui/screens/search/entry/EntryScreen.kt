@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -190,20 +192,24 @@ fun EntryScreen(
                             item { EntryDefinitions(entry) }
                         }
 
-                        itemsIndexed(state.variants) { i, variant ->
-                            if (i == 0) {
+                        if (state.variants.isNotEmpty()) {
+                            item {
                                 if (definitions.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 
                                 EntrySubHeader(AnnotatedString(stringResource(Res.string.variants)))
-                            }
 
-                            EntryVariant(
-                                variant = variant,
-                                index = i,
-                                showIndex = state.variants.size > 1
-                            )
+                                FlowRow(Modifier.padding(horizontal = 16.dp)) {
+                                    state.variants.forEachIndexed { i, variant ->
+                                        if (i > 0) {
+                                            Text("; ", style = MaterialTheme.typography.bodyMedium)
+                                        }
+
+                                        EntryVariant(variant)
+                                    }
+                                }
+                            }
                         }
 
                         itemsIndexed(state.examples) { i, example ->
