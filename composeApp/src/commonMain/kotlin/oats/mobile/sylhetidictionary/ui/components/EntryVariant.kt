@@ -12,7 +12,12 @@ fun EntryVariant(
     variant: Variant,
     highlightRegex: Regex = LocalHighlightRegex.current,
 ) = TaggedField(
-    tag = variant.environment?.lowercase() ?: "",
+    tag = buildString {
+        append('-')
+        variant.environment?.let {
+            append(" ${it.lowercase()}")
+        }
+    },
     tagFontFamily = latinDisplayFontFamily,
     bodies = listOfNotNull(
         SDString(variant.variantIPA, highlightRegex, SearchScript.LATIN),
