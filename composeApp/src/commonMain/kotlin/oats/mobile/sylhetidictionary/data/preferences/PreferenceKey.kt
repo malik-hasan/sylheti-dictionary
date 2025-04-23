@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.data.settings
+package oats.mobile.sylhetidictionary.data.preferences
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey

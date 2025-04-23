@@ -1,7 +1,7 @@
 package oats.mobile.sylhetidictionary.models.search.settings
 
 import androidx.datastore.preferences.core.Preferences
-import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.bengali

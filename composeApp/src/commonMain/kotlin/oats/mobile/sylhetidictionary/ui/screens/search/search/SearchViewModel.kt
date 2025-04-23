@@ -28,8 +28,8 @@ import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
-import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.injectLogger
 import oats.mobile.sylhetidictionary.models.displayEN
 import oats.mobile.sylhetidictionary.models.displayIPA

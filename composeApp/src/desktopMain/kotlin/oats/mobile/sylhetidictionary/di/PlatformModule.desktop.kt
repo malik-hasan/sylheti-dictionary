@@ -10,7 +10,7 @@ import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDatabase
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
-import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import java.io.File

@@ -3,8 +3,8 @@ package oats.mobile.sylhetidictionary.ui.app
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.utils.blockingStateFlowOf
 import oats.mobile.sylhetidictionary.utility.refreshLanguage
 

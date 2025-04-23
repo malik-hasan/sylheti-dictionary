@@ -6,8 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
-import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.initKoin
 import oats.mobile.sylhetidictionary.di.injectLogger
 import oats.mobile.sylhetidictionary.ui.app.App

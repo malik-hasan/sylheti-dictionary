@@ -12,7 +12,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import org.koin.compose.koinInject
 
 val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> {

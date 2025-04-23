@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import oats.mobile.sylhetidictionary.data.settings.PreferenceKey
-import oats.mobile.sylhetidictionary.data.settings.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.setAppOSLanguage
 

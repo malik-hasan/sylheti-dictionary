@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.data.settings
+package oats.mobile.sylhetidictionary.data.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
