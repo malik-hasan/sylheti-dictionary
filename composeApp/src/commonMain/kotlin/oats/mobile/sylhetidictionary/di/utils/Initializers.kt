@@ -9,11 +9,7 @@ import co.touchlab.kermit.koin.kermitLoggerModule
 import oats.mobile.sylhetidictionary.di.platformModule
 import oats.mobile.sylhetidictionary.di.sharedModule
 import okio.Path.Companion.toPath
-import org.koin.core.Koin
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import org.koin.core.context.startKoin
-import org.koin.core.parameter.parametersOf
 import org.koin.dsl.KoinAppDeclaration
 
 fun initKoin(config: KoinAppDeclaration = {}) {
@@ -34,9 +30,3 @@ fun initDataStore(getPath: (fileName: String) -> String) = PreferenceDataStoreFa
 
 fun <T : RoomDatabase> RoomDatabase.Builder<T>.init() =
     setDriver(BundledSQLiteDriver()).build()
-
-inline fun KoinComponent.injectLogger() =
-    inject<Logger> { parametersOf(this::class.simpleName) }
-
-inline fun Koin.injectLogger() =
-    inject<Logger> { parametersOf(null) }
