@@ -29,9 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
-import oats.mobile.sylhetidictionary.models.displayEN
-import oats.mobile.sylhetidictionary.models.displayIPA
-import oats.mobile.sylhetidictionary.models.displaySN
+import oats.mobile.sylhetidictionary.data.dictionary.models.displayEN
+import oats.mobile.sylhetidictionary.data.dictionary.models.displayIPA
+import oats.mobile.sylhetidictionary.data.dictionary.models.displaySN
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.utils.ifTrue

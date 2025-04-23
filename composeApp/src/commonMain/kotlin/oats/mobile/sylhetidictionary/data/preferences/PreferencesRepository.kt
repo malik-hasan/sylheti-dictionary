@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
-import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
-import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
-import oats.mobile.sylhetidictionary.models.settings.Language
-import oats.mobile.sylhetidictionary.models.settings.Theme
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchLanguage
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchPosition
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Theme
 
 class PreferencesRepository(private val preferences: DataStore<Preferences>) {
 

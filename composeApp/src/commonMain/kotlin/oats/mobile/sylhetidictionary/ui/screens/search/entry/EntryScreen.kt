@@ -33,10 +33,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import oats.mobile.sylhetidictionary.models.displayEN
-import oats.mobile.sylhetidictionary.models.displayIPA
-import oats.mobile.sylhetidictionary.models.displaySN
-import oats.mobile.sylhetidictionary.models.toDictionaryEntry
+import oats.mobile.sylhetidictionary.data.dictionary.models.displayEN
+import oats.mobile.sylhetidictionary.data.dictionary.models.displayIPA
+import oats.mobile.sylhetidictionary.data.dictionary.models.displaySN
+import oats.mobile.sylhetidictionary.data.dictionary.models.toDictionaryEntry
 import oats.mobile.sylhetidictionary.ui.components.BookmarkIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.EntryDefinitions

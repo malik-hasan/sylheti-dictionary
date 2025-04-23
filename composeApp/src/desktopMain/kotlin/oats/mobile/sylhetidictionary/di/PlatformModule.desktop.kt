@@ -11,6 +11,8 @@ import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
+import oats.mobile.sylhetidictionary.di.utils.init
+import oats.mobile.sylhetidictionary.di.utils.initDataStore
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import java.io.File

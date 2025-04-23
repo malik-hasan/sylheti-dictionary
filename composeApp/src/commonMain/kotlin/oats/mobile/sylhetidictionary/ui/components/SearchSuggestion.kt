@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
-import oats.mobile.sylhetidictionary.ui.utils.SDString
+import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.utils.appendHighlighted
 
 @Composable

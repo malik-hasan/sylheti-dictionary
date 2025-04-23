@@ -10,7 +10,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import org.koin.compose.viewmodel.koinViewModel
 
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }

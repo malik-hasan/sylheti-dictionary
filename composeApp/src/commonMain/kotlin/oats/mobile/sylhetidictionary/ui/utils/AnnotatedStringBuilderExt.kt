@@ -6,7 +6,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
-import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
+import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.theme.bengaliBodyFontFamily
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility

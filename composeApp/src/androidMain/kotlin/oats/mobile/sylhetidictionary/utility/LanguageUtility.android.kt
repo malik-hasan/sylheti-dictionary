@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import co.touchlab.kermit.Logger
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import java.util.Locale
 
 actual suspend fun PreferencesRepository.refreshLanguage(logger: Logger) {

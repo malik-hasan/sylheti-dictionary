@@ -31,8 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import oats.mobile.sylhetidictionary.models.settings.Language
-import oats.mobile.sylhetidictionary.models.settings.Theme
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Theme
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.DynamicThemeSetting

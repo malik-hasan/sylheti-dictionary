@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.di
+package oats.mobile.sylhetidictionary.di.utils
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.room.RoomDatabase
@@ -6,6 +6,8 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
 import co.touchlab.kermit.koin.kermitLoggerModule
+import oats.mobile.sylhetidictionary.di.platformModule
+import oats.mobile.sylhetidictionary.di.sharedModule
 import okio.Path.Companion.toPath
 import org.koin.core.Koin
 import org.koin.core.component.KoinComponent

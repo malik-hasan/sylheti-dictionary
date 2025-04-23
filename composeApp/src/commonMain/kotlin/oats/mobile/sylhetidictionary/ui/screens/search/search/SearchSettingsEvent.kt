@@ -1,8 +1,8 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
-import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
-import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
-import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchLanguage
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchPosition
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
 
 sealed interface SearchSettingsEvent {
     data class SelectPosition(val position: SearchPosition): SearchSettingsEvent

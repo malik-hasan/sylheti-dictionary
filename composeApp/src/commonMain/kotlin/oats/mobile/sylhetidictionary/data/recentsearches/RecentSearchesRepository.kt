@@ -1,6 +1,6 @@
 package oats.mobile.sylhetidictionary.data.recentsearches
 
-import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
 
 class RecentSearchesRepository(private val dao: RecentSearchesDao) {
 

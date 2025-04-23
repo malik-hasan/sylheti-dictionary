@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.models.search.settings
+package oats.mobile.sylhetidictionary.data.preferences.models.search
 
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res

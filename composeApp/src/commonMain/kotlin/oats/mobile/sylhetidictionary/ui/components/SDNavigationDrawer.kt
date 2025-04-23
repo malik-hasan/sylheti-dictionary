@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import oats.mobile.sylhetidictionary.models.Route
+import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.app.LocalDrawerState
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res

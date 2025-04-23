@@ -1,8 +1,8 @@
-package oats.mobile.sylhetidictionary.models.settings
+package oats.mobile.sylhetidictionary.data.preferences.models.settings
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import oats.mobile.sylhetidictionary.models.search.settings.SettingEnum
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SettingEnum
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.auto

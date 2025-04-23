@@ -4,7 +4,7 @@ import co.touchlab.kermit.Logger
 import kotlinx.coroutines.delay
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import java.util.Locale
 
 actual suspend fun PreferencesRepository.refreshLanguage(logger: Logger) {

@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.models.search.settings
+package oats.mobile.sylhetidictionary.data.preferences.models.search
 
 import androidx.datastore.preferences.core.Preferences
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey

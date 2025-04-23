@@ -3,7 +3,7 @@ package oats.mobile.sylhetidictionary.utility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.models.displayIPA
+import oats.mobile.sylhetidictionary.data.dictionary.models.displayIPA
 
 actual suspend fun List<DictionaryEntry>.getScrollCharIndexes() = withContext(Dispatchers.Default) {
     asSequence()

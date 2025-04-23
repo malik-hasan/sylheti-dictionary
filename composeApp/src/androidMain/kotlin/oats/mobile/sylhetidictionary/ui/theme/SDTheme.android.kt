@@ -10,7 +10,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 
 @Composable
 actual fun SDTheme(

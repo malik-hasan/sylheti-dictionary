@@ -1,7 +1,7 @@
 package oats.mobile.sylhetidictionary.ui.screens.settings
 
-import oats.mobile.sylhetidictionary.models.settings.Language
-import oats.mobile.sylhetidictionary.models.settings.Theme
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Theme
 
 sealed interface SettingsEvent {
     data class SetLanguage(val language: Language) : SettingsEvent

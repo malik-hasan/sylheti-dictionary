@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.models
+package oats.mobile.sylhetidictionary.ui.models
 
 import kotlinx.serialization.Serializable
 

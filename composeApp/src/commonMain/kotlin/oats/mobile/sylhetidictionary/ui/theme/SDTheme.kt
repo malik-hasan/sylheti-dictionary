@@ -1,7 +1,7 @@
 package oats.mobile.sylhetidictionary.ui.theme
 
 import androidx.compose.runtime.Composable
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
 
 @Composable

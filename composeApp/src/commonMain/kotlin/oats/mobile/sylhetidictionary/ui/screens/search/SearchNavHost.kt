@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import oats.mobile.sylhetidictionary.models.Route
+import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.screens.search.entry.EntryScreen
 import oats.mobile.sylhetidictionary.ui.screens.search.entry.EntryViewModel
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchScreen

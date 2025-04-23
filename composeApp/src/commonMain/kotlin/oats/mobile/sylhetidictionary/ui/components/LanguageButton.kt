@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import org.jetbrains.compose.resources.stringResource
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
 import oats.mobile.sylhetidictionary.ui.theme.bengaliBodyFontFamily

@@ -2,10 +2,10 @@ package oats.mobile.sylhetidictionary.ui.components
 
 import androidx.compose.runtime.Composable
 import oats.mobile.sylhetidictionary.Variant
-import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
-import oats.mobile.sylhetidictionary.ui.utils.SDString
+import oats.mobile.sylhetidictionary.ui.models.SDString
 
 @Composable
 fun EntryVariant(

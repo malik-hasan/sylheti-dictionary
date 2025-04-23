@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.models.search.settings
+package oats.mobile.sylhetidictionary.data.preferences.models.search
 
 import org.jetbrains.compose.resources.StringResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -35,6 +35,3 @@ enum class SearchScript(
 //        regexCharSet = Regex("\\p{IsSyloti_Nagri}")
     );
 }
-
-// unicode char classes not compatible with iOS
-// https://youtrack.jetbrains.com/issue/KT-51858/Kotlin-Native-Regex-does-not-support-UNICODECHARACTERCLASS

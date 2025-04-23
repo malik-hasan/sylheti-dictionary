@@ -8,7 +8,7 @@ import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
-import oats.mobile.sylhetidictionary.di.initKoin
+import oats.mobile.sylhetidictionary.di.utils.initKoin
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.parameter.parametersOf

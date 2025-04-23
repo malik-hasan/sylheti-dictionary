@@ -9,7 +9,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
 import org.jetbrains.compose.resources.Font
 import sylhetidictionary.composeapp.generated.resources.Res

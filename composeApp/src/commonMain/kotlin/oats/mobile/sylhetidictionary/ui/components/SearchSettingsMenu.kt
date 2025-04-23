@@ -21,9 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import oats.mobile.sylhetidictionary.models.search.settings.SearchLanguage
-import oats.mobile.sylhetidictionary.models.search.settings.SearchPosition
-import oats.mobile.sylhetidictionary.models.search.settings.SearchScript
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchLanguage
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchPosition
+import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchEvent
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsEvent
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchSettingsState

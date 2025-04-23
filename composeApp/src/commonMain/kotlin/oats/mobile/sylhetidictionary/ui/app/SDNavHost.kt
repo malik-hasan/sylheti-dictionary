@@ -6,7 +6,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import oats.mobile.sylhetidictionary.models.Route
+import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.screens.AboutScreen
 import oats.mobile.sylhetidictionary.ui.screens.IpaHelpScreen
 import oats.mobile.sylhetidictionary.ui.screens.search.SearchNavHost

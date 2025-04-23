@@ -1,7 +1,7 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.ui.utils.SDString
+import oats.mobile.sylhetidictionary.ui.models.SDString
 
 data class SearchState(
     val settingsMenuOpen: Boolean = false,

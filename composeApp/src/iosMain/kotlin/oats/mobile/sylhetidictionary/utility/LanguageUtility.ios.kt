@@ -2,7 +2,7 @@ package oats.mobile.sylhetidictionary.utility
 
 import co.touchlab.kermit.Logger
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
-import oats.mobile.sylhetidictionary.models.settings.Language
+import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import platform.Foundation.NSLocale
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.languageCode
