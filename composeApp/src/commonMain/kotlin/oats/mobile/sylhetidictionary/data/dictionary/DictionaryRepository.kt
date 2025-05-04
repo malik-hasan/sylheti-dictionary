@@ -2,7 +2,6 @@ package oats.mobile.sylhetidictionary.data.dictionary
 
 import app.cash.sqldelight.async.coroutines.awaitAsList
 import app.cash.sqldelight.async.coroutines.awaitAsOne
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.ensureActive
@@ -13,33 +12,24 @@ import kotlin.random.Random
 
 class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
     
-    private suspend fun <T> execute(block: suspend CoroutineScope.() -> T) = withContext(Dispatchers.IO) {
-        ensureActive()
-        block()
-    }
-    
-    suspend fun getEntry(entryId: String) = execute {
+    suspend fun getEntry(entryId: String) =
         queries.getEntry(entryId).awaitAsOne()
-    }
 
-    suspend fun getEntries(entryIds: Collection<String>) = execute {
+    suspend fun getEntries(entryIds: Collection<String>) =
         queries.getEntries(entryIds).awaitAsList()
-    }
 
     suspend fun searchAll(
         positionedQuery: String,
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            when {
-                searchDefinitions && searchExamples -> searchAllEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
-                searchDefinitions -> searchAllEntriesWithDefinitions(positionedQuery, simpleQuery)
-                searchExamples -> searchAllEntriesWithExamples(positionedQuery, simpleQuery)
-                else -> searchAllEntries(positionedQuery)
-            }.awaitAsList()
-        }
+    ) = with(queries) {
+        when {
+            searchDefinitions && searchExamples -> searchAllEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+            searchDefinitions -> searchAllEntriesWithDefinitions(positionedQuery, simpleQuery)
+            searchExamples -> searchAllEntriesWithExamples(positionedQuery, simpleQuery)
+            else -> searchAllEntries(positionedQuery)
+        }.awaitAsList()
     }
 
     suspend fun searchEnglish(
@@ -47,15 +37,13 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            when {
-                searchDefinitions && searchExamples -> searchEnglishEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
-                searchDefinitions -> searchEnglishEntriesWithDefinitions(positionedQuery, simpleQuery)
-                searchExamples -> searchEnglishEntriesWithExamples(positionedQuery, simpleQuery)
-                else -> searchEnglishEntries(positionedQuery)
-            }.awaitAsList()
-        }
+    ) = with(queries) {
+        when {
+            searchDefinitions && searchExamples -> searchEnglishEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+            searchDefinitions -> searchEnglishEntriesWithDefinitions(positionedQuery, simpleQuery)
+            searchExamples -> searchEnglishEntriesWithExamples(positionedQuery, simpleQuery)
+            else -> searchEnglishEntries(positionedQuery)
+        }.awaitAsList()
     }
 
     suspend fun searchSylhetiLatin(
@@ -63,15 +51,13 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            when {
-                searchDefinitions && searchExamples -> searchSylhetiLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
-                searchDefinitions -> searchSylhetiLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
-                searchExamples -> searchSylhetiLatinEntriesWithExamples(positionedQuery, simpleQuery)
-                else -> searchSylhetiLatinEntries(positionedQuery)
-            }.awaitAsList()
-        }
+    ) = with(queries) {
+        when {
+            searchDefinitions && searchExamples -> searchSylhetiLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+            searchDefinitions -> searchSylhetiLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
+            searchExamples -> searchSylhetiLatinEntriesWithExamples(positionedQuery, simpleQuery)
+            else -> searchSylhetiLatinEntries(positionedQuery)
+        }.awaitAsList()
     }
 
     suspend fun searchLatin(
@@ -79,15 +65,13 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            when {
-                searchDefinitions && searchExamples -> searchLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
-                searchDefinitions -> searchLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
-                searchExamples -> searchLatinEntriesWithExamples(positionedQuery, simpleQuery)
-                else -> searchLatinEntries(positionedQuery)
-            }.awaitAsList()
-        }
+    ) = with(queries) {
+        when {
+            searchDefinitions && searchExamples -> searchLatinEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+            searchDefinitions -> searchLatinEntriesWithDefinitions(positionedQuery, simpleQuery)
+            searchExamples -> searchLatinEntriesWithExamples(positionedQuery, simpleQuery)
+            else -> searchLatinEntries(positionedQuery)
+        }.awaitAsList()
     }
 
     suspend fun searchBengaliEasternNagri(
@@ -95,41 +79,35 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean, // unused
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            if (searchExamples) {
-                searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
-            } else searchBengaliEasternNagriDefinitions(simpleQuery)
-        }.awaitAsList()
-    }
+    ) = with(queries) {
+        if (searchExamples) {
+            searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
+        } else searchBengaliEasternNagriDefinitions(simpleQuery)
+    }.awaitAsList()
 
     suspend fun searchSylhetiEasternNagri(
         positionedQuery: String,
         simpleQuery: String,
         searchDefinitions: Boolean, // unused
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            if (searchExamples) {
-                searchSylhetiEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
-            } else searchSylhetiEasternNagriEntries(positionedQuery)
-        }.awaitAsList()
-    }
+    ) = with(queries) {
+        if (searchExamples) {
+            searchSylhetiEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
+        } else searchSylhetiEasternNagriEntries(positionedQuery)
+    }.awaitAsList()
 
     suspend fun searchEasternNagri(
         positionedQuery: String,
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            when {
-                searchDefinitions && searchExamples -> searchEasternNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
-                searchDefinitions -> searchEasternNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
-                searchExamples -> searchEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
-                else -> searchSylhetiEasternNagriEntries(positionedQuery)
-            }.awaitAsList()
-        }
+    ) = with(queries) {
+        when {
+            searchDefinitions && searchExamples -> searchEasternNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+            searchDefinitions -> searchEasternNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
+            searchExamples -> searchEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
+            else -> searchSylhetiEasternNagriEntries(positionedQuery)
+        }.awaitAsList()
     }
 
     suspend fun searchSylhetiNagri(
@@ -137,22 +115,19 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean,
         searchExamples: Boolean
-    ) = execute {
-        with(queries) {
-            when {
-                searchDefinitions && searchExamples -> searchSylhetiNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
-                searchDefinitions -> searchSylhetiNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
-                searchExamples -> searchSylhetiNagriEntriesWithExamples(positionedQuery, simpleQuery)
-                else -> searchSylhetiNagriEntries(positionedQuery)
-            }.awaitAsList()
-        }
+    ) = with(queries) {
+        when {
+            searchDefinitions && searchExamples -> searchSylhetiNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+            searchDefinitions -> searchSylhetiNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
+            searchExamples -> searchSylhetiNagriEntriesWithExamples(positionedQuery, simpleQuery)
+            else -> searchSylhetiNagriEntries(positionedQuery)
+        }.awaitAsList()
     }
 
-    suspend fun getExamples(entryId: String) = execute {
+    suspend fun getExamples(entryId: String) =
         queries.getExamples(entryId).awaitAsList()
-    }
 
-    suspend fun getVariants(entryId: String) = execute {
+    suspend fun getVariants(entryId: String) = withContext(Dispatchers.IO) {
         val allVariants = with(queries) {
             transactionWithResult {
                 getVariants(entryId).executeAsList() +
@@ -190,15 +165,12 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
             }.sortedWith(compareBy(nullsFirst()) { it.environment })
     }
 
-    suspend fun getReferenceEntries(entryId: String) = execute {
+    suspend fun getReferenceEntries(entryId: String) =
         queries.getReferenceEntries(entryId).awaitAsList()
-    }
 
-    suspend fun getComponentLexemes(entryId: String) = execute {
+    suspend fun getComponentLexemes(entryId: String) =
         queries.componentEntry(entryId).awaitAsList()
-    }
 
-    suspend fun getRelatedEntries(senseId: String) = execute {
+    suspend fun getRelatedEntries(senseId: String) =
         queries.relatedEntry(senseId).awaitAsList()
-    }
 }
