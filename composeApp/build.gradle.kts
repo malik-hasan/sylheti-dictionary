@@ -151,7 +151,7 @@ android {
 
     packaging.resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
 
-    buildTypes.getByName("release").isMinifyEnabled = false
+    buildTypes.getByName("release").isMinifyEnabled = true
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
