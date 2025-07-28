@@ -19,10 +19,7 @@ kotlin {
     targets.all {
         compilations.all {
             compileTaskProvider.configure {
-                compilerOptions.freeCompilerArgs.addAll(
-                    "-Xexpect-actual-classes",
-                    "-Xpartial-linkage-loglevel=ERROR"
-                )
+                compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
             }
         }
     }
@@ -146,8 +143,9 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
-        resourceConfigurations.addAll(setOf("en", "bn"))
     }
+
+    androidResources.localeFilters.addAll(setOf("en", "bn"))
 
     packaging.resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
 

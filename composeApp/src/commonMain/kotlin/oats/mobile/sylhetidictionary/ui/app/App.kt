@@ -12,7 +12,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import oats.mobile.sylhetidictionary.ui.components.SDNavigationDrawer
 import oats.mobile.sylhetidictionary.ui.theme.SDTheme
-import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -23,19 +22,17 @@ fun App(vm: AppViewModel = koinViewModel()) {
     val navController = rememberNavController()
     val selectedRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
-    KoinContext {
-        SDProvider {
-            SDTheme(
-                dynamicTheme = dynamicTheme,
-                darkTheme = theme.isDarkTheme
+    SDProvider {
+        SDTheme(
+            dynamicTheme = dynamicTheme,
+            darkTheme = theme.isDarkTheme
+        ) {
+            Box(Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
             ) {
-                Box(Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                ) {
-                    SDNavigationDrawer(selectedRoute, navController::navigate) {
-                        SDNavHost(navController)
-                    }
+                SDNavigationDrawer(selectedRoute, navController::navigate) {
+                    SDNavHost(navController)
                 }
             }
         }
