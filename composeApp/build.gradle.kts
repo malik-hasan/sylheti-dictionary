@@ -65,6 +65,7 @@ kotlin {
                 implementation(libs.koin.compose.viewmodel)
                 implementation(libs.koin.compose)
                 implementation(libs.lifecycle.viewmodel)
+                implementation(libs.material.icons.core)
                 implementation(libs.navigation.compose)
                 implementation(libs.room.runtime)
                 implementation(libs.kotlinx.serialization.json)
