@@ -1,5 +1,6 @@
 package oats.mobile.sylhetidictionary.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EntrySubHeader(
     text: AnnotatedString,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Text(
@@ -22,6 +24,7 @@ fun EntrySubHeader(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
+            .clickable(onClick = onClick)
             .then(modifier),
         textAlign = TextAlign.Center,
         fontWeight = FontWeight.SemiBold,

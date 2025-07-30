@@ -67,6 +67,12 @@ class EntryViewModel(
                     }
                 }
             }
+
+            is EntryEvent.ToggleVariants -> _state.update { it.copy(variantsExpanded = !it.variantsExpanded) }
+            is EntryEvent.ToggleExamples -> _state.update { it.copy(examplesExpanded = !it.examplesExpanded) }
+            is EntryEvent.ToggleComponentLexemes -> _state.update { it.copy(componentEntriesExpanded = !it.componentEntriesExpanded) }
+            is EntryEvent.ToggleDerivativeLexemes -> _state.update { it.copy(derivativeEntriesExpanded = !it.derivativeEntriesExpanded) }
+            is EntryEvent.ToggleRelatedWords -> _state.update { it.copy(relatedEntriesExpanded = !it.relatedEntriesExpanded) }
         }
     }
 }

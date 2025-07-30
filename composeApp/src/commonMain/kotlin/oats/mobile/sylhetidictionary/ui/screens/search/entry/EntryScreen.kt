@@ -40,7 +40,6 @@ import oats.mobile.sylhetidictionary.data.dictionary.models.toDictionaryEntry
 import oats.mobile.sylhetidictionary.ui.components.BookmarkIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.EntryDefinitions
-import oats.mobile.sylhetidictionary.ui.components.EntryDivider
 import oats.mobile.sylhetidictionary.ui.components.EntryExample
 import oats.mobile.sylhetidictionary.ui.components.EntryHeader
 import oats.mobile.sylhetidictionary.ui.components.EntrySubHeader
@@ -192,51 +191,50 @@ fun EntryScreen(
                         }
 
                         if (state.variants.isNotEmpty()) {
-                            item {
-                                if (definitions.isNotEmpty()) {
-                                    EntryDivider(Modifier.padding(bottom = 8.dp))
-                                }
+                            stickyHeader {
+                                EntrySubHeader(
+                                    text = AnnotatedString(stringResource(Res.string.variants)),
+                                    onClick = { onEvent(EntryEvent.ToggleVariants) }
+                                )
+                            }
 
-                                EntrySubHeader(AnnotatedString(stringResource(Res.string.variants)))
-
-                                Column (Modifier.padding(horizontal = 16.dp)) {
-                                    state.variants.forEachIndexed { i, variant ->
-                                        EntryVariant(variant)
+                            if (state.variantsExpanded) {
+                                item {
+                                    Column(Modifier.padding(horizontal = 16.dp)) {
+                                        state.variants.forEachIndexed { i, variant ->
+                                            EntryVariant(variant)
+                                        }
                                     }
                                 }
                             }
                         }
 
-                        itemsIndexed(state.examples) { i, example ->
-                            if (i == 0) {
-                                if (definitions.isNotEmpty() || state.variants.isNotEmpty()) {
-                                    EntryDivider(Modifier.padding(bottom = 8.dp))
-                                }
-
-                                EntrySubHeader(AnnotatedString(stringResource(Res.string.examples)))
+                        if (state.examples.isNotEmpty()) {
+                            stickyHeader {
+                                EntrySubHeader(
+                                    text = AnnotatedString(stringResource(Res.string.examples)),
+                                    onClick = { onEvent(EntryEvent.ToggleExamples) }
+                                )
                             }
-
-                            EntryExample(
-                                example = example,
-                                index = i,
-                                showIndex = state.examples.size > 1
-                            )
                         }
 
-                        itemsIndexed(
-                            items = state.componentEntries,
-                            key = { _, componentEntry -> componentEntry.entryId + "Component" }
-                        ) { i, componentEntry ->
-                            if (i == 0) {
-                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty()) {
-                                    EntryDivider(Modifier.padding(bottom = 8.dp))
-                                }
+                        if (state.examplesExpanded) {
+                            itemsIndexed(state.examples) { i, example ->
+                                EntryExample(
+                                    example = example,
+                                    index = i,
+                                    showIndex = state.examples.size > 1
+                                )
+                            }
+                        }
 
+                        if (state.componentEntries.isNotEmpty()) {
+                            stickyHeader {
                                 EntrySubHeader(
                                     text = buildAnnotatedString {
                                         append(stringResource(Res.string.component_lexemes))
 
-                                        componentEntry.complexFormType
+                                        state.componentEntries.first().complexFormType
                                             .takeIf { it != "Unspecified Complex Form" }
                                             ?.split(" ")
                                             ?.joinToString(" ") {
@@ -247,76 +245,90 @@ fun EntryScreen(
                                                     append("($complexFormType)")
                                                 }
                                             }
+                                    },
+                                    onClick = { onEvent(EntryEvent.ToggleComponentLexemes) }
+                                )
+                            }
+                        }
+
+                        if (state.componentEntriesExpanded) {
+                            items(
+                                items = state.componentEntries,
+                                key = { componentEntry -> componentEntry.entryId + "Component" }
+                            ) { componentEntry ->
+                                EntryCard(
+                                    entry = componentEntry.toDictionaryEntry(),
+                                    navigateToEntry = navigateToEntry,
+                                    setBookmark = { value ->
+                                        onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
                                     }
                                 )
                             }
-
-                            EntryCard(
-                                entry = componentEntry.toDictionaryEntry(),
-                                navigateToEntry = navigateToEntry,
-                                setBookmark = { value ->
-                                    onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
-                                }
-                            )
                         }
 
-                        itemsIndexed(
-                            items = state.derivativeEntries,
-                            key = { _, derivativeEntry -> derivativeEntry.entryId + "Derivative" }
-                        ) { i, derivativeEntry ->
-                            if (i == 0) {
-                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.componentEntries.isNotEmpty()) {
-                                    EntryDivider(Modifier.padding(bottom = 8.dp))
-                                }
-
-                                EntrySubHeader(AnnotatedString(stringResource(Res.string.derivative_lexemes)))
+                        if (state.derivativeEntries.isNotEmpty()) {
+                            stickyHeader {
+                                EntrySubHeader(
+                                    text = AnnotatedString(stringResource(Res.string.derivative_lexemes)),
+                                    onClick = { onEvent(EntryEvent.ToggleDerivativeLexemes) }
+                                )
                             }
-
-                            derivativeEntry.complexFormType
-                                .takeIf { it != "Unspecified Complex Form" }
-                                ?.let { complexFormType ->
-                                    FieldTag(
-                                        tag = complexFormType,
-                                        tagFontFamily = latinDisplayFontFamily,
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                }
-
-                            EntryCard(
-                                entry = derivativeEntry.toDictionaryEntry(),
-                                navigateToEntry = navigateToEntry,
-                                setBookmark = { value ->
-                                    onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
-                                }
-                            )
                         }
 
-                        itemsIndexed(
-                            items = state.relatedEntries,
-                            key = { _, relatedEntry -> relatedEntry.entryId + "Related" }
-                        ) { i, relatedEntry ->
-                            if (i == 0) {
-                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.derivativeEntries.isNotEmpty() || state.componentEntries.isNotEmpty()) {
-                                    EntryDivider(Modifier.padding(bottom = 8.dp))
-                                }
+                        if (state.derivativeEntriesExpanded) {
+                            items(
+                                items = state.derivativeEntries,
+                                key = { derivativeEntry -> derivativeEntry.entryId + "Derivative" }
+                            ) { derivativeEntry ->
+                                derivativeEntry.complexFormType
+                                    .takeIf { it != "Unspecified Complex Form" }
+                                    ?.let { complexFormType ->
+                                        FieldTag(
+                                            tag = complexFormType,
+                                            tagFontFamily = latinDisplayFontFamily,
+                                            modifier = Modifier.padding(horizontal = 16.dp)
+                                        )
+                                    }
 
-                                EntrySubHeader(AnnotatedString(stringResource(Res.string.related_words)))
+                                EntryCard(
+                                    entry = derivativeEntry.toDictionaryEntry(),
+                                    navigateToEntry = navigateToEntry,
+                                    setBookmark = { value ->
+                                        onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
+                                    }
+                                )
                             }
+                        }
 
-                            FieldTag(
-                                tag = relatedEntry.relationType,
-                                tagFontFamily = latinDisplayFontFamily,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
+                        if (state.relatedEntries.isNotEmpty()) {
+                            stickyHeader {
+                                EntrySubHeader(
+                                    text = AnnotatedString(stringResource(Res.string.related_words)),
+                                    onClick = { onEvent(EntryEvent.ToggleRelatedWords) }
+                                )
+                            }
+                        }
 
-                            EntryCard(
-                                entry = relatedEntry.toDictionaryEntry(),
-                                includeAnimation = relatedEntry.entryId !in componentEntryIds,
-                                navigateToEntry = navigateToEntry,
-                                setBookmark = { value ->
-                                    onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
-                                }
-                            )
+                        if (state.relatedEntriesExpanded) {
+                            items(
+                                items = state.relatedEntries,
+                                key = { relatedEntry -> relatedEntry.entryId + "Related" }
+                            ) { relatedEntry ->
+                                FieldTag(
+                                    tag = relatedEntry.relationType,
+                                    tagFontFamily = latinDisplayFontFamily,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+
+                                EntryCard(
+                                    entry = relatedEntry.toDictionaryEntry(),
+                                    includeAnimation = relatedEntry.entryId !in componentEntryIds,
+                                    navigateToEntry = navigateToEntry,
+                                    setBookmark = { value ->
+                                        onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
+                                    }
+                                )
+                            }
                         }
                     }
                 }
