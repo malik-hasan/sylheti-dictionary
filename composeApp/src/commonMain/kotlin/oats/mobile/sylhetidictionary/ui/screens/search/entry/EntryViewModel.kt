@@ -29,6 +29,7 @@ class EntryViewModel(
                 val variants = async { getVariants(entryId) }
                 val examples = async { getExamples(entryId) }
                 val componentLexemes = async { getComponentLexemes(entryId) }
+                val derivativeLexemes = async { getDerivativeLexemes(entryId) }
                 val relatedEntries = async {
                     entry.senseId?.let { getRelatedEntries(it) } ?: emptyList()
                 }
@@ -39,6 +40,7 @@ class EntryViewModel(
                         variants = variants.await(),
                         examples = examples.await(),
                         componentEntries = componentLexemes.await(),
+                        derivativeEntries = derivativeLexemes.await(),
                         relatedEntries = relatedEntries.await()
                     )
                 }

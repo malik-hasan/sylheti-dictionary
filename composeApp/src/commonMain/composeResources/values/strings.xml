@@ -35,6 +35,7 @@
     <string name="examples">Examples</string>
     <string name="example">Example %1$d</string>
     <string name="component_lexemes">Component Lexemes</string>
+    <string name="derivative_lexemes">Derivative Lexemes</string>
     <string name="related_words">Related Words</string>
 
     <string name="settings">Settings</string>

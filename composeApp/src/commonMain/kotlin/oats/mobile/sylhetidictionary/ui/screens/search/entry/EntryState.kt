@@ -1,6 +1,7 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.entry
 
 import oats.mobile.sylhetidictionary.ComponentEntry
+import oats.mobile.sylhetidictionary.DerivativeEntry
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.Example
 import oats.mobile.sylhetidictionary.RelatedEntry
@@ -13,5 +14,6 @@ data class EntryState(
     val variants: List<Variant> = emptyList(),
     val referenceEntries: List<DictionaryEntry> = emptyList(),
     val componentEntries: List<ComponentEntry> = emptyList(),
+    val derivativeEntries: List<DerivativeEntry> = emptyList(),
     val relatedEntries: List<RelatedEntry> = emptyList()
 )

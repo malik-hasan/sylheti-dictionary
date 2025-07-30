@@ -171,6 +171,9 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
     suspend fun getComponentLexemes(entryId: String) =
         queries.componentEntry(entryId).awaitAsList()
 
+    suspend fun getDerivativeLexemes(entryId: String) =
+        queries.derivativeEntry(entryId).awaitAsList()
+
     suspend fun getRelatedEntries(senseId: String) =
         queries.relatedEntry(senseId).awaitAsList()
 }

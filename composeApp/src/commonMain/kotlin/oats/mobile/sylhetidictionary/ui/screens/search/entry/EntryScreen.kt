@@ -60,6 +60,7 @@ import oats.mobile.sylhetidictionary.ui.utils.space
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.component_lexemes
+import sylhetidictionary.composeapp.generated.resources.derivative_lexemes
 import sylhetidictionary.composeapp.generated.resources.examples
 import sylhetidictionary.composeapp.generated.resources.related_words
 import sylhetidictionary.composeapp.generated.resources.variants
@@ -260,11 +261,42 @@ fun EntryScreen(
                         }
 
                         itemsIndexed(
+                            items = state.derivativeEntries,
+                            key = { _, derivativeEntry -> derivativeEntry.entryId + "Derivative" }
+                        ) { i, derivativeEntry ->
+                            if (i == 0) {
+                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.componentEntries.isNotEmpty()) {
+                                    EntryDivider(Modifier.padding(bottom = 8.dp))
+                                }
+
+                                EntrySubHeader(AnnotatedString(stringResource(Res.string.derivative_lexemes)))
+                            }
+
+                            derivativeEntry.complexFormType
+                                .takeIf { it != "Unspecified Complex Form" }
+                                ?.let { complexFormType ->
+                                    FieldTag(
+                                        tag = complexFormType,
+                                        tagFontFamily = latinDisplayFontFamily,
+                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                    )
+                                }
+
+                            EntryCard(
+                                entry = derivativeEntry.toDictionaryEntry(),
+                                navigateToEntry = navigateToEntry,
+                                setBookmark = { value ->
+                                    onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
+                                }
+                            )
+                        }
+
+                        itemsIndexed(
                             items = state.relatedEntries,
                             key = { _, relatedEntry -> relatedEntry.entryId + "Related" }
                         ) { i, relatedEntry ->
                             if (i == 0) {
-                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.componentEntries.isNotEmpty()) {
+                                if (definitions.isNotEmpty() || state.variants.isNotEmpty() || state.examples.isNotEmpty() || state.derivativeEntries.isNotEmpty() || state.componentEntries.isNotEmpty()) {
                                     EntryDivider(Modifier.padding(bottom = 8.dp))
                                 }
 

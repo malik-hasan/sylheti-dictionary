@@ -361,6 +361,12 @@ JOIN ComponentEntry CE ON D.entryId = CE.componentId
 WHERE CE.entryId = :entryId
     AND complexFormType IS NOT NULL;
 
+derivativeEntry:
+SELECT DISTINCT D.*, complexFormType FROM DictionaryEntry D
+JOIN ComponentEntry CE ON D.entryId = CE.entryId
+WHERE CE.componentId = :entryId
+    AND complexFormType IS NOT NULL;
+
 relatedEntry:
 SELECT DISTINCT D.*,
     CASE
