@@ -2,11 +2,14 @@ package oats.mobile.sylhetidictionary.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,10 +30,12 @@ fun EntrySubHeader(
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.secondaryContainer)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .heightIn(48.dp)
-            .clickable(onClick = onClick),
+            .heightIn(48.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = text,
@@ -40,10 +45,8 @@ fun EntrySubHeader(
             color = MaterialTheme.colorScheme.onSecondaryContainer
         )
 
-
-
         Icon(
-            Icons.Default.KeyboardArrowDown,
+            if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
             "expand"
         )
     }
