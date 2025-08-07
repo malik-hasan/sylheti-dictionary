@@ -160,13 +160,9 @@ fun EntryScreen(
                     }
 
                     LazyColumn(
-                        modifier = Modifier.padding(
-                            scaffoldPadding.copy(bottom = 0.dp)
-                        ),
+                        modifier = Modifier.padding(scaffoldPadding.copy(bottom = 0.dp)),
                         contentPadding = PaddingValues(
-                            start = 16.dp,
                             top = 16.dp,
-                            end = 16.dp,
                             bottom = 16.dp + scaffoldPadding.calculateBottomPadding()
                         ),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -175,32 +171,42 @@ fun EntryScreen(
                             ReferenceButton(
                                 referenceEntry = it,
                                 entryId = entryId,
-                                navigateToEntry = navigateToEntry
+                                navigateToEntry = navigateToEntry,
+                                modifier = Modifier.padding(horizontal = 16.dp)
                             )
                         }
 
-                        val definitions = listOfNotNull(
+                        listOfNotNull(
                             definitionEnglish,
                             definitionBengali,
                             definitionBengaliIPA,
                             definitionSN,
                             definitionIPA
-                        )
-                        if (definitions.isNotEmpty()) {
-                            item { EntryDefinitions(entry) }
+                        ).takeIf { it.isNotEmpty() }?.let {
+                            item {
+                                EntryDefinitions(
+                                    entry = entry,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+                            }
                         }
+
 
                         if (state.variants.isNotEmpty()) {
                             stickyHeader {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.variants)),
-                                    onClick = { onEvent(EntryEvent.ToggleVariants) }
+                                    onClick = { onEvent(EntryEvent.ToggleVariants) },
+                                    expanded = state.variantsExpanded
                                 )
                             }
 
                             if (state.variantsExpanded) {
                                 item {
-                                    Column(Modifier.padding(horizontal = 16.dp)) {
+                                    Column(Modifier
+                                        .padding(horizontal = 32.dp)
+                                        .animateItem()
+                                    ) {
                                         state.variants.forEachIndexed { i, variant ->
                                             EntryVariant(variant)
                                         }
@@ -213,7 +219,8 @@ fun EntryScreen(
                             stickyHeader {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.examples)),
-                                    onClick = { onEvent(EntryEvent.ToggleExamples) }
+                                    onClick = { onEvent(EntryEvent.ToggleExamples) },
+                                    expanded = state.examplesExpanded
                                 )
                             }
                         }
@@ -246,7 +253,8 @@ fun EntryScreen(
                                                 }
                                             }
                                     },
-                                    onClick = { onEvent(EntryEvent.ToggleComponentLexemes) }
+                                    onClick = { onEvent(EntryEvent.ToggleComponentLexemes) },
+                                    expanded = state.componentEntriesExpanded
                                 )
                             }
                         }
@@ -261,7 +269,8 @@ fun EntryScreen(
                                     navigateToEntry = navigateToEntry,
                                     setBookmark = { value ->
                                         onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
-                                    }
+                                    },
+                                    modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }
                         }
@@ -270,7 +279,8 @@ fun EntryScreen(
                             stickyHeader {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.derivative_lexemes)),
-                                    onClick = { onEvent(EntryEvent.ToggleDerivativeLexemes) }
+                                    onClick = { onEvent(EntryEvent.ToggleDerivativeLexemes) },
+                                    expanded = state.derivativeEntriesExpanded
                                 )
                             }
                         }
@@ -280,23 +290,25 @@ fun EntryScreen(
                                 items = state.derivativeEntries,
                                 key = { derivativeEntry -> derivativeEntry.entryId + "Derivative" }
                             ) { derivativeEntry ->
-                                derivativeEntry.complexFormType
-                                    .takeIf { it != "Unspecified Complex Form" }
-                                    ?.let { complexFormType ->
-                                        FieldTag(
-                                            tag = complexFormType,
-                                            tagFontFamily = latinDisplayFontFamily,
-                                            modifier = Modifier.padding(horizontal = 16.dp)
-                                        )
-                                    }
+                                Column(Modifier.padding(horizontal = 16.dp)) {
+                                    derivativeEntry.complexFormType
+                                        .takeIf { it != "Unspecified Complex Form" }
+                                        ?.let { complexFormType ->
+                                            FieldTag(
+                                                tag = complexFormType,
+                                                tagFontFamily = latinDisplayFontFamily,
+                                                modifier = Modifier.padding(horizontal = 16.dp)
+                                            )
+                                        }
 
-                                EntryCard(
-                                    entry = derivativeEntry.toDictionaryEntry(),
-                                    navigateToEntry = navigateToEntry,
-                                    setBookmark = { value ->
-                                        onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
-                                    }
-                                )
+                                    EntryCard(
+                                        entry = derivativeEntry.toDictionaryEntry(),
+                                        navigateToEntry = navigateToEntry,
+                                        setBookmark = { value ->
+                                            onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
+                                        }
+                                    )
+                                }
                             }
                         }
 
@@ -304,7 +316,8 @@ fun EntryScreen(
                             stickyHeader {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.related_words)),
-                                    onClick = { onEvent(EntryEvent.ToggleRelatedWords) }
+                                    onClick = { onEvent(EntryEvent.ToggleRelatedWords) },
+                                    expanded = state.relatedEntriesExpanded
                                 )
                             }
                         }
@@ -314,20 +327,22 @@ fun EntryScreen(
                                 items = state.relatedEntries,
                                 key = { relatedEntry -> relatedEntry.entryId + "Related" }
                             ) { relatedEntry ->
-                                FieldTag(
-                                    tag = relatedEntry.relationType,
-                                    tagFontFamily = latinDisplayFontFamily,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
+                                Column(Modifier.padding(horizontal = 16.dp)) {
+                                    FieldTag(
+                                        tag = relatedEntry.relationType,
+                                        tagFontFamily = latinDisplayFontFamily,
+                                        modifier = Modifier.padding(horizontal = 16.dp)
+                                    )
 
-                                EntryCard(
-                                    entry = relatedEntry.toDictionaryEntry(),
-                                    includeAnimation = relatedEntry.entryId !in componentEntryIds,
-                                    navigateToEntry = navigateToEntry,
-                                    setBookmark = { value ->
-                                        onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
-                                    }
-                                )
+                                    EntryCard(
+                                        entry = relatedEntry.toDictionaryEntry(),
+                                        includeAnimation = relatedEntry.entryId !in componentEntryIds,
+                                        navigateToEntry = navigateToEntry,
+                                        setBookmark = { value ->
+                                            onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

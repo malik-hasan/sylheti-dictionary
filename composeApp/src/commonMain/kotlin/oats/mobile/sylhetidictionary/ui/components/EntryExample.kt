@@ -10,12 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.Example
-import oats.mobile.sylhetidictionary.ui.models.FieldTag
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
 import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
-import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
+import oats.mobile.sylhetidictionary.ui.models.FieldTag
 import oats.mobile.sylhetidictionary.ui.models.SDString
+import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
 import oats.mobile.sylhetidictionary.utility.validateStrings
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -28,11 +28,12 @@ fun EntryExample(
     example: Example,
     index: Int,
     showIndex: Boolean,
+    modifier: Modifier = Modifier,
     language: Language = LocalLanguage.current,
     highlightRegex: Regex = LocalHighlightRegex.current
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = 16.dp),
+        modifier = modifier.padding(horizontal = 32.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (showIndex) Text("${index + 1}.")

@@ -43,6 +43,7 @@ fun EntryCard(
     entry: DictionaryEntry,
     navigateToEntry: (entryId: String) -> Unit,
     setBookmark: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     includeAnimation: Boolean = true,
     dictionaryRepository: DictionaryRepository = koinInject(),
     bookmarksRepository: BookmarksRepository = koinInject(),
@@ -71,7 +72,7 @@ fun EntryCard(
 
             val cardShape by derivedStateOf { RoundedCornerShape(containerCornerRounding) }
 
-            Card(Modifier
+            Card(modifier
                 .clip(cardShape)
                 .clickable {
                     isNavigatingToThisEntry = true

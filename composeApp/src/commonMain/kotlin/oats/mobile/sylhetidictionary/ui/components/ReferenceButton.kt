@@ -16,10 +16,10 @@ import oats.mobile.sylhetidictionary.data.dictionary.models.displayEN
 import oats.mobile.sylhetidictionary.data.dictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.data.dictionary.models.displaySN
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
+import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
-import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.utils.ifTrue
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -31,24 +31,26 @@ fun ReferenceButton(
     referenceEntry: DictionaryEntry,
     entryId: String,
     navigateToEntry: (entryId: String) -> Unit,
+    modifier: Modifier = Modifier,
     includeAnimation: Boolean = true,
     highlightRegex: Regex = LocalHighlightRegex.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
 ) {
-    Box(Modifier.fillMaxWidth(), Alignment.Center) {
-        with(sharedTransitionScope) {
-            OutlinedButton(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .ifTrue(includeAnimation) {
-                        sharedBounds(
-                            sharedContentState = rememberSharedContentState("see-variant-$entryId-${referenceEntry.entryId}"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                    },
-                onClick = { navigateToEntry(referenceEntry.entryId) }
-            ) {
+    with(sharedTransitionScope) {
+        Box(
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .ifTrue(includeAnimation) {
+                    sharedBounds(
+                        sharedContentState = rememberSharedContentState("see-variant-$entryId-${referenceEntry.entryId}"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            OutlinedButton({ navigateToEntry(referenceEntry.entryId) }) {
                 TaggedField(
                     enableSelection = false,
                     tag = stringResource(Res.string.see),
