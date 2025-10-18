@@ -19,14 +19,15 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -156,11 +157,14 @@ fun EntryScreen(
                         }
                     }
                 ) { scaffoldPadding ->
-                    val componentEntryIds = remember(state.componentEntries) {
-                        state.componentEntries.map { it.entryId }
+                    val lazyListState = rememberLazyListState()
+
+                    val visibleItemKeys by derivedStateOf {
+                        lazyListState.layoutInfo.visibleItemsInfo.mapNotNullTo(HashSet()) { it.key as? String }
                     }
 
                     LazyColumn(
+                        state = lazyListState,
                         modifier = Modifier.padding(scaffoldPadding.copy(bottom = 0.dp)),
                         contentPadding = PaddingValues(
                             top = 16.dp,
@@ -305,7 +309,7 @@ fun EntryScreen(
                                 TaggedEntryCard(
                                     tag = derivativeEntry.complexFormType.takeIf { it != "Unspecified Complex Form" },
                                     entry = derivativeEntry.toDictionaryEntry(),
-                                    includeAnimation = true, // TODO
+                                    includeAnimation = "component::${derivativeEntry.entryId}" !in visibleItemKeys,
                                     navigateToEntry = navigateToEntry,
                                     setBookmark = { value ->
                                         onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
@@ -333,7 +337,8 @@ fun EntryScreen(
                                 TaggedEntryCard(
                                     tag = relatedEntry.relationType,
                                     entry = relatedEntry.toDictionaryEntry(),
-                                    includeAnimation = relatedEntry.entryId !in componentEntryIds,
+                                    includeAnimation = "component::${relatedEntry.entryId}" !in visibleItemKeys
+                                        && "derivative::${relatedEntry.entryId}" !in visibleItemKeys,
                                     navigateToEntry = navigateToEntry,
                                     setBookmark = { value ->
                                         onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
