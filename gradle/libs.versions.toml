@@ -1,27 +1,27 @@
 [versions]
-kotlin = "2.2.0"
+kotlin = "2.2.20"
 ksp = "2.2.0-2.0.2"
-jetbrains-compose = "1.8.2"
-agp = "8.10.0" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
+jetbrains-compose = "1.9.1"
+agp = "8.11.1" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
 android-minSdk = "21"
 android-targetSdk = "36"
 android-compileSdk = "36"
 
-activity-compose = "1.10.1"
+activity-compose = "1.11.0"
 appcompat = "1.7.1"
 coroutines = "1.10.2"
 datastore = "1.1.7"
 datetime = "0.7.1"
-kermit = "2.0.6"
-koin = "4.1.0"
-lifecycle = "2.9.2"
-material = "1.7.3"
-navigation = "2.9.0-beta03"
-room = "2.7.2"
+kermit = "2.0.8"
+koin = "4.1.1"
+lifecycle = "2.9.4"
+material3 = "1.9.0-alpha04" # alpha required for m3 expressive for now https://www.jetbrains.com/help/kotlin-multiplatform-dev/whats-new-compose-190.html
+navigation = "2.9.1"
+room = "2.7.2" # any higher requires raising min Android SDK
 serialization = "1.9.0"
 splashscreen = "1.0.1"
 sqldelight = "2.1.0"
-sqlite = "2.5.2"
+sqlite = "2.5.2" # any higher requires raising min Android SDK
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -49,7 +49,7 @@ koin-android = { module = "io.insert-koin:koin-android" }
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
-material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material" }
+material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
 

@@ -25,7 +25,7 @@ fun App(vm: AppViewModel = koinViewModel()) {
     SDProvider {
         SDTheme(
             dynamicTheme = dynamicTheme,
-            darkTheme = theme.isDarkTheme
+            darkTheme = theme.isDarkTheme()
         ) {
             Box(Modifier
                 .fillMaxSize()

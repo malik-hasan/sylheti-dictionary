@@ -9,12 +9,20 @@ import sylhetidictionary.composeapp.generated.resources.auto
 import sylhetidictionary.composeapp.generated.resources.dark
 import sylhetidictionary.composeapp.generated.resources.light
 
-enum class Theme(override val label: StringResource): SettingEnum {
-    Auto(Res.string.auto),
-    Light(Res.string.light),
-    Dark(Res.string.dark);
-
-    val isDarkTheme
-        @Composable get() = this == Dark
-                || (this == Auto && isSystemInDarkTheme())
+enum class Theme(
+    override val label: StringResource,
+    val isDarkTheme: @Composable () -> Boolean
+): SettingEnum {
+    Auto(
+        label = Res.string.auto,
+        isDarkTheme = { isSystemInDarkTheme() }
+    ),
+    Light(
+        label = Res.string.light,
+        isDarkTheme = { false }
+    ),
+    Dark(
+        label = Res.string.dark,
+        isDarkTheme = { true }
+    )
 }

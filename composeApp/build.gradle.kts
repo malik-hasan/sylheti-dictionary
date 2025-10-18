@@ -52,7 +52,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.runtime)
                 implementation(compose.ui)
-                implementation(compose.material3)
+//                implementation(compose.material3) # overriding with alpha for m3 expressive
                 implementation(compose.components.resources)
 
                 implementation(libs.kotlinx.coroutines.core)
@@ -65,7 +65,7 @@ kotlin {
                 implementation(libs.koin.compose.viewmodel)
                 implementation(libs.koin.compose)
                 implementation(libs.lifecycle.viewmodel)
-                implementation(libs.material.icons.core)
+                implementation(libs.material3)
                 implementation(libs.navigation.compose)
                 implementation(libs.room.runtime)
                 implementation(libs.kotlinx.serialization.json)
@@ -93,19 +93,26 @@ kotlin {
             }
         }
 
+        val nonAndroidMain by creating {
+            dependsOn(commonMain.get())
+        }
+
         iosMain {
             dependsOn(mobileMain)
+            dependsOn(nonAndroidMain)
             dependencies {
                 implementation(libs.sqldelight.native.driver)
             }
         }
 
-        val desktopMain by getting
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.lifecycle.runtime.compose)
-            implementation(libs.sqldelight.sqlite.driver)
+        val desktopMain by getting {
+            dependsOn(nonAndroidMain)
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.lifecycle.runtime.compose)
+                implementation(libs.sqldelight.sqlite.driver)
+            }
         }
 
         commonTest.dependencies {
