@@ -192,7 +192,6 @@ fun EntryScreen(
                             }
                         }
 
-
                         if (state.variants.isNotEmpty()) {
                             stickyHeader {
                                 EntrySubHeader(
