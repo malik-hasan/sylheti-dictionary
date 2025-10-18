@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import oats.mobile.sylhetidictionary.data.dictionary.models.displayEN
 import oats.mobile.sylhetidictionary.data.dictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.data.dictionary.models.displaySN
 import oats.mobile.sylhetidictionary.data.dictionary.models.toDictionaryEntry
+import oats.mobile.sylhetidictionary.ui.components.BackIconButton
 import oats.mobile.sylhetidictionary.ui.components.BookmarkIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.EntryDefinitions
@@ -49,8 +51,7 @@ import oats.mobile.sylhetidictionary.ui.components.ReferenceButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBarWindowInsets
-import oats.mobile.sylhetidictionary.ui.components.SearchIconButton
-import oats.mobile.sylhetidictionary.ui.components.UpIconButton
+import oats.mobile.sylhetidictionary.ui.components.SearchIcon
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
@@ -101,8 +102,8 @@ fun EntryScreen(
                                 SDTopAppBar(
                                     colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
                                     navigationIcon = {
-                                        UpIconButton(
-                                            navigateUp = navigateUp,
+                                        BackIconButton(
+                                            onClick = navigateUp,
                                             modifier = Modifier.animateEnterExit(
                                                 enter = fadeIn(tween(delayMillis = 300)),
                                                 exit = fadeOut(tween(10))
@@ -110,14 +111,14 @@ fun EntryScreen(
                                         )
                                     },
                                     actions = {
-                                        SearchIconButton(
-                                            popToSearchBar = popToSearchBar,
+                                        IconButton(
+                                            onClick = popToSearchBar,
                                             modifier = Modifier
                                                 .animateEnterExit(
                                                     enter = fadeIn(tween(delayMillis = 300)),
                                                     exit = fadeOut(tween(10))
                                                 )
-                                        )
+                                        ) { SearchIcon() }
 
                                         BookmarkIconButton(
                                             modifier = Modifier.sharedElement(

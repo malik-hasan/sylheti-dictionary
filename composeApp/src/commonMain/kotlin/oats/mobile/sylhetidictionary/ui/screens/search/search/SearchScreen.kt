@@ -24,10 +24,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,11 +49,13 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import oats.mobile.sylhetidictionary.ui.components.BackIconButton
 import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.ScrollBar
+import oats.mobile.sylhetidictionary.ui.components.SearchIcon
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestion
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
@@ -68,6 +66,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.asset_load_error
+import sylhetidictionary.composeapp.generated.resources.clear
 import sylhetidictionary.composeapp.generated.resources.history
 import sylhetidictionary.composeapp.generated.resources.no_results
 import sylhetidictionary.composeapp.generated.resources.search_dictionary
@@ -256,17 +255,18 @@ fun SearchScreen(
                                                     },
                                                     leadingIcon = {
                                                         if (searchState.searchBarActive) {
-                                                            IconButton(
+                                                            BackIconButton(
                                                                 onClick = { onSearchEvent(SearchEvent.ActivateSearchBar(false)) }
-                                                            ) {
-                                                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
-                                                            }
-                                                        } else Icon(Icons.Default.Search, "Search")
+                                                            )
+                                                        } else SearchIcon()
                                                     },
                                                     trailingIcon = {
                                                         if (searchTerm.isNotBlank()) {
                                                             IconButton({ onSearchEvent(SearchEvent.ClearSearch) }) {
-                                                                Icon(Icons.Default.Clear, "Clear")
+                                                                Icon(
+                                                                    painter = painterResource(Res.drawable.clear),
+                                                                    contentDescription = "Clear"
+                                                                )
                                                             }
                                                         }
                                                     }
