@@ -46,12 +46,12 @@ import oats.mobile.sylhetidictionary.ui.components.EntryExample
 import oats.mobile.sylhetidictionary.ui.components.EntryHeader
 import oats.mobile.sylhetidictionary.ui.components.EntrySubHeader
 import oats.mobile.sylhetidictionary.ui.components.EntryVariant
-import oats.mobile.sylhetidictionary.ui.components.FieldTag
 import oats.mobile.sylhetidictionary.ui.components.ReferenceButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBarWindowInsets
 import oats.mobile.sylhetidictionary.ui.components.SearchIcon
+import oats.mobile.sylhetidictionary.ui.components.TaggedEntryCard
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
@@ -168,7 +168,11 @@ fun EntryScreen(
                         ),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(state.referenceEntries) {
+                        items(
+                            items = state.referenceEntries,
+                            key = { it },
+                            contentType = { "reference button" }
+                        ) {
                             ReferenceButton(
                                 referenceEntry = it,
                                 entryId = entryId,
@@ -184,7 +188,7 @@ fun EntryScreen(
                             definitionSN,
                             definitionIPA
                         ).takeIf { it.isNotEmpty() }?.let {
-                            item {
+                            item(key = "definitions", contentType = "definitions") {
                                 EntryDefinitions(
                                     entry = entry,
                                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -192,8 +196,9 @@ fun EntryScreen(
                             }
                         }
 
+                        val subHeaderContentType = "subheader"
                         if (state.variants.isNotEmpty()) {
-                            stickyHeader {
+                            stickyHeader(key = "variants header", contentType = subHeaderContentType) {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.variants)),
                                     onClick = { onEvent(EntryEvent.ToggleVariants) },
@@ -202,13 +207,13 @@ fun EntryScreen(
                             }
 
                             if (state.variantsExpanded) {
-                                item {
+                                item(key = "variants", contentType = "variants") {
                                     Column(Modifier
                                         .padding(horizontal = 32.dp)
                                         .animateItem()
                                     ) {
-                                        state.variants.forEachIndexed { i, variant ->
-                                            EntryVariant(variant)
+                                        state.variants.forEach {
+                                            EntryVariant(it)
                                         }
                                     }
                                 }
@@ -216,7 +221,7 @@ fun EntryScreen(
                         }
 
                         if (state.examples.isNotEmpty()) {
-                            stickyHeader {
+                            stickyHeader(key = "examples header", contentType = subHeaderContentType) {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.examples)),
                                     onClick = { onEvent(EntryEvent.ToggleExamples) },
@@ -226,7 +231,11 @@ fun EntryScreen(
                         }
 
                         if (state.examplesExpanded) {
-                            itemsIndexed(state.examples) { i, example ->
+                            itemsIndexed(
+                                items = state.examples,
+                                key = { _, example -> example },
+                                contentType = { _, _ -> "example" }
+                            ) { i, example ->
                                 EntryExample(
                                     example = example,
                                     index = i,
@@ -236,7 +245,7 @@ fun EntryScreen(
                         }
 
                         if (state.componentEntries.isNotEmpty()) {
-                            stickyHeader {
+                            stickyHeader(key = "component lexemes header", contentType = subHeaderContentType) {
                                 EntrySubHeader(
                                     text = buildAnnotatedString {
                                         append(stringResource(Res.string.component_lexemes))
@@ -262,7 +271,8 @@ fun EntryScreen(
                         if (state.componentEntriesExpanded) {
                             items(
                                 items = state.componentEntries,
-                                key = { componentEntry -> componentEntry.entryId + "Component" }
+                                key = { it.entryId + "Component" },
+                                contentType = { "entry card" }
                             ) { componentEntry ->
                                 EntryCard(
                                     entry = componentEntry.toDictionaryEntry(),
@@ -276,7 +286,7 @@ fun EntryScreen(
                         }
 
                         if (state.derivativeEntries.isNotEmpty()) {
-                            stickyHeader {
+                            stickyHeader(key = "derivative lexemes header", contentType = subHeaderContentType) {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.derivative_lexemes)),
                                     onClick = { onEvent(EntryEvent.ToggleDerivativeLexemes) },
@@ -285,35 +295,27 @@ fun EntryScreen(
                             }
                         }
 
+                        val taggedEntryCardContentType = "tagged entry card"
                         if (state.derivativeEntriesExpanded) {
                             items(
                                 items = state.derivativeEntries,
-                                key = { derivativeEntry -> derivativeEntry.entryId + "Derivative" }
+                                key = { it.entryId + "Derivative" },
+                                contentType = { taggedEntryCardContentType }
                             ) { derivativeEntry ->
-                                Column(Modifier.padding(horizontal = 16.dp)) {
-                                    derivativeEntry.complexFormType
-                                        .takeIf { it != "Unspecified Complex Form" }
-                                        ?.let { complexFormType ->
-                                            FieldTag(
-                                                tag = complexFormType,
-                                                tagFontFamily = latinDisplayFontFamily,
-                                                modifier = Modifier.padding(horizontal = 16.dp)
-                                            )
-                                        }
-
-                                    EntryCard(
-                                        entry = derivativeEntry.toDictionaryEntry(),
-                                        navigateToEntry = navigateToEntry,
-                                        setBookmark = { value ->
-                                            onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
-                                        }
-                                    )
-                                }
+                                TaggedEntryCard(
+                                    tag = derivativeEntry.complexFormType.takeIf { it != "Unspecified Complex Form" },
+                                    entry = derivativeEntry.toDictionaryEntry(),
+                                    includeAnimation = true, // TODO
+                                    navigateToEntry = navigateToEntry,
+                                    setBookmark = { value ->
+                                        onEvent(EntryEvent.Bookmark(derivativeEntry.entryId, value))
+                                    }
+                                )
                             }
                         }
 
                         if (state.relatedEntries.isNotEmpty()) {
-                            stickyHeader {
+                            stickyHeader(key = "related words header", contentType = subHeaderContentType) {
                                 EntrySubHeader(
                                     text = AnnotatedString(stringResource(Res.string.related_words)),
                                     onClick = { onEvent(EntryEvent.ToggleRelatedWords) },
@@ -325,24 +327,18 @@ fun EntryScreen(
                         if (state.relatedEntriesExpanded) {
                             items(
                                 items = state.relatedEntries,
-                                key = { relatedEntry -> relatedEntry.entryId + "Related" }
+                                key = { it.entryId + "Related" },
+                                contentType = { taggedEntryCardContentType }
                             ) { relatedEntry ->
-                                Column(Modifier.padding(horizontal = 16.dp)) {
-                                    FieldTag(
-                                        tag = relatedEntry.relationType,
-                                        tagFontFamily = latinDisplayFontFamily,
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-
-                                    EntryCard(
-                                        entry = relatedEntry.toDictionaryEntry(),
-                                        includeAnimation = relatedEntry.entryId !in componentEntryIds,
-                                        navigateToEntry = navigateToEntry,
-                                        setBookmark = { value ->
-                                            onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
-                                        }
-                                    )
-                                }
+                                TaggedEntryCard(
+                                    tag = relatedEntry.relationType,
+                                    entry = relatedEntry.toDictionaryEntry(),
+                                    includeAnimation = relatedEntry.entryId !in componentEntryIds,
+                                    navigateToEntry = navigateToEntry,
+                                    setBookmark = { value ->
+                                        onEvent(EntryEvent.Bookmark(relatedEntry.entryId, value))
+                                    }
+                                )
                             }
                         }
                     }
