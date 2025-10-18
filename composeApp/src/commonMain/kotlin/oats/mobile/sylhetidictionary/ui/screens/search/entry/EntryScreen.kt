@@ -170,7 +170,7 @@ fun EntryScreen(
                     ) {
                         items(
                             items = state.referenceEntries,
-                            key = { it },
+                            key = { "reference::${it.entryId}" },
                             contentType = { "reference button" }
                         ) {
                             ReferenceButton(
@@ -233,7 +233,7 @@ fun EntryScreen(
                         if (state.examplesExpanded) {
                             itemsIndexed(
                                 items = state.examples,
-                                key = { _, example -> example },
+                                key = { _, example -> "example::${example.id}" },
                                 contentType = { _, _ -> "example" }
                             ) { i, example ->
                                 EntryExample(
@@ -271,7 +271,7 @@ fun EntryScreen(
                         if (state.componentEntriesExpanded) {
                             items(
                                 items = state.componentEntries,
-                                key = { it.entryId + "Component" },
+                                key = { "component::${it.entryId}" },
                                 contentType = { "entry card" }
                             ) { componentEntry ->
                                 EntryCard(
@@ -299,7 +299,7 @@ fun EntryScreen(
                         if (state.derivativeEntriesExpanded) {
                             items(
                                 items = state.derivativeEntries,
-                                key = { it.entryId + "Derivative" },
+                                key = { "derivative::${it.entryId}" },
                                 contentType = { taggedEntryCardContentType }
                             ) { derivativeEntry ->
                                 TaggedEntryCard(
@@ -327,7 +327,7 @@ fun EntryScreen(
                         if (state.relatedEntriesExpanded) {
                             items(
                                 items = state.relatedEntries,
-                                key = { it.entryId + "Related" },
+                                key = { "related::${it.entryId}" },
                                 contentType = { taggedEntryCardContentType }
                             ) { relatedEntry ->
                                 TaggedEntryCard(
