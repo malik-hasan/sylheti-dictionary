@@ -146,8 +146,8 @@ fun SearchSettingsMenu(
 
                 AnimatedVisibility(!onlySylhetiEasternNagriEnabled) {
                     val onlyBengaliEasternNagriEnabled = easternNagriEnabled
-                            && bengaliEasternNagriEnabled
-                            && !sylhetiEasternNagriEnabled
+                        && bengaliEasternNagriEnabled
+                        && !sylhetiEasternNagriEnabled
 
                     CheckboxSearchSetting(
                         label = stringResource(Res.string.in_definitions),
