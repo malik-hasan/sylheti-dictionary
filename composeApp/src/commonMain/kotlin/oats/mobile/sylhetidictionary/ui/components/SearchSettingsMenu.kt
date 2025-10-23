@@ -137,18 +137,22 @@ fun SearchSettingsMenu(
                 )
 
                 val easternNagriEnabled = settingsState.script == SearchScript.EASTERN_NAGRI
-                val bengaliEasternNagriEnabled = easternNagriEnabled
-                        && settingsState.languages[SearchLanguage.EasternNagri.BENGALI] == true
-                        && settingsState.languages[SearchLanguage.EasternNagri.SYLHETI] != true
-                val sylhetiEasternNagriEnabled = easternNagriEnabled
-                        && settingsState.languages[SearchLanguage.EasternNagri.SYLHETI] == true
-                        && settingsState.languages[SearchLanguage.EasternNagri.BENGALI] != true
+                val bengaliEasternNagriEnabled = settingsState.languages[SearchLanguage.EasternNagri.BENGALI] == true
+                val sylhetiEasternNagriEnabled = settingsState.languages[SearchLanguage.EasternNagri.SYLHETI] == true
 
-                AnimatedVisibility(!sylhetiEasternNagriEnabled) {
+                val onlySylhetiEasternNagriEnabled = easternNagriEnabled
+                    && sylhetiEasternNagriEnabled
+                    && !bengaliEasternNagriEnabled
+
+                AnimatedVisibility(!onlySylhetiEasternNagriEnabled) {
+                    val onlyBengaliEasternNagriEnabled = easternNagriEnabled
+                            && bengaliEasternNagriEnabled
+                            && !sylhetiEasternNagriEnabled
+
                     CheckboxSearchSetting(
                         label = stringResource(Res.string.in_definitions),
-                        checked = settingsState.searchDefinitions || bengaliEasternNagriEnabled,
-                        enabled = !bengaliEasternNagriEnabled
+                        checked = settingsState.searchDefinitions || onlyBengaliEasternNagriEnabled,
+                        enabled = !onlyBengaliEasternNagriEnabled
                     ) { onSettingsEvent(SearchSettingsEvent.EnableSearchDefinitions(it)) }
                 }
 
