@@ -25,9 +25,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -75,7 +76,7 @@ import sylhetidictionary.composeapp.generated.resources.suggestion
 import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 import sylhetidictionary.composeapp.generated.resources.tune
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchScreen(
     activateSearchBar: Boolean,
@@ -334,7 +335,7 @@ fun SearchScreen(
                         }
 
                         if (searchTerm.isNotBlank() && searchState.resultsLoading) {
-                            LinearProgressIndicator(Modifier.fillMaxWidth())
+                            LinearWavyProgressIndicator(Modifier.fillMaxWidth())
                         }
                     }
                 }
