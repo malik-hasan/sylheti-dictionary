@@ -187,6 +187,10 @@ compose.desktop {
             packageName = sylhetiDictionaryPackage
             packageVersion = "1.0.0"
         }
+
+        tasks.withType<JavaExec>().configureEach {
+            systemProperty("debugBuild", project.findProperty("debugBuild") ?: false)
+        }
     }
 }
 
