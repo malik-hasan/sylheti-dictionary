@@ -10,14 +10,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.DictionaryEntry
-import oats.mobile.sylhetidictionary.ui.models.FieldTag
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
 import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
+import oats.mobile.sylhetidictionary.ui.app.LocalFeatureToggleBengaliDictionaryData
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
+import oats.mobile.sylhetidictionary.ui.models.FieldTag
+import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalAnimatedContentScope
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalSharedTransitionScope
-import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.utils.ifTrue
 import oats.mobile.sylhetidictionary.utility.validateStrings
 import org.jetbrains.compose.resources.stringResource
@@ -33,6 +34,7 @@ fun EntryDefinitions(
     modifier: Modifier = Modifier,
     includeAnimation: Boolean = true,
     language: Language = LocalLanguage.current,
+    featureBengaliDictionaryData: Boolean = LocalFeatureToggleBengaliDictionaryData.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
@@ -40,13 +42,15 @@ fun EntryDefinitions(
     with(sharedTransitionScope) {
         with(entry) {
             val definitions = remember(entry) {
-                mapOf(
-                    FieldTag.ENGLISH to definitionEnglish,
-                    FieldTag.BENGALI to definitionBengali,
-                    FieldTag.BENGALI_IPA to definitionBengaliIPA,
-                    FieldTag.SYLHETI_NAGRI to definitionSN,
-                    FieldTag.IPA to definitionIPA
-                ).validateStrings()
+                buildMap {
+                    put(FieldTag.ENGLISH, definitionEnglish)
+                    if (featureBengaliDictionaryData) {
+                        put(FieldTag.BENGALI, definitionBengali)
+                        put(FieldTag.BENGALI_IPA, definitionBengaliIPA)
+                    }
+                    put(FieldTag.SYLHETI_NAGRI, definitionSN)
+                    put(FieldTag.IPA, definitionIPA)
+                }.validateStrings()
             }
 
             @Composable

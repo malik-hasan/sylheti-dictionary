@@ -4,5 +4,6 @@ import oats.mobile.sylhetidictionary.data.preferences.models.settings.Theme
 
 data class SettingsState(
     val theme: Theme = Theme.Auto,
-    val dynamicThemeEnabled: Boolean = true
+    val dynamicThemeEnabled: Boolean = true,
+    val bengaliDictionaryDataFeature: Boolean = false
 )

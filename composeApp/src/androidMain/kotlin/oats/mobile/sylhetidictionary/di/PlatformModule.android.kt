@@ -6,11 +6,12 @@ import androidx.room.RoomDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import oats.mobile.sylhetidictionary.DictionaryDatabase
-import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDatabase
+import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
-import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.di.utils.init
 import oats.mobile.sylhetidictionary.di.utils.initDataStore
 import org.koin.android.ext.koin.androidContext
@@ -38,7 +39,7 @@ actual val platformModule = module {
     }
 
     single {
-        oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository(
+        RecentSearchesRepository(
             roomDatabase<RecentSearchesDatabase>(get(), RecentSearchesDatabase.FILENAME).dao()
         )
     }

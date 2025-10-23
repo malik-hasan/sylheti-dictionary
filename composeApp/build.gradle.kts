@@ -157,14 +157,21 @@ android {
 
     packaging.resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
 
-    buildTypes.getByName("release").isMinifyEnabled = true
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    buildFeatures.compose = true
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
 
     dependencies {
         debugImplementation(compose.uiTooling)

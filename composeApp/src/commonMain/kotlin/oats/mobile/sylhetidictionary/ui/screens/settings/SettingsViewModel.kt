@@ -14,11 +14,13 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
     val state = stateFlowOf(SettingsState(),
         combine(
             preferences.theme,
-            preferences.flow(PreferenceKey.DYNAMIC_THEME, true)
-        ) { theme, dynamicTheme ->
+            preferences.flow(PreferenceKey.DYNAMIC_THEME, true),
+            preferences.flow(PreferenceKey.FEATURE_BENGALI_DICTIONARY_DATA, false)
+        ) { theme, dynamicTheme, bengaliDictionaryDataFeature ->
             SettingsState(
                 theme = theme,
-                dynamicThemeEnabled = dynamicTheme
+                dynamicThemeEnabled = dynamicTheme,
+                bengaliDictionaryDataFeature = bengaliDictionaryDataFeature
             )
         }
     )
@@ -38,6 +40,10 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
 
             is SettingsEvent.EnableDynamicTheme -> viewModelScope.launch {
                 preferences.set(PreferenceKey.DYNAMIC_THEME, event.enable)
+            }
+
+            is SettingsEvent.EnableBengaliDictionaryDataFeature -> viewModelScope.launch {
+                preferences.set(PreferenceKey.FEATURE_BENGALI_DICTIONARY_DATA, event.enable)
             }
         }
     }

@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -40,6 +41,7 @@ import oats.mobile.sylhetidictionary.ui.components.LanguageButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.SettingLabel
+import oats.mobile.sylhetidictionary.utility.debugBuild
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -133,6 +135,19 @@ fun SettingsScreen(
 
             DynamicThemeSetting(state.dynamicThemeEnabled) {
                 onEvent(SettingsEvent.EnableDynamicTheme(it))
+            }
+
+            if (debugBuild) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("Enable Bengali Dictionary Data")
+                    Switch(
+                        checked = state.bengaliDictionaryDataFeature,
+                        onCheckedChange = { onEvent(SettingsEvent.EnableBengaliDictionaryDataFeature(it)) }
+                    )
+                }
             }
         }
     }

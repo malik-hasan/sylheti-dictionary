@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.utils.blockingStateFlowOf
+import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.refreshLanguage
 
 class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
@@ -17,6 +18,10 @@ class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
             preferences.refreshLanguage()
         }
     }
+
+    val featureBengaliDictionaryData = stateFlowOf(false,
+        preferences.flow(PreferenceKey.FEATURE_BENGALI_DICTIONARY_DATA, false)
+    )
 
     val theme = blockingStateFlowOf(preferences.theme)
 
