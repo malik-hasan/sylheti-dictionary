@@ -19,7 +19,10 @@ kotlin {
     targets.all {
         compilations.all {
             compileTaskProvider.configure {
-                compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+                compilerOptions.freeCompilerArgs.addAll(
+                    "-Xexpect-actual-classes",
+                    "-Xcontext-parameters"
+                )
             }
         }
     }

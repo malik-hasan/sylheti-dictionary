@@ -181,7 +181,9 @@ fun EntryScreen(
                                 referenceEntry = it,
                                 entryId = entryId,
                                 navigateToEntry = navigateToEntry,
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .animateItem()
                             )
                         }
 
@@ -196,7 +198,9 @@ fun EntryScreen(
                                 EntryDefinitions(
                                     entry = entry,
                                     featureBengaliDefinitions = state.featureBengaliDefinitions,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .animateItem()
                                 )
                             }
                         }
@@ -245,7 +249,8 @@ fun EntryScreen(
                                     example = example,
                                     index = i,
                                     showIndex = state.examples.size > 1,
-                                    featureBengaliExamples = state.featureBengaliExamples
+                                    featureBengaliExamples = state.featureBengaliExamples,
+                                    modifier = Modifier.animateItem()
                                 )
                             }
                         }
@@ -287,7 +292,9 @@ fun EntryScreen(
                                     setBookmark = { value ->
                                         onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
                                     },
-                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .animateItem()
                                 )
                             }
                         }
