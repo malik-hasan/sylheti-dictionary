@@ -15,12 +15,12 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
         combine(
             preferences.theme,
             preferences.flow(PreferenceKey.DYNAMIC_THEME, true),
-            preferences.flow(PreferenceKey.FEATURE_BENGALI_DICTIONARY_DATA, false)
-        ) { theme, dynamicTheme, bengaliDictionaryDataFeature ->
+            preferences.flow(PreferenceKey.FEATURE_BENGALI_APP_LOCALE, false)
+        ) { theme, dynamicTheme, featureBengaliAppLocale ->
             SettingsState(
                 theme = theme,
                 dynamicThemeEnabled = dynamicTheme,
-                bengaliDictionaryDataFeature = bengaliDictionaryDataFeature
+                featureBengaliAppLocale = featureBengaliAppLocale
             )
         }
     )
@@ -43,7 +43,7 @@ class SettingsViewModel(private val preferences: PreferencesRepository): ViewMod
             }
 
             is SettingsEvent.EnableBengaliDictionaryDataFeature -> viewModelScope.launch {
-                preferences.set(PreferenceKey.FEATURE_BENGALI_DICTIONARY_DATA, event.enable)
+                preferences.set(PreferenceKey.FEATURE_BENGALI_DEFINITIONS, event.enable)
             }
         }
     }

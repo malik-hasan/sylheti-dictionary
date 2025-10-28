@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -42,12 +40,10 @@ import oats.mobile.sylhetidictionary.ui.components.LanguageButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.components.SettingLabel
-import oats.mobile.sylhetidictionary.utility.debugBuild
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.contrast
-import sylhetidictionary.composeapp.generated.resources.debug
 import sylhetidictionary.composeapp.generated.resources.language
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.theme
@@ -78,36 +74,38 @@ fun SettingsScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            SettingLabel(
-                iconPainter = painterResource(Res.drawable.language),
-                label = stringResource(Res.string.language)
-            )
-
-            BoxWithConstraints(Modifier
-                .clip(MaterialTheme.shapes.extraLarge)
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                .height(150.dp)
-                .widthIn(max = 1000.dp)
-            ) {
-                val offset by animateDpAsState(
-                    targetValue = if (language == Language.BN) maxWidth * .48f else 0.dp,
-                    animationSpec = tween()
+            if (state.featureBengaliAppLocale) {
+                SettingLabel(
+                    iconPainter = painterResource(Res.drawable.language),
+                    label = stringResource(Res.string.language)
                 )
 
-                // Indicator
-                Box(Modifier
-                    .offset(offset)
-                    .fillMaxWidth(0.52f)
-                    .fillMaxHeight()
-                    .padding(8.dp)
-                    .shadow(8.dp, MaterialTheme.shapes.extraLarge)
-                    .background(MaterialTheme.colorScheme.primary)
-                )
+                BoxWithConstraints(Modifier
+                    .clip(MaterialTheme.shapes.extraLarge)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                    .height(150.dp)
+                    .widthIn(max = 1000.dp)
+                ) {
+                    val offset by animateDpAsState(
+                        targetValue = if (language == Language.BN) maxWidth * .48f else 0.dp,
+                        animationSpec = tween()
+                    )
 
-                Row(Modifier.selectableGroup()) {
-                    Language.entries.forEach { language ->
-                        LanguageButton(language) {
-                            onEvent(SettingsEvent.SetLanguage(language))
+                    // Indicator
+                    Box(Modifier
+                        .offset(offset)
+                        .fillMaxWidth(0.52f)
+                        .fillMaxHeight()
+                        .padding(8.dp)
+                        .shadow(8.dp, MaterialTheme.shapes.extraLarge)
+                        .background(MaterialTheme.colorScheme.primary)
+                    )
+
+                    Row(Modifier.selectableGroup()) {
+                        Language.entries.forEach { language ->
+                            LanguageButton(language) {
+                                onEvent(SettingsEvent.SetLanguage(language))
+                            }
                         }
                     }
                 }
@@ -137,26 +135,6 @@ fun SettingsScreen(
 
             DynamicThemeSetting(state.dynamicThemeEnabled) {
                 onEvent(SettingsEvent.EnableDynamicTheme(it))
-            }
-
-            if (debugBuild) {
-                Spacer(Modifier.height(24.dp))
-
-                SettingLabel(
-                    iconPainter = painterResource(Res.drawable.debug),
-                    label = "Debug Only"
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Enable Bengali Dictionary Data")
-                    Switch(
-                        checked = state.bengaliDictionaryDataFeature,
-                        onCheckedChange = { onEvent(SettingsEvent.EnableBengaliDictionaryDataFeature(it)) }
-                    )
-                }
             }
         }
     }

@@ -14,6 +14,7 @@ import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
 fun TaggedEntryCard(
     tag: String?,
     entry: DictionaryEntry,
+    featureBengaliDefinitions: Boolean,
     includeAnimation: Boolean,
     navigateToEntry: (String) -> Unit,
     setBookmark: (Boolean) -> Unit
@@ -29,6 +30,7 @@ fun TaggedEntryCard(
 
         EntryCard(
             entry = entry,
+            featureBengaliDefinitions = featureBengaliDefinitions,
             includeAnimation = includeAnimation,
             navigateToEntry = navigateToEntry,
             setBookmark = setBookmark

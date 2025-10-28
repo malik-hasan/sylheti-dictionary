@@ -27,16 +27,16 @@ import kotlinx.coroutines.withContext
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
-import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
-import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
-import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
-import oats.mobile.sylhetidictionary.di.utils.injectLogger
 import oats.mobile.sylhetidictionary.data.dictionary.models.displayEN
 import oats.mobile.sylhetidictionary.data.dictionary.models.displayIPA
 import oats.mobile.sylhetidictionary.data.dictionary.models.displaySN
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchLanguage
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchPosition
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
+import oats.mobile.sylhetidictionary.di.utils.injectLogger
 import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
@@ -158,13 +158,15 @@ class SearchViewModel(
         combine(
             _searchState,
             searchSuggestionsFlow,
-            entriesFlow
-        ) { state, (recents, suggestions), (entries, scrollCharIndexes) ->
+            entriesFlow,
+            preferences.flow(PreferenceKey.FEATURE_BENGALI_DEFINITIONS, false)
+        ) { state, (recents, suggestions), (entries, scrollCharIndexes), featureBengaliDefinitions ->
             state.copy(
                 recents = recents,
                 suggestions = suggestions,
                 entries = entries,
-                scrollCharIndexes = scrollCharIndexes
+                scrollCharIndexes = scrollCharIndexes,
+                featureBengaliDefinitions = featureBengaliDefinitions
             )
         }
     )

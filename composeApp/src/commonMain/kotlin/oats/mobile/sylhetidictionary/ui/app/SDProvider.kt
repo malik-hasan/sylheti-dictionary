@@ -15,7 +15,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 val LocalDrawerState = compositionLocalOf { DrawerState(DrawerValue.Closed) }
 val LocalLanguage = staticCompositionLocalOf { Language.EN } // static forces redraw of entire app so all string resources are refreshed
-val LocalFeatureToggleBengaliDictionaryData = compositionLocalOf { false }
 
 @Composable
 fun SDProvider(
@@ -23,7 +22,6 @@ fun SDProvider(
     content: @Composable () -> Unit
 ) {
     val language by vm.language.collectAsStateWithLifecycle()
-    val featureBengaliDictionaryData by vm.featureBengaliDictionaryData.collectAsStateWithLifecycle()
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         vm.refreshLanguage()
@@ -31,7 +29,6 @@ fun SDProvider(
 
     CompositionLocalProvider(
         LocalDrawerState provides DrawerState(DrawerValue.Closed),
-        LocalLanguage provides language,
-        LocalFeatureToggleBengaliDictionaryData provides featureBengaliDictionaryData
+        LocalLanguage provides language
     ) { content() }
 }

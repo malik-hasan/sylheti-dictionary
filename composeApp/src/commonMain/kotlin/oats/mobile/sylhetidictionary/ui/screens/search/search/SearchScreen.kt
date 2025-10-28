@@ -179,6 +179,7 @@ fun SearchScreen(
                                             EntryCard(
                                                 entry = entry,
                                                 navigateToEntry = navigateToEntry,
+                                                featureBengaliDefinitions = searchState.featureBengaliDefinitions,
                                                 setBookmark = { value ->
                                                     onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
                                                 }

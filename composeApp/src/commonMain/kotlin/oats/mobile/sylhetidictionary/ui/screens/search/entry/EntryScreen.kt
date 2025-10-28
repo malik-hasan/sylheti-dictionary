@@ -195,6 +195,7 @@ fun EntryScreen(
                             item(key = "definitions", contentType = "definitions") {
                                 EntryDefinitions(
                                     entry = entry,
+                                    featureBengaliDefinitions = state.featureBengaliDefinitions,
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }
@@ -243,7 +244,8 @@ fun EntryScreen(
                                 EntryExample(
                                     example = example,
                                     index = i,
-                                    showIndex = state.examples.size > 1
+                                    showIndex = state.examples.size > 1,
+                                    featureBengaliExamples = state.featureBengaliExamples
                                 )
                             }
                         }
@@ -280,6 +282,7 @@ fun EntryScreen(
                             ) { componentEntry ->
                                 EntryCard(
                                     entry = componentEntry.toDictionaryEntry(),
+                                    featureBengaliDefinitions = state.featureBengaliDefinitions,
                                     navigateToEntry = navigateToEntry,
                                     setBookmark = { value ->
                                         onEvent(EntryEvent.Bookmark(componentEntry.entryId, value))
@@ -309,6 +312,7 @@ fun EntryScreen(
                                 TaggedEntryCard(
                                     tag = derivativeEntry.complexFormType.takeIf { it != "Unspecified Complex Form" },
                                     entry = derivativeEntry.toDictionaryEntry(),
+                                    featureBengaliDefinitions = state.featureBengaliDefinitions,
                                     includeAnimation = "component::${derivativeEntry.entryId}" !in visibleItemKeys,
                                     navigateToEntry = navigateToEntry,
                                     setBookmark = { value ->
@@ -337,6 +341,7 @@ fun EntryScreen(
                                 TaggedEntryCard(
                                     tag = relatedEntry.relationType,
                                     entry = relatedEntry.toDictionaryEntry(),
+                                    featureBengaliDefinitions = state.featureBengaliDefinitions,
                                     includeAnimation = "component::${relatedEntry.entryId}" !in visibleItemKeys
                                         && "derivative::${relatedEntry.entryId}" !in visibleItemKeys,
                                     navigateToEntry = navigateToEntry,

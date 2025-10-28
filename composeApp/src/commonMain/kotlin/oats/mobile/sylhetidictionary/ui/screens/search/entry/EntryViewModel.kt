@@ -9,12 +9,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 
 class EntryViewModel(
     private val entryId: String,
     private val dictionaryRepository: DictionaryRepository,
-    private val bookmarksRepository: BookmarksRepository
+    private val bookmarksRepository: BookmarksRepository,
+    preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EntryState())
@@ -49,10 +52,17 @@ class EntryViewModel(
     }
 
     val state = stateFlowOf(EntryState(),
-        _state.combine(
-            bookmarksRepository.isBookmarkFlow(entryId)
-        ) { state, isBookmark ->
-            state.copy(isBookmark = isBookmark)
+        combine(
+            _state,
+            bookmarksRepository.isBookmarkFlow(entryId),
+            preferencesRepository.flow(PreferenceKey.FEATURE_BENGALI_DEFINITIONS, false),
+            preferencesRepository.flow(PreferenceKey.FEATURE_BENGALI_EXAMPLES, false)
+        ) { state, isBookmark, featureBengaliDefinitions, featureBengaliExamples ->
+            state.copy(
+                isBookmark = isBookmark,
+                featureBengaliDefinitions = featureBengaliDefinitions,
+                featureBengaliExamples = featureBengaliExamples
+            )
         }
     )
 

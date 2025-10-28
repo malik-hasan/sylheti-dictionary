@@ -28,6 +28,7 @@ fun EntryExample(
     example: Example,
     index: Int,
     showIndex: Boolean,
+    featureBengaliExamples: Boolean,
     modifier: Modifier = Modifier,
     language: Language = LocalLanguage.current,
     highlightRegex: Regex = LocalHighlightRegex.current
@@ -41,14 +42,16 @@ fun EntryExample(
         Column {
             with(example) {
                 val examples = remember(example) {
-                    mapOf(
-                        FieldTag.IPA to exampleIPA,
-                        FieldTag.EASTERN_NAGRI to exampleEN,
-                        FieldTag.SYLHETI_NAGRI to exampleSN,
-                        FieldTag.ENGLISH to exampleEnglish,
-                        FieldTag.BENGALI to exampleBengali,
-                        FieldTag.BENGALI_IPA to exampleBengaliIPA
-                    ).validateStrings()
+                    buildMap {
+                        put(FieldTag.IPA, exampleIPA)
+                        put(FieldTag.EASTERN_NAGRI, exampleEN)
+                        put(FieldTag.SYLHETI_NAGRI, exampleSN)
+                        put(FieldTag.ENGLISH, exampleEnglish)
+                        if (featureBengaliExamples) {
+                            put(FieldTag.BENGALI, exampleBengali)
+                            put(FieldTag.BENGALI_IPA, exampleBengaliIPA)
+                        }
+                    }.validateStrings()
                 }
 
                 @Composable

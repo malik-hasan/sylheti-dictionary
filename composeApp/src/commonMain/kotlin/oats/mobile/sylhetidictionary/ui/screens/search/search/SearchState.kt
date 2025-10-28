@@ -10,5 +10,6 @@ data class SearchState(
     val recents: List<SDString> = emptyList(),
     val suggestions: List<SDString> = emptyList(),
     val entries: List<DictionaryEntry> = emptyList(),
-    val scrollCharIndexes: Map<Char, Int> = emptyMap()
+    val scrollCharIndexes: Map<Char, Int> = emptyMap(),
+    val featureBengaliDefinitions: Boolean = false
 )

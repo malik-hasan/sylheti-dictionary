@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.screens.AboutScreen
 import oats.mobile.sylhetidictionary.ui.screens.IpaHelpScreen
+import oats.mobile.sylhetidictionary.ui.screens.debug.DebugScreen
+import oats.mobile.sylhetidictionary.ui.screens.debug.DebugViewModel
 import oats.mobile.sylhetidictionary.ui.screens.search.SearchNavHost
 import oats.mobile.sylhetidictionary.ui.screens.search.SearchProvider
 import oats.mobile.sylhetidictionary.ui.screens.settings.SettingsScreen
@@ -38,6 +40,13 @@ fun SDNavHost(navController: NavHostController) {
 
         composable<Route.About> {
             AboutScreen()
+        }
+
+        composable<Route.Debug> {
+            with(koinViewModel<DebugViewModel>()) {
+                val state by state.collectAsStateWithLifecycle()
+                DebugScreen(state, ::onEvent)
+            }
         }
     }
 }

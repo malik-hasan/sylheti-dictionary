@@ -7,7 +7,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 object PreferenceKey {
     val CURRENT_DICTIONARY_VERSION = intPreferencesKey("CURRENT_DICTIONARY_VERSION")
 
-    val FEATURE_BENGALI_DICTIONARY_DATA = booleanPreferencesKey("FEATURE_BENGALI_DICTIONARY_DATA")
+    val FEATURE_BENGALI_APP_LOCALE = booleanPreferencesKey("FEATURE_BENGALI_APP_LOCALE")
+    val FEATURE_BENGALI_DEFINITIONS = booleanPreferencesKey("FEATURE_BENGALI_DEFINITIONS")
+    val FEATURE_BENGALI_EXAMPLES = booleanPreferencesKey("FEATURE_BENGALI_EXAMPLES")
 
     val SEARCH_POSITION = intPreferencesKey("SEARCH_POSITION")
     val SEARCH_SCRIPT = intPreferencesKey("SEARCH_SCRIPT")

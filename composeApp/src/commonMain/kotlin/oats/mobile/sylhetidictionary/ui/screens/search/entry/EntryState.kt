@@ -20,5 +20,7 @@ data class EntryState(
     val derivativeEntries: List<DerivativeEntry> = emptyList(),
     val derivativeEntriesExpanded: Boolean = false,
     val relatedEntries: List<RelatedEntry> = emptyList(),
-    val relatedEntriesExpanded: Boolean = false
+    val relatedEntriesExpanded: Boolean = false,
+    val featureBengaliDefinitions: Boolean = false,
+    val featureBengaliExamples: Boolean = false
 )

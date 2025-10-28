@@ -20,8 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.app.LocalDrawerState
+import oats.mobile.sylhetidictionary.ui.models.Route
+import oats.mobile.sylhetidictionary.utility.debugBuild
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.about
@@ -71,6 +72,10 @@ fun SDNavigationDrawer(
                     SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp, selectedRoute, navigate)
 
                     SDNavigationDrawerItem(stringResource(Res.string.about), Route.About, selectedRoute, navigate)
+
+                    if (debugBuild) {
+                        SDNavigationDrawerItem("Debug Menu", Route.Debug, selectedRoute, navigate)
+                    }
 
                     Spacer(Modifier.weight(1f))
 

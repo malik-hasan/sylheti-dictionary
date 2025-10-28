@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
 import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
-import oats.mobile.sylhetidictionary.ui.app.LocalFeatureToggleBengaliDictionaryData
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
 import oats.mobile.sylhetidictionary.ui.models.FieldTag
 import oats.mobile.sylhetidictionary.ui.models.SDString
@@ -31,10 +30,10 @@ import sylhetidictionary.composeapp.generated.resources.sylheti
 @Composable
 fun EntryDefinitions(
     entry: DictionaryEntry,
+    featureBengaliDefinitions: Boolean,
     modifier: Modifier = Modifier,
     includeAnimation: Boolean = true,
     language: Language = LocalLanguage.current,
-    featureBengaliDictionaryData: Boolean = LocalFeatureToggleBengaliDictionaryData.current,
     highlightRegex: Regex = LocalHighlightRegex.current,
     sharedTransitionScope: SharedTransitionScope = LocalSharedTransitionScope.current,
     animatedContentScope: AnimatedContentScope = LocalAnimatedContentScope.current
@@ -44,7 +43,7 @@ fun EntryDefinitions(
             val definitions = remember(entry) {
                 buildMap {
                     put(FieldTag.ENGLISH, definitionEnglish)
-                    if (featureBengaliDictionaryData) {
+                    if (featureBengaliDefinitions) {
                         put(FieldTag.BENGALI, definitionBengali)
                         put(FieldTag.BENGALI_IPA, definitionBengaliIPA)
                     }

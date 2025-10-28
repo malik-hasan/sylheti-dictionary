@@ -41,6 +41,7 @@ import org.koin.compose.koinInject
 @Composable
 fun EntryCard(
     entry: DictionaryEntry,
+    featureBengaliDefinitions: Boolean,
     navigateToEntry: (entryId: String) -> Unit,
     setBookmark: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -141,6 +142,7 @@ fun EntryCard(
 
                     EntryDefinitions(
                         entry = entry,
+                        featureBengaliDefinitions = featureBengaliDefinitions,
                         includeAnimation = includeAnimation
                     )
                 }
