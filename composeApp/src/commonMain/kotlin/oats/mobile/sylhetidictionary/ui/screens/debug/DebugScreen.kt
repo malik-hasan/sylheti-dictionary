@@ -38,18 +38,21 @@ fun DebugScreen(
         ) {
             DebugSwitch(
                 label = "Bengali App Locale",
+                description = "Unlocks the setting (on settings screen) to switch the app's titles and labels to Bengali",
                 checked = state.featureBengaliAppLocale,
                 onCheckedChange = { onEvent(DebugEvent.EnableFeatureBengaliAppLocale(it)) }
             )
 
             DebugSwitch(
-                label = "Bengali Dictionary Definitions",
+                label = "Bengali Definitions",
+                description = "Displays Bengali dictionary definitions (when available)",
                 checked = state.featureBengaliDefinitions,
                 onCheckedChange = { onEvent(DebugEvent.EnableFeatureBengaliDefinitions(it)) }
             )
 
             DebugSwitch(
-                label = "Bengali Example Sentence Translations",
+                label = "Bengali Examples",
+                description = "Displays Bengali translations of example sentences (when available)",
                 checked = state.featureBengaliExamples,
                 onCheckedChange = { onEvent(DebugEvent.EnableFeatureBengaliExamples(it)) }
             )
