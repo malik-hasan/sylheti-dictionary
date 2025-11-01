@@ -249,6 +249,11 @@ searchBengaliEasternNagriDefinitions:
 SELECT * FROM DictionaryEntry
 WHERE definitionBengali GLOB :simpleQuery;
 
+searchBengaliEasternNagriExamples:
+SELECT DISTINCT D.* FROM DictionaryEntry D
+LEFT JOIN Example USING(entryId)
+WHERE exampleBengali GLOB :simpleQuery;
+
 searchBengaliEasternNagriDefinitionsAndExamples:
 SELECT DISTINCT D.* FROM DictionaryEntry D
 LEFT JOIN Example USING(entryId)

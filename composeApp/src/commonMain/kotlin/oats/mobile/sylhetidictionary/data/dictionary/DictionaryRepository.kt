@@ -7,10 +7,16 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
+import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.Variant
+import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
+import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import kotlin.random.Random
 
-class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
+class DictionaryRepository(
+    private val queries: DictionaryDatabaseQueries,
+    private val preferences: PreferencesRepository
+) {
     
     suspend fun getEntry(entryId: String) =
         queries.getEntry(entryId).awaitAsOne()
@@ -79,11 +85,19 @@ class DictionaryRepository(private val queries: DictionaryDatabaseQueries) {
         simpleQuery: String,
         searchDefinitions: Boolean, // unused
         searchExamples: Boolean
-    ) = with(queries) {
-        if (searchExamples) {
-            searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
-        } else searchBengaliEasternNagriDefinitions(simpleQuery)
-    }.awaitAsList()
+    ): List<DictionaryEntry> {
+        val searchDefinitions = preferences.get(PreferenceKey.FEATURE_BENGALI_DEFINITIONS) == true
+        val searchExamples = searchExamples && preferences.get(PreferenceKey.FEATURE_BENGALI_EXAMPLES) == true
+
+        return with(queries) {
+            when {
+                searchDefinitions && searchExamples -> searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
+                searchDefinitions -> searchBengaliEasternNagriDefinitions(simpleQuery)
+                searchExamples -> searchBengaliEasternNagriExamples(simpleQuery)
+                else -> return emptyList()
+            }
+        }.awaitAsList()
+    }
 
     suspend fun searchSylhetiEasternNagri(
         positionedQuery: String,
