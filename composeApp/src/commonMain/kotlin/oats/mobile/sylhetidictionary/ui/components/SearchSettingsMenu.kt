@@ -155,7 +155,7 @@ fun SearchSettingsMenu(
                     ) { onSettingsEvent(SearchSettingsEvent.EnableSearchDefinitions(it)) }
                 }
 
-                AnimatedVisibility(settingsState.featureBengaliExamples || !onlyBengaliEasternNagriEnabled) {
+                AnimatedVisibility(!onlyBengaliEasternNagriEnabled || settingsState.featureBengaliExamples) {
                     CheckboxSearchSetting(
                         label = stringResource(Res.string.in_examples),
                         checked = settingsState.searchExamples
