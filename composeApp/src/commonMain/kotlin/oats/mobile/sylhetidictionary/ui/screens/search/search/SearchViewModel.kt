@@ -75,19 +75,14 @@ class SearchViewModel(
                     flow(PreferenceKey.SEARCH_EXAMPLES, false),
                     ::Pair
                 ),
-                combine(
-                    flow(PreferenceKey.FEATURE_BENGALI_DEFINITIONS, false),
-                    flow(PreferenceKey.FEATURE_BENGALI_EXAMPLES, false),
-                    ::Pair
-                )
-            ) { position, script, languages, (searchDefinitions, searchExamples), (featureBengaliDefinitions, featureBengaliExamples) ->
+                flow(PreferenceKey.FEATURE_BENGALI_EXAMPLES, false),
+            ) { position, script, languages, (searchDefinitions, searchExamples), featureBengaliExamples ->
                 SearchSettingsState(
                     position = position,
                     script = script,
                     languages = languages.filterKeys { it in script.languages },
                     searchDefinitions = searchDefinitions,
                     searchExamples = searchExamples,
-                    featureBengaliDefinitions = featureBengaliDefinitions,
                     featureBengaliExamples = featureBengaliExamples
                 )
             }.distinctUntilChanged()

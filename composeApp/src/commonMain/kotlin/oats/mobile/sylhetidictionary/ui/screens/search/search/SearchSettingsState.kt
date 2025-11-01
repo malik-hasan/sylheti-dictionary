@@ -10,6 +10,5 @@ data class SearchSettingsState(
     val languages: Map<SearchLanguage, Boolean> = emptyMap(),
     val searchDefinitions: Boolean = false,
     val searchExamples: Boolean = false,
-    val featureBengaliDefinitions: Boolean = false,
     val featureBengaliExamples: Boolean = false
 )

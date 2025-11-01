@@ -15,7 +15,7 @@ sealed interface SearchLanguage: SettingEnum {
 
     companion object {
         val entries: List<SearchLanguage> =
-            SearchLanguage.Latin.entries + SearchLanguage.EasternNagri.entries
+            Latin.entries + EasternNagri.entries
     }
 
     enum class Latin(

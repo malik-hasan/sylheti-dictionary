@@ -101,33 +101,38 @@ fun SearchSettingsMenu(
                 }
             }
 
-            with(settingsState.languages.toList()) {
-                AnimatedVisibility(
-                    visible = isNotEmpty(),
-                    enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-                    exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        SettingLabel(
-                            iconPainter = painterResource(Res.drawable.search_language),
-                            label = stringResource(Res.string.search_languages),
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
+            settingsState.languages.toList()
+                .filter {
+                    if (!searchState.featureBengaliDefinitions && !settingsState.featureBengaliExamples) {
+                        it.first != SearchLanguage.EasternNagri.BENGALI
+                    } else true
+                }.run {
+                    AnimatedVisibility(
+                        visible = size > 1,
+                        enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+                        exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            SettingLabel(
+                                iconPainter = painterResource(Res.drawable.search_language),
+                                label = stringResource(Res.string.search_languages),
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
 
-                        MultiChoiceSegmentedButtonRow {
-                            forEachIndexed { i, (language, checked) ->
-                                SegmentedButton(
-                                    checked = checked,
-                                    onCheckedChange = { selected ->
-                                        onSettingsEvent(SearchSettingsEvent.SelectLanguage(language, selected))
-                                    },
-                                    shape = SegmentedButtonDefaults.itemShape(i, size)
-                                ) { Text(stringResource(language.label)) }
+                            MultiChoiceSegmentedButtonRow {
+                                forEachIndexed { i, (language, checked) ->
+                                    SegmentedButton(
+                                        checked = checked,
+                                        onCheckedChange = { selected ->
+                                            onSettingsEvent(SearchSettingsEvent.SelectLanguage(language, selected))
+                                        },
+                                        shape = SegmentedButtonDefaults.itemShape(i, size)
+                                    ) { Text(stringResource(language.label)) }
+                                }
                             }
                         }
                     }
                 }
-            }
 
             Column {
                 SettingLabel(
@@ -136,19 +141,13 @@ fun SearchSettingsMenu(
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
 
-                val easternNagriEnabled = settingsState.script == SearchScript.EASTERN_NAGRI
+                val easternNagriSelected = settingsState.script == SearchScript.EASTERN_NAGRI
                 val bengaliEasternNagriEnabled = settingsState.languages[SearchLanguage.EasternNagri.BENGALI] == true
                 val sylhetiEasternNagriEnabled = settingsState.languages[SearchLanguage.EasternNagri.SYLHETI] == true
 
-                val onlySylhetiEasternNagriEnabled = easternNagriEnabled
-                    && sylhetiEasternNagriEnabled
-                    && !bengaliEasternNagriEnabled
+                val onlyBengaliEasternNagriEnabled = easternNagriSelected && !sylhetiEasternNagriEnabled
 
-                AnimatedVisibility(!onlySylhetiEasternNagriEnabled) {
-                    val onlyBengaliEasternNagriEnabled = easternNagriEnabled
-                        && bengaliEasternNagriEnabled
-                        && !sylhetiEasternNagriEnabled
-
+                AnimatedVisibility(!easternNagriSelected || (searchState.featureBengaliDefinitions && bengaliEasternNagriEnabled)) {
                     CheckboxSearchSetting(
                         label = stringResource(Res.string.in_definitions),
                         checked = settingsState.searchDefinitions || onlyBengaliEasternNagriEnabled,
@@ -156,10 +155,12 @@ fun SearchSettingsMenu(
                     ) { onSettingsEvent(SearchSettingsEvent.EnableSearchDefinitions(it)) }
                 }
 
-                CheckboxSearchSetting(
-                    label = stringResource(Res.string.in_examples),
-                    checked = settingsState.searchExamples
-                ) { onSettingsEvent(SearchSettingsEvent.EnableSearchExamples(it)) }
+                AnimatedVisibility(settingsState.featureBengaliExamples || !onlyBengaliEasternNagriEnabled) {
+                    CheckboxSearchSetting(
+                        label = stringResource(Res.string.in_examples),
+                        checked = settingsState.searchExamples
+                    ) { onSettingsEvent(SearchSettingsEvent.EnableSearchExamples(it)) }
+                }
             }
         }
     }
