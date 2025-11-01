@@ -86,8 +86,8 @@ class DictionaryRepository(
         searchDefinitions: Boolean, // unused
         searchExamples: Boolean
     ): List<DictionaryEntry> {
-        val searchDefinitions = preferences.get(PreferenceKey.FEATURE_BENGALI_DEFINITIONS) == true
-        val searchExamples = searchExamples && preferences.get(PreferenceKey.FEATURE_BENGALI_EXAMPLES) == true
+        val searchDefinitions = preferences.get(PreferenceKey.FEATURE_BENGALI_DEFINITIONS) != false
+        val searchExamples = searchExamples && preferences.get(PreferenceKey.FEATURE_BENGALI_EXAMPLES) != false
 
         return with(queries) {
             when {
@@ -116,10 +116,15 @@ class DictionaryRepository(
         searchDefinitions: Boolean,
         searchExamples: Boolean
     ) = with(queries) {
+        val featureBengaliDefinitions = preferences.get(PreferenceKey.FEATURE_BENGALI_DEFINITIONS) != false
+        val featureBengaliExamples = preferences.get(PreferenceKey.FEATURE_BENGALI_EXAMPLES) != false
+
         when {
-            searchDefinitions && searchExamples -> searchEasternNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
-            searchDefinitions -> searchEasternNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
-            searchExamples -> searchEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
+            searchDefinitions && searchExamples && featureBengaliDefinitions && featureBengaliExamples -> searchEasternNagriEntriesWithDefinitionsAndExamples(positionedQuery, simpleQuery)
+            searchDefinitions && searchExamples && featureBengaliDefinitions -> searchEasternNagriEntriesWithDefinitionsAndSylhetiExamples(positionedQuery, simpleQuery)
+            searchDefinitions && featureBengaliDefinitions -> searchEasternNagriEntriesWithDefinitions(positionedQuery, simpleQuery)
+            searchExamples && featureBengaliExamples -> searchEasternNagriEntriesWithExamples(positionedQuery, simpleQuery)
+            searchExamples -> searchEasternNagriEntriesWithSylhetiExamples(positionedQuery, simpleQuery)
             else -> searchSylhetiEasternNagriEntries(positionedQuery)
         }.awaitAsList()
     }

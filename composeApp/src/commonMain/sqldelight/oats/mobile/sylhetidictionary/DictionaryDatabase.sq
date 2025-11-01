@@ -294,6 +294,15 @@ WHERE lexemeEN GLOB :positionedQuery
     OR exampleEN GLOB :simpleQuery
     OR exampleBengali GLOB :simpleQuery;
 
+searchEasternNagriEntriesWithSylhetiExamples:
+SELECT DISTINCT D.* FROM DictionaryEntry D
+LEFT JOIN Variant USING(entryId)
+LEFT JOIN Example USING(entryId)
+WHERE lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR variantEN GLOB :positionedQuery
+    OR exampleEN GLOB :simpleQuery;
+
 searchEasternNagriEntriesWithDefinitionsAndExamples:
 SELECT DISTINCT D.* FROM DictionaryEntry D
 LEFT JOIN Variant USING(entryId)
@@ -304,6 +313,16 @@ WHERE lexemeEN GLOB :positionedQuery
     OR definitionBengali GLOB :simpleQuery
     OR exampleEN GLOB :simpleQuery
     OR exampleBengali GLOB :simpleQuery;
+
+searchEasternNagriEntriesWithDefinitionsAndSylhetiExamples:
+SELECT DISTINCT D.* FROM DictionaryEntry D
+LEFT JOIN Variant USING(entryId)
+LEFT JOIN Example USING(entryId)
+WHERE lexemeEN GLOB :positionedQuery
+    OR citationEN GLOB :positionedQuery
+    OR variantEN GLOB :positionedQuery
+    OR definitionBengali GLOB :simpleQuery
+    OR exampleEN GLOB :simpleQuery;
 
 searchSylhetiNagriEntries:
 SELECT DISTINCT D.* FROM DictionaryEntry D
