@@ -17,5 +17,5 @@ val sharedModule = module {
     viewModelOf(::EntryViewModel)
     viewModelOf(::DebugViewModel)
 
-    single { DictionaryRepository(DictionaryDatabase(get()).dictionaryDatabaseQueries) }
+    single { DictionaryRepository(DictionaryDatabase(get()).dictionaryDatabaseQueries, get()) }
 }

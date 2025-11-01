@@ -156,9 +156,11 @@ fun SearchSettingsMenu(
                 }
 
                 AnimatedVisibility(!onlyBengaliEasternNagriEnabled || settingsState.featureBengaliExamples) {
+                    val onlyBengaliEasternNagriExamplesEnabled = onlyBengaliEasternNagriEnabled && settingsState.featureBengaliExamples && !searchState.featureBengaliDefinitions
                     CheckboxSearchSetting(
                         label = stringResource(Res.string.in_examples),
-                        checked = settingsState.searchExamples
+                        checked = settingsState.searchExamples || onlyBengaliEasternNagriExamplesEnabled,
+                        enabled = !onlyBengaliEasternNagriExamplesEnabled
                     ) { onSettingsEvent(SearchSettingsEvent.EnableSearchExamples(it)) }
                 }
             }

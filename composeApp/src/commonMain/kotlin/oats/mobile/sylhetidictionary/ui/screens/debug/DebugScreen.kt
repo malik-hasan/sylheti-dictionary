@@ -45,14 +45,14 @@ fun DebugScreen(
 
             DebugSwitch(
                 label = "Bengali Definitions",
-                description = "Displays Bengali dictionary definitions (when available)",
+                description = "View and search Bengali dictionary definitions (when available)",
                 checked = state.featureBengaliDefinitions,
                 onCheckedChange = { onEvent(DebugEvent.EnableFeatureBengaliDefinitions(it)) }
             )
 
             DebugSwitch(
                 label = "Bengali Examples",
-                description = "Displays Bengali translations of example sentences (when available)",
+                description = "View and search Bengali translations of example sentences (when available)",
                 checked = state.featureBengaliExamples,
                 onCheckedChange = { onEvent(DebugEvent.EnableFeatureBengaliExamples(it)) }
             )
