@@ -342,7 +342,7 @@ class SearchViewModel(
                     languages[SearchLanguage.EasternNagri.BENGALI] == true -> ::searchBengaliEasternNagri
                     languages[SearchLanguage.EasternNagri.SYLHETI] == true -> ::searchSylhetiEasternNagri
                     else -> { positionedQuery, simpleQuery, searchDefinitions, searchExamples ->
-                        Logger.e("SEARCH: searching Eastern Nagri with no languages enabled")
+                        logger.e("SEARCH: searching Eastern Nagri with no languages enabled")
                         searchEasternNagri(positionedQuery, simpleQuery, searchDefinitions, searchExamples)
                     }
                 }
@@ -354,7 +354,7 @@ class SearchViewModel(
                     languages[SearchLanguage.Latin.ENGLISH] == true -> ::searchEnglish
                     languages[SearchLanguage.Latin.SYLHETI] == true -> ::searchSylhetiLatin
                     else -> { positionedQuery, simpleQuery, searchDefinitions, searchExamples ->
-                        Logger.e("SEARCH: searching Latin with no languages enabled")
+                        logger.e("SEARCH: searching Latin with no languages enabled")
                         searchLatin(positionedQuery, simpleQuery, searchDefinitions, searchExamples)
                     }
                 }
@@ -455,11 +455,11 @@ class SearchViewModel(
         getQueryResults(suggestionQuery, detectedSearchScript, settings).forEach { entry ->
             ensureActive()
             with(entry) {
-                when {
-                    detectedSearchScript == SearchScript.EASTERN_NAGRI && displayEN != null ->
+                when (detectedSearchScript) {
+                    SearchScript.EASTERN_NAGRI if displayEN != null ->
                         suggestions += SDString(displayEN!!, highlightRegex, SearchScript.EASTERN_NAGRI)
 
-                    detectedSearchScript == SearchScript.SYLHETI_NAGRI && displaySN != null ->
+                    SearchScript.SYLHETI_NAGRI if displaySN != null ->
                         suggestions += SDString(displaySN!!, highlightRegex)
 
                     else -> {
