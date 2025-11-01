@@ -7,7 +7,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import oats.mobile.sylhetidictionary.DictionaryDatabaseQueries
-import oats.mobile.sylhetidictionary.DictionaryEntry
 import oats.mobile.sylhetidictionary.Variant
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
@@ -85,17 +84,14 @@ class DictionaryRepository(
         simpleQuery: String,
         searchDefinitions: Boolean, // unused
         searchExamples: Boolean
-    ): List<DictionaryEntry> {
+    ) = with(queries) {
         val searchDefinitions = preferences.get(PreferenceKey.FEATURE_BENGALI_DEFINITIONS) != false
         val searchExamples = searchExamples && preferences.get(PreferenceKey.FEATURE_BENGALI_EXAMPLES) != false
 
-        return with(queries) {
-            when {
-                searchDefinitions && searchExamples -> searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
-                searchDefinitions -> searchBengaliEasternNagriDefinitions(simpleQuery)
-                searchExamples -> searchBengaliEasternNagriExamples(simpleQuery)
-                else -> return emptyList()
-            }
+        when {
+            searchDefinitions && searchExamples -> searchBengaliEasternNagriDefinitionsAndExamples(simpleQuery)
+            searchDefinitions -> searchBengaliEasternNagriDefinitions(simpleQuery)
+            else -> searchBengaliEasternNagriExamples(simpleQuery)
         }.awaitAsList()
     }
 
