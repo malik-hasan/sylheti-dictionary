@@ -102,38 +102,33 @@ fun SearchSettingsMenu(
                 }
             }
 
-            settingsState.languages.toList()
-                .filter {
-                    if (!searchState.featureBengaliDefinitions && !settingsState.featureBengaliExamples) {
-                        it.first != SearchLanguage.EasternNagri.BENGALI
-                    } else true
-                }.run {
-                    AnimatedVisibility(
-                        visible = size > 1,
-                        enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-                        exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
-                    ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            SettingLabel(
-                                iconPainter = painterResource(Res.drawable.search_language),
-                                label = stringResource(Res.string.search_languages),
-                                modifier = Modifier.padding(horizontal = 8.dp)
-                            )
+            settingsState.languages.toList().run {
+                AnimatedVisibility(
+                    visible = size > 1 && (settingsState.script != SearchScript.EASTERN_NAGRI || searchState.featureBengaliDefinitions || settingsState.featureBengaliExamples),
+                    enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+                    exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top),
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        SettingLabel(
+                            iconPainter = painterResource(Res.drawable.search_language),
+                            label = stringResource(Res.string.search_languages),
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
 
-                            MultiChoiceSegmentedButtonRow {
-                                forEachIndexed { i, (language, checked) ->
-                                    SegmentedButton(
-                                        checked = checked,
-                                        onCheckedChange = { selected ->
-                                            onSettingsEvent(SearchSettingsEvent.SelectLanguage(language, selected))
-                                        },
-                                        shape = SegmentedButtonDefaults.itemShape(i, size)
-                                    ) { Text(stringResource(language.label)) }
-                                }
+                        MultiChoiceSegmentedButtonRow {
+                            forEachIndexed { i, (language, checked) ->
+                                SegmentedButton(
+                                    checked = checked,
+                                    onCheckedChange = { selected ->
+                                        onSettingsEvent(SearchSettingsEvent.SelectLanguage(language, selected))
+                                    },
+                                    shape = SegmentedButtonDefaults.itemShape(i, size)
+                                ) { Text(stringResource(language.label)) }
                             }
                         }
                     }
                 }
+            }
 
             Column {
                 SettingLabel(
