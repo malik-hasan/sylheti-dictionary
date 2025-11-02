@@ -35,12 +35,27 @@ class DebugViewModel(private val preferences: PreferencesRepository): ViewModel(
             }
 
             is DebugEvent.EnableFeatureBengaliDefinitions -> viewModelScope.launch {
-                preferences.set(PreferenceKey.FEATURE_BENGALI_DEFINITIONS, event.enable)
+                val enabled = event.enable
+                preferences.set(PreferenceKey.FEATURE_BENGALI_DEFINITIONS, enabled)
+
+                if (!enabled && preferences.get(PreferenceKey.FEATURE_BENGALI_EXAMPLES) != true) {
+                    turnOffBengaliSearchLanguage()
+                }
             }
 
             is DebugEvent.EnableFeatureBengaliExamples -> viewModelScope.launch {
-                preferences.set(PreferenceKey.FEATURE_BENGALI_EXAMPLES, event.enable)
+                val enabled = event.enable
+                preferences.set(PreferenceKey.FEATURE_BENGALI_EXAMPLES, enabled)
+
+                if (!enabled && preferences.get(PreferenceKey.FEATURE_BENGALI_DEFINITIONS) != true) {
+                    turnOffBengaliSearchLanguage()
+                }
             }
         }
+    }
+
+    private suspend fun turnOffBengaliSearchLanguage() {
+        preferences.set(PreferenceKey.BENGALI_SEARCH_LANGUAGE, false)
+        preferences.set(PreferenceKey.EASTERN_NAGRI_SCRIPT_SYLHETI_SEARCH_LANGUAGE, true)
     }
 }
