@@ -1,5 +1,6 @@
 package oats.mobile.sylhetidictionary.ui.components
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,15 +20,16 @@ actual fun DynamicThemeSetting(
     dynamicThemeEnabled: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .widthIn(max = 1000.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        SettingLabel(painterResource(Res.drawable.dynamic_theme), stringResource(Res.string.dynamic_theme))
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+        Row(
+            modifier = Modifier
+                .widthIn(max = 1000.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SettingLabel(painterResource(Res.drawable.dynamic_theme), stringResource(Res.string.dynamic_theme))
 
-        Switch(dynamicThemeEnabled, onToggle)
-    }
+            Switch(dynamicThemeEnabled, onToggle)
+        }
 }
