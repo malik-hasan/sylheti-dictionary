@@ -49,10 +49,6 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
-        sourceSets.all {
-            languageSettings.enableLanguageFeature("ExplicitBackingFields")
-        }
-
         commonMain {
             kotlin.srcDir("build/generated/ksp/metadata")
 
