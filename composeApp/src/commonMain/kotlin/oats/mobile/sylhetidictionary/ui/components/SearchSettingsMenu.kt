@@ -18,6 +18,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -148,18 +149,30 @@ fun SearchSettingsMenu(
                 val onlyBengaliEasternNagriEnabled = easternNagriSelected && !sylhetiEasternNagriEnabled
 
                 AnimatedVisibility(!easternNagriSelected || (searchState.featureBengaliDefinitions && bengaliEasternNagriEnabled)) {
+
+                    LaunchedEffect(onlyBengaliEasternNagriEnabled) {
+                        if (onlyBengaliEasternNagriEnabled)
+                            onSettingsEvent(SearchSettingsEvent.EnableSearchDefinitions(true))
+                    }
+
                     CheckboxSearchSetting(
                         label = stringResource(Res.string.in_definitions),
-                        checked = settingsState.searchDefinitions || onlyBengaliEasternNagriEnabled,
+                        checked = settingsState.searchDefinitions,
                         enabled = !onlyBengaliEasternNagriEnabled
                     ) { onSettingsEvent(SearchSettingsEvent.EnableSearchDefinitions(it)) }
                 }
 
                 AnimatedVisibility(!onlyBengaliEasternNagriEnabled || settingsState.featureBengaliExamples) {
                     val onlyBengaliEasternNagriExamplesEnabled = onlyBengaliEasternNagriEnabled && settingsState.featureBengaliExamples && !searchState.featureBengaliDefinitions
+
+                    LaunchedEffect(onlyBengaliEasternNagriExamplesEnabled) {
+                        if (onlyBengaliEasternNagriExamplesEnabled)
+                            onSettingsEvent(SearchSettingsEvent.EnableSearchExamples(true))
+                    }
+
                     CheckboxSearchSetting(
                         label = stringResource(Res.string.in_examples),
-                        checked = settingsState.searchExamples || onlyBengaliEasternNagriExamplesEnabled,
+                        checked = settingsState.searchExamples,
                         enabled = !onlyBengaliEasternNagriExamplesEnabled
                     ) { onSettingsEvent(SearchSettingsEvent.EnableSearchExamples(it)) }
                 }
