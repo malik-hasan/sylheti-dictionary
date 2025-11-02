@@ -1,11 +1,10 @@
 [versions]
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 ksp = "2.2.0-2.0.2"
-jetbrains-compose = "1.9.1"
+jetbrains-compose = "1.9.2"
 agp = "8.11.1" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
 android-minSdk = "21"
 android-targetSdk = "36"
-android-compileSdk = "36"
 
 activity-compose = "1.11.0"
 appcompat = "1.7.1"

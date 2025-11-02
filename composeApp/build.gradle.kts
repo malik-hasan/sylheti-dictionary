@@ -145,7 +145,7 @@ room.schemaDirectory("$projectDir/schemas")
 
 android {
     namespace = sylhetiDictionaryPackage
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = libs.versions.android.targetSdk.get().toInt()
 
     sourceSets.getByName("main") {
         manifest.srcFile("src/androidMain/AndroidManifest.xml")
