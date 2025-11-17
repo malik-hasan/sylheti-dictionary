@@ -1,10 +1,26 @@
 package oats.mobile.sylhetidictionary
 
+import android.app.Activity
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 
-class ProcessTextActivity : AppCompatActivity() {
+class ProcessTextActivity : Activity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && intent.action == Intent.ACTION_PROCESS_TEXT) {
+            intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
+                ?.takeIf { it.isNotBlank() }
+                ?.let { selectedText ->
+                    Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        putExtra(MainActivity.EXTRA_SELECTED_TEXT, selectedText)
+                    }.let(::startActivity)
+                }
+        }
+
+        finish()
     }
 }

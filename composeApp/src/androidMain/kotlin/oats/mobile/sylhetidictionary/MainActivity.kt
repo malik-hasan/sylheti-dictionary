@@ -18,6 +18,10 @@ class MainActivity : AppCompatActivity(), KoinComponent {
 
     private val vm: AppViewModel by viewModel()
 
+    companion object {
+        const val EXTRA_SELECTED_TEXT = "oats.mobile.sylhetidictionary.SELECTED_TEXT"
+    }
+
     // copied from EdgeToEdge
     private val defaultLightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
     private val defaultDarkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
