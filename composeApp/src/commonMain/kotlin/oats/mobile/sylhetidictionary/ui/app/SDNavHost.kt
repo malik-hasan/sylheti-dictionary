@@ -19,8 +19,8 @@ import oats.mobile.sylhetidictionary.ui.screens.settings.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SDNavHost(navController: NavHostController) {
-    NavHost(navController, Route.Search()) {
+fun SDNavHost(navController: NavHostController, processTextSearchTerm: String?) {
+    NavHost(navController, Route.Search(processTextSearchTerm)) {
         composable<Route.Search> {
             SearchProvider {
                 SearchNavHost(it.toRoute<Route.Search>().processTextSearchTerm)

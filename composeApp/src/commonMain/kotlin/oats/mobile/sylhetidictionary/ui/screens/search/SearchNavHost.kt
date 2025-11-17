@@ -26,13 +26,13 @@ fun SearchNavHost(processTextSearchTerm: String?) {
         navController.navigate(Route.Entry(entryId))
     }
 
-    NavHost(navController, Route.Search()) {
+    NavHost(navController, Route.Search(processTextSearchTerm)) {
         composable<Route.Search> {
             val activateSearchBar = it.savedStateHandle.remove(Route.Search.ACTIVATE_SEARCH_BAR_KEY) ?: false
 
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
                 with(koinViewModel<SearchViewModel> {
-                    parametersOf(processTextSearchTerm)
+                    parametersOf(it.toRoute<Route.Search>().processTextSearchTerm)
                 }) {
                     val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
                     val searchState by searchState.collectAsStateWithLifecycle()

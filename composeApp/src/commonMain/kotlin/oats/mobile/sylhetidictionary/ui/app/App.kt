@@ -12,7 +12,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import oats.mobile.sylhetidictionary.ui.components.SDNavigationDrawer
-import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.theme.SDTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -26,10 +25,7 @@ fun App(vm: AppViewModel = koinViewModel()) {
 
     with(vm) {
         LaunchedEffect(processTextSearchTerm) {
-            processTextSearchTerm?.let {
-                navController.navigate(Route.Search(it))
-                consumeProcessTextSearchTerm()
-            }
+            consumeProcessTextSearchTerm()
         }
     }
 
@@ -43,7 +39,7 @@ fun App(vm: AppViewModel = koinViewModel()) {
                 .background(MaterialTheme.colorScheme.background)
             ) {
                 SDNavigationDrawer(selectedRoute, navController::navigate) {
-                    SDNavHost(navController)
+                    SDNavHost(navController, vm.processTextSearchTerm)
                 }
             }
         }
