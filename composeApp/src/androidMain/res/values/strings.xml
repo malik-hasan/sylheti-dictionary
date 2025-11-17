@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Sylheti Dictionary</string>
+    <string name="process_text_label">Search Sylheti Dict</string>
 </resources>
