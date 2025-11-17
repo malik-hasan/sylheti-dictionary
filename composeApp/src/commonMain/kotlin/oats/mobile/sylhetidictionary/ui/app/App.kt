@@ -34,7 +34,15 @@ fun App(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
             ) {
-                SDNavigationDrawer(selectedRoute, navController::navigate) {
+                SDNavigationDrawer(
+                    selectedRoute = selectedRoute,
+                    navigate = {
+                        navController.navigate(it) {
+                            launchSingleTop = true
+                            popUpTo(navController.graph.startDestinationId)
+                        }
+                    }
+                ) {
                     SDNavHost(navController, processTextSearchTerm)
                 }
             }
