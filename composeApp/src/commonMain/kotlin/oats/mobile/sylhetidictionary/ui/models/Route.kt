@@ -3,8 +3,10 @@ package oats.mobile.sylhetidictionary.ui.models
 import kotlinx.serialization.Serializable
 
 sealed interface Route {
-    @Serializable data object Search: Route {
-        const val ACTIVATE_SEARCH_BAR_KEY = "ACTIVATE_SEARCH_BAR"
+    @Serializable data class Search(val processTextSearchTerm: String? = null): Route {
+        companion object {
+            const val ACTIVATE_SEARCH_BAR_KEY = "ACTIVATE_SEARCH_BAR"
+        }
     }
 
     @Serializable data object Settings: Route

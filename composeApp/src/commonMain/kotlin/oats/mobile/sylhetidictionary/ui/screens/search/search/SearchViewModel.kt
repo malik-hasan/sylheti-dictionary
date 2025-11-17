@@ -48,6 +48,7 @@ import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
+    processTextSearchTerm: String?,
     private val preferences: PreferencesRepository,
     private val dictionaryRepository: DictionaryRepository,
     private val bookmarksRepository: BookmarksRepository,
@@ -133,7 +134,7 @@ class SearchViewModel(
         }
     }
 
-    var searchTerm by mutableStateOf("")
+    var searchTerm by mutableStateOf(processTextSearchTerm ?: "")
         private set
 
     val suggestionsListState = LazyListState()

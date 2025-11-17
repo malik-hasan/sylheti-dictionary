@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity(), KoinComponent {
     private val vm: AppViewModel by viewModel()
 
     companion object {
-        const val EXTRA_SELECTED_TEXT = "oats.mobile.sylhetidictionary.SELECTED_TEXT"
+        const val EXTRA_PROCESS_TEXT_SEARCH_TERM = "${BuildConfig.APPLICATION_ID}.extra.PROCESS_TEXT_SEARCH_TERM"
     }
 
     // copied from EdgeToEdge
@@ -28,6 +28,11 @@ class MainActivity : AppCompatActivity(), KoinComponent {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        vm.processText(
+            intent.getCharSequenceExtra(EXTRA_PROCESS_TEXT_SEARCH_TERM)?.toString()
+        )
+
         setContent {
             val theme by vm.theme.collectAsStateWithLifecycle()
             val darkTheme = theme.isDarkTheme()

@@ -65,7 +65,7 @@ fun SDNavigationDrawer(
                         textAlign = TextAlign.Center
                     )
 
-                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search, selectedRoute, navigate)
+                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search(), selectedRoute, navigate)
 
                     SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings, selectedRoute, navigate)
 

@@ -23,4 +23,15 @@ class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
     val dynamicTheme = blockingStateFlowOf(
         preferences.flow(PreferenceKey.DYNAMIC_THEME, true)
     )
+
+    var processTextSearchTerm: String? = null
+        private set
+
+    fun processText(processText: String?) {
+        processTextSearchTerm = processText
+    }
+
+    fun consumeProcessTextSearchTerm() {
+        processTextSearchTerm = null
+    }
 }

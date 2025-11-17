@@ -19,19 +19,21 @@ import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SearchNavHost() {
+fun SearchNavHost(processTextSearchTerm: String?) {
     val navController = rememberNavController()
 
     fun navigateToEntry(entryId: String) {
         navController.navigate(Route.Entry(entryId))
     }
 
-    NavHost(navController, Route.Search) {
+    NavHost(navController, Route.Search()) {
         composable<Route.Search> {
             val activateSearchBar = it.savedStateHandle.remove(Route.Search.ACTIVATE_SEARCH_BAR_KEY) ?: false
 
             CompositionLocalProvider(LocalAnimatedContentScope provides this) {
-                with(koinViewModel<SearchViewModel>()) {
+                with(koinViewModel<SearchViewModel> {
+                    parametersOf(processTextSearchTerm)
+                }) {
                     val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
                     val searchState by searchState.collectAsStateWithLifecycle()
                     val settingsState by settingsState.collectAsStateWithLifecycle()

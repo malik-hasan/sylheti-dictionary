@@ -6,6 +6,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.screens.AboutScreen
 import oats.mobile.sylhetidictionary.ui.screens.IpaHelpScreen
@@ -19,10 +20,10 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SDNavHost(navController: NavHostController) {
-    NavHost(navController, Route.Search) {
+    NavHost(navController, Route.Search()) {
         composable<Route.Search> {
             SearchProvider {
-                SearchNavHost()
+                SearchNavHost(it.toRoute<Route.Search>().processTextSearchTerm)
             }
         }
 
