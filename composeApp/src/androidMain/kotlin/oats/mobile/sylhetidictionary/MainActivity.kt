@@ -29,9 +29,7 @@ class MainActivity : AppCompatActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        vm.processText(
-            intent.getCharSequenceExtra(EXTRA_PROCESS_TEXT_SEARCH_TERM)?.toString()
-        )
+        val processTextSearchTerm = intent.getCharSequenceExtra(EXTRA_PROCESS_TEXT_SEARCH_TERM)?.toString()
 
         setContent {
             val theme by vm.theme.collectAsStateWithLifecycle()
@@ -47,7 +45,7 @@ class MainActivity : AppCompatActivity(), KoinComponent {
                 )
             }
 
-            App()
+            App(processTextSearchTerm)
         }
     }
 }

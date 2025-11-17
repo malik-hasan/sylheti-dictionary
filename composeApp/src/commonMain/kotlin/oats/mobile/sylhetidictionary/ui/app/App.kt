@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -16,18 +15,15 @@ import oats.mobile.sylhetidictionary.ui.theme.SDTheme
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun App(vm: AppViewModel = koinViewModel()) {
+fun App(
+    processTextSearchTerm: String? = null,
+    vm: AppViewModel = koinViewModel()
+) {
     val theme by vm.theme.collectAsStateWithLifecycle()
     val dynamicTheme by vm.dynamicTheme.collectAsStateWithLifecycle()
 
     val navController = rememberNavController()
     val selectedRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-    with(vm) {
-        LaunchedEffect(processTextSearchTerm) {
-            consumeProcessTextSearchTerm()
-        }
-    }
 
     SDProvider {
         SDTheme(
@@ -39,7 +35,7 @@ fun App(vm: AppViewModel = koinViewModel()) {
                 .background(MaterialTheme.colorScheme.background)
             ) {
                 SDNavigationDrawer(selectedRoute, navController::navigate) {
-                    SDNavHost(navController, vm.processTextSearchTerm)
+                    SDNavHost(navController, processTextSearchTerm)
                 }
             }
         }
