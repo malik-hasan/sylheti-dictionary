@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +26,7 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.keyboard_arrow_down
 
 @Composable
-fun EntrySubHeader(
+fun LazyItemScope.EntrySubHeader(
     text: AnnotatedString,
     onClick: () -> Unit,
     expanded: Boolean
@@ -36,13 +37,14 @@ fun EntrySubHeader(
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .heightIn(48.dp),
+            .heightIn(48.dp)
+            .animateItem(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSecondaryContainer
