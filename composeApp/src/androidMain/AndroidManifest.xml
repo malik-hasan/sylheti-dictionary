@@ -13,8 +13,8 @@
         tools:targetApi="tiramisu">
 
         <activity
-            android:exported="true"
             android:name=".MainActivity"
+            android:exported="true"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="colorMode|density|fontScale|fontWeightAdjustment|grammaticalGender|keyboard|keyboardHidden|layoutDirection|locale|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode">
             <intent-filter>
@@ -24,9 +24,9 @@
         </activity>
 
         <activity
-            android:exported="true"
             android:name=".ProcessTextActivity"
             android:label="@string/process_text_label"
+            android:exported="true"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
