@@ -89,9 +89,9 @@ fun EntryCard(
                     )
                 }
             ) {
-                Column(Modifier.padding(bottom = 12.dp)) {
-                    Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                        SelectionContainer {
+                SelectionContainer {
+                    Column(Modifier.padding(bottom = 12.dp)) {
+                        Row(horizontalArrangement = Arrangement.SpaceBetween) {
                             EntryHeader(
                                 modifier = Modifier
                                     .weight(1f)

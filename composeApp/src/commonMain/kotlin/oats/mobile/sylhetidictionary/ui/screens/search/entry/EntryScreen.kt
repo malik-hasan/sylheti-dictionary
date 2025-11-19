@@ -198,13 +198,15 @@ fun EntryScreen(
                             definitionIPA
                         ).takeIf { it.isNotEmpty() }?.let {
                             item(key = "definitions", contentType = "definitions") {
-                                EntryDefinitions(
-                                    entry = entry,
-                                    featureBengaliDefinitions = state.featureBengaliDefinitions,
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .animateItem()
-                                )
+                                SelectionContainer {
+                                    EntryDefinitions(
+                                        entry = entry,
+                                        featureBengaliDefinitions = state.featureBengaliDefinitions,
+                                        modifier = Modifier
+                                            .padding(horizontal = 16.dp)
+                                            .animateItem()
+                                    )
+                                }
                             }
                         }
 
@@ -220,12 +222,15 @@ fun EntryScreen(
 
                             if (state.variantsExpanded) {
                                 item(key = "variants", contentType = "variants") {
-                                    Column(Modifier
-                                        .padding(horizontal = 32.dp)
-                                        .animateItem()
-                                    ) {
-                                        state.variants.forEach {
-                                            EntryVariant(it)
+                                    SelectionContainer {
+                                        Column(
+                                            Modifier
+                                                .padding(horizontal = 32.dp)
+                                                .animateItem()
+                                        ) {
+                                            state.variants.forEach {
+                                                EntryVariant(it)
+                                            }
                                         }
                                     }
                                 }
