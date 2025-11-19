@@ -67,38 +67,38 @@ fun EntryHeader(
                     )
                 }
             )
-        }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            partOfSpeech?.let {
-                Chip(
-                    text = it.lowercase(),
-                    style = partOfSpeechStyle,
-                    modifier = Modifier.ifTrue(includeAnimation) {
-                        sharedBounds(
-                            sharedContentState = rememberSharedContentState("part-of-speech-$entryId"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                    }
-                )
-            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                partOfSpeech?.let {
+                    Chip(
+                        text = it.lowercase(),
+                        style = partOfSpeechStyle,
+                        modifier = Modifier.ifTrue(includeAnimation) {
+                            sharedBounds(
+                                sharedContentState = rememberSharedContentState("part-of-speech-$entryId"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                        }
+                    )
+                }
 
-            gloss?.let {
-                Text(
-                    text = buildAnnotatedString {
-                        appendHighlighted(it, highlightRegex, latinBodyFontFamily)
-                    },
-                    style = glossStyle,
-                    modifier = Modifier.ifTrue(includeAnimation) {
-                        sharedBounds(
-                            sharedContentState = rememberSharedContentState("gloss-$entryId"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
-                    }
-                )
+                gloss?.let {
+                    Text(
+                        text = buildAnnotatedString {
+                            appendHighlighted(it, highlightRegex, latinBodyFontFamily)
+                        },
+                        style = glossStyle,
+                        modifier = Modifier.ifTrue(includeAnimation) {
+                            sharedBounds(
+                                sharedContentState = rememberSharedContentState("gloss-$entryId"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                        }
+                    )
+                }
             }
         }
     }

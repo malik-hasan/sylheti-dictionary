@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +39,9 @@ fun EntryExample(
         modifier = modifier.padding(horizontal = 32.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (showIndex) Text("${index + 1}.")
+        if (showIndex) DisableSelection {
+            Text("${index + 1}.")
+        }
 
         Column {
             with(example) {
