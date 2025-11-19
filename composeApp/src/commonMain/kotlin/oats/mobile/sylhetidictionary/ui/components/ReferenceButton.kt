@@ -52,7 +52,6 @@ fun ReferenceButton(
         ) {
             OutlinedButton({ navigateToEntry(referenceEntry.entryId) }) {
                 TaggedField(
-                    enableSelection = false,
                     tag = stringResource(Res.string.see),
                     bodies = listOfNotNull(
                         SDString(referenceEntry.displayIPA, highlightRegex, SearchScript.LATIN),
