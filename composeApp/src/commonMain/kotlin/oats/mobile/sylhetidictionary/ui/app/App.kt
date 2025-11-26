@@ -12,6 +12,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import oats.mobile.sylhetidictionary.ui.components.SDNavigationDrawer
+import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.theme.SDTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -39,7 +40,14 @@ fun App(
                 navigate = { route ->
                     if (currentDestination?.hasRoute(route::class) != true) {
                         navController.navigate(route) {
+                            launchSingleTop = true
                             popUpTo(navController.graph.startDestinationId)
+                        }
+                    } else if (route is Route.Search) {
+                        navController.navigate(route) {
+                            popUpTo(route) {
+                                inclusive = true
+                            }
                         }
                     }
                 }
