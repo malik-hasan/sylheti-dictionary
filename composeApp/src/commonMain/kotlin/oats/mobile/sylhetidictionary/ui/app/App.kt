@@ -35,11 +35,10 @@ fun App(
             val currentDestination = navController.currentBackStackEntryAsState().value?.destination
 
             SDNavigationDrawer(
-                selectedRoute = currentDestination?.route,
+                currentDestination = currentDestination,
                 navigate = { route ->
                     if (currentDestination?.hasRoute(route::class) != true) {
                         navController.navigate(route) {
-                            launchSingleTop = true
                             popUpTo(navController.graph.startDestinationId)
                         }
                     }

@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.ui.app.LocalDrawerState
 import oats.mobile.sylhetidictionary.ui.models.Route
@@ -33,7 +34,7 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 
 @Composable
 fun SDNavigationDrawer(
-    selectedRoute: String?,
+    currentDestination: NavDestination?,
     navigate: (Route) -> Unit,
     drawerState: DrawerState = LocalDrawerState.current,
     content: @Composable () -> Unit
@@ -65,16 +66,16 @@ fun SDNavigationDrawer(
                         textAlign = TextAlign.Center
                     )
 
-                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search(), selectedRoute, navigate)
+                    SDNavigationDrawerItem(stringResource(Res.string.search), Route.Search(), currentDestination, navigate)
 
-                    SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings, selectedRoute, navigate)
+                    SDNavigationDrawerItem(stringResource(Res.string.settings), Route.Settings, currentDestination, navigate)
 
-                    SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp, selectedRoute, navigate)
+                    SDNavigationDrawerItem(stringResource(Res.string.ipa_help), Route.IpaHelp, currentDestination, navigate)
 
-                    SDNavigationDrawerItem(stringResource(Res.string.about), Route.About, selectedRoute, navigate)
+                    SDNavigationDrawerItem(stringResource(Res.string.about), Route.About, currentDestination, navigate)
 
                     if (debugBuild) {
-                        SDNavigationDrawerItem("Debug Menu", Route.Debug, selectedRoute, navigate)
+                        SDNavigationDrawerItem("Debug Menu", Route.Debug, currentDestination, navigate)
                     }
 
                     Spacer(Modifier.weight(1f))

@@ -5,6 +5,8 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.ui.app.LocalDrawerState
 import oats.mobile.sylhetidictionary.ui.models.Route
@@ -13,7 +15,7 @@ import oats.mobile.sylhetidictionary.ui.models.Route
 fun SDNavigationDrawerItem(
     label: String,
     route: Route,
-    selectedRoute: String?,
+    currentDestination: NavDestination?,
     navigate: (Route) -> Unit,
     drawerState: DrawerState = LocalDrawerState.current
 ) {
@@ -21,9 +23,7 @@ fun SDNavigationDrawerItem(
 
     NavigationDrawerItem(
         label = { Text(label) },
-        selected = route::class.qualifiedName?.let { route ->
-            selectedRoute?.startsWith(route)
-        } == true,
+        selected = currentDestination?.hasRoute(route::class) == true,
         onClick = {
             navigate(route)
             scope.launch {
