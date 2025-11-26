@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import oats.mobile.sylhetidictionary.ui.components.SDNavigationDrawer
@@ -18,33 +19,33 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App(
     processTextSearchTerm: String? = null,
     vm: AppViewModel = koinViewModel()
-) {
+) = SDProvider {
     val theme by vm.theme.collectAsStateWithLifecycle()
     val dynamicTheme by vm.dynamicTheme.collectAsStateWithLifecycle()
 
-    val navController = rememberNavController()
-    val selectedRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-    SDProvider {
-        SDTheme(
-            dynamicTheme = dynamicTheme,
-            darkTheme = theme.isDarkTheme()
+    SDTheme(
+        dynamicTheme = dynamicTheme,
+        darkTheme = theme.isDarkTheme()
+    ) {
+        Box(Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
         ) {
-            Box(Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-            ) {
-                SDNavigationDrawer(
-                    selectedRoute = selectedRoute,
-                    navigate = {
-                        navController.navigate(it) {
+            val navController = rememberNavController()
+            val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+
+            SDNavigationDrawer(
+                selectedRoute = currentDestination?.route,
+                navigate = { route ->
+                    if (currentDestination?.hasRoute(route::class) != true) {
+                        navController.navigate(route) {
                             launchSingleTop = true
                             popUpTo(navController.graph.startDestinationId)
                         }
                     }
-                ) {
-                    SDNavHost(navController, processTextSearchTerm)
                 }
+            ) {
+                SDNavHost(navController, processTextSearchTerm)
             }
         }
     }
