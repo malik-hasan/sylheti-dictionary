@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.DisableSelection
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -89,68 +87,64 @@ fun EntryCard(
                     )
                 }
             ) {
-                SelectionContainer {
-                    Column(Modifier.padding(bottom = 12.dp)) {
-                        Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                            EntryHeader(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(start = 16.dp, top = 8.dp),
-                                entryId = entryId,
-                                includeAnimation = includeAnimation,
-                                displayIPA = displayIPA,
-                                displayEN = displayEN,
-                                displaySN = displaySN,
-                                displayStyle = MaterialTheme.typography.bodyLarge,
-                                partOfSpeech = partOfSpeech,
-                                partOfSpeechStyle = MaterialTheme.typography.labelMedium,
-                                gloss = gloss,
-                                glossStyle = MaterialTheme.typography.bodyLarge
-                            )
-
-                            isBookmark?.let { isBookmark ->
-                                BookmarkIconButton(
-                                    modifier = Modifier.ifTrue(includeAnimation) {
-                                        sharedElement(
-                                            rememberSharedContentState("bookmark-$entryId"),
-                                            animatedVisibilityScope = animatedContentScope
-                                        )
-                                    },
-                                    isBookmark = isBookmark,
-                                    onClick = { setBookmark(!isBookmark) }
-                                )
-                            }
-                        }
-
-                        EntryDivider(Modifier
-                            .padding(horizontal = 16.dp)
-                            .ifTrue(includeAnimation) {
-                                sharedBounds(
-                                    sharedContentState = rememberSharedContentState("definition-divider-$entryId"),
-                                    animatedVisibilityScope = animatedContentScope,
-                                    enter = EnterTransition.None,
-                                    exit = ExitTransition.None
-                                )
-                            }
+                Column(Modifier.padding(bottom = 12.dp)) {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                        EntryHeader(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 16.dp, top = 8.dp),
+                            entryId = entryId,
+                            includeAnimation = includeAnimation,
+                            displayIPA = displayIPA,
+                            displayEN = displayEN,
+                            displaySN = displaySN,
+                            displayStyle = MaterialTheme.typography.bodyLarge,
+                            partOfSpeech = partOfSpeech,
+                            partOfSpeechStyle = MaterialTheme.typography.labelMedium,
+                            gloss = gloss,
+                            glossStyle = MaterialTheme.typography.bodyLarge
                         )
 
-                        DisableSelection {
-                            referenceEntries.forEach {
-                                ReferenceButton(
-                                    referenceEntry = it,
-                                    entryId = entryId,
-                                    navigateToEntry = navigateToEntry,
-                                    includeAnimation = includeAnimation
-                                )
-                            }
+                        isBookmark?.let { isBookmark ->
+                            BookmarkIconButton(
+                                modifier = Modifier.ifTrue(includeAnimation) {
+                                    sharedElement(
+                                        rememberSharedContentState("bookmark-$entryId"),
+                                        animatedVisibilityScope = animatedContentScope
+                                    )
+                                },
+                                isBookmark = isBookmark,
+                                onClick = { setBookmark(!isBookmark) }
+                            )
                         }
+                    }
 
-                        EntryDefinitions(
-                            entry = entry,
-                            featureBengaliDefinitions = featureBengaliDefinitions,
+                    EntryDivider(Modifier
+                        .padding(horizontal = 16.dp)
+                        .ifTrue(includeAnimation) {
+                            sharedBounds(
+                                sharedContentState = rememberSharedContentState("definition-divider-$entryId"),
+                                animatedVisibilityScope = animatedContentScope,
+                                enter = EnterTransition.None,
+                                exit = ExitTransition.None
+                            )
+                        }
+                    )
+
+                    referenceEntries.forEach {
+                        ReferenceButton(
+                            referenceEntry = it,
+                            entryId = entryId,
+                            navigateToEntry = navigateToEntry,
                             includeAnimation = includeAnimation
                         )
                     }
+
+                    EntryDefinitions(
+                        entry = entry,
+                        featureBengaliDefinitions = featureBengaliDefinitions,
+                        includeAnimation = includeAnimation
+                    )
                 }
             }
         }
