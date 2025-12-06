@@ -1,29 +1,39 @@
 [versions]
 kotlin = "2.2.21"
 ksp = "2.2.21-2.0.4"
-jetbrains-compose = "1.9.2"
+jetbrains-compose = "1.9.3"
 agp = "8.11.1" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
 android-minSdk = "21"
 android-targetSdk = "36"
 
+#noinspection GradleDependency; any higher requires raising min Android SDK
 activity-compose = "1.11.0"
 appcompat = "1.7.1"
 coroutines = "1.10.2"
+#noinspection GradleDependency; any higher requires raising min Android SDK
 datastore = "1.1.7"
 datetime = "0.7.1"
 kermit = "2.0.8"
 koin = "4.1.1"
+#noinspection GradleDependency; any higher requires raising min Android SDK
 lifecycle = "2.9.4"
 material3 = "1.9.0-alpha04" # alpha required for m3 expressive for now https://www.jetbrains.com/help/kotlin-multiplatform-dev/whats-new-compose-190.html
 navigation = "2.9.1"
-room = "2.7.2" # any higher requires raising min Android SDK
+#noinspection GradleDependency; any higher requires raising min Android SDK
+room = "2.7.2"
 serialization = "1.9.0"
-splashscreen = "1.0.1"
-sqldelight = "2.1.0"
-sqlite = "2.5.2" # any higher requires raising min Android SDK
+splashscreen = "1.2.0"
+sqldelight = "2.2.1"
+#noinspection GradleDependency; any higher requires raising min Android SDK
+sqlite = "2.5.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose" }
 
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 
@@ -48,7 +58,7 @@ koin-android = { module = "io.insert-koin:koin-android" }
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
 
@@ -69,11 +79,16 @@ sqldelight-async-extensions = { module = "app.cash.sqldelight:async-extensions",
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 [plugins]
-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
+
 android-application = { id = "com.android.application", version.ref = "agp" }
+
 room = { id = "androidx.room", version.ref = "room" }
+
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

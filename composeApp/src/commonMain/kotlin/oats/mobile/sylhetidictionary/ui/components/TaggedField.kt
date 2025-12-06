@@ -3,7 +3,7 @@ package oats.mobile.sylhetidictionary.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +20,8 @@ fun TaggedField(
     body: SDString,
     modifier: Modifier = Modifier,
     tagFontFamily: FontFamily? = null,
-    enableSelection: Boolean = true,
     separator: String = "\n",
-) { TaggedField(tag, listOf(body), modifier, tagFontFamily, enableSelection, separator) }
+) = TaggedField(tag, listOf(body), modifier, tagFontFamily, separator)
 
 @Composable
 fun TaggedField(
@@ -30,17 +29,17 @@ fun TaggedField(
     bodies: List<SDString>,
     modifier: Modifier = Modifier,
     tagFontFamily: FontFamily? = null,
-    enableSelection: Boolean = true,
     separator: String = "\n"
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        FieldTag(tag, tagFontFamily, Modifier.padding(top = 3.dp))
+        DisableSelection {
+            FieldTag(tag, tagFontFamily, Modifier.padding(top = 3.dp))
+        }
 
-        @Composable
-        fun BodyText() = Text(
+        Text(
             text = buildAnnotatedString {
                 bodies.forEachIndexed { i, body ->
                     if (i > 0) append(separator)
@@ -49,11 +48,5 @@ fun TaggedField(
             },
             style = MaterialTheme.typography.bodyMedium
         )
-
-        if (enableSelection) {
-            SelectionContainer {
-                BodyText()
-            }
-        } else BodyText()
     }
 }

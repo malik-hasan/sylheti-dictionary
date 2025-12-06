@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -52,58 +53,60 @@ fun IpaHelpScreen() {
             )
         }
     ) { scaffoldPadding ->
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(scaffoldPadding)
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    withLink(LinkAnnotation.Url(
-                        url = stringResource(Res.string.ipa_url),
-                        styles = textLinkStyle
-                    )) { append(stringResource(Res.string.what_is_ipa)) }
-                },
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Text(
-                text = buildAnnotatedString {
-                    withLink(LinkAnnotation.Url(
-                        url = stringResource(Res.string.sylheti_ipa_url),
-                        styles = textLinkStyle
-                    )) { append(stringResource(Res.string.how_does_ipa_rep_sylheti)) }
-                },
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(Res.string.how_to_search_ipa),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Text(
-                text = stringResource(Res.string.ipa_equivalences),
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            UnicodeUtility.LATIN_IPA_CHAR_MAP.forEach { (char, charSet) ->
+        SelectionContainer {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(scaffoldPadding)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Text(
                     text = buildAnnotatedString {
-                        withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
-                            append("$char — ")
-                        }
-                        append(charSet.joinToString(", "))
+                        withLink(LinkAnnotation.Url(
+                            url = stringResource(Res.string.ipa_url),
+                            styles = textLinkStyle
+                        )) { append(stringResource(Res.string.what_is_ipa)) }
                     },
-                    fontFamily = latinBodyFontFamily
+                    style = MaterialTheme.typography.bodyLarge
                 )
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    text = buildAnnotatedString {
+                        withLink(LinkAnnotation.Url(
+                            url = stringResource(Res.string.sylheti_ipa_url),
+                            styles = textLinkStyle
+                        )) { append(stringResource(Res.string.how_does_ipa_rep_sylheti)) }
+                    },
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    text = stringResource(Res.string.how_to_search_ipa),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Text(
+                    text = stringResource(Res.string.ipa_equivalences),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                UnicodeUtility.LATIN_IPA_CHAR_MAP.forEach { (char, charSet) ->
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
+                                append("$char — ")
+                            }
+                            append(charSet.joinToString(", "))
+                        },
+                        fontFamily = latinBodyFontFamily
+                    )
+                }
             }
         }
     }

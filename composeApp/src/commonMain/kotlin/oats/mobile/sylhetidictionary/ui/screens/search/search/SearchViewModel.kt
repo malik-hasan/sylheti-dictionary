@@ -245,6 +245,10 @@ class SearchViewModel(
         }
     }
 
+    init {
+        if (searchTerm.isNotEmpty()) search()
+    }
+
     private suspend fun processSearchQuery(searchTerm: String, settings: SearchSettingsState) = coroutineScope {
         val globSearchTermJob = async {
             searchTerm.takeIf { it.isNotBlank() }?.let {

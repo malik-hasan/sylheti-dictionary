@@ -5,6 +5,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.WideNavigationRailItem
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import oats.mobile.sylhetidictionary.ui.models.Route
 import org.jetbrains.compose.resources.painterResource
 import sylhetidictionary.composeapp.generated.resources.Res
@@ -15,13 +17,11 @@ import sylhetidictionary.composeapp.generated.resources.search
 fun SDNavigationRailItem(
     label: String,
     route: Route,
-    selectedRoute: String?,
+    currentDestination: NavDestination?,
     railExpanded: Boolean,
     navigate: (Route) -> Unit,
 ) = WideNavigationRailItem(
-    selected = route::class.qualifiedName?.let { route ->
-        selectedRoute?.startsWith(route)
-    } == true,
+    selected = currentDestination?.hasRoute(route::class) == true,
     onClick = { navigate(route) },
     icon = {
         Icon(

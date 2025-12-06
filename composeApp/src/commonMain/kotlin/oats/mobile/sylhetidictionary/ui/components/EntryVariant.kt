@@ -3,9 +3,9 @@ package oats.mobile.sylhetidictionary.ui.components
 import androidx.compose.runtime.Composable
 import oats.mobile.sylhetidictionary.Variant
 import oats.mobile.sylhetidictionary.data.preferences.models.search.SearchScript
+import oats.mobile.sylhetidictionary.ui.models.SDString
 import oats.mobile.sylhetidictionary.ui.screens.search.LocalHighlightRegex
 import oats.mobile.sylhetidictionary.ui.theme.latinDisplayFontFamily
-import oats.mobile.sylhetidictionary.ui.models.SDString
 
 @Composable
 fun EntryVariant(
@@ -13,7 +13,7 @@ fun EntryVariant(
     highlightRegex: Regex = LocalHighlightRegex.current,
 ) = TaggedField(
     tag = buildString {
-        append('-')
+        append('•')
         variant.environment?.let {
             append(" ${it.lowercase()}")
         }

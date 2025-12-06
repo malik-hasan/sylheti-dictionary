@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.utility.debugBuild
 import org.jetbrains.compose.resources.stringResource
@@ -28,7 +29,7 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SDNavigationRail(
-    selectedRoute: String?,
+    currentDestination: NavDestination?,
     navigate: (Route) -> Unit
 ) {
     val state = rememberWideNavigationRailState()
@@ -55,16 +56,16 @@ fun SDNavigationRail(
         ) {
             val railExpanded = state.currentValue == WideNavigationRailValue.Expanded
 
-            SDNavigationRailItem(stringResource(Res.string.search), Route.Search(), selectedRoute, railExpanded, navigate)
+            SDNavigationRailItem(stringResource(Res.string.search), Route.Search(), currentDestination, railExpanded, navigate)
 
-            SDNavigationRailItem(stringResource(Res.string.settings), Route.Settings, selectedRoute, railExpanded, navigate)
+            SDNavigationRailItem(stringResource(Res.string.settings), Route.Settings, currentDestination, railExpanded, navigate)
 
-            SDNavigationRailItem(stringResource(Res.string.ipa_help), Route.IpaHelp, selectedRoute, railExpanded, navigate)
+            SDNavigationRailItem(stringResource(Res.string.ipa_help), Route.IpaHelp, currentDestination, railExpanded, navigate)
 
-            SDNavigationRailItem(stringResource(Res.string.about), Route.About, selectedRoute, railExpanded, navigate)
+            SDNavigationRailItem(stringResource(Res.string.about), Route.About, currentDestination, railExpanded, navigate)
 
             if (debugBuild) {
-                SDNavigationRailItem("Debug Menu", Route.Debug, selectedRoute, railExpanded, navigate)
+                SDNavigationRailItem("Debug Menu", Route.Debug, currentDestination, railExpanded, navigate)
             }
 
             Spacer(Modifier.weight(1f))

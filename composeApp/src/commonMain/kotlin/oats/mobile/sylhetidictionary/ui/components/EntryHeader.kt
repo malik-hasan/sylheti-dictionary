@@ -6,7 +6,6 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,32 +43,30 @@ fun EntryHeader(
 ) {
     with(sharedTransitionScope) {
         Column(modifier) {
-            SelectionContainer {
-                Text(
-                    text = buildAnnotatedString {
-                        appendHighlighted(displayIPA, highlightRegex, latinBodyFontFamily)
+            Text(
+                text = buildAnnotatedString {
+                    appendHighlighted(displayIPA, highlightRegex, latinBodyFontFamily)
 
-                        displayEN?.let {
-                            append(" • ")
-                            appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
-                        }
-
-                        displaySN?.let {
-                            append(" • ")
-                            appendHighlighted(it, highlightRegex)
-                        }
-                    },
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = displayStyle,
-                    modifier = Modifier.ifTrue(includeAnimation) {
-                        sharedBounds(
-                            sharedContentState = rememberSharedContentState("display-$entryId"),
-                            animatedVisibilityScope = animatedContentScope
-                        )
+                    displayEN?.let {
+                        append(" • ")
+                        appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                     }
-                )
-            }
+
+                    displaySN?.let {
+                        append(" • ")
+                        appendHighlighted(it, highlightRegex)
+                    }
+                },
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.primary,
+                style = displayStyle,
+                modifier = Modifier.ifTrue(includeAnimation) {
+                    sharedBounds(
+                        sharedContentState = rememberSharedContentState("display-$entryId"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                }
+            )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -89,20 +86,18 @@ fun EntryHeader(
                 }
 
                 gloss?.let {
-                    SelectionContainer {
-                        Text(
-                            text = buildAnnotatedString {
-                                appendHighlighted(it, highlightRegex, latinBodyFontFamily)
-                            },
-                            style = glossStyle,
-                            modifier = Modifier.ifTrue(includeAnimation) {
-                                sharedBounds(
-                                    sharedContentState = rememberSharedContentState("gloss-$entryId"),
-                                    animatedVisibilityScope = animatedContentScope
-                                )
-                            }
-                        )
-                    }
+                    Text(
+                        text = buildAnnotatedString {
+                            appendHighlighted(it, highlightRegex, latinBodyFontFamily)
+                        },
+                        style = glossStyle,
+                        modifier = Modifier.ifTrue(includeAnimation) {
+                            sharedBounds(
+                                sharedContentState = rememberSharedContentState("gloss-$entryId"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                        }
+                    )
                 }
             }
         }

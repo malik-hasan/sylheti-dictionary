@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -132,20 +133,22 @@ fun EntryScreen(
                                 )
                             }
 
-                            EntryHeader(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .padding(bottom = 16.dp),
-                                entryId = entryId,
-                                displayIPA = displayIPA,
-                                displayEN = displayEN,
-                                displaySN = displaySN,
-                                displayStyle = MaterialTheme.typography.headlineMedium,
-                                partOfSpeech = partOfSpeech,
-                                partOfSpeechStyle = MaterialTheme.typography.titleMedium,
-                                gloss = gloss,
-                                glossStyle = MaterialTheme.typography.titleLarge
-                            )
+                            SelectionContainer {
+                                EntryHeader(
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp)
+                                        .padding(bottom = 16.dp),
+                                    entryId = entryId,
+                                    displayIPA = displayIPA,
+                                    displayEN = displayEN,
+                                    displaySN = displaySN,
+                                    displayStyle = MaterialTheme.typography.headlineMedium,
+                                    partOfSpeech = partOfSpeech,
+                                    partOfSpeechStyle = MaterialTheme.typography.titleMedium,
+                                    gloss = gloss,
+                                    glossStyle = MaterialTheme.typography.titleLarge
+                                )
+                            }
 
                             Spacer(Modifier
                                 .fillMaxWidth()
@@ -195,13 +198,15 @@ fun EntryScreen(
                             definitionIPA
                         ).takeIf { it.isNotEmpty() }?.let {
                             item(key = "definitions", contentType = "definitions") {
-                                EntryDefinitions(
-                                    entry = entry,
-                                    featureBengaliDefinitions = state.featureBengaliDefinitions,
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .animateItem()
-                                )
+                                SelectionContainer {
+                                    EntryDefinitions(
+                                        entry = entry,
+                                        featureBengaliDefinitions = state.featureBengaliDefinitions,
+                                        modifier = Modifier
+                                            .padding(horizontal = 16.dp)
+                                            .animateItem()
+                                    )
+                                }
                             }
                         }
 
@@ -217,12 +222,15 @@ fun EntryScreen(
 
                             if (state.variantsExpanded) {
                                 item(key = "variants", contentType = "variants") {
-                                    Column(Modifier
-                                        .padding(horizontal = 32.dp)
-                                        .animateItem()
-                                    ) {
-                                        state.variants.forEach {
-                                            EntryVariant(it)
+                                    SelectionContainer {
+                                        Column(
+                                            Modifier
+                                                .padding(horizontal = 32.dp)
+                                                .animateItem()
+                                        ) {
+                                            state.variants.forEach {
+                                                EntryVariant(it)
+                                            }
                                         }
                                     }
                                 }
