@@ -1,11 +1,9 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package oats.mobile.sylhetidictionary.ui.app
 
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.WideNavigationRailState
-import androidx.compose.material3.WideNavigationRailStateImpl
-import androidx.compose.material3.WideNavigationRailValue
 import androidx.compose.material3.rememberWideNavigationRailState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -18,8 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-val LocalDrawerState = compositionLocalOf { WideNavigationRailStateImpl(WideNavigationRailValue.Collapsed) }
+val LocalNavigationRailState = compositionLocalOf<WideNavigationRailState> { error("No navigation rail state provided") }
 val LocalLanguage = staticCompositionLocalOf { Language.EN } // static forces redraw of entire app so all string resources are refreshed
 
 @Composable
@@ -27,6 +24,7 @@ fun SDProvider(
     vm: AppViewModel = koinViewModel(),
     content: @Composable () -> Unit
 ) {
+    val navigationRailState = rememberWideNavigationRailState()
     val language by vm.language.collectAsStateWithLifecycle()
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -34,7 +32,8 @@ fun SDProvider(
     }
 
     CompositionLocalProvider(
-        LocalDrawerState provides DrawerState(DrawerValue.Closed),
-        LocalLanguage provides language
-    ) { content() }
+        LocalNavigationRailState provides navigationRailState,
+        LocalLanguage provides language,
+        content = content
+    )
 }

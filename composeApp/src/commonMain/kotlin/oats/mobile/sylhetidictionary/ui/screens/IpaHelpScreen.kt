@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -38,7 +39,7 @@ import sylhetidictionary.composeapp.generated.resources.ipa_url
 import sylhetidictionary.composeapp.generated.resources.sylheti_ipa_url
 import sylhetidictionary.composeapp.generated.resources.what_is_ipa
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun IpaHelpScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

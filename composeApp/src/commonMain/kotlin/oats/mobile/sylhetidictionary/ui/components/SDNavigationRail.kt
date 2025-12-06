@@ -8,14 +8,15 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalWideNavigationRail
 import androidx.compose.material3.Text
+import androidx.compose.material3.WideNavigationRailState
 import androidx.compose.material3.WideNavigationRailValue
-import androidx.compose.material3.rememberWideNavigationRailState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
+import oats.mobile.sylhetidictionary.ui.app.LocalNavigationRailState
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.utility.debugBuild
 import org.jetbrains.compose.resources.stringResource
@@ -30,10 +31,9 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_dictionary
 @Composable
 fun SDNavigationRail(
     currentDestination: NavDestination?,
-    navigate: (Route) -> Unit
+    navigate: (Route) -> Unit,
+    state: WideNavigationRailState = LocalNavigationRailState.current
 ) {
-    val state = rememberWideNavigationRailState()
-
     ModalWideNavigationRail(
         state = state,
         hideOnCollapse = true,
