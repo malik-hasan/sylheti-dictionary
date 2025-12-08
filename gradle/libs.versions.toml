@@ -18,7 +18,7 @@ koin = "4.1.1"
 #noinspection GradleDependency; any higher requires raising min Android SDK
 lifecycle = "2.9.4"
 material3 = "1.9.0-alpha04" # alpha required for m3 expressive for now https://www.jetbrains.com/help/kotlin-multiplatform-dev/whats-new-compose-190.html
-material3-adaptive = "1.2.0"
+material3-adaptive = "1.1.2"
 navigation = "2.9.1"
 #noinspection GradleDependency; any higher requires raising min Android SDK
 room = "2.7.2"

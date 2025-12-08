@@ -61,6 +61,7 @@ fun App(
                     }
                 }
             )
+
             SDNavHost(navController, processTextSearchTerm)
         }
     }

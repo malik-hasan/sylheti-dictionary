@@ -10,11 +10,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import oats.mobile.sylhetidictionary.utility.isCompactWidth
 
 val SDTopAppBarWindowInsets
-    @Composable get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+    @Composable get() = WindowInsets.safeDrawing.run {
+        if (currentWindowAdaptiveInfo().isCompactWidth) {
+            only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+        } else only(WindowInsetsSides.Top + WindowInsetsSides.End)
+    }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
