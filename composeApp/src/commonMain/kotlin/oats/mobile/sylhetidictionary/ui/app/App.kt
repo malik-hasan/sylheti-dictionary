@@ -2,7 +2,7 @@ package oats.mobile.sylhetidictionary.ui.app
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +34,7 @@ fun App(
         dynamicTheme = dynamicTheme,
         darkTheme = theme.isDarkTheme()
     ) {
-        Box(Modifier
+        Row(Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .clickable(null, null) {
