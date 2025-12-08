@@ -34,6 +34,7 @@ import sylhetidictionary.composeapp.generated.resources.settings
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SDNavigationRail(
+    darkTheme: Boolean,
     currentDestination: NavDestination?,
     navigate: (Route) -> Unit,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
@@ -49,6 +50,8 @@ fun SDNavigationRail(
             state = state,
             hideOnCollapse = isCompactWindowWidth
         ) {
+            DialogWindowStatusBarsEffect(darkTheme)
+
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp)

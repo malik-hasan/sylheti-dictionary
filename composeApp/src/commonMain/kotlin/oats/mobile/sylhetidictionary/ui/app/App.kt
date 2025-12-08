@@ -29,10 +29,11 @@ fun App(
 ) = SDProvider {
     val theme by vm.theme.collectAsStateWithLifecycle()
     val dynamicTheme by vm.dynamicTheme.collectAsStateWithLifecycle()
+    val darkTheme = theme.isDarkTheme()
 
     SDTheme(
         dynamicTheme = dynamicTheme,
-        darkTheme = theme.isDarkTheme()
+        darkTheme = darkTheme
     ) {
         Row(Modifier
             .fillMaxSize()
@@ -45,6 +46,7 @@ fun App(
             val currentDestination = navController.currentBackStackEntryAsState().value?.destination
 
             SDNavigationRail(
+                darkTheme = darkTheme,
                 currentDestination = currentDestination,
                 navigate = { route ->
                     if (currentDestination?.hasRoute(route::class) != true) {
