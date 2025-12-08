@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.DebugSwitch
-import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
+import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 
@@ -25,7 +25,7 @@ fun DebugScreen(
     SDScreen(
         topBar = {
             SDTopAppBar(
-                navigationIcon = { DrawerIconButton() },
+                navigationIcon = { NavigationRailIconButton() },
                 title = { Text("Debug Menu") }
             )
         }

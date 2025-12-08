@@ -18,7 +18,7 @@ import sylhetidictionary.composeapp.generated.resources.menu
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun DrawerIconButton(
+fun NavigationRailIconButton(
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
     navigationRailState: WideNavigationRailState = LocalNavigationRailState.current
 ) = AnimatedVisibility(windowAdaptiveInfo.isCompactWidth) {

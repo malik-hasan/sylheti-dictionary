@@ -6,7 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
+import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -19,7 +19,7 @@ fun AboutScreen() {
     SDScreen(
         topBar = {
             SDTopAppBar(
-                navigationIcon = { DrawerIconButton() },
+                navigationIcon = { NavigationRailIconButton() },
                 title = { Text(stringResource(Res.string.about)) }
             )
         }

@@ -51,7 +51,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.BackIconButton
-import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
+import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
@@ -105,7 +105,7 @@ fun SearchScreen(
                             .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 2f)
                             .animateEnterExit(),
                         scrollBehavior = scrollBehavior,
-                        navigationIcon = { DrawerIconButton() },
+                        navigationIcon = { NavigationRailIconButton() },
                         title = { Text(stringResource(Res.string.sylheti_dictionary)) },
                         actions = {
                             Box {

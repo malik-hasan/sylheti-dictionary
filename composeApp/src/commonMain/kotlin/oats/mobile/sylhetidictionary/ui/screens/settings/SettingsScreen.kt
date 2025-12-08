@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.data.preferences.models.settings.Language
 import oats.mobile.sylhetidictionary.data.preferences.models.settings.Theme
 import oats.mobile.sylhetidictionary.ui.app.LocalLanguage
-import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
+import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
 import oats.mobile.sylhetidictionary.ui.components.DynamicThemeSetting
 import oats.mobile.sylhetidictionary.ui.components.LanguageButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
@@ -62,7 +62,7 @@ fun SettingsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SDTopAppBar(
-                navigationIcon = { DrawerIconButton() },
+                navigationIcon = { NavigationRailIconButton() },
                 title = { Text(stringResource(Res.string.settings)) },
                 scrollBehavior = scrollBehavior
             )

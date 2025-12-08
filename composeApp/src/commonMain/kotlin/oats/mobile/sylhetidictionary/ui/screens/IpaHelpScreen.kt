@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import oats.mobile.sylhetidictionary.ui.components.DrawerIconButton
+import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
@@ -49,7 +49,7 @@ fun IpaHelpScreen() {
         topBar = {
             SDTopAppBar(
                 scrollBehavior = scrollBehavior,
-                navigationIcon = { DrawerIconButton() },
+                navigationIcon = { NavigationRailIconButton() },
                 title = { Text(stringResource(Res.string.ipa_help)) }
             )
         }
