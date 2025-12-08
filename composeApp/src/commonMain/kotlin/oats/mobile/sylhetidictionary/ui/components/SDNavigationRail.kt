@@ -27,6 +27,7 @@ import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.about
 import sylhetidictionary.composeapp.generated.resources.debug
 import sylhetidictionary.composeapp.generated.resources.info
+import sylhetidictionary.composeapp.generated.resources.ipa
 import sylhetidictionary.composeapp.generated.resources.ipa_help
 import sylhetidictionary.composeapp.generated.resources.search
 import sylhetidictionary.composeapp.generated.resources.settings
@@ -74,7 +75,7 @@ fun SDNavigationRail(
 
                 SDNavigationRailItem(
                     label = stringResource(Res.string.ipa_help),
-                    iconPainter = painterResource(Res.drawable.search),
+                    iconPainter = painterResource(Res.drawable.ipa),
                     route = Route.IpaHelp,
                     currentDestination = currentDestination,
                     navigate = navigate
