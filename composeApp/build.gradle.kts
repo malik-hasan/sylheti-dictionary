@@ -85,7 +85,6 @@ kotlin {
         androidMain {
             dependsOn(mobileMain)
             dependencies {
-                implementation(compose.preview)
                 implementation(libs.activity.compose)
                 implementation(libs.appcompat)
                 implementation(libs.core.splashscreen)
@@ -174,10 +173,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-
-    dependencies {
-        debugImplementation(compose.uiTooling)
     }
 }
 
