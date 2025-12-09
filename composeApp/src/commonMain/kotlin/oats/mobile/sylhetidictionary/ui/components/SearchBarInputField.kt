@@ -10,6 +10,7 @@ import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.ui.screens.search.search.SearchEvent
@@ -39,7 +40,9 @@ fun SearchBarInputField(
     placeholder = {
         Text(
             text = stringResource(Res.string.search_sylheti_dictionary),
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.tertiary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     },
     leadingIcon = {
