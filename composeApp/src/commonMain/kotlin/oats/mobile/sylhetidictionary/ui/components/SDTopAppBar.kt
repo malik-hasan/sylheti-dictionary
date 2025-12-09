@@ -13,7 +13,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import oats.mobile.sylhetidictionary.utility.isCompactWidth
+import oats.mobile.sylhetidictionary.ui.utils.isCompactWidth
 
 val SDTopAppBarWindowInsets
     @Composable get() = WindowInsets.safeDrawing.run {

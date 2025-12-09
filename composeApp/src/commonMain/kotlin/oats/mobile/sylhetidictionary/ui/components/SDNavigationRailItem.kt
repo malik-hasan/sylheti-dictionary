@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.ui.app.LocalNavigationRailState
 import oats.mobile.sylhetidictionary.ui.models.Route
-import oats.mobile.sylhetidictionary.utility.isCompactWidth
+import oats.mobile.sylhetidictionary.ui.utils.isCompactWidth
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

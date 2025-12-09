@@ -23,8 +23,7 @@ actual fun ScrollBar(
     lazyListState: LazyListState,
     scrollCharIndexes: Map<Char, Int>,
     modifier: Modifier,
-    density: Density,
-    scrollingFromScrollBar: () -> Unit
+    density: Density
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()

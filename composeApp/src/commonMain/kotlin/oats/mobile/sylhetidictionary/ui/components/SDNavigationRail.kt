@@ -20,7 +20,7 @@ import androidx.navigation.NavDestination
 import oats.mobile.sylhetidictionary.ui.app.LocalNavigationRailState
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.utility.debugBuild
-import oats.mobile.sylhetidictionary.utility.isCompactWidth
+import oats.mobile.sylhetidictionary.ui.utils.isCompactWidth
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res

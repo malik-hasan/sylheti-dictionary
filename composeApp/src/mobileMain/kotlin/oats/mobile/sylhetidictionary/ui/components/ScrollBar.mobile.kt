@@ -53,8 +53,7 @@ actual fun ScrollBar(
     lazyListState: LazyListState,
     scrollCharIndexes: Map<Char, Int>,
     modifier: Modifier,
-    density: Density,
-    scrollingFromScrollBar: () -> Unit
+    density: Density
 ) {
     val logger: Logger = koinInject { parametersOf("Scrollbar") }
 
@@ -79,7 +78,6 @@ actual fun ScrollBar(
 
     LaunchedEffect(touchedChar) {
         scrollCharIndexes[touchedChar]?.let { itemIndex ->
-            scrollingFromScrollBar()
             lazyListState.scrollToItem(itemIndex)
         }
     }

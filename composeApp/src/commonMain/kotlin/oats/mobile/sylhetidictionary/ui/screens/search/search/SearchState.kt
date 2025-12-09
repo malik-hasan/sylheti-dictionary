@@ -5,11 +5,11 @@ import oats.mobile.sylhetidictionary.ui.models.SDString
 
 data class SearchState(
     val settingsMenuOpen: Boolean = false,
-    val searchBarActive: Boolean = false,
+    val lastSearchedTerm: String = "",
     val resultsLoading: Boolean = false,
     val recents: List<SDString> = emptyList(),
     val suggestions: List<SDString> = emptyList(),
     val entries: List<DictionaryEntry> = emptyList(),
     val scrollCharIndexes: Map<Char, Int> = emptyMap(),
-    val featureBengaliDefinitions: Boolean = false
+    val featureBengaliDefinitions: Boolean = false,
 )

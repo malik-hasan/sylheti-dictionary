@@ -11,6 +11,5 @@ expect fun ScrollBar(
     lazyListState: LazyListState,
     scrollCharIndexes: Map<Char, Int>,
     modifier: Modifier = Modifier,
-    density: Density = LocalDensity.current,
-    scrollingFromScrollBar: () -> Unit
+    density: Density = LocalDensity.current
 )

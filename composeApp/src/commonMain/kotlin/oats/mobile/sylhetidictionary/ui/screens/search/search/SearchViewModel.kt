@@ -1,10 +1,10 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -89,7 +89,7 @@ class SearchViewModel(
             }.distinctUntilChanged()
                 .onEach {
                     logger.d("SEARCH: refreshing search for settings change $it")
-                    refreshSearch(searchTerm, it)
+                    refreshSearch(searchInputState.text.toString(), it)
                 }
         }
     )
@@ -134,17 +134,12 @@ class SearchViewModel(
         }
     }
 
-    var searchTerm by mutableStateOf(processTextSearchTerm ?: "")
-        private set
-
-    val suggestionsListState = LazyListState()
+    var searchInputState = TextFieldState(processTextSearchTerm ?: "")
 
     private val searchSuggestionsFlow = settingsState.combine(
-        snapshotFlow { searchTerm }.debounce(300)
+        snapshotFlow { searchInputState.text }.debounce(300)
     ) { settings, searchTerm ->
-        getSearchSuggestions(searchTerm, settings)
-    }.onEach {
-        suggestionsListState.requestScrollToItem(0)
+        getSearchSuggestions(searchTerm.toString(), settings)
     }
 
     private val searchResultsSharedFlow = MutableSharedFlow<List<DictionaryEntry>?>()
@@ -177,7 +172,9 @@ class SearchViewModel(
         }
     )
 
-    private var previousSearchTerm = ""
+    fun updateLastSearchedTerm(term: String) = _searchState.update {
+        it.copy(lastSearchedTerm = term)
+    }
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
@@ -185,25 +182,16 @@ class SearchViewModel(
                 it.copy(settingsMenuOpen = event.open)
             }
 
-            is SearchEvent.ActivateSearchBar -> with(event) {
-                if (activate) {
-                    previousSearchTerm = searchTerm
-                } else {
-                    searchTerm = previousSearchTerm
-                }
-                activateSearchBar(activate)
-            }
-
-            is SearchEvent.UpdateSearchTerm -> searchTerm = event.term
+            is SearchEvent.UpdateLastSearchedTerm -> updateLastSearchedTerm(event.term)
             SearchEvent.Search -> search()
             is SearchEvent.SelectSuggestion -> {
-                searchTerm = event.term
+                searchInputState.setTextAndPlaceCursorAtEnd(event.term)
                 search()
             }
 
-            SearchEvent.ClearSearch -> viewModelScope.launch {
-                searchTerm = ""
-                if (!searchState.value.searchBarActive) {
+            is SearchEvent.ClearSearch -> viewModelScope.launch {
+                searchInputState.clearText()
+                if (!event.searchBarExpanded) {
                     logger.d("SEARCH: clearing results and highlight regex")
                     searchResultsSharedFlow.emit(null)
                     preferences.setHighlightRegex(Regex(""))
@@ -222,31 +210,25 @@ class SearchViewModel(
         }
     }
 
-    private fun activateSearchBar(value: Boolean) {
-        _searchState.update { it.copy(searchBarActive = value) }
-    }
+    private fun search() = viewModelScope.launch {
+        searchInputState.text.toString().let { searchTerm ->
+            if (searchTerm != searchState.value.lastSearchedTerm) {
+                updateLastSearchedTerm(searchTerm)
 
-    private fun search() {
-        viewModelScope.launch {
-            activateSearchBar(false)
+                logger.d("SEARCH: searching for $searchTerm")
+                val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
 
-            searchTerm.let { searchTerm ->
-                if (searchTerm != previousSearchTerm) {
-                    logger.d("SEARCH: searching for $searchTerm")
-                    val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
+                preferences.setHighlightRegex(highlightRegex)
 
-                    preferences.setHighlightRegex(highlightRegex)
-
-                    if (hasSearchResults) {
-                        recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
-                    }
+                if (hasSearchResults) {
+                    recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
                 }
             }
         }
     }
 
     init {
-        if (searchTerm.isNotEmpty()) search()
+        if (searchInputState.text.isNotEmpty()) search()
     }
 
     private suspend fun processSearchQuery(searchTerm: String, settings: SearchSettingsState) = coroutineScope {
