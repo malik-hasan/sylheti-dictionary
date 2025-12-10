@@ -30,7 +30,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -41,7 +40,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -78,7 +76,6 @@ fun SearchScreen(
     layoutDirection: LayoutDirection = LocalLayoutDirection.current
 ) {
     val isCompactWindowWidth = windowAdaptiveInfo.isCompactWidth
-    val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -97,7 +94,6 @@ fun SearchScreen(
 
             AppBarWithSearch(
                 state = searchBarState,
-                scrollBehavior = scrollBehavior,
                 windowInsets = SDTopAppBarWindowInsets,
                 navigationIcon = { NavigationRailIconButton() },
                 inputField = {
@@ -160,19 +156,18 @@ fun SearchScreen(
 
             Row(
                 modifier = Modifier.padding(
-                    start = 16.dp + scaffoldPadding.calculateStartPadding(layoutDirection),
+                    start = scaffoldPadding.calculateStartPadding(layoutDirection),
                     end = scaffoldPadding.calculateEndPadding(layoutDirection),
-                ),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                )
             ) {
                 LazyColumn(
                     state = resultsListState,
-                    modifier = Modifier
-                        .weight(1f)
-                        .nestedScroll(scrollBehavior.nestedScrollConnection),
+                    modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(
                         top = 8.dp,
-                        bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
+                        bottom = 8.dp + scaffoldPadding.calculateBottomPadding(),
+                        start = 16.dp,
+                        end = 16.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
