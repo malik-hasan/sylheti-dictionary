@@ -1,15 +1,18 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -26,7 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearWavyProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -36,16 +39,16 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
+import oats.mobile.sylhetidictionary.ui.components.SDTopAppBarWindowInsets
 import oats.mobile.sylhetidictionary.ui.components.ScrollBar
 import oats.mobile.sylhetidictionary.ui.components.SearchBarInputField
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
@@ -71,7 +74,8 @@ fun SearchScreen(
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+    layoutDirection: LayoutDirection = LocalLayoutDirection.current
 ) {
     val isCompactWindowWidth = windowAdaptiveInfo.isCompactWidth
     val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
@@ -94,6 +98,7 @@ fun SearchScreen(
             AppBarWithSearch(
                 state = searchBarState,
                 scrollBehavior = scrollBehavior,
+                windowInsets = SDTopAppBarWindowInsets,
                 navigationIcon = { NavigationRailIconButton() },
                 inputField = {
                     SearchBarInputField(
@@ -148,68 +153,61 @@ fun SearchScreen(
             }
         }
     ) { scaffoldPadding ->
-        Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
-            Row {
-                Box(Modifier
-                    .animateContentSize()
-                    .weight(1f)
-                ) {
-                    LazyColumn(
-                        state = resultsListState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .nestedScroll(scrollBehavior.nestedScrollConnection),
-                        contentPadding = PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        with(searchState) {
-                            if (entries.isEmpty() && searchInputState.text.isNotEmpty() && !resultsLoading) {
-                                item { Text(stringResource(Res.string.no_results)) }
-                                return@LazyColumn
-                            }
+        Column(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
+            if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
+                LinearProgressIndicator(Modifier.fillMaxWidth())
+            } else Spacer(Modifier.height(4.dp))
 
-                            items(
-                                items = entries,
-                                key = { it.entryId }
-                            ) { entry ->
-                                EntryCard(
-                                    entry = entry,
-                                    navigateToEntry = navigateToEntry,
-                                    featureBengaliDefinitions = searchState.featureBengaliDefinitions,
-                                    setBookmark = { value ->
-                                        onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
-                                    }
-                                )
-                            }
+            Row(
+                modifier = Modifier.padding(
+                    start = 16.dp + scaffoldPadding.calculateStartPadding(layoutDirection),
+                    end = scaffoldPadding.calculateEndPadding(layoutDirection),
+                ),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                LazyColumn(
+                    state = resultsListState,
+                    modifier = Modifier
+                        .weight(1f)
+                        .nestedScroll(scrollBehavior.nestedScrollConnection),
+                    contentPadding = PaddingValues(
+                        top = 8.dp,
+                        bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    with(searchState) {
+                        if (entries.isEmpty() && searchInputState.text.isNotEmpty() && !resultsLoading) {
+                            item { Text(stringResource(Res.string.no_results)) }
+                            return@LazyColumn
+                        }
+
+                        items(
+                            items = entries,
+                            key = { it.entryId }
+                        ) { entry ->
+                            EntryCard(
+                                entry = entry,
+                                navigateToEntry = navigateToEntry,
+                                featureBengaliDefinitions = featureBengaliDefinitions,
+                                setBookmark = { value ->
+                                    onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
+                                }
+                            )
                         }
                     }
                 }
 
-                val showScrollBar by remember(searchState) {
-                    derivedStateOf {
-                        resultsListState.run { canScrollForward || canScrollBackward }
-                            && searchState.scrollCharIndexes.run { isEmpty() || size > 4 }
-                    }
-                }
-
-                if (showScrollBar) {
-                    ScrollBar(
-                        modifier = Modifier
-                            .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-                            .align(Alignment.CenterVertically),
-                        lazyListState = resultsListState,
-                        scrollCharIndexes = searchState.scrollCharIndexes
-                    )
-                }
-            }
-
-            if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
-                LinearWavyProgressIndicator(Modifier.fillMaxWidth())
+                if (resultsListState.run { canScrollForward || canScrollBackward }
+                    && searchState.scrollCharIndexes.run { isEmpty() || size > 4 }
+                ) ScrollBar(
+                    modifier = Modifier
+                        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                        .align(Alignment.CenterVertically),
+                    lazyListState = resultsListState,
+                    scrollCharIndexes = searchState.scrollCharIndexes
+                )
             }
         }
     }
