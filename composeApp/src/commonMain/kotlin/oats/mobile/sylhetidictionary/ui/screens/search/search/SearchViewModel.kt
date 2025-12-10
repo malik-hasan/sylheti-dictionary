@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,12 +55,6 @@ class SearchViewModel(
 ) : ViewModel(), KoinComponent {
 
     private val logger: Logger by injectLogger()
-
-    val assetLoaded = stateFlowOf(null,
-        preferences.nullableFlow(PreferenceKey.CURRENT_DICTIONARY_VERSION).map { version ->
-            version?.let { it >= 0 }
-        }
-    )
 
     val snackbarHostState = SnackbarHostState()
 

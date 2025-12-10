@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,7 +20,10 @@ import androidx.navigation.compose.rememberNavController
 import oats.mobile.sylhetidictionary.ui.components.SDNavigationRail
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.theme.SDTheme
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.asset_load_error
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -66,5 +71,14 @@ fun App(
 
             SDNavHost(navController, processTextSearchTerm)
         }
+    }
+
+    val assetLoaded by vm.assetLoaded.collectAsStateWithLifecycle()
+    if (assetLoaded == false) {
+        AlertDialog(
+            onDismissRequest = {},
+            confirmButton = {},
+            text = { Text(stringResource(Res.string.asset_load_error)) }
+        )
     }
 }

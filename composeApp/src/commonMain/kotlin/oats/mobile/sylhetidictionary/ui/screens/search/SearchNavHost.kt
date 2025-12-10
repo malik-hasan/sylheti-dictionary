@@ -34,14 +34,12 @@ fun SearchNavHost(processTextSearchTerm: String?) {
                 with(koinViewModel<SearchViewModel> {
                     parametersOf(it.toRoute<Route.Search>().processTextSearchTerm)
                 }) {
-                    val assetLoaded by assetLoaded.collectAsStateWithLifecycle()
                     val searchState by searchState.collectAsStateWithLifecycle()
                     val settingsState by settingsState.collectAsStateWithLifecycle()
 
                     SearchScreen(
                         activateSearchBar = activateSearchBar,
                         navigateToEntry = ::navigateToEntry,
-                        assetLoaded = assetLoaded,
                         snackbarHostState = snackbarHostState,
                         searchInputState = searchInputState,
                         resultsListState = resultsListState,

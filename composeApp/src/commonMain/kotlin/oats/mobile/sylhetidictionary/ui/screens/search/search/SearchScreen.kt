@@ -42,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
@@ -56,7 +55,6 @@ import oats.mobile.sylhetidictionary.ui.utils.isExpanded
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
-import sylhetidictionary.composeapp.generated.resources.asset_load_error
 import sylhetidictionary.composeapp.generated.resources.no_results
 import sylhetidictionary.composeapp.generated.resources.settings
 import sylhetidictionary.composeapp.generated.resources.tune
@@ -66,7 +64,6 @@ import sylhetidictionary.composeapp.generated.resources.tune
 fun SearchScreen(
     activateSearchBar: Boolean,
     navigateToEntry: (entryId: String) -> Unit,
-    assetLoaded: Boolean?,
     snackbarHostState: SnackbarHostState,
     searchInputState: TextFieldState,
     resultsListState: LazyListState,
@@ -151,78 +148,68 @@ fun SearchScreen(
             }
         }
     ) { scaffoldPadding ->
-        if (assetLoaded == false) {
-            Text(
-                text = stringResource(Res.string.asset_load_error),
-                modifier = Modifier
-                    .padding(scaffoldPadding)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-        } else {
-            Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
-                Row {
-                    Box(Modifier
-                        .animateContentSize()
-                        .weight(1f)
+        Box(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
+            Row {
+                Box(Modifier
+                    .animateContentSize()
+                    .weight(1f)
+                ) {
+                    LazyColumn(
+                        state = resultsListState,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .nestedScroll(scrollBehavior.nestedScrollConnection),
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        LazyColumn(
-                            state = resultsListState,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(scrollBehavior.nestedScrollConnection),
-                            contentPadding = PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                bottom = 8.dp + scaffoldPadding.calculateBottomPadding()
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            with(searchState) {
-                                if (entries.isEmpty() && searchInputState.text.isNotEmpty() && !resultsLoading) {
-                                    item { Text(stringResource(Res.string.no_results)) }
-                                    return@LazyColumn
-                                }
+                        with(searchState) {
+                            if (entries.isEmpty() && searchInputState.text.isNotEmpty() && !resultsLoading) {
+                                item { Text(stringResource(Res.string.no_results)) }
+                                return@LazyColumn
+                            }
 
-                                items(
-                                    items = entries,
-                                    key = { it.entryId }
-                                ) { entry ->
-                                    EntryCard(
-                                        entry = entry,
-                                        navigateToEntry = navigateToEntry,
-                                        featureBengaliDefinitions = searchState.featureBengaliDefinitions,
-                                        setBookmark = { value ->
-                                            onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
-                                        }
-                                    )
-                                }
+                            items(
+                                items = entries,
+                                key = { it.entryId }
+                            ) { entry ->
+                                EntryCard(
+                                    entry = entry,
+                                    navigateToEntry = navigateToEntry,
+                                    featureBengaliDefinitions = searchState.featureBengaliDefinitions,
+                                    setBookmark = { value ->
+                                        onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
+                                    }
+                                )
                             }
                         }
                     }
+                }
 
-                    val showScrollBar by remember(searchState) {
-                        derivedStateOf {
-                            resultsListState.run { canScrollForward || canScrollBackward }
-                                && searchState.scrollCharIndexes.run { isEmpty() || size > 4 }
-                        }
-                    }
-
-                    if (showScrollBar) {
-                        ScrollBar(
-                            modifier = Modifier
-                                .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-                                .align(Alignment.CenterVertically),
-                            lazyListState = resultsListState,
-                            scrollCharIndexes = searchState.scrollCharIndexes
-                        )
+                val showScrollBar by remember(searchState) {
+                    derivedStateOf {
+                        resultsListState.run { canScrollForward || canScrollBackward }
+                            && searchState.scrollCharIndexes.run { isEmpty() || size > 4 }
                     }
                 }
 
-                if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
-                    LinearWavyProgressIndicator(Modifier.fillMaxWidth())
+                if (showScrollBar) {
+                    ScrollBar(
+                        modifier = Modifier
+                            .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                            .align(Alignment.CenterVertically),
+                        lazyListState = resultsListState,
+                        scrollCharIndexes = searchState.scrollCharIndexes
+                    )
                 }
+            }
+
+            if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
+                LinearWavyProgressIndicator(Modifier.fillMaxWidth())
             }
         }
     }

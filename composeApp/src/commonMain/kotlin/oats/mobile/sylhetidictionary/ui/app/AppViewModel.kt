@@ -2,13 +2,21 @@ package oats.mobile.sylhetidictionary.ui.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.utils.blockingStateFlowOf
+import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
 import oats.mobile.sylhetidictionary.utility.refreshLanguage
 
 class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
+
+    val assetLoaded = stateFlowOf(null,
+        preferences.nullableFlow(PreferenceKey.CURRENT_DICTIONARY_VERSION).map { version ->
+            version?.let { it >= 0 }
+        }
+    )
 
     val language = blockingStateFlowOf(preferences.language)
 
