@@ -1,18 +1,16 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -30,6 +28,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -38,10 +38,24 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.annotation.FrequentlyChangingValue
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
@@ -51,6 +65,8 @@ import oats.mobile.sylhetidictionary.ui.components.ScrollBar
 import oats.mobile.sylhetidictionary.ui.components.SearchBarInputField
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestions
+import oats.mobile.sylhetidictionary.ui.utils.PinnedSearchBarScrollBehavior
+import oats.mobile.sylhetidictionary.ui.utils.copy
 import oats.mobile.sylhetidictionary.ui.utils.isCompactWidth
 import oats.mobile.sylhetidictionary.ui.utils.isExpanded
 import org.jetbrains.compose.resources.painterResource
@@ -72,10 +88,17 @@ fun SearchScreen(
     onSearchEvent: (SearchEvent) -> Unit,
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
-    layoutDirection: LayoutDirection = LocalLayoutDirection.current
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
 ) {
     val isCompactWindowWidth = windowAdaptiveInfo.isCompactWidth
+
+    val scrollBehavior = rememberSaveable(
+        saver = Saver(
+            save = { it.contentOffset },
+            restore = ::PinnedSearchBarScrollBehavior
+        ),
+        init = ::PinnedSearchBarScrollBehavior
+    )
 
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -92,8 +115,28 @@ fun SearchScreen(
                 } else searchInputState.setTextAndPlaceCursorAtEnd(searchState.lastSearchedTerm)
             }
 
+            val appBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
+            val targetAppBarContainerColor by remember {
+                derivedStateOf {
+                    appBarWithSearchColors.run {
+                        if (scrolledAppBarContainerColor == Color.Unspecified) {
+                            appBarContainerColor
+                        } else lerp(
+                            appBarContainerColor,
+                            scrolledAppBarContainerColor,
+                            FastOutLinearInEasing.transform(
+                                if (scrollBehavior.contentOffset < -1f) 1f else 0f
+                            )
+                        )
+                    }
+                }
+            }
+            val appBarContainerColor by animateColorAsState(targetAppBarContainerColor)
+
             AppBarWithSearch(
+                modifier = Modifier.background(appBarContainerColor),
                 state = searchBarState,
+                scrollBehavior = scrollBehavior,
                 windowInsets = SDTopAppBarWindowInsets,
                 navigationIcon = { NavigationRailIconButton() },
                 inputField = {
@@ -149,20 +192,13 @@ fun SearchScreen(
             }
         }
     ) { scaffoldPadding ->
-        Column(Modifier.padding(top = scaffoldPadding.calculateTopPadding())) {
-            if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
-                LinearProgressIndicator(Modifier.fillMaxWidth())
-            } else Spacer(Modifier.height(4.dp))
-
-            Row(
-                modifier = Modifier.padding(
-                    start = scaffoldPadding.calculateStartPadding(layoutDirection),
-                    end = scaffoldPadding.calculateEndPadding(layoutDirection),
-                )
-            ) {
+        Box(Modifier.padding(scaffoldPadding.copy(bottom = 0.dp))) {
+            Row {
                 LazyColumn(
                     state = resultsListState,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .nestedScroll(scrollBehavior.nestedScrollConnection),
                     contentPadding = PaddingValues(
                         top = 8.dp,
                         bottom = 8.dp + scaffoldPadding.calculateBottomPadding(),
@@ -203,6 +239,10 @@ fun SearchScreen(
                     lazyListState = resultsListState,
                     scrollCharIndexes = searchState.scrollCharIndexes
                 )
+            }
+
+            if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
+                LinearProgressIndicator(Modifier.fillMaxWidth())
             }
         }
     }
