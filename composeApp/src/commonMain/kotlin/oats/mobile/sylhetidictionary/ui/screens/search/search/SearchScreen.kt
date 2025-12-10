@@ -29,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -38,24 +37,12 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.annotation.FrequentlyChangingValue
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import oats.mobile.sylhetidictionary.ui.components.EntryCard
 import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
@@ -65,7 +52,6 @@ import oats.mobile.sylhetidictionary.ui.components.ScrollBar
 import oats.mobile.sylhetidictionary.ui.components.SearchBarInputField
 import oats.mobile.sylhetidictionary.ui.components.SearchSettingsMenu
 import oats.mobile.sylhetidictionary.ui.components.SearchSuggestions
-import oats.mobile.sylhetidictionary.ui.utils.PinnedSearchBarScrollBehavior
 import oats.mobile.sylhetidictionary.ui.utils.copy
 import oats.mobile.sylhetidictionary.ui.utils.isCompactWidth
 import oats.mobile.sylhetidictionary.ui.utils.isExpanded
@@ -92,13 +78,13 @@ fun SearchScreen(
 ) {
     val isCompactWindowWidth = windowAdaptiveInfo.isCompactWidth
 
-    val scrollBehavior = rememberSaveable(
-        saver = Saver(
-            save = { it.contentOffset },
-            restore = ::PinnedSearchBarScrollBehavior
-        ),
-        init = ::PinnedSearchBarScrollBehavior
-    )
+    val resultScrolledDown by remember {
+        derivedStateOf {
+            resultsListState.run {
+                firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
+            }
+        }
+    }
 
     SDScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -115,28 +101,39 @@ fun SearchScreen(
                 } else searchInputState.setTextAndPlaceCursorAtEnd(searchState.lastSearchedTerm)
             }
 
-            val appBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
-            val targetAppBarContainerColor by remember {
+            val defaultAppBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
+            val targetContainerColors by remember {
                 derivedStateOf {
-                    appBarWithSearchColors.run {
-                        if (scrolledAppBarContainerColor == Color.Unspecified) {
-                            appBarContainerColor
-                        } else lerp(
+                    val colorTransitionFraction = FastOutLinearInEasing.transform(
+                        resultScrolledDown.compareTo(false).toFloat()
+                    )
+
+                    defaultAppBarWithSearchColors.run {
+                        lerp(
                             appBarContainerColor,
                             scrolledAppBarContainerColor,
-                            FastOutLinearInEasing.transform(
-                                if (scrollBehavior.contentOffset < -1f) 1f else 0f
-                            )
+                            colorTransitionFraction
+                        ) to lerp(
+                            searchBarColors.containerColor,
+                            scrolledSearchBarContainerColor,
+                            colorTransitionFraction
                         )
                     }
                 }
             }
-            val appBarContainerColor by animateColorAsState(targetAppBarContainerColor)
+
+            val appBarContainerColor by animateColorAsState(targetContainerColors.first)
+            val searchBarContainerColor by animateColorAsState(targetContainerColors.second)
 
             AppBarWithSearch(
                 modifier = Modifier.background(appBarContainerColor),
+                colors = SearchBarDefaults.appBarWithSearchColors(
+                    appBarContainerColor = appBarContainerColor,
+                    searchBarColors = defaultAppBarWithSearchColors.searchBarColors.copy(
+                        containerColor = searchBarContainerColor
+                    )
+                ),
                 state = searchBarState,
-                scrollBehavior = scrollBehavior,
                 windowInsets = SDTopAppBarWindowInsets,
                 navigationIcon = { NavigationRailIconButton() },
                 inputField = {
@@ -196,9 +193,7 @@ fun SearchScreen(
             Row {
                 LazyColumn(
                     state = resultsListState,
-                    modifier = Modifier
-                        .weight(1f)
-                        .nestedScroll(scrollBehavior.nestedScrollConnection),
+                    modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(
                         top = 8.dp,
                         bottom = 8.dp + scaffoldPadding.calculateBottomPadding(),
