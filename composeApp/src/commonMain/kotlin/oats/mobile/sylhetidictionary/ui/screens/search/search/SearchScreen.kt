@@ -77,169 +77,167 @@ fun SearchScreen(
     settingsState: SearchSettingsState,
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
-) {
-    val isCompactWindowWidth = windowAdaptiveInfo.isCompactWidth
+) = SDScreen(
+    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    topBar = {
+        val searchBarState = rememberSearchBarState()
 
-    val resultsListScrolledDown by remember {
-        derivedStateOf {
-            resultsListState.run {
-                firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
+        LaunchedEffect(Unit) {
+            if (activateSearchBar) searchBarState.animateToExpanded()
+        }
+
+        LaunchedEffect(searchBarState.currentValue) {
+            if (searchBarState.isExpanded) {
+                onSearchEvent(SearchEvent.UpdateLastSearchedTerm(searchInputState.text.toString()))
+            } else searchInputState.setTextAndPlaceCursorAtEnd(searchState.lastSearchedTerm)
+        }
+
+        // manually implementing pinned color behavior was much easier and less buggy
+        val resultsListScrolledDown by remember {
+            derivedStateOf {
+                resultsListState.run { firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0 }
             }
         }
-    }
 
-    SDScreen(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        topBar = {
-            val searchBarState = rememberSearchBarState()
-
-            LaunchedEffect(Unit) {
-                if (activateSearchBar) searchBarState.animateToExpanded()
-            }
-
-            LaunchedEffect(searchBarState.currentValue) {
-                if (searchBarState.isExpanded) {
-                    onSearchEvent(SearchEvent.UpdateLastSearchedTerm(searchInputState.text.toString()))
-                } else searchInputState.setTextAndPlaceCursorAtEnd(searchState.lastSearchedTerm)
-            }
-
-            val appBarContainerColorsTransition = updateTransition(
-                FastOutLinearInEasing.transform(
-                    resultsListScrolledDown.compareTo(false).toFloat()
-                )
+        val appBarContainerColorsTransition = updateTransition(
+            FastOutLinearInEasing.transform(
+                resultsListScrolledDown.compareTo(false).toFloat()
             )
-            val defaultAppBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
-            val appBarContainerColor by appBarContainerColorsTransition.animateColor { colorTransitionFraction ->
-                defaultAppBarWithSearchColors.run {
-                    lerp(
-                        appBarContainerColor,
-                        scrolledAppBarContainerColor,
-                        colorTransitionFraction
-                    )
-                }
-            }
-            val searchBarContainerColor by appBarContainerColorsTransition.animateColor { colorTransitionFraction ->
-                defaultAppBarWithSearchColors.run {
-                    lerp(
-                        searchBarColors.containerColor,
-                        scrolledSearchBarContainerColor,
-                        colorTransitionFraction
-                    )
-                }
-            }
+        )
 
-            AppBarWithSearch(
-                modifier = Modifier.background(appBarContainerColor),
-                colors = SearchBarDefaults.appBarWithSearchColors(
-                    appBarContainerColor = appBarContainerColor,
-                    searchBarColors = colors(searchBarContainerColor)
-                ),
+        val defaultAppBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
+
+        val appBarContainerColor by appBarContainerColorsTransition.animateColor { colorTransitionFraction ->
+            defaultAppBarWithSearchColors.run {
+                lerp(
+                    appBarContainerColor,
+                    scrolledAppBarContainerColor,
+                    colorTransitionFraction
+                )
+            }
+        }
+
+        val searchBarContainerColor by appBarContainerColorsTransition.animateColor { colorTransitionFraction ->
+            defaultAppBarWithSearchColors.run {
+                lerp(
+                    searchBarColors.containerColor,
+                    scrolledSearchBarContainerColor,
+                    colorTransitionFraction
+                )
+            }
+        }
+
+        AppBarWithSearch(
+            modifier = Modifier.background(appBarContainerColor),
+            colors = SearchBarDefaults.appBarWithSearchColors(
+                appBarContainerColor = appBarContainerColor,
+                searchBarColors = colors(searchBarContainerColor)
+            ),
+            state = searchBarState,
+            windowInsets = SDTopAppBarWindowInsets,
+            navigationIcon = { NavigationRailIconButton() },
+            inputField = {
+                SearchBarInputField(
+                    searchBarState = searchBarState,
+                    searchInputState = searchInputState,
+                    onSearchEvent = onSearchEvent
+                )
+            },
+            actions = {
+                Box {
+                    IconButton({
+                        onSearchEvent(SearchEvent.OpenSettingsMenu(true))
+                    }) {
+                        Icon(
+                            painter = painterResource(Res.drawable.tune),
+                            contentDescription = stringResource(Res.string.settings)
+                        )
+                    }
+
+                    SearchSettingsMenu(
+                        searchState = searchState,
+                        onSearchEvent = onSearchEvent,
+                        settingsState = settingsState,
+                        onSettingsEvent = onSettingsEvent
+                    )
+                }
+            }
+        )
+
+        if (windowAdaptiveInfo.isCompactWidth) {
+            ExpandedFullScreenSearchBar(
                 state = searchBarState,
-                windowInsets = SDTopAppBarWindowInsets,
-                navigationIcon = { NavigationRailIconButton() },
                 inputField = {
                     SearchBarInputField(
                         searchBarState = searchBarState,
                         searchInputState = searchInputState,
                         onSearchEvent = onSearchEvent
                     )
-                },
-                actions = {
-                    Box {
-                        IconButton({
-                            onSearchEvent(SearchEvent.OpenSettingsMenu(true))
-                        }) {
-                            Icon(
-                                painter = painterResource(Res.drawable.tune),
-                                contentDescription = stringResource(Res.string.settings)
-                            )
-                        }
-
-                        SearchSettingsMenu(
-                            searchState = searchState,
-                            onSearchEvent = onSearchEvent,
-                            settingsState = settingsState,
-                            onSettingsEvent = onSettingsEvent
-                        )
-                    }
                 }
-            )
-
-            if (isCompactWindowWidth) {
-                ExpandedFullScreenSearchBar(
-                    state = searchBarState,
-                    inputField = {
-                        SearchBarInputField(
-                            searchBarState = searchBarState,
-                            searchInputState = searchInputState,
-                            onSearchEvent = onSearchEvent
-                        )
-                    }
-                ) { SearchSuggestions(searchBarState, searchState, onSearchEvent) }
-            } else {
-                ExpandedDockedSearchBar(
-                    state = searchBarState,
-                    inputField = {
-                        SearchBarInputField(
-                            searchBarState = searchBarState,
-                            searchInputState = searchInputState,
-                            onSearchEvent = onSearchEvent
-                        )
-                    }
-                ) { SearchSuggestions(searchBarState, searchState, onSearchEvent) }
-            }
+            ) { SearchSuggestions(searchBarState, searchState, onSearchEvent) }
+        } else {
+            ExpandedDockedSearchBar(
+                state = searchBarState,
+                inputField = {
+                    SearchBarInputField(
+                        searchBarState = searchBarState,
+                        searchInputState = searchInputState,
+                        onSearchEvent = onSearchEvent
+                    )
+                }
+            ) { SearchSuggestions(searchBarState, searchState, onSearchEvent) }
         }
-    ) { scaffoldPadding ->
-        Box(Modifier.padding(scaffoldPadding.copy(bottom = 0.dp))) {
-            Row {
-                LazyColumn(
-                    state = resultsListState,
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(
-                        top = 8.dp,
-                        bottom = 8.dp + scaffoldPadding.calculateBottomPadding(),
-                        start = 16.dp,
-                        end = 16.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    with(searchState) {
-                        if (entries.isEmpty() && searchInputState.text.isNotEmpty() && !resultsLoading) {
-                            item { Text(stringResource(Res.string.no_results)) }
-                            return@LazyColumn
-                        }
+    }
+) { scaffoldPadding ->
+    Box(Modifier.padding(scaffoldPadding.copy(bottom = 0.dp))) {
+        Row {
+            LazyColumn(
+                state = resultsListState,
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(
+                    top = 8.dp,
+                    bottom = 8.dp + scaffoldPadding.calculateBottomPadding(),
+                    start = 16.dp,
+                    end = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                with(searchState) {
+                    if (entries.isEmpty() && searchInputState.text.isNotEmpty() && !resultsLoading) {
+                        item { Text(stringResource(Res.string.no_results)) }
+                        return@LazyColumn
+                    }
 
-                        items(
-                            items = entries,
-                            key = { it.entryId }
-                        ) { entry ->
-                            EntryCard(
-                                entry = entry,
-                                navigateToEntry = navigateToEntry,
-                                featureBengaliDefinitions = featureBengaliDefinitions,
-                                setBookmark = { value ->
-                                    onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
-                                }
-                            )
-                        }
+                    items(
+                        items = entries,
+                        key = { it.entryId }
+                    ) { entry ->
+                        EntryCard(
+                            entry = entry,
+                            navigateToEntry = navigateToEntry,
+                            featureBengaliDefinitions = featureBengaliDefinitions,
+                            setBookmark = { value ->
+                                onSearchEvent(SearchEvent.Bookmark(entry.entryId, value))
+                            }
+                        )
                     }
                 }
-
-                if (resultsListState.run { canScrollForward || canScrollBackward }
-                    && searchState.scrollCharIndexes.run { isEmpty() || size > 4 }
-                ) ScrollBar(
-                    modifier = Modifier
-                        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
-                        .align(Alignment.CenterVertically),
-                    lazyListState = resultsListState,
-                    scrollCharIndexes = searchState.scrollCharIndexes
-                )
             }
 
-            if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
-                LinearProgressIndicator(Modifier.fillMaxWidth())
-            }
+            if (resultsListState.run { canScrollForward || canScrollBackward }
+                && searchState.scrollCharIndexes.run { isEmpty() || size > 4 }
+            ) ScrollBar(
+                modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+                    .align(Alignment.CenterVertically),
+                lazyListState = resultsListState,
+                scrollCharIndexes = searchState.scrollCharIndexes
+            )
+        }
+
+        if (searchInputState.text.isNotBlank() && searchState.resultsLoading) {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
         }
     }
 }
