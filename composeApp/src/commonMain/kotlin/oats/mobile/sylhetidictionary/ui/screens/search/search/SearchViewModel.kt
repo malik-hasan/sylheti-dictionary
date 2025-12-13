@@ -128,7 +128,7 @@ class SearchViewModel(
     }
 
     val searchQueryState = TextFieldState(processTextSearchTerm ?: "")
-    val searchInputState = TextFieldState("")
+    val searchInputState = TextFieldState()
 
     @OptIn(FlowPreview::class)
     private val searchSuggestionsFlow = settingsState.combine(
