@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.2.21"
 ksp = "2.2.21-2.0.4"
-jetbrains-compose = "1.10.0-rc01"
+jetbrains-compose = "1.10.0-rc02"
 agp = "8.11.1" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
 android-minSdk = "23"
 android-targetSdk = "36"
