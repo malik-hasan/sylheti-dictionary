@@ -82,7 +82,7 @@ class SearchViewModel(
             }.distinctUntilChanged()
                 .onEach {
                     logger.d("SEARCH: refreshing search for settings change $it")
-                    refreshSearch(searchInputState.text.toString(), it)
+                    refreshSearch(searchQueryState.text.toString(), it)
                 }
         }
     )
