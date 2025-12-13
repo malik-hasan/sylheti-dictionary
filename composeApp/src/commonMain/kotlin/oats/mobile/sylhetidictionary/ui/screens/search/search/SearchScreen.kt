@@ -70,6 +70,7 @@ fun SearchScreen(
     activateSearchBar: Boolean,
     navigateToEntry: (entryId: String) -> Unit,
     snackbarHostState: SnackbarHostState,
+    searchQueryState: TextFieldState,
     searchInputState: TextFieldState,
     resultsListState: LazyListState,
     searchState: SearchState,
@@ -88,8 +89,8 @@ fun SearchScreen(
 
         LaunchedEffect(searchBarState.currentValue) {
             if (searchBarState.isExpanded) {
-                onSearchEvent(SearchEvent.UpdateLastSearchedTerm(searchInputState.text.toString()))
-            } else searchInputState.setTextAndPlaceCursorAtEnd(searchState.lastSearchedTerm)
+                searchInputState.setTextAndPlaceCursorAtEnd(searchQueryState.text.toString())
+            }
         }
 
         // manually implementing pinned color behavior was much easier and less buggy
@@ -136,7 +137,7 @@ fun SearchScreen(
             state = searchBarState,
             windowInsets = SDTopAppBarWindowInsets,
             navigationIcon = { NavigationRailIconButton() },
-            inputField = { SearchBarInputField(searchBarState, searchInputState, onSearchEvent) },
+            inputField = { SearchBarInputField(searchBarState, searchQueryState, onSearchEvent) },
             actions = {
                 Box {
                     IconButton({

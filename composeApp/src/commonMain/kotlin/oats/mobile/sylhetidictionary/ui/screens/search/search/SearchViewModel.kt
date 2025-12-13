@@ -127,7 +127,8 @@ class SearchViewModel(
         }
     }
 
-    var searchInputState = TextFieldState(processTextSearchTerm ?: "")
+    val searchQueryState = TextFieldState("")
+    val searchInputState = TextFieldState(processTextSearchTerm ?: "")
 
     private val searchSuggestionsFlow = settingsState.combine(
         snapshotFlow { searchInputState.text }.debounce(300)
@@ -165,17 +166,12 @@ class SearchViewModel(
         }
     )
 
-    fun updateLastSearchedTerm(term: String) = _searchState.update {
-        it.copy(lastSearchedTerm = term)
-    }
-
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.OpenSettingsMenu -> _searchState.update {
                 it.copy(settingsMenuOpen = event.open)
             }
 
-            is SearchEvent.UpdateLastSearchedTerm -> updateLastSearchedTerm(event.term)
             SearchEvent.Search -> search()
             is SearchEvent.SelectSuggestion -> {
                 searchInputState.setTextAndPlaceCursorAtEnd(event.term)
@@ -183,12 +179,12 @@ class SearchViewModel(
             }
 
             is SearchEvent.ClearSearch -> viewModelScope.launch {
-                searchInputState.clearText()
                 if (!event.searchBarExpanded) {
                     logger.d("SEARCH: clearing results and highlight regex")
+                    searchQueryState.clearText()
                     searchResultsSharedFlow.emit(null)
                     preferences.setHighlightRegex(Regex(""))
-                }
+                } else searchInputState.clearText()
             }
 
             is SearchEvent.Bookmark -> with(event) {
@@ -204,11 +200,12 @@ class SearchViewModel(
     }
 
     private fun search() = viewModelScope.launch {
-        searchInputState.text.toString().let { searchTerm ->
-            if (searchTerm != searchState.value.lastSearchedTerm) {
-                updateLastSearchedTerm(searchTerm)
-
+        searchInputState.text.let { searchInputText ->
+            if (searchInputText != searchQueryState.text) {
+                val searchTerm = searchInputText.toString()
                 logger.d("SEARCH: searching for $searchTerm")
+
+                searchQueryState.setTextAndPlaceCursorAtEnd(searchInputState.text.toString())
                 val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
 
                 preferences.setHighlightRegex(highlightRegex)

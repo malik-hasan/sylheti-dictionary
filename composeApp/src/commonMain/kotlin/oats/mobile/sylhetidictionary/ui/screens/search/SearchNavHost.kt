@@ -41,6 +41,7 @@ fun SearchNavHost(processTextSearchTerm: String?) {
                         activateSearchBar = activateSearchBar,
                         navigateToEntry = ::navigateToEntry,
                         snackbarHostState = snackbarHostState,
+                        searchQueryState = searchQueryState,
                         searchInputState = searchInputState,
                         resultsListState = resultsListState,
                         searchState = searchState,

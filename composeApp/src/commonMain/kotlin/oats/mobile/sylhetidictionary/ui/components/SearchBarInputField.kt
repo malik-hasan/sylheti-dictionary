@@ -25,11 +25,11 @@ import sylhetidictionary.composeapp.generated.resources.search_sylheti_dictionar
 @Composable
 fun SearchBarInputField(
     searchBarState: SearchBarState,
-    searchInputState: TextFieldState,
+    textFieldState: TextFieldState,
     onSearchEvent: (SearchEvent) -> Unit,
     scope: CoroutineScope = rememberCoroutineScope()
 ) = SearchBarDefaults.InputField(
-    textFieldState = searchInputState,
+    textFieldState = textFieldState,
     searchBarState = searchBarState,
     onSearch = {
         scope.launch {
@@ -55,13 +55,13 @@ fun SearchBarInputField(
         } else SearchIcon()
     },
     trailingIcon = {
-        if (searchInputState.text.isNotBlank()) {
-            IconButton({ onSearchEvent(SearchEvent.ClearSearch(searchBarState.isExpanded)) }) {
-                Icon(
-                    painter = painterResource(Res.drawable.clear),
-                    contentDescription = "Clear"
-                )
-            }
+        if (textFieldState.text.isNotBlank()) IconButton(
+            onClick = { onSearchEvent(SearchEvent.ClearSearch(searchBarState.isExpanded)) }
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.clear),
+                contentDescription = "Clear"
+            )
         }
     }
 )
