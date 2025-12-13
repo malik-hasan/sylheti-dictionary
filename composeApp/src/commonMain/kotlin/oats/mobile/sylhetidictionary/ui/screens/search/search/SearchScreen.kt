@@ -41,7 +41,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.lerp
@@ -79,7 +81,7 @@ fun SearchScreen(
     onSettingsEvent: (SearchSettingsEvent) -> Unit,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
 ) = SDScreen(
-    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    snackbarHost = { SnackbarHost(snackbarHostState) },
     topBar = {
         val searchBarState = rememberSearchBarState()
 
@@ -140,9 +142,8 @@ fun SearchScreen(
             inputField = { SearchBarInputField(searchBarState, searchQueryState, onSearchEvent) },
             actions = {
                 Box {
-                    IconButton({
-                        onSearchEvent(SearchEvent.OpenSettingsMenu(true))
-                    }) {
+                    var menuExpanded by remember { mutableStateOf(false) }
+                    IconButton({ menuExpanded = true }) {
                         Icon(
                             painter = painterResource(Res.drawable.tune),
                             contentDescription = stringResource(Res.string.settings)
@@ -150,8 +151,9 @@ fun SearchScreen(
                     }
 
                     SearchSettingsMenu(
+                        expanded = menuExpanded,
+                        onDismiss = { menuExpanded = false },
                         searchState = searchState,
-                        onSearchEvent = onSearchEvent,
                         settingsState = settingsState,
                         onSettingsEvent = onSettingsEvent
                     )

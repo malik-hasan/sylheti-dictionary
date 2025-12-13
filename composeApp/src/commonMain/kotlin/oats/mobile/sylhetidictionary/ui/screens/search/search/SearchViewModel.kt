@@ -16,6 +16,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -45,7 +46,6 @@ import org.koin.core.component.KoinComponent
 import sylhetidictionary.composeapp.generated.resources.Res
 import sylhetidictionary.composeapp.generated.resources.at_least_one_language
 
-@OptIn(FlowPreview::class)
 class SearchViewModel(
     processTextSearchTerm: String?,
     private val preferences: PreferencesRepository,
@@ -107,7 +107,7 @@ class SearchViewModel(
                         preferences.set(language.settingsKey, selected)
                     } else {
                         val message = getString(Res.string.at_least_one_language)
-                        with(snackbarHostState) {
+                        snackbarHostState.run {
                             if (currentSnackbarData?.visuals?.message != message) {
                                 currentSnackbarData?.dismiss()
                                 showSnackbar(message)
@@ -127,9 +127,10 @@ class SearchViewModel(
         }
     }
 
-    val searchQueryState = TextFieldState("")
-    val searchInputState = TextFieldState(processTextSearchTerm ?: "")
+    val searchQueryState = TextFieldState(processTextSearchTerm ?: "")
+    val searchInputState = TextFieldState("")
 
+    @OptIn(FlowPreview::class)
     private val searchSuggestionsFlow = settingsState.combine(
         snapshotFlow { searchInputState.text }.debounce(300)
     ) { settings, searchTerm ->
@@ -168,16 +169,8 @@ class SearchViewModel(
 
     fun onSearchEvent(event: SearchEvent) {
         when (event) {
-            is SearchEvent.OpenSettingsMenu -> _searchState.update {
-                it.copy(settingsMenuOpen = event.open)
-            }
-
-            SearchEvent.Search -> search()
-            is SearchEvent.SelectSuggestion -> {
-                searchInputState.setTextAndPlaceCursorAtEnd(event.term)
-                search()
-            }
-
+            SearchEvent.Search -> searchQueryState.setTextAndPlaceCursorAtEnd(searchInputState.text.toString())
+            is SearchEvent.SelectSuggestion -> searchQueryState.setTextAndPlaceCursorAtEnd(event.term)
             is SearchEvent.ClearSearch -> viewModelScope.launch {
                 if (!event.searchBarExpanded) {
                     logger.d("SEARCH: clearing results and highlight regex")
@@ -199,26 +192,15 @@ class SearchViewModel(
         }
     }
 
-    private fun search() = viewModelScope.launch {
-        searchInputState.text.let { searchInputText ->
-            if (searchInputText != searchQueryState.text) {
-                val searchTerm = searchInputText.toString()
+    init {
+        viewModelScope.launch {
+            snapshotFlow { searchQueryState.text.toString() }.collectLatest { searchTerm ->
                 logger.d("SEARCH: searching for $searchTerm")
-
-                searchQueryState.setTextAndPlaceCursorAtEnd(searchInputState.text.toString())
                 val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
-
                 preferences.setHighlightRegex(highlightRegex)
-
-                if (hasSearchResults) {
-                    recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
-                }
+                if (hasSearchResults) recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
             }
         }
-    }
-
-    init {
-        if (searchInputState.text.isNotEmpty()) search()
     }
 
     private suspend fun processSearchQuery(searchTerm: String, settings: SearchSettingsState) = coroutineScope {
