@@ -82,7 +82,7 @@ class SearchViewModel(
             }.distinctUntilChanged()
                 .onEach {
                     logger.d("SEARCH: refreshing search for settings change $it")
-                    refreshSearch(searchQueryState.text.toString(), it)
+                    search(searchQueryState.text.toString(), it)
                 }
         }
     )
@@ -198,7 +198,7 @@ class SearchViewModel(
         viewModelScope.launch {
             snapshotFlow { searchQueryState.text.toString() }.collectLatest { searchTerm ->
                 logger.d("SEARCH: searching for $searchTerm")
-                val (hasSearchResults, detectedSearchScript, highlightRegex) = refreshSearch(searchTerm, settingsState.value)
+                val (hasSearchResults, detectedSearchScript, highlightRegex) = search(searchTerm, settingsState.value)
                 preferences.setHighlightRegex(highlightRegex)
                 if (hasSearchResults) recentSearchesRepository.cacheSearch(searchTerm, detectedSearchScript)
             }
@@ -347,7 +347,7 @@ class SearchViewModel(
 
     val resultsListState = LazyListState()
 
-    private suspend fun refreshSearch(
+    private suspend fun search(
         searchTerm: String,
         settings: SearchSettingsState
     ): Triple<Boolean, SearchScript, Regex> {
