@@ -187,12 +187,9 @@ fun SearchScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 with(searchState) {
-                    if (entries.isEmpty() && searchInputState.text.isNotEmpty() && !resultsLoading) {
+                    if (entries.isEmpty() && searchQueryState.text.isNotEmpty() && !resultsLoading) {
                         item { Text(stringResource(Res.string.no_results)) }
-                        return@LazyColumn
-                    }
-
-                    items(
+                    } else items(
                         items = entries,
                         key = { it.entryId }
                     ) { entry ->
@@ -205,6 +202,7 @@ fun SearchScreen(
                             }
                         )
                     }
+
                 }
             }
 
