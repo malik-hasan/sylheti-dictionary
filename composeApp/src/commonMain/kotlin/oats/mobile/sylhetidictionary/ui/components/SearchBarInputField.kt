@@ -55,7 +55,7 @@ fun SearchBarInputField(
         } else SearchIcon()
     },
     trailingIcon = {
-        if (textFieldState.text.isNotBlank()) IconButton(
+        if (textFieldState.text.isNotEmpty()) IconButton(
             onClick = { onSearchEvent(SearchEvent.ClearSearch(searchBarState.isExpanded)) }
         ) {
             Icon(

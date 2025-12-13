@@ -172,12 +172,14 @@ class SearchViewModel(
             SearchEvent.Search -> searchQueryState.setTextAndPlaceCursorAtEnd(searchInputState.text.toString())
             is SearchEvent.SelectSuggestion -> searchQueryState.setTextAndPlaceCursorAtEnd(event.term)
             is SearchEvent.ClearSearch -> viewModelScope.launch {
-                if (!event.searchBarExpanded) {
+                if (event.searchBarExpanded) {
+                    searchInputState.clearText()
+                } else {
                     logger.d("SEARCH: clearing results and highlight regex")
                     searchQueryState.clearText()
                     searchResultsSharedFlow.emit(null)
                     preferences.setHighlightRegex(Regex(""))
-                } else searchInputState.clearText()
+                }
             }
 
             is SearchEvent.Bookmark -> with(event) {
