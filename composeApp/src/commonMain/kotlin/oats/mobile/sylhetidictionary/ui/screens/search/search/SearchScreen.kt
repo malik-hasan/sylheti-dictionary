@@ -1,8 +1,9 @@
 package oats.mobile.sylhetidictionary.ui.screens.search.search
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarDefaults.colors
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -78,7 +80,7 @@ fun SearchScreen(
 ) {
     val isCompactWindowWidth = windowAdaptiveInfo.isCompactWidth
 
-    val resultScrolledDown by remember {
+    val resultsListScrolledDown by remember {
         derivedStateOf {
             resultsListState.run {
                 firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
@@ -101,37 +103,36 @@ fun SearchScreen(
                 } else searchInputState.setTextAndPlaceCursorAtEnd(searchState.lastSearchedTerm)
             }
 
+            val appBarContainerColorsTransition = updateTransition(
+                FastOutLinearInEasing.transform(
+                    resultsListScrolledDown.compareTo(false).toFloat()
+                )
+            )
             val defaultAppBarWithSearchColors = SearchBarDefaults.appBarWithSearchColors()
-            val targetContainerColors by remember {
-                derivedStateOf {
-                    val colorTransitionFraction = FastOutLinearInEasing.transform(
-                        resultScrolledDown.compareTo(false).toFloat()
+            val appBarContainerColor by appBarContainerColorsTransition.animateColor { colorTransitionFraction ->
+                defaultAppBarWithSearchColors.run {
+                    lerp(
+                        appBarContainerColor,
+                        scrolledAppBarContainerColor,
+                        colorTransitionFraction
                     )
-
-                    defaultAppBarWithSearchColors.run {
-                        lerp(
-                            appBarContainerColor,
-                            scrolledAppBarContainerColor,
-                            colorTransitionFraction
-                        ) to lerp(
-                            searchBarColors.containerColor,
-                            scrolledSearchBarContainerColor,
-                            colorTransitionFraction
-                        )
-                    }
                 }
             }
-
-            val appBarContainerColor by animateColorAsState(targetContainerColors.first)
-            val searchBarContainerColor by animateColorAsState(targetContainerColors.second)
+            val searchBarContainerColor by appBarContainerColorsTransition.animateColor { colorTransitionFraction ->
+                defaultAppBarWithSearchColors.run {
+                    lerp(
+                        searchBarColors.containerColor,
+                        scrolledSearchBarContainerColor,
+                        colorTransitionFraction
+                    )
+                }
+            }
 
             AppBarWithSearch(
                 modifier = Modifier.background(appBarContainerColor),
                 colors = SearchBarDefaults.appBarWithSearchColors(
                     appBarContainerColor = appBarContainerColor,
-                    searchBarColors = defaultAppBarWithSearchColors.searchBarColors.copy(
-                        containerColor = searchBarContainerColor
-                    )
+                    searchBarColors = colors(searchBarContainerColor)
                 ),
                 state = searchBarState,
                 windowInsets = SDTopAppBarWindowInsets,
