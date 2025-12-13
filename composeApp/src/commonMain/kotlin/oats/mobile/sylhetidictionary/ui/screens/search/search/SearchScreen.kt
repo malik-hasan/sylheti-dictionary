@@ -136,13 +136,7 @@ fun SearchScreen(
             state = searchBarState,
             windowInsets = SDTopAppBarWindowInsets,
             navigationIcon = { NavigationRailIconButton() },
-            inputField = {
-                SearchBarInputField(
-                    searchBarState = searchBarState,
-                    searchInputState = searchInputState,
-                    onSearchEvent = onSearchEvent
-                )
-            },
+            inputField = { SearchBarInputField(searchBarState, searchInputState, onSearchEvent) },
             actions = {
                 Box {
                     IconButton({
@@ -167,26 +161,12 @@ fun SearchScreen(
         if (windowAdaptiveInfo.isCompactWidth) {
             ExpandedFullScreenSearchBar(
                 state = searchBarState,
-                inputField = {
-                    SearchBarInputField(
-                        searchBarState = searchBarState,
-                        searchInputState = searchInputState,
-                        onSearchEvent = onSearchEvent
-                    )
-                }
+                inputField = { SearchBarInputField(searchBarState, searchInputState, onSearchEvent) }
             ) { SearchSuggestions(searchBarState, searchState, onSearchEvent) }
-        } else {
-            ExpandedDockedSearchBar(
-                state = searchBarState,
-                inputField = {
-                    SearchBarInputField(
-                        searchBarState = searchBarState,
-                        searchInputState = searchInputState,
-                        onSearchEvent = onSearchEvent
-                    )
-                }
-            ) { SearchSuggestions(searchBarState, searchState, onSearchEvent) }
-        }
+        } else ExpandedDockedSearchBar(
+            state = searchBarState,
+            inputField = { SearchBarInputField(searchBarState, searchInputState, onSearchEvent) }
+        ) { SearchSuggestions(searchBarState, searchState, onSearchEvent) }
     }
 ) { scaffoldPadding ->
     Box(Modifier.padding(scaffoldPadding.copy(bottom = 0.dp))) {
