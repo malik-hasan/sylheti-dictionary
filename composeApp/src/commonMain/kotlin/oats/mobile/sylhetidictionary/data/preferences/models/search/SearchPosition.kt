@@ -8,6 +8,10 @@ import sylhetidictionary.composeapp.generated.resources.full_match
 import sylhetidictionary.composeapp.generated.resources.start
 
 enum class SearchPosition(override val label: StringResource): SettingEnum {
+    FULL_MATCH(Res.string.full_match) {
+        override fun getPositionedQuery(term: String) = term
+        override fun getSuggestionQuery(term: String) = START.getPositionedQuery(term)
+    },
     ANYWHERE(Res.string.anywhere) {
         override fun getPositionedQuery(term: String) = "*$term*"
         override fun getSuggestionQuery(term: String) = getPositionedQuery(term)
@@ -19,10 +23,6 @@ enum class SearchPosition(override val label: StringResource): SettingEnum {
     END(Res.string.end) {
         override fun getPositionedQuery(term: String) = "*$term"
         override fun getSuggestionQuery(term: String) = ANYWHERE.getPositionedQuery(term)
-    },
-    FULL_MATCH(Res.string.full_match) {
-        override fun getPositionedQuery(term: String) = term
-        override fun getSuggestionQuery(term: String) = START.getPositionedQuery(term)
     };
 
     abstract fun getPositionedQuery(term: String): String
