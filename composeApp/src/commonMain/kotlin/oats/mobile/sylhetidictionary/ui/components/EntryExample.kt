@@ -48,8 +48,8 @@ fun EntryExample(
                 val examples = remember(example) {
                     buildMap {
                         put(FieldTag.IPA, exampleIPA)
-                        put(FieldTag.EASTERN_NAGRI, exampleEN)
                         put(FieldTag.SYLHETI_NAGRI, exampleSN)
+                        put(FieldTag.EASTERN_NAGRI, exampleEN)
                         put(FieldTag.ENGLISH, exampleEnglish)
                         if (featureBengaliExamples) {
                             put(FieldTag.BENGALI, exampleBengali)
@@ -75,11 +75,11 @@ fun EntryExample(
                             examples[FieldTag.IPA]?.let {
                                 SDString(it, highlightRegex, SearchScript.LATIN)
                             },
-                            examples[FieldTag.EASTERN_NAGRI]?.let {
-                                SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
-                            },
                             examples[FieldTag.SYLHETI_NAGRI]?.let {
                                 SDString(it, highlightRegex)
+                            },
+                            examples[FieldTag.EASTERN_NAGRI]?.let {
+                                SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI)
                             }
                         )
                     )

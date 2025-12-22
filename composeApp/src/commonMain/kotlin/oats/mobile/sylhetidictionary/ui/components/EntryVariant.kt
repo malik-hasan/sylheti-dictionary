@@ -21,8 +21,8 @@ fun EntryVariant(
     tagFontFamily = latinDisplayFontFamily,
     bodies = listOfNotNull(
         SDString(variant.variantIPA, highlightRegex, SearchScript.LATIN),
-        variant.variantEN?.let { SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI) },
-        variant.variantSN?.let { SDString(it, highlightRegex) }
+        variant.variantSN?.let { SDString(it, highlightRegex) },
+        variant.variantEN?.let { SDString(it, highlightRegex, SearchScript.EASTERN_NAGRI) }
     ),
     separator = " • "
 )

@@ -47,14 +47,14 @@ fun EntryHeader(
                 text = buildAnnotatedString {
                     appendHighlighted(displayIPA, highlightRegex, latinBodyFontFamily)
 
-                    displayEN?.let {
-                        append(" • ")
-                        appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
-                    }
-
                     displaySN?.let {
                         append(" • ")
                         appendHighlighted(it, highlightRegex)
+                    }
+
+                    displayEN?.let {
+                        append(" • ")
+                        appendHighlighted(it, highlightRegex, bengaliBodyFontFamily)
                     }
                 },
                 fontWeight = FontWeight.Black,

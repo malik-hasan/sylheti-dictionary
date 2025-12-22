@@ -22,16 +22,16 @@ enum class SearchScript(
         languages = SearchLanguage.Latin.entries
     ),
 
+    SYLHETI_NAGRI(
+        label = Res.string.sylheti_nagri,
+        regexCharSet = Regex("[\ua800-\ua82f]")
+//        regexCharSet = Regex("\\p{IsSyloti_Nagri}")
+    ),
+
     EASTERN_NAGRI(
         label = Res.string.eastern_nagri,
         regexCharSet = Regex("[\u0980-\u09FF]"),
 //        regexCharSet = Regex("\\p{IsBengali}"),
         languages = SearchLanguage.EasternNagri.entries
-    ),
-
-    SYLHETI_NAGRI(
-        label = Res.string.sylheti_nagri,
-        regexCharSet = Regex("[\ua800-\ua82f]")
-//        regexCharSet = Regex("\\p{IsSyloti_Nagri}")
     );
 }
