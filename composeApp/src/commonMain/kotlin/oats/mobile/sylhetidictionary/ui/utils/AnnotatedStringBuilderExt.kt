@@ -35,7 +35,7 @@ fun AnnotatedString.Builder.appendHighlighted(
             if (currentIndex < highlightRange.first) {
                 append(trimmedText.substring(currentIndex, highlightRange.first))
             }
-            withStyle(SpanStyle(background = MaterialTheme.colorScheme.primaryContainer)) {
+            withStyle(SpanStyle(background = MaterialTheme.colorScheme.inversePrimary)) {
                 val stopIndex = if (trimmedText[highlightRange.last] in UnicodeUtility.HOSHONTO) {
                     highlightRange.last // exclusive
                 } else highlightRange.last + 1 // inclusive
