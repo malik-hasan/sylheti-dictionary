@@ -66,8 +66,8 @@ fun SearchNavHost(processTextSearchTerm: String?) {
                         navigateUp = navController::navigateUp,
                         popToSearchBar = {
                             navController.run {
-                                getBackStackEntry(Route.Search()).savedStateHandle[Route.Search.ACTIVATE_SEARCH_BAR_KEY] = true
-                                popBackStack(Route.Search(), false)
+                                getBackStackEntry(Route.Search::class).savedStateHandle[Route.Search.ACTIVATE_SEARCH_BAR_KEY] = true
+                                popBackStack(Route.Search::class, false)
                             }
                         },
                         navigateToEntry = ::navigateToEntry
