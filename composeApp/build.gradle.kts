@@ -63,7 +63,7 @@ kotlin {
                 implementation(libs.kermit)
                 implementation(libs.kermit.koin)
                 implementation(project.dependencies.platform(libs.koin.bom))
-                api(libs.koin.core)
+                implementation(libs.koin.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
                 implementation(libs.kotlinx.coroutines.core)
@@ -89,7 +89,6 @@ kotlin {
                 implementation(libs.appcompat)
                 implementation(libs.core.splashscreen)
                 implementation(libs.koin.android)
-                implementation(libs.lifecycle.runtime.compose)
                 implementation(libs.room.runtime.android)
                 implementation(libs.sqldelight.android.driver)
             }
@@ -112,7 +111,6 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.lifecycle.runtime.compose)
                 implementation(libs.sqldelight.sqlite.driver)
             }
         }
