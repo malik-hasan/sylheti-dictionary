@@ -45,13 +45,18 @@
     <string name="dark">Dark</string>
     <string name="dynamic_theme">Dynamic Theme</string>
 
+<!--    TODO: bengali translations of this section -->
     <string name="ipa_help">IPA Help</string>
     <string name="what_is_ipa">What is IPA?</string>
+    <string name="ipa_is_an_alphabet">The International Phonetic Alphabet (IPA) is an alphabetic system used by linguists to represent speech sounds across different languages.</string>
     <string name="ipa_url">https://en.wikipedia.org/wiki/International_Phonetic_Alphabet</string>
     <string name="how_does_ipa_rep_sylheti">How does IPA represent Sylheti sounds?</string>
+    <string name="each_contrastive_sound">Each contrastive sound in the Sylheti language is represented with an IPA symbol, e.g. ꠖ/ꠗ = /ɖ/</string>
     <string name="sylheti_ipa_url">https://en.wikipedia.org/wiki/Help:IPA/Sylheti</string>
     <string name="how_to_search_ipa">How do I search in IPA?</string>
-    <string name="ipa_equivalences">This app supports the following equivalences between Latin and IPA characters so that you may search using a standard QWERTY keyboard.</string>
+    <string name="use_qwerty">You may use a regular QWERTY keyboard to search for IPA terms. Each special IPA character can be matched by searching a similar Latin character. For example, searching "suron" returns the following results:</string>
+    <string name="ipa_equivalences">The full list of Latin-IPA character matches for searching is below:</string>
+    <string name="learn_more">Learn more</string>
 
     <string name="about">About</string>
 </resources>

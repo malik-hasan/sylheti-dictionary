@@ -1,5 +1,6 @@
 package oats.mobile.sylhetidictionary.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,15 +29,21 @@ import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
 import oats.mobile.sylhetidictionary.ui.theme.textLinkStyle
+import oats.mobile.sylhetidictionary.ui.utils.space
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import sylhetidictionary.composeapp.generated.resources.Res
+import sylhetidictionary.composeapp.generated.resources.each_contrastive_sound
 import sylhetidictionary.composeapp.generated.resources.how_does_ipa_rep_sylheti
 import sylhetidictionary.composeapp.generated.resources.how_to_search_ipa
 import sylhetidictionary.composeapp.generated.resources.ipa_equivalences
 import sylhetidictionary.composeapp.generated.resources.ipa_help
+import sylhetidictionary.composeapp.generated.resources.ipa_is_an_alphabet
 import sylhetidictionary.composeapp.generated.resources.ipa_url
+import sylhetidictionary.composeapp.generated.resources.learn_more
 import sylhetidictionary.composeapp.generated.resources.sylheti_ipa_url
+import sylhetidictionary.composeapp.generated.resources.use_qwerty
 import sylhetidictionary.composeapp.generated.resources.what_is_ipa
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -64,25 +71,39 @@ fun IpaHelpScreen() {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
+                    text = stringResource(Res.string.what_is_ipa),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Text(
                     text = buildAnnotatedString {
+                        append(stringResource(Res.string.ipa_is_an_alphabet))
+                        space()
                         withLink(LinkAnnotation.Url(
                             url = stringResource(Res.string.ipa_url),
                             styles = textLinkStyle
-                        )) { append(stringResource(Res.string.what_is_ipa)) }
+                        )) { append(stringResource(Res.string.learn_more)) }
                     },
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
                 Spacer(Modifier.height(8.dp))
 
                 Text(
+                    text = stringResource(Res.string.how_does_ipa_rep_sylheti),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Text(
                     text = buildAnnotatedString {
+                        append(stringResource(Res.string.each_contrastive_sound))
+                        space()
                         withLink(LinkAnnotation.Url(
                             url = stringResource(Res.string.sylheti_ipa_url),
                             styles = textLinkStyle
-                        )) { append(stringResource(Res.string.how_does_ipa_rep_sylheti)) }
+                        )) { append(stringResource(Res.string.learn_more)) }
                     },
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -90,6 +111,16 @@ fun IpaHelpScreen() {
                 Text(
                     text = stringResource(Res.string.how_to_search_ipa),
                     style = MaterialTheme.typography.bodyLarge
+                )
+
+                Text(
+                    text = stringResource(Res.string.use_qwerty),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Image(
+                    painter = painterResource(Res.drawable.ipa_equivalences),
+                    contentDescription = "searching 'suron' matches 'sʊɾɔn' as well as 'ʃʊɾɔŋ'"
                 )
 
                 Text(
