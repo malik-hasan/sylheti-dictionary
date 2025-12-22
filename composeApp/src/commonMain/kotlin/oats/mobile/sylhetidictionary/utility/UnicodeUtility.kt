@@ -13,9 +13,13 @@ object UnicodeUtility {
 
     // chars found in Sylheti IPA fields:
     val SYLHETI_IPA_CHARS = listOf(
-        'a', 'b', 'd', 'ɖ', 'ʤ', 'e', 'ɛ', 'f', 'ɡ', 'h', 'i', 'ɪ', 'k', 'l', 'm', 'ɱ', 'n', 'ɳ', 'ŋ',
-        'o', 'ɔ', 'p', 'r', 'ɾ', 'ɽ', 's', 'ʂ', 'ʃ', 't', 'ʈ', 'ʧ', 'u', 'ʊ', 'x', 'z', 'ʒ'
+        'a', 'i', 'ɪ', 'u', 'ʊ', 'e', 'ɛ', 'o', 'ɔ', 'b', 'd', 'ɖ', 'ʤ', 'f', 'ɡ', 'h', 'k', 'x',
+        'l', 'm', 'ɱ', 'n', 'ɳ', 'ŋ', 'p', 'r', 'ɾ', 'ɽ', 's', 'ʂ', 'ʃ', 't', 'ʈ', 'ʧ', 'z', 'ʒ'
     ).withIndex().associate { it.value to it.index }
+
+    // old order
+//    'a', 'b', 'd', 'ɖ', 'ʤ', 'e', 'ɛ', 'f', 'ɡ', 'h', 'i', 'ɪ', 'k', 'l', 'm', 'ɱ', 'n', 'ɳ',
+//    'ŋ', 'o', 'ɔ', 'p', 'r', 'ɾ', 'ɽ', 's', 'ʂ', 'ʃ', 't', 'ʈ', 'ʧ', 'u', 'ʊ', 'x', 'z', 'ʒ'
 
     val SYLHETI_IPA_SORTER = Comparator<String> { str1, str2 ->
         var i1 = 0
