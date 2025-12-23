@@ -111,6 +111,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.lifecycle.runtime.compose)
                 implementation(libs.sqldelight.sqlite.driver)
             }
         }
