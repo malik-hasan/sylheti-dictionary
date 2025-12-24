@@ -51,7 +51,7 @@
     <string name="ipa_is_an_alphabet">The International Phonetic Alphabet (IPA) is an alphabetic system used by linguists to represent speech sounds across different languages.</string>
     <string name="ipa_url">https://en.wikipedia.org/wiki/International_Phonetic_Alphabet</string>
     <string name="how_does_ipa_rep_sylheti">How does IPA represent Sylheti sounds?</string>
-    <string name="sylheti_ipa_chart_with_audio">The charts below contain the IPA symbols used for Sylheti. Tap to play audio.</string>
+    <string name="sylheti_ipa_chart_with_audio">The IPA symbols used for Sylheti are charted below. Tap to play audio.</string>
     <string name="sylheti_ipa_url">https://en.wikipedia.org/wiki/Help:IPA/Sylheti</string>
     <string name="how_to_search_ipa">How do I search in IPA?</string>
     <string name="use_qwerty">You may use a regular QWERTY keyboard to search for IPA terms. Each special IPA character can be matched by searching a similar Latin character. For example, searching "suron" returns the following results:</string>

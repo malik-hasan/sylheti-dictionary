@@ -13,15 +13,18 @@ fun DrawScope.drawVowelChartLine(start: Offset, end: Offset, color: Color) =
         color = color,
         start = start,
         end = end,
-        strokeWidth = 2f
+        strokeWidth = 1.sp.toPx()
     )
 
-fun DrawScope.drawVoweChartDot(center: Offset, color: Color) =
+fun DrawScope.drawVoweChartDot(center: Offset, color: Color): Rect {
+    val radius = 4.sp.toPx()
     drawCircle(
         color = color,
-        radius = 6.sp.toPx(),
+        radius = 4.sp.toPx(),
         center = center
     )
+    return Rect(center, radius)
+}
 
 fun DrawScope.drawVowelButton(
     vowel: TextLayoutResult,

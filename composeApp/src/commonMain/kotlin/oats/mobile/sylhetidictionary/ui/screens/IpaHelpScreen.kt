@@ -241,6 +241,8 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[i] = "9/91/Close_front_unrounded_vowel"
+                            val vowelDotSpacer = Offset(8.sp.toPx(), 0f)
+                            val iDot = drawVoweChartDot(i.centerRight + vowelDotSpacer, chartColor)
 
                             val u = drawVowelButton(
                                 vowel = textMeasurer.measure("u", textStyle),
@@ -250,10 +252,12 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[u] = "5/5d/Close_back_rounded_vowel"
+                            val uDot = drawVoweChartDot(u.centerLeft - vowelDotSpacer, chartColor)
 
+                            val laxIDot = drawVoweChartDot(Offset(oneThirdChart, oneSixthChart), chartColor)
                             val laxI = drawVowelButton(
                                 vowel = textMeasurer.measure("ɪ", textStyle),
-                                center = Offset(oneThirdChart, oneSixthChart),
+                                center = laxIDot.center - Offset(8.sp.toPx() + chartStart, 0f),
                                 buttonColor = buttonColor,
                                 tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
@@ -268,6 +272,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[laxU] = "d/d5/Near-close_near-back_rounded_vowel"
+                            drawVoweChartDot(laxU.centerLeft - vowelDotSpacer, chartColor)
 
                             val e = drawVowelButton(
                                 vowel = textMeasurer.measure("e", textStyle),
@@ -277,6 +282,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[e] = "6/6c/Close-mid_front_unrounded_vowel"
+                            val eDot = drawVoweChartDot(e.centerRight + vowelDotSpacer, chartColor)
 
                             val o = drawVowelButton(
                                 vowel = textMeasurer.measure("o", textStyle),
@@ -286,6 +292,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[o] = "8/84/Close-mid_back_rounded_vowel"
+                            val oDot = drawVoweChartDot(o.centerLeft - vowelDotSpacer, chartColor)
 
                             val lowE = drawVowelButton(
                                 vowel = textMeasurer.measure("ɛ", textStyle),
@@ -295,6 +302,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[lowE] = "7/71/Open-mid_front_unrounded_vowel"
+                            val lowEDot = drawVoweChartDot(lowE.centerRight + vowelDotSpacer, chartColor)
 
                             val lowO = drawVowelButton(
                                 vowel = textMeasurer.measure("ɔ", textStyle),
@@ -304,6 +312,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[lowO] = "d/d0/PR-open-mid_back_rounded_vowel"
+                            val lowODot = drawVoweChartDot(lowO.centerLeft - vowelDotSpacer, chartColor)
 
                             val a = drawVowelButton(
                                 vowel = textMeasurer.measure("a", textStyle),
@@ -313,39 +322,40 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[a] = "6/65/Open_front_unrounded_vowel"
+                            val aDot = drawVoweChartDot(a.centerRight + vowelDotSpacer, chartColor)
 
-                            drawVowelChartLine(i.centerRight, u.centerLeft, chartColor)
-                            drawVowelChartLine(e.centerRight, o.centerLeft, chartColor)
-                            drawVowelChartLine(lowE.centerRight, lowO.centerLeft, chartColor)
-                            val lowBackVertex = Offset(lowO.center.x, a.center.y, chartColor)
-                            drawVowelChartLine(a.centerRight, lowBackVertex, chartColor)
+                            drawVowelChartLine(iDot.centerRight, uDot.centerLeft, chartColor)
+                            drawVowelChartLine(eDot.centerRight, oDot.centerLeft, chartColor)
+                            drawVowelChartLine(lowEDot.centerRight, lowODot.centerLeft, chartColor)
+                            val lowBackVertex = Offset(lowODot.center.x, aDot.center.y)
+                            drawVowelChartLine(aDot.centerRight, lowBackVertex, chartColor)
 
                             val angle = -30f
                             drawVowelChartLine(
-                                start = i.bottomCenter.rotate(angle, i.center),
-                                end = e.topCenter.rotate(angle, e.center),
+                                start = iDot.bottomCenter.rotate(angle, iDot.center),
+                                end = eDot.topCenter.rotate(angle, eDot.center),
                                 color = chartColor
                             )
                             drawVowelChartLine(
-                                start = e.bottomCenter.rotate(angle, e.center),
-                                end = lowE.topCenter.rotate(angle, lowE.center),
+                                start = eDot.bottomCenter.rotate(angle, eDot.center),
+                                end = lowEDot.topCenter.rotate(angle, lowEDot.center),
                                 color = chartColor
                             )
                             drawVowelChartLine(
-                                start = lowE.bottomCenter.rotate(angle, lowE.center),
-                                end = a.topCenter.rotate(angle, a.center),
+                                start = lowEDot.bottomCenter.rotate(angle, lowEDot.center),
+                                end = aDot.topCenter.rotate(angle, aDot.center),
                                 color = chartColor
                             )
 
                             drawVowelChartLine(
-                                start = Offset(halfChart, i.center.y),
-                                end = Offset(chartEnd * 3 / 4, a.center.y),
+                                start = Offset(halfChart, iDot.center.y),
+                                end = Offset(chartEnd * 3 / 4, aDot.center.y),
                                 color = chartColor
                             )
 
-                            drawVowelChartLine(u.bottomCenter, o.topCenter, chartColor)
-                            drawVowelChartLine(o.bottomCenter, lowO.topCenter, chartColor)
-                            drawVowelChartLine(lowO.bottomCenter, lowBackVertex, chartColor)
+                            drawVowelChartLine(uDot.bottomCenter, oDot.topCenter, chartColor)
+                            drawVowelChartLine(oDot.bottomCenter, lowODot.topCenter, chartColor)
+                            drawVowelChartLine(lowODot.bottomCenter, lowBackVertex, chartColor)
                         }
                     }
                 }
