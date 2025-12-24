@@ -1,4 +1,4 @@
-package oats.mobile.sylhetidictionary.utility
+package oats.mobile.sylhetidictionary.ui.utils
 
 import android.content.Context
 import androidx.media3.common.MediaItem

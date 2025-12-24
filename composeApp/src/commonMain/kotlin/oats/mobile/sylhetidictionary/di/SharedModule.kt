@@ -1,5 +1,8 @@
 package oats.mobile.sylhetidictionary.di
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import oats.mobile.sylhetidictionary.data.dictionary.DictionaryRepository
 import oats.mobile.sylhetidictionary.ui.app.AppViewModel
@@ -21,4 +24,6 @@ val sharedModule = module {
     viewModelOf(::DebugViewModel)
 
     single { DictionaryRepository(DictionaryDatabase(get()).dictionaryDatabaseQueries, get()) }
+
+    single { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 }

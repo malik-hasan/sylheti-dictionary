@@ -115,6 +115,7 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.swing)
                 implementation(libs.lifecycle.runtime.compose)
                 implementation(libs.sqldelight.sqlite.driver)
+                implementation("com.googlecode.soundlibs:vorbisspi:1.0.3.3")
             }
         }
 

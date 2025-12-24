@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -40,10 +39,8 @@ import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
@@ -52,13 +49,17 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.delay
 import oats.mobile.sylhetidictionary.ui.components.NavigationRailIconButton
 import oats.mobile.sylhetidictionary.ui.components.SDScreen
 import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
 import oats.mobile.sylhetidictionary.ui.theme.textLinkStyle
+import oats.mobile.sylhetidictionary.ui.utils.AudioPlayer
+import oats.mobile.sylhetidictionary.ui.utils.drawVowelButton
+import oats.mobile.sylhetidictionary.ui.utils.drawVowelChartLine
+import oats.mobile.sylhetidictionary.ui.utils.rotate
 import oats.mobile.sylhetidictionary.ui.utils.space
-import oats.mobile.sylhetidictionary.utility.AudioPlayer
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -76,9 +77,6 @@ import sylhetidictionary.composeapp.generated.resources.sylheti_ipa_chart_with_a
 import sylhetidictionary.composeapp.generated.resources.sylheti_ipa_url
 import sylhetidictionary.composeapp.generated.resources.use_qwerty
 import sylhetidictionary.composeapp.generated.resources.what_is_ipa
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -198,6 +196,13 @@ fun IpaHelpScreen(
 
                         val vowelButtons = remember { mutableMapOf<Rect, String>() }
                         var tappedVowel by remember { mutableStateOf<Rect?>(null) }
+
+                        LaunchedEffect(tappedVowel) {
+                            tappedVowel?.let {
+                                delay(500)
+                                tappedVowel = null
+                            }
+                        }
 
                         Canvas(Modifier
                             .constrainAs(chart) {
@@ -386,65 +391,3 @@ fun IpaHelpScreen(
         }
     }
 }
-
-fun DrawScope.drawVowelChartLine(start: Offset, end: Offset) =
-    drawLine(
-        color = Color.Black,
-        start = start,
-        end = end,
-        strokeWidth = 2f
-    )
-
-fun DrawScope.drawVowelButton(
-    vowel: TextLayoutResult,
-    center: Offset,
-    buttonColor: Color,
-    tappedColor: Color,
-    tappedVowel: Rect?
-): Rect {
-    val vowelSize = vowel.size
-    val radius = vowelSize.height / 2f
-    val rect = Rect(center, radius)
-    drawCircle(
-        color = if (rect == tappedVowel) tappedColor else buttonColor,
-        radius = radius,
-        center = center
-    )
-    drawText(
-        textLayoutResult = vowel,
-        topLeft = center - Offset(vowelSize.width / 2f, radius)
-    )
-    return rect
-}
-
-fun Offset.rotate(degrees: Float, pivot: Offset = Offset.Zero): Offset {
-    // Convert angle from degrees to radians
-    val radians = PI / 180 * degrees
-    val cosTheta = cos(radians)
-    val sinTheta = sin(radians)
-
-    // Translate the point relative to the pivot (pivot becomes the origin)
-    val dx = x - pivot.x
-    val dy = y - pivot.y
-
-    // Apply the 2D rotation formula around the origin:
-    // newX = x*cos(theta) - y*sin(theta)
-    // newY = x*sin(theta) + y*cos(theta)
-    val newDx = dx * cosTheta - dy * sinTheta
-    val newDy = dx * sinTheta + dy * cosTheta
-
-    // Translate the point back to the original coordinate system
-    val rotatedX = newDx + pivot.x
-    val rotatedY = newDy + pivot.y
-
-    return Offset(rotatedX.toFloat(), rotatedY.toFloat())
-}
-
-//@Composable
-//fun IPAButton(char: Char, audioPath: String, audioPlayer: AudioPlayer) {
-//    Button({
-//        audioPlayer.play("https://upload.wikimedia.org/wikipedia/commons/$audioPath.ogg")
-//    }) {
-//        Text(char.toString())
-//    }
-//}
