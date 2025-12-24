@@ -6,13 +6,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.unit.sp
 
-fun DrawScope.drawVowelChartLine(start: Offset, end: Offset) =
+fun DrawScope.drawVowelChartLine(start: Offset, end: Offset, color: Color) =
     drawLine(
-        color = Color.Black,
+        color = color,
         start = start,
         end = end,
         strokeWidth = 2f
+    )
+
+fun DrawScope.drawVoweChartDot(center: Offset, color: Color) =
+    drawCircle(
+        color = color,
+        radius = 6.sp.toPx(),
+        center = center
     )
 
 fun DrawScope.drawVowelButton(

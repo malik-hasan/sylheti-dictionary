@@ -56,6 +56,7 @@ import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
 import oats.mobile.sylhetidictionary.ui.theme.textLinkStyle
 import oats.mobile.sylhetidictionary.ui.utils.AudioPlayer
+import oats.mobile.sylhetidictionary.ui.utils.drawVoweChartDot
 import oats.mobile.sylhetidictionary.ui.utils.drawVowelButton
 import oats.mobile.sylhetidictionary.ui.utils.drawVowelChartLine
 import oats.mobile.sylhetidictionary.ui.utils.rotate
@@ -191,8 +192,9 @@ fun IpaHelpScreen(
                             LocalLayoutDirection.current
                         )
                         val textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSecondary)
+                        val chartColor = MaterialTheme.colorScheme.onBackground
                         val buttonColor = MaterialTheme.colorScheme.secondary
-                        val tappedColor = MaterialTheme.colorScheme.secondaryContainer
+                        val tappedButtonColor = MaterialTheme.colorScheme.secondaryContainer
 
                         val vowelButtons = remember { mutableMapOf<Rect, String>() }
                         var tappedVowel by remember { mutableStateOf<Rect?>(null) }
@@ -224,7 +226,7 @@ fun IpaHelpScreen(
                         ) {
                             val iText = textMeasurer.measure("i", textStyle)
                             val canvasDimension = size.width
-                            val chartStart = iText.size.height / 2f
+                            val chartStart = (iText.size.height) / 2f
                             val chartEnd = canvasDimension - chartStart
                             val halfChart = canvasDimension / 2
                             val chartDimension = chartEnd - chartStart
@@ -235,7 +237,7 @@ fun IpaHelpScreen(
                                 vowel = iText,
                                 center = Offset(chartStart, chartStart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[i] = "9/91/Close_front_unrounded_vowel"
@@ -244,7 +246,7 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("u", textStyle),
                                 center = Offset(chartEnd, chartStart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[u] = "5/5d/Close_back_rounded_vowel"
@@ -253,7 +255,7 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("ɪ", textStyle),
                                 center = Offset(oneThirdChart, oneSixthChart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[laxI] = "4/4c/Near-close_near-front_unrounded_vowel"
@@ -262,7 +264,7 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("ʊ", textStyle),
                                 center = Offset(chartDimension * 5 / 6 + chartStart, oneSixthChart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[laxU] = "d/d5/Near-close_near-back_rounded_vowel"
@@ -271,7 +273,7 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("e", textStyle),
                                 center = Offset(oneSixthChart, oneThirdChart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[e] = "6/6c/Close-mid_front_unrounded_vowel"
@@ -280,7 +282,7 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("o", textStyle),
                                 center = Offset(chartEnd, oneThirdChart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[o] = "8/84/Close-mid_back_rounded_vowel"
@@ -289,7 +291,7 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("ɛ", textStyle),
                                 center = Offset(oneThirdChart, twoThirdsChart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[lowE] = "7/71/Open-mid_front_unrounded_vowel"
@@ -298,7 +300,7 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("ɔ", textStyle),
                                 center = Offset(chartEnd, twoThirdsChart),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[lowO] = "d/d0/PR-open-mid_back_rounded_vowel"
@@ -307,39 +309,43 @@ fun IpaHelpScreen(
                                 vowel = textMeasurer.measure("a", textStyle),
                                 center = Offset(halfChart, chartEnd),
                                 buttonColor = buttonColor,
-                                tappedColor = tappedColor,
+                                tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[a] = "6/65/Open_front_unrounded_vowel"
 
-                            drawVowelChartLine(i.centerRight, u.centerLeft)
-                            drawVowelChartLine(e.centerRight, o.centerLeft)
-                            drawVowelChartLine(lowE.centerRight, lowO.centerLeft)
-                            val lowBackVertex = Offset(lowO.center.x, a.center.y)
-                            drawVowelChartLine(a.centerRight, lowBackVertex)
+                            drawVowelChartLine(i.centerRight, u.centerLeft, chartColor)
+                            drawVowelChartLine(e.centerRight, o.centerLeft, chartColor)
+                            drawVowelChartLine(lowE.centerRight, lowO.centerLeft, chartColor)
+                            val lowBackVertex = Offset(lowO.center.x, a.center.y, chartColor)
+                            drawVowelChartLine(a.centerRight, lowBackVertex, chartColor)
 
                             val angle = -30f
                             drawVowelChartLine(
                                 start = i.bottomCenter.rotate(angle, i.center),
-                                end = e.topCenter.rotate(angle, e.center)
+                                end = e.topCenter.rotate(angle, e.center),
+                                color = chartColor
                             )
                             drawVowelChartLine(
                                 start = e.bottomCenter.rotate(angle, e.center),
-                                end = lowE.topCenter.rotate(angle, lowE.center)
+                                end = lowE.topCenter.rotate(angle, lowE.center),
+                                color = chartColor
                             )
                             drawVowelChartLine(
                                 start = lowE.bottomCenter.rotate(angle, lowE.center),
-                                end = a.topCenter.rotate(angle, a.center)
+                                end = a.topCenter.rotate(angle, a.center),
+                                color = chartColor
                             )
 
                             drawVowelChartLine(
                                 start = Offset(halfChart, i.center.y),
-                                end = Offset(chartEnd * 3 / 4, a.center.y)
+                                end = Offset(chartEnd * 3 / 4, a.center.y),
+                                color = chartColor
                             )
 
-                            drawVowelChartLine(u.bottomCenter, o.topCenter)
-                            drawVowelChartLine(o.bottomCenter, lowO.topCenter)
-                            drawVowelChartLine(lowO.bottomCenter, lowBackVertex)
+                            drawVowelChartLine(u.bottomCenter, o.topCenter, chartColor)
+                            drawVowelChartLine(o.bottomCenter, lowO.topCenter, chartColor)
+                            drawVowelChartLine(lowO.bottomCenter, lowBackVertex, chartColor)
                         }
                     }
                 }
