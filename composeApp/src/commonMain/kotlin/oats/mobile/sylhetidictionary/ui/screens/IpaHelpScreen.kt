@@ -2,27 +2,37 @@ package oats.mobile.sylhetidictionary.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -30,7 +40,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -43,6 +55,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -157,7 +170,7 @@ fun IpaHelpScreen(
                 }
                 
                 item { 
-                    Text("Vowel Chart", style = MaterialTheme.typography.titleMedium)
+                    Text("Vowels", style = MaterialTheme.typography.titleMedium)
                 }
 
                 item {
@@ -184,8 +197,8 @@ fun IpaHelpScreen(
                             },
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("High", style = MaterialTheme.typography.labelLarge)
-                            Text("Low", style = MaterialTheme.typography.labelLarge)
+                            Text("Close", style = MaterialTheme.typography.labelLarge)
+                            Text("Open", style = MaterialTheme.typography.labelLarge)
                         }
 
                         val textMeasurer = TextMeasurer(
@@ -363,6 +376,77 @@ fun IpaHelpScreen(
                 }
 
                 item {
+                    Text("Consonants", style = MaterialTheme.typography.titleMedium)
+                }
+
+                // 'b', 'd', 'ɖ', 'ʤ', 'f', 'ɡ', 'h', 'k', 'x',
+                // 'l', 'm', 'ɱ', 'n', 'ɳ', 'ŋ', 'p', 'r', 'ɾ', 'ɽ', 's', 'ʂ', 'ʃ', 't', 'ʈ', 'ʧ', 'z', 'ʒ'
+
+                item {
+                    LazyRow {
+                        item {
+                            Column(Modifier.width(IntrinsicSize.Min)) {
+                                TableCell(
+                                    topLeftBorders = false,
+                                    bottomBorder = true,
+                                    rightBorder = true
+                                ) {}
+                                TableCell(rightBorder = true) {
+                                    Text("Stop", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(rightBorder = true) {
+                                    Text("Nasal", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(rightBorder = true) {
+                                    Text("Trill", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(rightBorder = true) {
+                                    Text("Tap/Flap", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(rightBorder = true) {
+                                    Text("Fricative", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(bottomBorder = true, rightBorder = true) {
+                                    Text("Lateral Approximant", style = MaterialTheme.typography.labelLarge)
+                                }
+                            }
+                        }
+
+                        item {
+                            Column(Modifier.width(IntrinsicSize.Min)) {
+                                TableCell(bottomBorder = true) {
+                                    Text("Bilabial", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell {
+                                    Row {
+                                        ConsonantButton("p", "5/51/Voiceless_bilabial_plosive", audioPlayer)
+                                        ConsonantButton("b", "2/2c/Voiced_bilabial_plosive", audioPlayer)
+                                    }
+                                }
+                                TableCell(rightBorder = true) {
+                                    Row {
+                                        Spacer(Modifier.weight(1f))
+                                        ConsonantButton("m", "a/a9/Bilabial_nasal", audioPlayer)
+                                    }
+                                }
+                                TableCell(rightBorder = true) {
+//                                    Text("Trill", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(rightBorder = true) {
+//                                    Text("Tap/Flap", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(rightBorder = true) {
+//                                    Text("Fricative", style = MaterialTheme.typography.labelLarge)
+                                }
+                                TableCell(bottomBorder = true, rightBorder = true) {
+//                                    Text("Lateral Approximant", style = MaterialTheme.typography.labelLarge)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                item {
                     Spacer(Modifier.height(8.dp))
                 }
 
@@ -408,4 +492,47 @@ fun IpaHelpScreen(
             }
         }
     }
+}
+
+@Composable
+fun ColumnScope.TableCell(
+    topLeftBorders: Boolean = true,
+    bottomBorder: Boolean = false,
+    rightBorder: Boolean = false,
+    content: @Composable () -> Unit
+) = Box(
+    modifier = Modifier.weight(1f).fillMaxWidth(),
+    contentAlignment = Alignment.Center
+) {
+    content()
+
+    val borderColor = MaterialTheme.colorScheme.onBackground
+    if (topLeftBorders) {
+        HorizontalDivider(Modifier.align(Alignment.TopStart), color = borderColor)
+        VerticalDivider(Modifier.align(Alignment.TopStart), color = borderColor)
+    }
+
+    if (bottomBorder) HorizontalDivider(Modifier.align(Alignment.BottomStart), color = borderColor)
+    if (rightBorder) VerticalDivider(Modifier.align(Alignment.TopEnd), color = borderColor)
+}
+
+@Composable
+fun RowScope.ConsonantButton(
+    consonant: String,
+    path: String,
+    audioPlayer: AudioPlayer,
+    logger: Logger = koinInject { parametersOf("IpaHelp") }
+) {
+    Text(
+        text = consonant,
+        modifier = Modifier
+            .weight(1f)
+            .background(MaterialTheme.colorScheme.secondary)
+            .clickable {
+                logger.d("IPA_HELP: playing audio for $path")
+                audioPlayer.play("https://upload.wikimedia.org/wikipedia/commons/$path.ogg")
+            },
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onSecondary
+    )
 }
