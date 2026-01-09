@@ -23,4 +23,4 @@ actual suspend fun PreferencesRepository.refreshLanguage(logger: Logger) {
     }
 }
 
-actual fun setAppOSLanguage(language: Language) = Locale.setDefault(Locale(language.code))
+actual fun setAppOSLanguage(language: Language) = Locale.setDefault(Locale.of(language.code))

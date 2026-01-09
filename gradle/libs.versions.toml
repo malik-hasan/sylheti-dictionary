@@ -1,10 +1,14 @@
 [versions]
-kotlin = "2.3.0"
-ksp = "2.2.21-2.0.4"
-jetbrains-compose = "1.10.0-rc02"
-agp = "8.13.0" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
 android-minSdk = "23"
 android-targetSdk = "36"
+
+android = "8.13.0" # https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#version-compatibility
+buildkonfig = "0.17.1"
+compose = "1.10.0-rc02"
+kotlin = "2.3.0"
+ksp = "2.2.21-2.0.4"
+room = "2.8.4"
+sqldelight = "2.2.1"
 
 activity-compose = "1.12.2"
 appcompat = "1.7.1"
@@ -17,23 +21,38 @@ lifecycle = "2.9.6"
 material3 = "1.10.0-alpha05"
 material3-adaptive = "1.3.0-alpha03"
 navigation = "2.9.1"
-room = "2.8.4"
 serialization = "1.9.0"
 splashscreen = "1.2.0"
-sqldelight = "2.2.1"
 sqlite = "2.6.2"
 
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "android" }
+
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
+
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+room = { id = "androidx.room", version.ref = "room" }
+
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+
 [libraries]
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-
-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose" }
-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
-
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
@@ -50,6 +69,8 @@ koin-core = { module = "io.insert-koin:koin-core" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-android = { module = "io.insert-koin:koin-android" }
+
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
@@ -75,18 +96,3 @@ sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-ex
 sqldelight-async-extensions = { module = "app.cash.sqldelight:async-extensions", version.ref = "sqldelight" }
 
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
-
-[plugins]
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-
-jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
-
-android-application = { id = "com.android.application", version.ref = "agp" }
-
-room = { id = "androidx.room", version.ref = "room" }
-
-sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

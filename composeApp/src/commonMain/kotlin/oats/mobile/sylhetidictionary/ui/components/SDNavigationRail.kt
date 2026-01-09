@@ -17,9 +17,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
+import oats.mobile.sylhetidictionary.BuildKonfig
 import oats.mobile.sylhetidictionary.ui.app.LocalNavigationRailState
 import oats.mobile.sylhetidictionary.ui.models.Route
-import oats.mobile.sylhetidictionary.utility.debugBuild
 import oats.mobile.sylhetidictionary.ui.utils.isCompactWidth
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -89,7 +89,7 @@ fun SDNavigationRail(
                     navigate = navigate
                 )
 
-                if (debugBuild) {
+                if (BuildKonfig.DEBUG) {
                     SDNavigationRailItem(
                         label = "Debug Menu",
                         iconPainter = painterResource(Res.drawable.debug),

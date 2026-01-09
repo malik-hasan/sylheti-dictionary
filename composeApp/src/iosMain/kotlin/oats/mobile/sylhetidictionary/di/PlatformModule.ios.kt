@@ -7,7 +7,7 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import oats.mobile.sylhetidictionary.DictionaryDatabase
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDatabase
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
+import oats.mobile.sylhetidictionary.utility.DictionaryAsset
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository

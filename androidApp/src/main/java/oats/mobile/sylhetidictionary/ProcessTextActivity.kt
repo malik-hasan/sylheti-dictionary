@@ -2,7 +2,6 @@ package oats.mobile.sylhetidictionary
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 
 class ProcessTextActivity : Activity() {
@@ -10,7 +9,7 @@ class ProcessTextActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && intent.action == Intent.ACTION_PROCESS_TEXT) {
+        if (intent.action == Intent.ACTION_PROCESS_TEXT) {
             intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.let { processText ->
                 startActivity(
                     Intent(this, MainActivity::class.java).apply {
