@@ -1,19 +1,33 @@
 
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.plugin.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.room)
 }
 
 val sylhetiDictionaryPackage = "oats.mobile.sylhetidictionary"
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = sylhetiDictionaryPackage
+            packageVersion = "1.0.0"
+        }
+    }
+}
 
 kotlin {
     targets.all {
@@ -27,8 +41,12 @@ kotlin {
         }
     }
 
-    androidTarget {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
+    androidLibrary {
+        namespace = "$sylhetiDictionaryPackage.composeapp"
+        compileSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_25)
     }
 
     listOf(
@@ -87,7 +105,6 @@ kotlin {
         androidMain {
             dependsOn(mobileMain)
             dependencies {
-                implementation(libs.activity.compose)
                 implementation(libs.appcompat)
                 implementation(libs.core.splashscreen)
                 implementation(libs.koin.android)
@@ -125,6 +142,10 @@ kotlin {
     }
 }
 
+room.schemaDirectory("$projectDir/schemas")
+
+sqldelight.databases.create("DictionaryDatabase").packageName = sylhetiDictionaryPackage
+
 dependencies {
     listOf(
         "kspAndroid",
@@ -137,61 +158,15 @@ dependencies {
     }
 }
 
-room.schemaDirectory("$projectDir/schemas")
+buildkonfig {
+    packageName = sylhetiDictionaryPackage
 
-android {
-    namespace = sylhetiDictionaryPackage
-    compileSdk = libs.versions.android.targetSdk.get().toInt()
-
-    sourceSets.getByName("main") {
-        manifest.srcFile("src/androidMain/AndroidManifest.xml")
-        res.srcDirs("src/androidMain/res")
-        resources.srcDirs("src/commonMain/resources")
+    val debug = "DEBUG"
+    defaultConfigs {
+        buildConfigField(BOOLEAN, debug, "true")
     }
 
-    defaultConfig {
-        applicationId = sylhetiDictionaryPackage
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-
-    androidResources.localeFilters.addAll(setOf("en", "bn"))
-
-    packaging.resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
+    defaultConfigs("release") {
+        buildConfigField(BOOLEAN, debug, "false")
     }
 }
-
-compose.desktop {
-    application {
-        mainClass = "MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = sylhetiDictionaryPackage
-            packageVersion = "1.0.0"
-        }
-
-        tasks.withType<JavaExec>().configureEach {
-            systemProperty("debugBuild", project.findProperty("debugBuild") ?: false)
-        }
-    }
-}
-
-sqldelight.databases.create("DictionaryDatabase").packageName = sylhetiDictionaryPackage

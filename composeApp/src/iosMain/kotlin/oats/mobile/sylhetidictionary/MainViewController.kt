@@ -12,8 +12,8 @@ import kotlinx.cinterop.ptr
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
+import oats.mobile.sylhetidictionary.utility.DictionaryAsset
+import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.utils.initKoin
@@ -44,7 +44,7 @@ fun MainViewController() = ComposeUIViewController(
             val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
             if (DictionaryAssetVersion > currentDictionaryVersion) {
 
-                val sourceBytes = Res.readBytes("files/$DictionaryAsset")
+                val sourceBytes = readDictionaryAsset()
                 val destinationDirectory = NSApplicationSupportDirectory.path.stringByAppendingPathComponent("databases")
 
                 logger.d("INIT: copying dictionary asset to SQLite")

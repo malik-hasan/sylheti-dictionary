@@ -4,15 +4,15 @@ import androidx.compose.ui.window.application
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAsset
-import oats.mobile.sylhetidictionary.data.dictionary.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.utils.initKoin
 import oats.mobile.sylhetidictionary.di.utils.injectLogger
 import oats.mobile.sylhetidictionary.ui.app.App
+import oats.mobile.sylhetidictionary.utility.DictionaryAsset
+import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
+import oats.mobile.sylhetidictionary.utility.readDictionaryAsset
 import org.koin.mp.KoinPlatform.getKoin
-import sylhetidictionary.composeapp.generated.resources.Res
 import java.io.FileOutputStream
 import java.io.IOException
 
@@ -32,7 +32,7 @@ fun main() {
             var dictionaryVersion = DictionaryAssetVersion
 
             try {
-                val inputStream = Res.readBytes("files/$DictionaryAsset").inputStream()
+                val inputStream = readDictionaryAsset().inputStream()
                 val outputStream = FileOutputStream(DictionaryAsset)
 
                 inputStream.use { input ->
