@@ -8,11 +8,10 @@ plugins {
 
 dependencies {
     implementation(projects.composeApp)
-    implementation(libs.kermit)
-    implementation(project.dependencies.platform(libs.koin.bom))
-    implementation(libs.koin.android)
     implementation(libs.activity.compose)
+    implementation(libs.koin.android)
     implementation(libs.lifecycle.runtime.compose)
+//    implementation(libs.core.splashscreen)
 }
 
 val sylhetiDictionaryPackage = "oats.mobile.sylhetidictionary"
@@ -44,10 +43,10 @@ android {
         buildConfig = true
     }
 
-    kotlin.compilerOptions.jvmTarget.set(JvmTarget.JVM_25)
+    kotlin.compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_25
-        targetCompatibility = JavaVersion.VERSION_25
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
