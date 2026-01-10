@@ -21,6 +21,7 @@ import oats.mobile.sylhetidictionary.di.utils.injectLogger
 import oats.mobile.sylhetidictionary.ui.app.App
 import oats.mobile.sylhetidictionary.utility.DictionaryAsset
 import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
+import oats.mobile.sylhetidictionary.utility.applicationSupportDirectory
 import oats.mobile.sylhetidictionary.utility.path
 import oats.mobile.sylhetidictionary.utility.readDictionaryAsset
 import okio.IOException
@@ -50,9 +51,7 @@ fun MainViewController() = ComposeUIViewController(
                 try {
                     logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
 
-                    val destinationDirectory = NSApplicationSupportDirectory.path
-                        .stringByAppendingPathComponent("databases")
-
+                    val destinationDirectory = applicationSupportDirectory.stringByAppendingPathComponent("databases")
                     memScoped {
                         val error: ObjCObjectVar<NSError?> = alloc()
                         if (!NSFileManager.defaultManager.createDirectoryAtPath(
