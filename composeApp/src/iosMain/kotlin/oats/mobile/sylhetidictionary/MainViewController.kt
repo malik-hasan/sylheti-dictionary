@@ -62,17 +62,15 @@ fun MainViewController() = ComposeUIViewController(
                         )) throw IOException("failed to create directory: ${error.value?.localizedDescription}")
                     }
 
-                    if (!readDictionaryAsset().run {
-                        usePinned { pinned ->
-                            NSData.create(
-                                bytes = pinned.addressOf(0),
-                                length = size.toULong()
-                            )
-                        }.writeToFile(
-                            path = "$destinationDirectory/$DictionaryAsset",
-                            atomically = true
+                    if (!readDictionaryAsset().usePinned { pinned ->
+                        NSData.create(
+                            bytes = pinned.addressOf(0),
+                            length = pinned.get().size.toULong()
                         )
-                    }) throw IOException("failed to copy file")
+                    }.writeToFile(
+                        path = "$destinationDirectory/$DictionaryAsset",
+                        atomically = true
+                    )) throw IOException("failed to copy file")
 
                     logger.d("INIT: dictionary asset copied successfully")
                     preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
