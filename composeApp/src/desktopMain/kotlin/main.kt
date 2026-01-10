@@ -10,8 +10,8 @@ import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.utils.initKoin
 import oats.mobile.sylhetidictionary.di.utils.injectLogger
 import oats.mobile.sylhetidictionary.ui.app.App
-import oats.mobile.sylhetidictionary.utility.DictionaryAsset
 import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
+import oats.mobile.sylhetidictionary.utility.dictionaryDatabasePath
 import oats.mobile.sylhetidictionary.utility.readDictionaryAsset
 import org.koin.mp.KoinPlatform.getKoin
 import java.io.FileOutputStream
@@ -29,7 +29,7 @@ fun main() {
             try {
                 logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
                 readDictionaryAsset().inputStream().use { input ->
-                    FileOutputStream(DictionaryAsset).use { output ->
+                    FileOutputStream(dictionaryDatabasePath).use { output ->
                         input.copyTo(output)
                     }
                 }

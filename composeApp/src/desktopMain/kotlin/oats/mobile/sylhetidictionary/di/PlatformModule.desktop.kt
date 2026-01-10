@@ -5,14 +5,14 @@ import androidx.room.RoomDatabase
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import oats.mobile.sylhetidictionary.DictionaryDatabase
-import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksDatabase
-import oats.mobile.sylhetidictionary.utility.DictionaryAsset
-import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
-import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
+import oats.mobile.sylhetidictionary.data.bookmarks.BookmarksRepository
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
+import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.di.utils.init
 import oats.mobile.sylhetidictionary.di.utils.initDataStore
+import oats.mobile.sylhetidictionary.utility.dictionaryDatabasePath
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import java.io.File
@@ -22,7 +22,8 @@ actual val platformModule = module {
     single { PreferencesRepository(initDataStore { it }) }
 
     single {
-        JdbcSqliteDriver("jdbc:sqlite:$DictionaryAsset").also(DictionaryDatabase.Schema::create)
+        JdbcSqliteDriver("jdbc:sqlite:$dictionaryDatabasePath")
+            .also(DictionaryDatabase.Schema::create)
     }.bind(SqlDriver::class)
 
     single {
