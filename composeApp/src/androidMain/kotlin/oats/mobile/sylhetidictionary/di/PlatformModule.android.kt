@@ -1,6 +1,7 @@
 package oats.mobile.sylhetidictionary.di
 
 import android.content.Context
+import androidx.datastore.dataStoreFile
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import app.cash.sqldelight.db.SqlDriver
@@ -23,7 +24,7 @@ actual val platformModule = module {
     single {
         PreferencesRepository(
             initDataStore { fileName ->
-                androidContext().filesDir.resolve(fileName).absolutePath
+                androidContext().dataStoreFile(fileName).absolutePath
             }
         )
     }

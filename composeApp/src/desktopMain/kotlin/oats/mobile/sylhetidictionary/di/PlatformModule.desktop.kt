@@ -12,6 +12,7 @@ import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesDatabase
 import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepository
 import oats.mobile.sylhetidictionary.di.utils.init
 import oats.mobile.sylhetidictionary.di.utils.initDataStore
+import oats.mobile.sylhetidictionary.utility.databaseDirectory
 import oats.mobile.sylhetidictionary.utility.dictionaryDatabasePath
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -19,7 +20,13 @@ import java.io.File
 
 actual val platformModule = module {
 
-    single { PreferencesRepository(initDataStore { it }) }
+    single {
+        PreferencesRepository(
+            initDataStore { fileName ->
+                databaseDirectory.resolve(fileName).absolutePath
+            }
+        )
+    }
 
     single {
         JdbcSqliteDriver("jdbc:sqlite:$dictionaryDatabasePath")
@@ -40,4 +47,4 @@ actual val platformModule = module {
 }
 
 inline fun <reified T : RoomDatabase> roomDatabase(filename: String) =
-    Room.databaseBuilder<T>(File(System.getProperty("java.io.tmpdir"), filename).absolutePath).init()
+    Room.databaseBuilder<T>(File(databaseDirectory, filename).absolutePath).init()

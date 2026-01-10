@@ -25,7 +25,7 @@ fun initKoin(config: KoinAppDeclaration = {}) {
 }
 
 fun initDataStore(getPath: (fileName: String) -> String) = PreferenceDataStoreFactory.createWithPath {
-    getPath("preferences.preferences_pb").toPath()
+    getPath("sylheti_dictionary.preferences_pb").toPath()
 }
 
 fun <T : RoomDatabase> RoomDatabase.Builder<T>.init() =

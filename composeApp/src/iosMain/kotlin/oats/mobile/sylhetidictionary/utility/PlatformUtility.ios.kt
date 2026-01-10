@@ -7,8 +7,8 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalForeignApi::class)
-val applicationSupportDirectory
-    get() = requireNotNull(
+val applicationSupportDirectory by lazy {
+    requireNotNull(
         NSFileManager.defaultManager.URLForDirectory(
             directory = NSApplicationSupportDirectory,
             inDomain = NSUserDomainMask,
@@ -17,6 +17,7 @@ val applicationSupportDirectory
             error = null
         )
     )
+}
 
 operator fun NSURL.plus(pathComponent: String) =
     requireNotNull(URLByAppendingPathComponent(pathComponent))
