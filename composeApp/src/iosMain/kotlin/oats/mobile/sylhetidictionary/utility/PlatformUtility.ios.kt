@@ -1,13 +1,25 @@
 package oats.mobile.sylhetidictionary.utility
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSApplicationSupportDirectory
-import platform.Foundation.NSSearchPathForDirectoriesInDomains
-import platform.Foundation.NSString
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 
+@OptIn(ExperimentalForeignApi::class)
 val applicationSupportDirectory
-    get() = NSSearchPathForDirectoriesInDomains(
-        directory = NSApplicationSupportDirectory,
-        domainMask = NSUserDomainMask,
-        expandTilde = true
-    ).first() as NSString
+    get() = requireNotNull(
+        NSFileManager.defaultManager.URLForDirectory(
+            directory = NSApplicationSupportDirectory,
+            inDomain = NSUserDomainMask,
+            appropriateForURL = null,
+            create = false,
+            error = null
+        )
+    )
+
+operator fun NSURL.plus(pathComponent: String) =
+    requireNotNull(URLByAppendingPathComponent(pathComponent))
+
+val NSURL.absolutePath
+    get() = requireNotNull(path)

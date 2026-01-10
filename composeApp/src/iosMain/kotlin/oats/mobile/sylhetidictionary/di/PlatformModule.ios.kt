@@ -13,17 +13,18 @@ import oats.mobile.sylhetidictionary.data.recentsearches.RecentSearchesRepositor
 import oats.mobile.sylhetidictionary.di.utils.init
 import oats.mobile.sylhetidictionary.di.utils.initDataStore
 import oats.mobile.sylhetidictionary.utility.DictionaryAsset
+import oats.mobile.sylhetidictionary.utility.absolutePath
 import oats.mobile.sylhetidictionary.utility.applicationSupportDirectory
+import oats.mobile.sylhetidictionary.utility.plus
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import platform.Foundation.stringByAppendingPathComponent
 
 actual val platformModule = module {
 
     single {
         PreferencesRepository(
             initDataStore { fileName ->
-                applicationSupportDirectory.stringByAppendingPathComponent(fileName)
+                (applicationSupportDirectory + fileName).absolutePath
             }
         )
     }
@@ -45,5 +46,7 @@ actual val platformModule = module {
     }
 }
 
-inline fun <reified T : RoomDatabase> roomDatabase(filename: String) =
-    Room.databaseBuilder<T>(applicationSupportDirectory.stringByAppendingPathComponent(filename)).init()
+inline fun <reified T : RoomDatabase> roomDatabase(fileName: String) =
+    Room.databaseBuilder<T>(
+        (applicationSupportDirectory + fileName).absolutePath
+    ).init()

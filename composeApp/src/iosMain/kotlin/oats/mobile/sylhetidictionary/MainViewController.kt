@@ -21,8 +21,10 @@ import oats.mobile.sylhetidictionary.di.utils.injectLogger
 import oats.mobile.sylhetidictionary.ui.app.App
 import oats.mobile.sylhetidictionary.utility.DictionaryAsset
 import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
+import oats.mobile.sylhetidictionary.utility.absolutePath
 import oats.mobile.sylhetidictionary.utility.applicationSupportDirectory
 import oats.mobile.sylhetidictionary.utility.path
+import oats.mobile.sylhetidictionary.utility.plus
 import oats.mobile.sylhetidictionary.utility.readDictionaryAsset
 import okio.IOException
 import org.koin.mp.KoinPlatform.getKoin
@@ -50,12 +52,12 @@ fun MainViewController() = ComposeUIViewController(
             if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1))
                 try {
                     logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
+                    val destinationDirectory = applicationSupportDirectory + "databases"
 
-                    val destinationDirectory = applicationSupportDirectory.stringByAppendingPathComponent("databases")
                     memScoped {
                         val error: ObjCObjectVar<NSError?> = alloc()
                         if (!NSFileManager.defaultManager.createDirectoryAtPath(
-                            path = destinationDirectory,
+                            path = destinationDirectory.absolutePath,
                             withIntermediateDirectories = true,
                             attributes = null,
                             error = error.ptr
@@ -68,7 +70,7 @@ fun MainViewController() = ComposeUIViewController(
                             length = pinned.get().size.toULong()
                         )
                     }.writeToFile(
-                        path = NSString.create(destinationDirectory).stringByAppendingPathComponent(DictionaryAsset),
+                        path = (destinationDirectory + DictionaryAsset).absolutePath,
                         atomically = true
                     )) throw IOException("failed to copy file")
 
