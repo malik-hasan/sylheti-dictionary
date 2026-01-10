@@ -52,8 +52,8 @@ fun MainViewController() = ComposeUIViewController(
             if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1))
                 try {
                     logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
-                    val destinationDirectory = applicationSupportDirectory + "databases"
 
+                    val destinationDirectory = applicationSupportDirectory + "databases"
                     memScoped {
                         val error: ObjCObjectVar<NSError?> = alloc()
                         if (!NSFileManager.defaultManager.createDirectoryAtPath(

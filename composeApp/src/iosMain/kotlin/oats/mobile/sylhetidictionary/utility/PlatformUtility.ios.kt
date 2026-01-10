@@ -13,7 +13,7 @@ val applicationSupportDirectory
             directory = NSApplicationSupportDirectory,
             inDomain = NSUserDomainMask,
             appropriateForURL = null,
-            create = false,
+            create = true,
             error = null
         )
     )
