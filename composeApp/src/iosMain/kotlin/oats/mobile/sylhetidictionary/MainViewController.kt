@@ -1,13 +1,11 @@
 package oats.mobile.sylhetidictionary
 
 import androidx.compose.ui.window.ComposeUIViewController
-import co.touchlab.kermit.Logger
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCObjectVar
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.alloc
-import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.usePinned
@@ -16,14 +14,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import oats.mobile.sylhetidictionary.utility.DictionaryAsset
-import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.utils.initKoin
 import oats.mobile.sylhetidictionary.di.utils.injectLogger
 import oats.mobile.sylhetidictionary.ui.app.App
+import oats.mobile.sylhetidictionary.utility.DictionaryAsset
+import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.utility.path
 import oats.mobile.sylhetidictionary.utility.readDictionaryAsset
 import okio.IOException
@@ -35,7 +32,6 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.create
 import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.writeToFile
-import sylhetidictionary.composeapp.generated.resources.Res
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Suppress("Unused", "FunctionName")
