@@ -29,6 +29,7 @@ import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSString
 import platform.Foundation.create
 import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.writeToFile
@@ -68,7 +69,7 @@ fun MainViewController() = ComposeUIViewController(
                             length = pinned.get().size.toULong()
                         )
                     }.writeToFile(
-                        path = "$destinationDirectory/$DictionaryAsset",
+                        path = NSString.create(destinationDirectory).stringByAppendingPathComponent(DictionaryAsset),
                         atomically = true
                     )) throw IOException("failed to copy file")
 
