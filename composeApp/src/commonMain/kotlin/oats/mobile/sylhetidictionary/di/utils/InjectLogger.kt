@@ -9,5 +9,5 @@ import org.koin.core.parameter.parametersOf
 fun KoinComponent.injectLogger() =
     inject<Logger> { parametersOf(this::class.simpleName) }
 
-fun Koin.injectLogger() =
-    inject<Logger> { parametersOf(null) }
+fun Koin.injectLogger(tag: String? = null) =
+    inject<Logger> { parametersOf(tag) }

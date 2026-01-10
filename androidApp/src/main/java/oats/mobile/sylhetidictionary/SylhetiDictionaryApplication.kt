@@ -2,8 +2,9 @@ package oats.mobile.sylhetidictionary
 
 import android.app.Application
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.utils.initKoin
@@ -14,10 +15,10 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.parameter.parametersOf
 import java.io.FileOutputStream
-import java.io.IOException
 
 class SylhetiDictionaryApplication: Application() {
 
+    private val scope: CoroutineScope by inject()
     private val preferences: PreferencesRepository by inject()
     private val logger: Logger by inject { parametersOf(this::class.simpleName) }
 
@@ -28,30 +29,21 @@ class SylhetiDictionaryApplication: Application() {
             androidContext(this@SylhetiDictionaryApplication)
         }
 
-        runBlocking(Dispatchers.IO) {
-            val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
-            if (DictionaryAssetVersion > currentDictionaryVersion) {
-
-                logger.d("INIT: copying dictionary asset to SQLite")
-
-                var dictionaryVersion = DictionaryAssetVersion
-
+        scope.launch(Dispatchers.IO) {
+            if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1))
                 try {
-                    val inputStream = readDictionaryAsset().inputStream()
-                    val outputStream = FileOutputStream(getDatabasePath(DictionaryAsset).absolutePath)
-
-                    inputStream.use { input ->
-                        outputStream.use {
-                            input.copyTo(it)
+                    logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
+                    readDictionaryAsset().inputStream().use { input ->
+                        FileOutputStream(getDatabasePath(DictionaryAsset).absolutePath).use { output ->
+                            input.copyTo(output)
                         }
                     }
-                    logger.d("INIT: dictionary asset copied")
-                } catch(_: IOException) {
-                    dictionaryVersion = -1 // failure
-                }
 
-                preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, dictionaryVersion)
-            }
+                    logger.d("INIT: dictionary asset copied successfully")
+                    preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+                } catch(e: Exception) {
+                    logger.e("INIT: failed to copy dictionary asset: ${e.message}")
+                }
         }
     }
 }

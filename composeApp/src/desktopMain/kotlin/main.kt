@@ -2,8 +2,9 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.di.utils.initKoin
@@ -14,7 +15,6 @@ import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.utility.readDictionaryAsset
 import org.koin.mp.KoinPlatform.getKoin
 import java.io.FileOutputStream
-import java.io.IOException
 
 fun main() {
     initKoin()
@@ -22,31 +22,23 @@ fun main() {
     val koin = getKoin()
     val preferences: PreferencesRepository by koin.inject()
     val logger: Logger by koin.injectLogger()
+    val scope: CoroutineScope by koin.inject()
 
-    runBlocking(Dispatchers.IO) {
-        val currentDictionaryVersion = preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1
-        if (DictionaryAssetVersion > currentDictionaryVersion) {
-
-            logger.d("INIT: copying dictionary asset to SQLite")
-
-            var dictionaryVersion = DictionaryAssetVersion
-
+    scope.launch(Dispatchers.IO) {
+        if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1))
             try {
-                val inputStream = readDictionaryAsset().inputStream()
-                val outputStream = FileOutputStream(DictionaryAsset)
-
-                inputStream.use { input ->
-                    outputStream.use {
-                        input.copyTo(it)
+                logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
+                readDictionaryAsset().inputStream().use { input ->
+                    FileOutputStream(DictionaryAsset).use { output ->
+                        input.copyTo(output)
                     }
                 }
-                logger.d("INIT: dictionary asset copied")
-            } catch(e: IOException) {
-                dictionaryVersion = -1 // failure
-            }
 
-            preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, dictionaryVersion)
-        }
+                logger.d("INIT: dictionary asset copied successfully")
+                preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+            } catch(e: Exception) {
+                logger.e("INIT: failed to copy dictionary asset: ${e.message}")
+            }
     }
 
     application {
