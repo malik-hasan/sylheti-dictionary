@@ -23,18 +23,14 @@ import oats.mobile.sylhetidictionary.utility.DictionaryAsset
 import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.utility.absolutePath
 import oats.mobile.sylhetidictionary.utility.applicationSupportDirectory
-import oats.mobile.sylhetidictionary.utility.path
 import oats.mobile.sylhetidictionary.utility.plus
 import oats.mobile.sylhetidictionary.utility.readDictionaryAsset
 import okio.IOException
 import org.koin.mp.KoinPlatform.getKoin
-import platform.Foundation.NSApplicationSupportDirectory
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
-import platform.Foundation.NSString
 import platform.Foundation.create
-import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.writeToFile
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
