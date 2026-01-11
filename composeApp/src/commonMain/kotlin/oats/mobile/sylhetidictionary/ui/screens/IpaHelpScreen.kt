@@ -42,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -70,7 +69,7 @@ import oats.mobile.sylhetidictionary.ui.components.SDTopAppBar
 import oats.mobile.sylhetidictionary.ui.theme.latinBodyFontFamily
 import oats.mobile.sylhetidictionary.ui.theme.textLinkStyle
 import oats.mobile.sylhetidictionary.ui.utils.AudioPlayer
-import oats.mobile.sylhetidictionary.ui.utils.drawVoweChartDot
+import oats.mobile.sylhetidictionary.ui.utils.drawVowelChartDot
 import oats.mobile.sylhetidictionary.ui.utils.drawVowelButton
 import oats.mobile.sylhetidictionary.ui.utils.drawVowelChartLine
 import oats.mobile.sylhetidictionary.ui.utils.rotate
@@ -257,7 +256,7 @@ fun IpaHelpScreen(
                             )
                             vowelButtons[i] = "9/91/Close_front_unrounded_vowel"
                             val vowelDotSpacer = Offset(8.sp.toPx(), 0f)
-                            val iDot = drawVoweChartDot(i.centerRight + vowelDotSpacer, chartColor)
+                            val iDot = drawVowelChartDot(i.centerRight + vowelDotSpacer, chartColor)
 
                             val u = drawVowelButton(
                                 vowel = textMeasurer.measure("u", textStyle),
@@ -267,9 +266,9 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[u] = "5/5d/Close_back_rounded_vowel"
-                            val uDot = drawVoweChartDot(u.centerLeft - vowelDotSpacer, chartColor)
+                            val uDot = drawVowelChartDot(u.centerLeft - vowelDotSpacer, chartColor)
 
-                            val laxIDot = drawVoweChartDot(Offset(oneThirdChart, oneSixthChart), chartColor)
+                            val laxIDot = drawVowelChartDot(Offset(oneThirdChart, oneSixthChart), chartColor)
                             val laxI = drawVowelButton(
                                 vowel = textMeasurer.measure("ɪ", textStyle),
                                 center = laxIDot.center - Offset(8.sp.toPx() + chartStart, 0f),
@@ -287,7 +286,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[laxU] = "d/d5/Near-close_near-back_rounded_vowel"
-                            drawVoweChartDot(laxU.centerLeft - vowelDotSpacer, chartColor)
+                            drawVowelChartDot(laxU.centerLeft - vowelDotSpacer, chartColor)
 
                             val e = drawVowelButton(
                                 vowel = textMeasurer.measure("e", textStyle),
@@ -297,7 +296,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[e] = "6/6c/Close-mid_front_unrounded_vowel"
-                            val eDot = drawVoweChartDot(e.centerRight + vowelDotSpacer, chartColor)
+                            val eDot = drawVowelChartDot(e.centerRight + vowelDotSpacer, chartColor)
 
                             val o = drawVowelButton(
                                 vowel = textMeasurer.measure("o", textStyle),
@@ -307,7 +306,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[o] = "8/84/Close-mid_back_rounded_vowel"
-                            val oDot = drawVoweChartDot(o.centerLeft - vowelDotSpacer, chartColor)
+                            val oDot = drawVowelChartDot(o.centerLeft - vowelDotSpacer, chartColor)
 
                             val lowE = drawVowelButton(
                                 vowel = textMeasurer.measure("ɛ", textStyle),
@@ -317,7 +316,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[lowE] = "7/71/Open-mid_front_unrounded_vowel"
-                            val lowEDot = drawVoweChartDot(lowE.centerRight + vowelDotSpacer, chartColor)
+                            val lowEDot = drawVowelChartDot(lowE.centerRight + vowelDotSpacer, chartColor)
 
                             val lowO = drawVowelButton(
                                 vowel = textMeasurer.measure("ɔ", textStyle),
@@ -327,7 +326,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[lowO] = "d/d0/PR-open-mid_back_rounded_vowel"
-                            val lowODot = drawVoweChartDot(lowO.centerLeft - vowelDotSpacer, chartColor)
+                            val lowODot = drawVowelChartDot(lowO.centerLeft - vowelDotSpacer, chartColor)
 
                             val a = drawVowelButton(
                                 vowel = textMeasurer.measure("a", textStyle),
@@ -337,7 +336,7 @@ fun IpaHelpScreen(
                                 tappedVowel = tappedVowel
                             )
                             vowelButtons[a] = "6/65/Open_front_unrounded_vowel"
-                            val aDot = drawVoweChartDot(a.centerRight + vowelDotSpacer, chartColor)
+                            val aDot = drawVowelChartDot(a.centerRight + vowelDotSpacer, chartColor)
 
                             drawVowelChartLine(iDot.centerRight, uDot.centerLeft, chartColor)
                             drawVowelChartLine(eDot.centerRight, oDot.centerLeft, chartColor)

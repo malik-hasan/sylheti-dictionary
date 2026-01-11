@@ -16,7 +16,7 @@ fun DrawScope.drawVowelChartLine(start: Offset, end: Offset, color: Color) =
         strokeWidth = 1.sp.toPx()
     )
 
-fun DrawScope.drawVoweChartDot(center: Offset, color: Color): Rect {
+fun DrawScope.drawVowelChartDot(center: Offset, color: Color): Rect {
     val radius = 4.sp.toPx()
     drawCircle(
         color = color,
