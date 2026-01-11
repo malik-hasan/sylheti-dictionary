@@ -30,17 +30,6 @@ compose.desktop {
 }
 
 kotlin {
-    targets.all {
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions.freeCompilerArgs.addAll(
-                    "-Xexpect-actual-classes",
-                    "-Xcontext-parameters"
-                )
-            }
-        }
-    }
-
     androidLibrary {
         namespace = "$sylhetiDictionaryPackage.composeapp"
         compileSdk = libs.versions.android.targetSdk.get().toInt()
