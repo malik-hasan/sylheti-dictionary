@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -115,13 +116,15 @@ fun IpaHelpScreen(
                 onRetire { audioPlayer.release() }
             }
 
+            val horizontalPadding = Modifier.padding(horizontal = 16.dp)
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = scaffoldPadding + PaddingValues(16.dp),
+                contentPadding = scaffoldPadding + PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
                     Text(
+                        modifier = horizontalPadding,
                         text = stringResource(Res.string.what_is_ipa),
                         style = MaterialTheme.typography.headlineSmall
                     )
@@ -129,6 +132,7 @@ fun IpaHelpScreen(
 
                 item {
                     Text(
+                        modifier = horizontalPadding,
                         text = buildAnnotatedString {
                             append(stringResource(Res.string.ipa_is_an_alphabet))
                             space()
@@ -149,6 +153,7 @@ fun IpaHelpScreen(
 
                 item {
                     Text(
+                        modifier = horizontalPadding,
                         text = stringResource(Res.string.how_does_ipa_rep_sylheti),
                         style = MaterialTheme.typography.headlineSmall
                     )
@@ -156,6 +161,7 @@ fun IpaHelpScreen(
 
                 item {
                     Text(
+                        modifier = horizontalPadding,
                         text = buildAnnotatedString {
                             append(stringResource(Res.string.sylheti_ipa_chart_with_audio))
                             space()
@@ -169,11 +175,18 @@ fun IpaHelpScreen(
                 }
                 
                 item { 
-                    Text("Vowels", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        modifier = horizontalPadding,
+                        text = "Vowels",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
 
                 item {
-                    ConstraintLayout(Modifier.horizontalScroll(rememberScrollState())) {
+                    ConstraintLayout(Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .then(horizontalPadding)
+                    ) {
                         val (backnessLabels, heightLabels, chart) = createRefs()
 
                         Row(
@@ -376,11 +389,15 @@ fun IpaHelpScreen(
                 }
 
                 item {
-                    Text("Consonants", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        modifier = horizontalPadding,
+                        text = "Consonants",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
 
                 item {
-                    LazyRow {
+                    LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
                         item {
                             TableColumn {
                                 TableCell(
@@ -684,6 +701,7 @@ fun IpaHelpScreen(
 
                 item {
                     Text(
+                        modifier = horizontalPadding,
                         text = stringResource(Res.string.how_to_search_ipa),
                         style = MaterialTheme.typography.headlineSmall
                     )
@@ -691,6 +709,7 @@ fun IpaHelpScreen(
 
                 item {
                     Text(
+                        modifier = horizontalPadding,
                         text = stringResource(Res.string.use_qwerty),
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -698,6 +717,7 @@ fun IpaHelpScreen(
 
                 item {
                     Image(
+                        modifier = horizontalPadding,
                         painter = painterResource(Res.drawable.ipa_equivalences),
                         contentDescription = "searching 'suron' matches 'sʊɾɔn' as well as 'ʃʊɾɔŋ'",
                     )
@@ -705,6 +725,7 @@ fun IpaHelpScreen(
 
                 item {
                     Text(
+                        modifier = horizontalPadding,
                         text = stringResource(Res.string.ipa_equivalences),
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -712,6 +733,7 @@ fun IpaHelpScreen(
 
                 items(UnicodeUtility.LATIN_IPA_CHAR_MAP.toList()) { (char, charSet) ->
                     Text(
+                        modifier = horizontalPadding,
                         text = buildAnnotatedString {
                             withStyle(SpanStyle(fontWeight = FontWeight.Black)) {
                                 append("$char — ")

@@ -34,7 +34,7 @@ fun ConsonantButton(
         .clip(CircleShape)
         .background(ButtonDefaults.buttonColors().containerColor)
         .size(with(density) { textStyle.lineHeight.toDp() })
-        .clickable {
+        .clickable(null, null) {
             logger.d("IPA_HELP: playing audio for $path")
             audioPlayer.playPhone(path)
         },
