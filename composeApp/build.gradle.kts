@@ -30,6 +30,8 @@ compose.desktop {
 }
 
 kotlin {
+    compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+
     androidLibrary {
         namespace = "$sylhetiDictionaryPackage.composeapp"
         compileSdk = libs.versions.android.targetSdk.get().toInt()
