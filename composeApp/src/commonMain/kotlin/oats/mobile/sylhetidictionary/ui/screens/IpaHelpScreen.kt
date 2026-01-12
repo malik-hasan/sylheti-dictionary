@@ -627,7 +627,7 @@ fun IpaHelpScreen(
 
                                 // Nasal
                                 ConsonantButtonTableCell(true) {
-                                    ConsonantButton("ŋ", "3/39/Velar_nasal.ogg", audioPlayer)
+                                    ConsonantButton("ŋ", "39/Velar_nasal.ogg", audioPlayer)
                                 }
 
                                 // Trill
