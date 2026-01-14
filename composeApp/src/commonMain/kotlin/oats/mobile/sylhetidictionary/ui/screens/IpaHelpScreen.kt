@@ -116,6 +116,9 @@ fun IpaHelpScreen(
                 onRetire { audioPlayer.release() }
             }
 
+            var tappedVowel by remember { mutableStateOf<Rect?>(null) }
+            var tappedConsonant by remember { mutableStateOf<String?>(null) }
+
             val horizontalPadding = Modifier.padding(horizontal = 16.dp)
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -224,10 +227,10 @@ fun IpaHelpScreen(
                         val tappedButtonColor = MaterialTheme.colorScheme.secondary
 
                         val vowelButtons = remember { mutableMapOf<Rect, String>() }
-                        var tappedVowel by remember { mutableStateOf<Rect?>(null) }
-
+                        
                         LaunchedEffect(tappedVowel) {
                             tappedVowel?.let {
+                                tappedConsonant = null
                                 delay(500)
                                 tappedVowel = null
                             }
@@ -397,6 +400,14 @@ fun IpaHelpScreen(
                 }
 
                 item {
+                    LaunchedEffect(tappedConsonant) {
+                        tappedConsonant?.let {
+                            tappedVowel = null
+                            delay(500)
+                            tappedConsonant = null
+                        }
+                    }
+                    
                     LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
                         item {
                             TableColumn {
@@ -426,8 +437,20 @@ fun IpaHelpScreen(
 
                                 // Plosive
                                 ConsonantButtonTableCell {
-                                    ConsonantButton("p", "51/Voiceless_bilabial_plosive.ogg", audioPlayer)
-                                    ConsonantButton("b", "2c/Voiced_bilabial_plosive.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "p",
+                                        path = "51/Voiceless_bilabial_plosive.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
+                                    ConsonantButton(
+                                        consonant = "b",
+                                        path = "2c/Voiced_bilabial_plosive.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Affricate
@@ -435,7 +458,13 @@ fun IpaHelpScreen(
 
                                 // Nasal
                                 ConsonantButtonTableCell(true) {
-                                    ConsonantButton("m", "a9/Bilabial_nasal.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "m",
+                                        path = "a9/Bilabial_nasal.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Trill
@@ -463,7 +492,13 @@ fun IpaHelpScreen(
 
                                 // Nasal
                                 ConsonantButtonTableCell(true) {
-                                    ConsonantButton("ɱ", "18/Labiodental_nasal.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ɱ",
+                                        path = "18/Labiodental_nasal.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Trill
@@ -473,7 +508,13 @@ fun IpaHelpScreen(
 
                                 // Fricative
                                 ConsonantButtonTableCell(voicelessOnly = true) {
-                                    ConsonantButton("f", "c7/Voiceless_labio-dental_fricative.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "f",
+                                        path = "c7/Voiceless_labio-dental_fricative.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Lateral Approximant
@@ -490,8 +531,20 @@ fun IpaHelpScreen(
 
                                 // Plosive
                                 ConsonantButtonTableCell {
-                                    ConsonantButton("t", "dc/Voiceless_dental_stop.ogg", audioPlayer)
-                                    ConsonantButton("d", "1c/Voiced_dental_stop.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "t",
+                                        path = "dc/Voiceless_dental_stop.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
+                                    ConsonantButton(
+                                        consonant = "d",
+                                        path = "1c/Voiced_dental_stop.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Affricate
@@ -523,7 +576,13 @@ fun IpaHelpScreen(
                                     voicedOnly = true,
                                     leftBorderThickness = null
                                 ) {
-                                    ConsonantButton("n", "29/Alveolar_nasal.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "n",
+                                        path = "29/Alveolar_nasal.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Trill
@@ -531,7 +590,13 @@ fun IpaHelpScreen(
                                     voicedOnly = true,
                                     leftBorderThickness = null
                                 ) {
-                                    ConsonantButton("r", "ce/Alveolar_trill.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "r",
+                                        path = "ce/Alveolar_trill.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Tap/Flap
@@ -539,13 +604,31 @@ fun IpaHelpScreen(
                                     voicedOnly = true,
                                     leftBorderThickness = null
                                 ) {
-                                    ConsonantButton("ɾ", "a0/Alveolar_tap.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ɾ",
+                                        path = "a0/Alveolar_tap.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Fricative
                                 ConsonantButtonTableCell {
-                                    ConsonantButton("s", "ac/Voiceless_alveolar_sibilant.ogg", audioPlayer)
-                                    ConsonantButton("z", "c0/Voiced_alveolar_sibilant.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "s",
+                                        path = "ac/Voiceless_alveolar_sibilant.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
+                                    ConsonantButton(
+                                        consonant = "z",
+                                        path = "c0/Voiced_alveolar_sibilant.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Lateral Approximant
@@ -554,7 +637,13 @@ fun IpaHelpScreen(
                                     leftBorderThickness = null,
                                     bottomBorderThickness = 2.dp
                                 ) {
-                                    ConsonantButton("l", "bc/Alveolar_lateral_approximant.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "l",
+                                        path = "bc/Alveolar_lateral_approximant.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
                             }
                         }
@@ -568,8 +657,20 @@ fun IpaHelpScreen(
 
                                 // Affricate
                                 ConsonantButtonTableCell {
-                                    ConsonantButton("ʧ", "97/Voiceless_palato-alveolar_affricate.ogg", audioPlayer)
-                                    ConsonantButton("ʤ", "e6/Voiced_palato-alveolar_affricate.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ʧ",
+                                        path = "97/Voiceless_palato-alveolar_affricate.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
+                                    ConsonantButton(
+                                        consonant = "ʤ",
+                                        path = "e6/Voiced_palato-alveolar_affricate.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Nasal
@@ -581,8 +682,20 @@ fun IpaHelpScreen(
 
                                 // Fricative
                                 ConsonantButtonTableCell {
-                                    ConsonantButton("ʃ", "cc/Voiceless_palato-alveolar_sibilant.ogg", audioPlayer)
-                                    ConsonantButton("ʒ", "30/Voiced_palato-alveolar_sibilant.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ʃ",
+                                        path = "cc/Voiceless_palato-alveolar_sibilant.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
+                                    ConsonantButton(
+                                        consonant = "ʒ",
+                                        path = "30/Voiced_palato-alveolar_sibilant.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Lateral Approximant
@@ -599,8 +712,20 @@ fun IpaHelpScreen(
 
                                 // Plosive
                                 ConsonantButtonTableCell {
-                                    ConsonantButton("ʈ", "b0/Voiceless_retroflex_stop.oga", audioPlayer)
-                                    ConsonantButton("ɖ", "27/Voiced_retroflex_stop.oga", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ʈ",
+                                        path = "b0/Voiceless_retroflex_stop.oga",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
+                                    ConsonantButton(
+                                        consonant = "ɖ",
+                                        path = "27/Voiced_retroflex_stop.oga",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Affricate
@@ -608,7 +733,13 @@ fun IpaHelpScreen(
 
                                 // Nasal
                                 ConsonantButtonTableCell(true) {
-                                    ConsonantButton("ɳ", "af/Retroflex_nasal.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ɳ",
+                                        path = "af/Retroflex_nasal.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Trill
@@ -616,12 +747,24 @@ fun IpaHelpScreen(
 
                                 // Tap/Flap
                                 ConsonantButtonTableCell(true) {
-                                    ConsonantButton("ɽ", "87/Retroflex_flap.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ɽ",
+                                        path = "87/Retroflex_flap.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Fricative
                                 ConsonantButtonTableCell(voicelessOnly = true) {
-                                    ConsonantButton("ʂ", "b1/Voiceless_retroflex_sibilant.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ʂ",
+                                        path = "b1/Voiceless_retroflex_sibilant.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Lateral Approximant
@@ -635,8 +778,20 @@ fun IpaHelpScreen(
 
                                 // Plosive
                                 ConsonantButtonTableCell {
-                                    ConsonantButton("k", "e3/Voiceless_velar_plosive.ogg", audioPlayer)
-                                    ConsonantButton("g", "12/Voiced_velar_plosive_02.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "k",
+                                        path = "e3/Voiceless_velar_plosive.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
+                                    ConsonantButton(
+                                        consonant = "g",
+                                        path = "12/Voiced_velar_plosive_02.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Affricate
@@ -644,7 +799,13 @@ fun IpaHelpScreen(
 
                                 // Nasal
                                 ConsonantButtonTableCell(true) {
-                                    ConsonantButton("ŋ", "39/Velar_nasal.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "ŋ",
+                                        path = "39/Velar_nasal.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Trill
@@ -654,7 +815,13 @@ fun IpaHelpScreen(
 
                                 // Fricative
                                 ConsonantButtonTableCell(voicelessOnly = true) {
-                                    ConsonantButton("x", "0f/Voiceless_velar_fricative.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "x",
+                                        path = "0f/Voiceless_velar_fricative.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Lateral Approximant
@@ -685,7 +852,13 @@ fun IpaHelpScreen(
                                     voicelessOnly = true,
                                     rightBorderThickness = 2.dp
                                 ) {
-                                    ConsonantButton("h", "da/Voiceless_glottal_fricative.ogg", audioPlayer)
+                                    ConsonantButton(
+                                        consonant = "h",
+                                        path = "da/Voiceless_glottal_fricative.ogg",
+                                        audioPlayer = audioPlayer,
+                                        tappedConsonant = tappedConsonant,
+                                        onClick = { tappedConsonant = it }
+                                    )
                                 }
 
                                 // Lateral Approximant

@@ -26,15 +26,22 @@ fun ConsonantButton(
     consonant: String,
     path: String,
     audioPlayer: AudioPlayer,
+    tappedConsonant: String?,
+    onClick: (String) -> Unit,
     density: Density = LocalDensity.current,
     logger: Logger = koinInject { parametersOf("IpaHelp") }
 ) {
     val textStyle = MaterialTheme.typography.bodyLarge
     Box(Modifier
         .clip(CircleShape)
-        .background(ButtonDefaults.buttonColors().containerColor)
+        .background(
+            if (consonant == tappedConsonant) {
+                MaterialTheme.colorScheme.secondary
+            } else ButtonDefaults.buttonColors().containerColor
+        )
         .size(with(density) { textStyle.lineHeight.toDp() })
         .clickable(null, null) {
+            onClick(consonant)
             logger.d("IPA_HELP: playing audio for $path")
             audioPlayer.playPhone(path)
         },
