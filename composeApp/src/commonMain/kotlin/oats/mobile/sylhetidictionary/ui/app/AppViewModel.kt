@@ -8,13 +8,14 @@ import oats.mobile.sylhetidictionary.data.preferences.PreferenceKey
 import oats.mobile.sylhetidictionary.data.preferences.PreferencesRepository
 import oats.mobile.sylhetidictionary.ui.utils.blockingStateFlowOf
 import oats.mobile.sylhetidictionary.ui.utils.stateFlowOf
+import oats.mobile.sylhetidictionary.utility.DictionaryAssetVersion
 import oats.mobile.sylhetidictionary.utility.refreshLanguage
 
 class AppViewModel(val preferences: PreferencesRepository): ViewModel() {
 
     val assetLoaded = stateFlowOf(null,
         preferences.nullableFlow(PreferenceKey.CURRENT_DICTIONARY_VERSION).map { version ->
-            version?.let { it >= 0 }
+            version?.let { it == DictionaryAssetVersion }
         }
     )
 
