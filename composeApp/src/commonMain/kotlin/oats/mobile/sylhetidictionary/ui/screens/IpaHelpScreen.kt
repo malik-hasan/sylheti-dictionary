@@ -75,7 +75,6 @@ import oats.mobile.sylhetidictionary.ui.utils.drawVowelButton
 import oats.mobile.sylhetidictionary.ui.utils.drawVowelChartDot
 import oats.mobile.sylhetidictionary.ui.utils.drawVowelChartLine
 import oats.mobile.sylhetidictionary.ui.utils.playPhone
-import oats.mobile.sylhetidictionary.ui.utils.rotate
 import oats.mobile.sylhetidictionary.ui.utils.space
 import oats.mobile.sylhetidictionary.utility.UnicodeUtility
 import org.jetbrains.compose.resources.painterResource
@@ -286,14 +285,16 @@ fun IpaHelpScreen(
                             vowelButtons[u] = "d5/Near-close_near-back_rounded_vowel"
                             drawVowelChartDot(u.centerLeft - vowelDotSpacer, chartColor)
 
+                            val highFrontVertex = iDot.center
                             val halfChart = canvasDimension / 2
                             val lowFrontVertex = Offset(halfChart, chartEnd)
-                            fun frontVertex(fraction: Float) = lerp(iDot.center, lowFrontVertex, fraction)
+                            fun frontVertex(fraction: Float) = lerp(highFrontVertex, lowFrontVertex, fraction)
                             val eDot = drawVowelChartDot(frontVertex(2 / 3f), chartColor)
+                            val eVertex = eDot.center
                             val vowelRadiusSpacer = Offset(vowelRadius, 0f)
                             val e = drawVowelButton(
                                 vowel = textMeasurer.measure("ɛ", textStyle),
-                                center = eDot.center - vowelDotSpacer - vowelRadiusSpacer,
+                                center = eVertex - vowelDotSpacer - vowelRadiusSpacer,
                                 buttonColor = buttonColor,
                                 tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
@@ -310,31 +311,29 @@ fun IpaHelpScreen(
                             vowelButtons[o] = "d0/PR-open-mid_back_rounded_vowel"
                             val oDot = drawVowelChartDot(o.centerLeft - vowelDotSpacer, chartColor)
 
-                            val backCenterX = oDot.center.x
+                            val oVertex = oDot.center
+                            val backCenterX = oVertex.x
                             val aDot = drawVowelChartDot(Offset(lerp(backCenterX, halfChart, 0.5f), chartEnd), chartColor)
 
                             val highBackVertex = Offset(backCenterX, vowelRadius)
-                            drawVowelChartLine(iDot.centerRight, highBackVertex, chartColor)
+                            drawVowelChartLine(highFrontVertex, highBackVertex, chartColor)
                             drawVowelChartLine(
                                 start = frontVertex(1 / 3f),
                                 end = Offset(backCenterX, chartDimension(1 / 3f)),
                                 color = chartColor
                             )
-                            drawVowelChartLine(eDot.centerRight, oDot.centerLeft, chartColor)
+                            drawVowelChartLine(eVertex, oVertex, chartColor)
                             val lowBackVertex = Offset(backCenterX, chartEnd)
                             drawVowelChartLine(lowFrontVertex, lowBackVertex, chartColor)
 
-                            drawVowelChartLine(
-                                start = iDot.bottomCenter.rotate(-30f, iDot.center),
-                                end = lowFrontVertex,
-                                color = chartColor
-                            )
-                            drawVowelChartLine(Offset(halfChart, vowelRadius), aDot.center, chartColor)
+                            drawVowelChartLine(highFrontVertex, lowFrontVertex, chartColor)
+                            val aVertex = aDot.center
+                            drawVowelChartLine(Offset(halfChart, vowelRadius), aVertex, chartColor)
                             drawVowelChartLine(highBackVertex, lowBackVertex, chartColor)
 
                             val a = drawVowelButton(
                                 vowel = textMeasurer.measure("a", textStyle),
-                                center = aDot.center - vowelDotSpacer - vowelRadiusSpacer,
+                                center = aVertex - vowelDotSpacer - vowelRadiusSpacer,
                                 buttonColor = buttonColor,
                                 tappedColor = tappedButtonColor,
                                 tappedVowel = tappedVowel
