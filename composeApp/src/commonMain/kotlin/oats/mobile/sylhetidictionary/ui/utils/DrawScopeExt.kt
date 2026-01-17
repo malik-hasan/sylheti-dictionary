@@ -9,20 +9,11 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.sp
 
 fun DrawScope.drawVowelChartLine(start: Offset, end: Offset, color: Color) =
-    drawLine(
-        color = color,
-        start = start,
-        end = end,
-        strokeWidth = 1.sp.toPx()
-    )
+    drawLine(color, start, end, 1.sp.toPx())
 
 fun DrawScope.drawVowelChartDot(center: Offset, color: Color): Rect {
     val radius = 4.sp.toPx()
-    drawCircle(
-        color = color,
-        radius = 4.sp.toPx(),
-        center = center
-    )
+    drawCircle(color, radius, center)
     return Rect(center, radius)
 }
 
