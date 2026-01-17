@@ -11,7 +11,6 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.koin.android)
     implementation(libs.lifecycle.runtime.compose)
-//    implementation(libs.core.splashscreen)
 }
 
 val sylhetiDictionaryPackage = "oats.mobile.sylhetidictionary"
