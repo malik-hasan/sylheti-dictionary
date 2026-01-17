@@ -6,5 +6,5 @@ expect class AudioPlayer() {
 }
 
 fun AudioPlayer.playPhone(path: String) {
-    play("https://upload.wikimedia.org/wikipedia/commons/${path.first()}/$path")
+    play("https://upload.wikimedia.org/wikipedia/commons/${path.first()}/$path.ogg")
 }
