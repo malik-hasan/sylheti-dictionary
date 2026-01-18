@@ -50,11 +50,11 @@ class MainActivity : AppCompatActivity(), KoinComponent {
             App(processTextSearchTerm)
         }
 
-        findViewById<View>(android.R.id.content).viewTreeObserver.run {
-            addOnPreDrawListener(
+        findViewById<View>(android.R.id.content).run {
+            viewTreeObserver.addOnPreDrawListener(
                 object : ViewTreeObserver.OnPreDrawListener {
                     override fun onPreDraw() = vm.assetLoaded.value?.let {
-                        removeOnPreDrawListener(this)
+                        viewTreeObserver.removeOnPreDrawListener(this)
                         true
                     } ?: false
                 }
