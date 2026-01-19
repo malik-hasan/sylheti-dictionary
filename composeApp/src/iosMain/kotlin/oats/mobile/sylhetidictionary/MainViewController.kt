@@ -45,7 +45,8 @@ fun MainViewController() = ComposeUIViewController(
         val logger by koin.injectLogger(this::class.simpleName)
 
         scope.launch(Dispatchers.IO) {
-            if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1))
+            if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1)) {
+                var loadedDictionaryVersion = -1
                 try {
                     logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
 
@@ -53,28 +54,31 @@ fun MainViewController() = ComposeUIViewController(
                     memScoped {
                         val error: ObjCObjectVar<NSError?> = alloc()
                         if (!NSFileManager.defaultManager.createDirectoryAtPath(
-                            path = destinationDirectory.absolutePath,
-                            withIntermediateDirectories = true,
-                            attributes = null,
-                            error = error.ptr
-                        )) throw IOException("failed to create directory: ${error.value?.localizedDescription}")
+                                path = destinationDirectory.absolutePath,
+                                withIntermediateDirectories = true,
+                                attributes = null,
+                                error = error.ptr
+                            )) throw IOException("failed to create directory: ${error.value?.localizedDescription}")
                     }
 
                     if (!readDictionaryAsset().usePinned { pinned ->
-                        NSData.create(
-                            bytes = pinned.addressOf(0),
-                            length = pinned.get().size.toULong()
-                        )
-                    }.writeToFile(
-                        path = (destinationDirectory + DictionaryAsset).absolutePath,
-                        atomically = true
-                    )) throw IOException("failed to copy file")
+                            NSData.create(
+                                bytes = pinned.addressOf(0),
+                                length = pinned.get().size.toULong()
+                            )
+                        }.writeToFile(
+                            path = (destinationDirectory + DictionaryAsset).absolutePath,
+                            atomically = true
+                        )) throw IOException("failed to copy file")
 
                     logger.d("INIT: dictionary asset copied successfully")
-                    preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+                    loadedDictionaryVersion = DictionaryAssetVersion
                 } catch (e: Exception) {
                     logger.e("INIT: failed to copy dictionary asset: ${e.message}")
                 }
+
+                preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, loadedDictionaryVersion)
+            }
         }
     }
 ) { App() }

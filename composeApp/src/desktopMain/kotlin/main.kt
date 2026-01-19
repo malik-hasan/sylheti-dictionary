@@ -25,7 +25,8 @@ fun main() {
     val scope: CoroutineScope by koin.inject()
 
     scope.launch(Dispatchers.IO) {
-        if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1))
+        if (DictionaryAssetVersion > (preferences.get(PreferenceKey.CURRENT_DICTIONARY_VERSION) ?: -1)) {
+            var loadedDictionaryVersion = -1
             try {
                 logger.d("INIT: copying dictionary asset $DictionaryAssetVersion to SQLite")
                 readDictionaryAsset().inputStream().use { input ->
@@ -35,10 +36,13 @@ fun main() {
                 }
 
                 logger.d("INIT: dictionary asset copied successfully")
-                preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, DictionaryAssetVersion)
+                loadedDictionaryVersion = DictionaryAssetVersion
             } catch(e: Exception) {
                 logger.e("INIT: failed to copy dictionary asset: ${e.message}")
             }
+
+            preferences.set(PreferenceKey.CURRENT_DICTIONARY_VERSION, loadedDictionaryVersion)
+        }
     }
 
     application {
