@@ -23,14 +23,12 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SDNavHost(navController: NavHostController, processTextSearchTerm: String?) {
     NavHost(navController, Route.Loading) {
         composable<Route.Loading> {
-            with(koinViewModel<AppViewModel>()) {
-                val appDataLoaded by appDataLoaded.collectAsStateWithLifecycle()
+            val appDataLoaded by koinViewModel<AppViewModel>().appDataLoaded.collectAsStateWithLifecycle()
 
-                LaunchedEffect(appDataLoaded) {
-                    if (appDataLoaded) navController.navigate(Route.Search(processTextSearchTerm)) {
-                        popUpTo(Route.Loading) {
-                            inclusive = true
-                        }
+            LaunchedEffect(appDataLoaded) {
+                if (appDataLoaded) navController.navigate(Route.Search(processTextSearchTerm)) {
+                    popUpTo(Route.Loading) {
+                        inclusive = true
                     }
                 }
             }
