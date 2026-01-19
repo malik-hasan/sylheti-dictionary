@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.screens.AboutScreen
 import oats.mobile.sylhetidictionary.ui.screens.IpaHelpScreen
+import oats.mobile.sylhetidictionary.ui.screens.LoadingScreen
 import oats.mobile.sylhetidictionary.ui.screens.debug.DebugScreen
 import oats.mobile.sylhetidictionary.ui.screens.debug.DebugViewModel
 import oats.mobile.sylhetidictionary.ui.screens.search.SearchNavHost
@@ -20,7 +21,24 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SDNavHost(navController: NavHostController, processTextSearchTerm: String?) {
-    NavHost(navController, Route.Search(processTextSearchTerm)) {
+    NavHost(navController, Route.Loading) {
+        composable<Route.Loading> {
+            with(koinViewModel<AppViewModel>()) {
+                val appDataLoaded by appDataLoaded.collectAsStateWithLifecycle()
+
+                LoadingScreen(
+                    appDataLoaded = appDataLoaded,
+                    clearLoadingScreen = {
+                        navController.navigate(Route.Search(processTextSearchTerm)) {
+                            popUpTo(Route.Loading) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+        }
+
         composable<Route.Search> {
             SearchProvider {
                 SearchNavHost(it.toRoute<Route.Search>().processTextSearchTerm)

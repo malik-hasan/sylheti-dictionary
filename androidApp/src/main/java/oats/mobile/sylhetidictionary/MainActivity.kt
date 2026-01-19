@@ -2,8 +2,6 @@ package oats.mobile.sylhetidictionary
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.view.ViewTreeObserver
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -48,17 +46,6 @@ class MainActivity : AppCompatActivity(), KoinComponent {
             }
 
             App(processTextSearchTerm)
-        }
-
-        findViewById<View>(android.R.id.content).run {
-            viewTreeObserver.addOnPreDrawListener(
-                object : ViewTreeObserver.OnPreDrawListener {
-                    override fun onPreDraw() = vm.assetLoaded.value?.let {
-                        viewTreeObserver.removeOnPreDrawListener(this)
-                        true
-                    } ?: false
-                }
-            )
         }
     }
 }

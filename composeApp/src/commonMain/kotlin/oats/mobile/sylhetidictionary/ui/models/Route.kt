@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 sealed class Route {
 
+    @Serializable data object Loading: Route()
+
     @Serializable
     data class Search(val processTextSearchTerm: String? = null): Route() {
         companion object {

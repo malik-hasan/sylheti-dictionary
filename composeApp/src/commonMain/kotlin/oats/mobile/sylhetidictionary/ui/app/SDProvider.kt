@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package oats.mobile.sylhetidictionary.ui.app
 
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.WideNavigationRailState
 import androidx.compose.material3.rememberWideNavigationRailState
 import androidx.compose.runtime.Composable
