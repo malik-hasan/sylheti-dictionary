@@ -786,7 +786,7 @@ fun IpaHelpScreen(
                                         onClick = { tappedConsonant = it }
                                     )
                                     ConsonantButton(
-                                        consonant = "g",
+                                        consonant = "ɡ",
                                         path = "12/Voiced_velar_plosive_02.ogg",
                                         audioPlayer = audioPlayer,
                                         tappedConsonant = tappedConsonant,
