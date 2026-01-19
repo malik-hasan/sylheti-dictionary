@@ -1,6 +1,7 @@
 package oats.mobile.sylhetidictionary.ui.app
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -10,7 +11,6 @@ import androidx.navigation.toRoute
 import oats.mobile.sylhetidictionary.ui.models.Route
 import oats.mobile.sylhetidictionary.ui.screens.AboutScreen
 import oats.mobile.sylhetidictionary.ui.screens.IpaHelpScreen
-import oats.mobile.sylhetidictionary.ui.screens.LoadingScreen
 import oats.mobile.sylhetidictionary.ui.screens.debug.DebugScreen
 import oats.mobile.sylhetidictionary.ui.screens.debug.DebugViewModel
 import oats.mobile.sylhetidictionary.ui.screens.search.SearchNavHost
@@ -26,16 +26,13 @@ fun SDNavHost(navController: NavHostController, processTextSearchTerm: String?) 
             with(koinViewModel<AppViewModel>()) {
                 val appDataLoaded by appDataLoaded.collectAsStateWithLifecycle()
 
-                LoadingScreen(
-                    appDataLoaded = appDataLoaded,
-                    clearLoadingScreen = {
-                        navController.navigate(Route.Search(processTextSearchTerm)) {
-                            popUpTo(Route.Loading) {
-                                inclusive = true
-                            }
+                LaunchedEffect(appDataLoaded) {
+                    if (appDataLoaded) navController.navigate(Route.Search(processTextSearchTerm)) {
+                        popUpTo(Route.Loading) {
+                            inclusive = true
                         }
                     }
-                )
+                }
             }
         }
 
