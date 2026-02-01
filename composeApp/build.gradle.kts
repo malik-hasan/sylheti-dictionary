@@ -42,7 +42,6 @@ kotlin {
 
     listOf(
         iosArm64(),
-        iosX64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -80,7 +79,6 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.lifecycle.viewmodel)
-                implementation(libs.media3.exoplayer)
                 implementation(libs.navigation.compose)
                 implementation(libs.room.runtime)
                 implementation(libs.sqldelight.coroutines.extensions)
@@ -96,6 +94,7 @@ kotlin {
         androidMain {
             dependsOn(mobileMain)
             dependencies {
+                implementation(libs.media3.exoplayer)
                 implementation(libs.room.runtime.android)
                 implementation(libs.sqldelight.android.driver)
             }
@@ -138,7 +137,6 @@ dependencies {
     listOf(
         "kspAndroid",
         "kspIosArm64",
-        "kspIosX64",
         "kspIosSimulatorArm64",
         "kspDesktop"
     ).forEach {
